@@ -24,8 +24,8 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.core.AuthenticationException;
 
-import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -89,7 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("UserPrincipal.role: {}", principal.getAuthorities().stream().findFirst().get().toString());
 
             Authentication authToken = null;
-            if ("local".equals(principal.getProvider())) {
+            if ("local".equals(principal.getProvider().getValue())) {
                 // 폼 로그인(자체 회원)
                 authToken = new UsernamePasswordAuthenticationToken(principal, null, authorities);
             }
@@ -103,8 +103,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("JWT Filter Success : {}", request.getRequestURI());
             SecurityContextHolder.getContext().setAuthentication(authToken);
             filterChain.doFilter(request, response);
-        } catch (CustomAuthenticationException | AuthenticationException e) {
-            customAuthenticationEntryPoint.commence(request, response, (org.springframework.security.core.AuthenticationException) e);
+        } catch (CustomAuthenticationException | (AuthenticationException) e) {
+            customAuthenticationEntryPoint.commence(request, response, (AuthenticationException) e);
         }
     }
     private boolean isPassUri(String uri) {

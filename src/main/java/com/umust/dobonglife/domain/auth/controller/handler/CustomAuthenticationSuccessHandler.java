@@ -31,24 +31,19 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
-        String providerId = authenticationUtil.getProviderId();
+        String providerId = authenticationUtil.getProvider();
         String role = authenticationUtil.getRole();
-        Long memberId = authenticationUtil.getMemberId();
+        Long userId = authenticationUtil.getUserId();
         String userName = authenticationUtil.getUserName();
-        String email = authenticationUtil.getEmail();
-        log.info("[CustomAuthenticationSuccessHandler] providerId={}, role={}, memberId={}, email={}", providerId, role, memberId, email);
+        log.info("[CustomAuthenticationSuccessHandler] providerId={}, role={}, userId={}", providerId, role, userId);
 
         // 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(memberId, providerId, role, userName);
-        String refreshToken = jwtUtil.createRefreshToken(memberId, providerId, role);
+        String accessToken = jwtUtil.createAccessToken(userId, providerId, role, userName);
+        String refreshToken = jwtUtil.createRefreshToken(userId, providerId, role);
 
         // refresh token 저장
-        jwtService.storeRefreshToken(refreshToken);
+        jwtService.storeRefreshToken(refreshToken, userId);
         log.info("[CustomAuthenticationSuccessHandler], refreshToken={}", refreshToken);
-
-        // 응답 설정
-        response.addCookie(cookieUtil.createCookie("ACCESS_TOKEN", accessToken));
-        response.addCookie(cookieUtil.createCookie("REFRESH_TOKEN", refreshToken));
 
         // 리다이렉션
         response.sendRedirect(LOGIN_SUCCESS_URI);

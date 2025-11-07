@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.auth.model;
 
+import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,12 +15,12 @@ public enum Provider {
     private final String value;
 
     public static Provider fromProvider(String providerString) {
-        if (providerString == null) throw new IllegalArgumentException("provider is null");
+        if (providerString == null) throw new CustomAuthenticationException("provider is null");
         for (Provider p : values()) {
             if (p.value.equalsIgnoreCase(providerString) || p.name().equalsIgnoreCase(providerString)) {
                 return p;
             }
         }
-        throw new IllegalArgumentException("Unknown provider: " + providerString);
+        throw new CustomAuthenticationException ("Unknown provider: " + providerString);
     }
 }

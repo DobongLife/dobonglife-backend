@@ -1,7 +1,11 @@
 package com.umust.dobonglife.domain.auth.controller;
 
+import com.umust.dobonglife.domain.auth.dto.request.RefreshTokenRequest;
+import com.umust.dobonglife.domain.auth.dto.response.ReissueResponse;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.global.common.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -9,42 +13,37 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(("/api/auth/"))
+@RequestMapping(("/api/auth"))
 @RestController
 public class AuthController {
 
-    private final JwtUtil jwtUtil;
     private final JwtService jwtService;
 
-    @GetMapping("/login/success")
-    public BaseResponse<AccesstokenDTO> success(HttpServletRequest request) {
+    @GetMapping("/login/kakao")
+    public void redirectToKakao(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/oauth2/authorization/kakao");
+    }
 
-        // 쿠키에서 토큰 받기
-        String accessToken = cookieUtil.getCookieValue(request, "ACCESS_TOKEN");
-        String refreshToken = cookieUtil.getCookieValue(request, "REFRESH_TOKEN");
-        log.info("Cookie AT: {} RT: {}", accessToken, refreshToken);
-
-        // JwtInfo 객체 생성
-        // JwtInfo jwtInfo = new JwtInfo(accessToken, refreshToken);
-
-        String name = jwtUtil.getUserNameFromToken(accessToken); // 아래에 구현 설명
-
-        AccesstokenDTO accesstokenDTO = new AccesstokenDTO(accessToken, name);
-
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS, accesstokenDTO);
+    @GetMapping("/login/google")
+    public void redirectToGoogle(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/oauth2/authorization/google");
     }
 
     @PostMapping("/logout")
-    public BaseResponse<BaseResponseStatus> logout(HttpServletRequest request) {
-        jwtService.logout(request);
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+    public BaseResponse<Void> logout(HttpServletRequest request,
+                                     @RequestBody RefreshTokenRequest tokenRequest){
+        jwtService.logout(request, tokenRequest);
+        return BaseResponse.ok(null);
     }
 
     @PostMapping("/reissue")
-    public BaseResponse<BaseResponseStatus> reissue(HttpServletRequest request, HttpServletResponse response) {
-        jwtService.reissueToken(request, response);
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+    public BaseResponse<ReissueResponse> reissueTokens(@RequestBody RefreshTokenRequest tokenRequest,
+                                                       @CurrentUserId Long userId) {
+        ReissueResponse response = jwtService.reissueTokens(tokenRequest, userId);
+        return BaseResponse.ok(response);
     }
 }

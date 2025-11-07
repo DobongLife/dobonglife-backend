@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.user.model;
 
+import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,7 +34,7 @@ public enum Role {
         }
 
         // todo 예외 처리 로직 추가
-        throw new IllegalArgumentException("Unknown role: " + roleString);
+        throw new CustomAuthenticationException("Unknown role: " + roleString);
     }
 
     // Role을 권한으로 변환하는 메서드 (MEMBER -> ROLE_MEMBER)
