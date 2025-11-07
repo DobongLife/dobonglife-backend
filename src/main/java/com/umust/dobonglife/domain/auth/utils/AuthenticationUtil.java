@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.auth.utils;
 
+import com.umust.dobonglife.domain.auth.model.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,10 +12,10 @@ import java.util.Iterator;
 @Component
 public class AuthenticationUtil {
 
-    public String getProviderId() {
+    public String getProvider() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        return customOAuth2User.getProviderId();
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        return principal.getProvider().getValue();
     }
 
     public String getRole() {
@@ -25,21 +26,21 @@ public class AuthenticationUtil {
         return grantedAuthority.getAuthority();
     }
 
-    public Long getMemberId() {
+    public Long getUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        return customOAuth2User.getMemberId();
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        return principal.getUserId();
     }
 
     public String getUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        return customOAuth2User.getName();
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        return principal.getUsername();
     }
 
     public String getEmail(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        return customOAuth2User.getEmail();
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        return principal.getEmail();
     }
 }
