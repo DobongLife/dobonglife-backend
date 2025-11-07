@@ -1,24 +1,18 @@
-package com.umust.dobonglife.domain.auth.presentation;
+package com.umust.dobonglife.domain.auth.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.jooeon.mybeauty.domain.auth.application.JwtService;
-import me.jooeon.mybeauty.domain.auth.model.dto.AccesstokenDTO;
-import me.jooeon.mybeauty.domain.auth.utils.CookieUtil;
-import me.jooeon.mybeauty.domain.auth.utils.JwtUtil;
-import me.jooeon.mybeauty.global.common.model.dto.BaseResponse;
-import me.jooeon.mybeauty.global.common.model.enums.BaseResponseStatus;
+
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(("/app/api"))
+@RequestMapping(("/api/auth/"))
 @RestController
 public class AuthController {
 
-    private final CookieUtil cookieUtil;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
 

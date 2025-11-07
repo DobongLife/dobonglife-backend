@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.auth.presentation;
+package com.umust.dobonglife.domain.auth.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;

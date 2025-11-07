@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umust.dobonglife.domain.auth.dto.request.RefreshTokenRequest;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.global.common.redis.RedisService;
 import com.umust.dobonglife.global.common.response.ErrorCode;

@@ -1,11 +1,13 @@
-package com.umust.dobonglife.domain.auth.presentation.handler;
+package com.umust.dobonglife.domain.auth.controller.handler;
 
+import com.umust.dobonglife.domain.auth.service.JwtService;
+import com.umust.dobonglife.domain.auth.utils.AuthenticationUtil;
+import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -19,13 +21,11 @@ import java.io.IOException;
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final AuthenticationUtil authenticationUtil;
-    private final CookieUtil cookieUtil;
     private final JwtUtil jwtUtil;
-    //private final RedisService redisService;
+    private final JwtService jwtService;
 
     // 원래는 프론트에게 Rest API를 redirect 해야됨 추후 수정 예정
     private static final String LOGIN_SUCCESS_URI = "http://localhost:8080/api/login/successPage";
-    private final JwtService jwtService;
 
     @Override
     @Transactional
