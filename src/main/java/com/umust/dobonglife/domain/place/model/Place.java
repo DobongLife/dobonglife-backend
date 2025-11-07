@@ -27,9 +27,9 @@ public class Place extends BaseEntity {
     @Column
     private String content;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private Amentity amentity;
+//    @Column
+//    @Enumerated(EnumType.STRING)
+//    private Amentity amentity;
 
     @Column
     private String address;

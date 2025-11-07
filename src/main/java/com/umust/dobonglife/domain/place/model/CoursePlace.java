@@ -19,9 +19,9 @@ public class CoursePlace {
     @JoinColumn(name = "place_id", nullable = false)
     private Place name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course content;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "course_id", nullable = false)
+//    private Course content;
 
     @Column
     @Enumerated(EnumType.STRING)
