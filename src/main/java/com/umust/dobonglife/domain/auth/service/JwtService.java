@@ -2,6 +2,9 @@ package com.umust.dobonglife.domain.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.dto.request.RefreshTokenRequest;
+import com.umust.dobonglife.domain.auth.dto.response.ReissueResponse;
+import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
+import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.global.common.redis.RedisService;
 import com.umust.dobonglife.global.common.response.ErrorCode;
@@ -90,8 +93,8 @@ public class JwtService {
     private ReissueResponse reissueAndSendTokens(String refreshToken, Long userId) {
 
         // 새로운 Refresh Token 발급
-        String reissuedAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProviderId(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
-        String reissuedRefreshToken = jwtUtil.createRefreshToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProviderId(refreshToken), jwtUtil.getName(refreshToken));
+        String reissuedAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
+        String reissuedRefreshToken = jwtUtil.createRefreshToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getName(refreshToken));
 
         // 새로운 Refresh Token을 DB나 Redis에 저장
         storeRefreshToken(reissuedRefreshToken, userId);

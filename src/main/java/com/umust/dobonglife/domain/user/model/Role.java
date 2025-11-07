@@ -22,14 +22,18 @@ public enum Role {
     private final String role;
 
     // 파싱된 값에 맞는 Role을 반환하는 메서드 (ROLE_MEMBER -> MEMBER)
-    public static Optional<Role> fromRole(String roleString) {
+    public static Role fromRole(String roleString) {
         if (roleString != null && roleString.startsWith(PREFIX)) {
             String roleValue = roleString.substring(PREFIX.length());
-            for (Role r : values()) {
-                if (r.value.equalsIgnoreCase(roleValue)) return Optional.of(r);
+            for (Role role : Role.values()) {
+                if (role.value.equalsIgnoreCase(roleValue)) {
+                    return role;
+                }
             }
         }
-        return Optional.empty();
+
+        // todo 예외 처리 로직 추가
+        throw new IllegalArgumentException("Unknown role: " + roleString);
     }
 
     // Role을 권한으로 변환하는 메서드 (MEMBER -> ROLE_MEMBER)

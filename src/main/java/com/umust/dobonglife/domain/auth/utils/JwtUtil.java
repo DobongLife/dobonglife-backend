@@ -1,12 +1,13 @@
 package com.umust.dobonglife.domain.auth.utils;
 
+import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
+import com.umust.dobonglife.global.common.response.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -41,8 +42,8 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
     }
 
-    public String getProviderId(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("providerId", String.class);
+    public String getProvider(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("provider", String.class);
     }
 
     public String getRole(String token) {
@@ -65,12 +66,12 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createAccessToken(Long userId, String providerId, String role, String name) {
+    public String createAccessToken(Long userId, String provider, String role, String name) {
 
         return Jwts.builder()
                 .claim("tokenType", "access")
                 .claim("userId", userId)
-                .claim("providerId", providerId)
+                .claim("provider", provider)
                 .claim("name", name)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -79,12 +80,12 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String createRefreshToken(Long userId, String providerId, String name) {
+    public String createRefreshToken(Long userId, String provider, String name) {
 
         return Jwts.builder()
                 .claim("tokenType", "refresh")
                 .claim("userId", userId)
-                .claim("providerId", providerId)
+                .claim("providerId", provider)
                 .claim("name", name)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRED_IN))

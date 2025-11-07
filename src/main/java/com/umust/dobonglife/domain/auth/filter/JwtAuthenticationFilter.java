@@ -1,8 +1,13 @@
 package com.umust.dobonglife.domain.auth.filter;
 
+import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
+import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
+import com.umust.dobonglife.domain.auth.exception.handler.CustomAuthenticationEntryPoint;
+import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.auth.model.UserPrincipal;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.model.Role;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -71,20 +76,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 권한 리스트 생성
             List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority(jwtUtil.getRole(accessToken)));
             log.info("Granted Authorities : {}", authorities);
-            UserPrincipal principal = new UserPrincipal(
-                    jwtUtil.getUserId(accessToken),
-                    jwtUtil.getName(accessToken),
-                    null, // 패스워드는 필요 없음
-                    jwtUtil.getProviderId(accessToken),
-                    authorities
-            );
+            UserPrincipal principal = UserPrincipal.builder()
+                    .userId(jwtUtil.getUserId(accessToken))
+                    .userName(jwtUtil.getName(accessToken))
+                    .role(Role.fromRole(jwtUtil.getRole(accessToken)))
+                    .provider(Provider.fromProvider(jwtUtil.getProvider(accessToken)))
+                    .authorities(authorities)
+                    .build();
             log.info("UserPrincipal.userId: {}", principal.getUserId());
-            log.info("UserPrincipal.nickName: {}", principal.getUsername());
+            log.info("UserPrincipal.userName: {}", principal.getUsername());
             log.info("UserPrincipal.provider: {}", principal.getProvider());
             log.info("UserPrincipal.role: {}", principal.getAuthorities().stream().findFirst().get().toString());
 
             Authentication authToken = null;
-            if ("local".equals(principal.getProvider().getValue())) {
+            if ("local".equals(principal.getProvider())) {
                 // 폼 로그인(자체 회원)
                 authToken = new UsernamePasswordAuthenticationToken(principal, null, authorities);
             }
