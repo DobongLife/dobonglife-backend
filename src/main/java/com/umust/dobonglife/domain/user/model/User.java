@@ -1,13 +1,11 @@
 package com.umust.dobonglife.domain.user.model;
 
-import com.umust.dobonglife.domain.auth.model.dto.Provider;
+import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

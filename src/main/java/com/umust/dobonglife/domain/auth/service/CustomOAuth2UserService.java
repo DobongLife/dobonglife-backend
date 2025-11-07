@@ -1,7 +1,11 @@
 package com.umust.dobonglife.domain.auth.service;
 
+import com.umust.dobonglife.domain.auth.dto.response.GoogleResponse;
+import com.umust.dobonglife.domain.auth.dto.response.KakaoResponse;
+import com.umust.dobonglife.domain.auth.dto.response.NaverResponse;
+import com.umust.dobonglife.domain.auth.dto.response.OAuth2Response;
+import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.auth.model.UserPrincipal;
-import com.umust.dobonglife.domain.auth.model.dto.*;
 import com.umust.dobonglife.domain.user.model.Role;
 import com.umust.dobonglife.domain.user.model.User;
 import com.umust.dobonglife.domain.user.repository.UserRepository;

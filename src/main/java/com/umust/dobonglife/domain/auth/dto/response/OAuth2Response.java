@@ -1,4 +1,6 @@
-package com.umust.dobonglife.domain.auth.model.dto;
+package com.umust.dobonglife.domain.auth.dto.response;
+
+import com.umust.dobonglife.domain.auth.model.Provider;
 
 public interface OAuth2Response {
 

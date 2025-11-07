@@ -1,20 +1,23 @@
-package com.umust.dobonglife.domain.auth.model.dto;
+package com.umust.dobonglife.domain.auth.dto.response;
 
+import com.umust.dobonglife.domain.auth.model.Provider;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class NaverResponse implements OAuth2Response {
+public class GoogleResponse implements OAuth2Response {
 
     private final Map<String, Object> attribute;
 
     @Override
-    public Provider getProvider() {return Provider.NAVER;}
+    public Provider getProvider() {
+        return Provider.GOOGLE;
+    }
 
     @Override
     public String getProviderId() {
-        return attribute.get("id").toString();
+        return attribute.get("sub").toString();
     }
 
     @Override

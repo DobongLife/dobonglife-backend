@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.auth.model.dto;
+package com.umust.dobonglife.domain.auth.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
