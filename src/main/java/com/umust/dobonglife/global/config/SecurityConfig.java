@@ -9,6 +9,7 @@ import com.umust.dobonglife.domain.auth.exception.handler.CustomJsonAuthenticati
 import com.umust.dobonglife.domain.auth.exception.handler.JwtExceptionHandlerFilter;
 import com.umust.dobonglife.domain.auth.filter.CustomLoginFilter;
 import com.umust.dobonglife.domain.auth.filter.JwtAuthenticationFilter;
+import com.umust.dobonglife.domain.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration configuration;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomLoginFilter customLoginFilter) throws Exception {
@@ -69,14 +71,11 @@ public class SecurityConfig {
                 );
 
         // OAuth2 소셜 로그인 설정
-//        http
-//                .oauth2Login(oauth2Login -> oauth2Login
-//                        .loginPage("/login")
-//                        .userInfoEndpoint(userInfo -> userInfo
-//                                .userService(customOAuth2UserService) // OAuth2 사용자 정보 처리
-//                        )
-//                        .successHandler(customAuthenticationSuccessHandler) // 소셜 로그인도 동일한 성공 핸들러 사용
-//                );
+        http
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
+                                .userService(customOAuth2UserService)))
+                        .successHandler(customAuthenticationSuccessHandler));
         return http.build();
     }
 
