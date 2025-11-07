@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.auth.model;
 
+import com.umust.dobonglife.domain.auth.model.dto.Provider;
 import com.umust.dobonglife.domain.user.model.Role;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
     private final String userName;
     private final String password;
     private final Role role;
+    private final Provider provider;
     private final Collection<? extends GrantedAuthority> authorities;
 
     /** UserDetails 구현 */

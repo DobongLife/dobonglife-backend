@@ -1,96 +1,106 @@
 package com.umust.dobonglife.domain.auth.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
-import com.umust.dobonglife.domain.user.repository.UserRepository;
 import com.umust.dobonglife.global.common.redis.RedisService;
+import com.umust.dobonglife.global.common.response.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
-@RequiredArgsConstructor
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-    private final UserRepository memberRepository;
+    @Value("${jwt.access.expiration}")
+    private Long ACCESS_TOKEN_EXPIRED_IN;
 
-    @Value("${secret.jwt-access-expired-in}")
-    private Long accessTokenExpirationPeriod;
+    @Value("${jwt.refresh.expiration}")
+    private Long REFRESH_TOKEN_EXPIRED_IN;
 
-    @Value("${secret.jwt-refresh-expired-in}")
-    private Long refreshTokenExpirationPeriod;
+    @Value("${jwt.access.header}")
+    private String ACCESS_HEADER;
 
-    private final String accessHeader = "ACCESS_TOKEN";
-    private final String refreshHeader = "REFRESH_TOKEN";
+    @Value("${jwt.refresh.header}")
+    private String REFRESH_HEADER;
 
     private static final String LOGOUT_VALUE = "logout";
     private static final String REFRESH_TOKEN_KEY_PREFIX = "auth:refresh:";
+    private final String BEARER_PREFIX = "Bearer ";
 
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
-    private final CookieUtil cookieUtil;
+    private final ObjectMapper objectMapper;
 
-    public void logout(HttpServletRequest request) {
-        String accessToken = jwtUtil.resolveAccessToken(request);
-        String refreshToken = jwtUtil.resolveRefreshToken(request);
+    public void logout(HttpServletRequest request, RefreshTokenRequest tokenRequest) {
+        String accessToken = jwtUtil.extractAccessToken(request)
+                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+
+        log.info("LogOut Access Token: {}", accessToken);
+
+        String refreshToken = tokenRequest.getRefreshToken();
+        jwtUtil.validateToken(refreshToken);
+        if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
+            throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
+        }
 
         deleteRefreshToken(refreshToken);
         //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationFilter에서 인증처리 거부
         invalidAccessToken(accessToken);
     }
 
-    public void reissueToken(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = jwtUtil.resolveRefreshToken(request);
+    public ReissueResponse reissueTokens(RefreshTokenRequest tokenRequest, Long userId) {
+        String refreshToken = tokenRequest.getRefreshToken();
         jwtUtil.validateToken(refreshToken);
-        reissueAndSendTokens(response, refreshToken);
+        if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
+            throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
+        }
+        return reissueAndSendTokens(refreshToken, userId);
     }
 
-    public void checkLogout(HttpServletRequest request) {
-        String accessToken = jwtUtil.resolveAccessToken(request);
+    public void checkLogout(String accessToken) {
         String value = redisService.getValues(accessToken);
         if (value.equals(LOGOUT_VALUE)) {
-            throw new LogoutException(BaseResponseStatus.UNAUTHORIZED_ACCESS);
+            throw new CustomAuthenticationException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
     }
 
-    public void storeRefreshToken(String refreshToken) {
-        redisService.setValues(REFRESH_TOKEN_KEY_PREFIX, refreshToken, Duration.ofMillis(refreshTokenExpirationPeriod));
+    public void storeRefreshToken(String refreshToken, Long userId) {
+        redisService.setValues(REFRESH_TOKEN_KEY_PREFIX+refreshToken, String.valueOf(userId), Duration.ofMillis(REFRESH_TOKEN_EXPIRED_IN));
     }
 
     private void deleteRefreshToken(String refreshToken){
         if(refreshToken == null){
-            throw new JwtException(BaseResponseStatus.EMPTY_REFRESH_HEADER);
+            throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
         }
-        redisService.delete(refreshToken);
+        redisService.delete(REFRESH_TOKEN_KEY_PREFIX+refreshToken);
     }
 
-    private void invalidAccessToken(String accessToken) {
+    public void invalidAccessToken(String accessToken) {
         redisService.setValues(accessToken, LOGOUT_VALUE,
-                Duration.ofMillis(accessTokenExpirationPeriod));
+                Duration.ofMillis(ACCESS_TOKEN_EXPIRED_IN));
     }
 
-    private void reissueAndSendTokens(HttpServletResponse response, String refreshToken) {
+    private ReissueResponse reissueAndSendTokens(String refreshToken, Long userId) {
 
         // 새로운 Refresh Token 발급
-        String reissuedAccessToken = jwtUtil.createAccessToken(jwtUtil.getMemberId(refreshToken), jwtUtil.getProviderId(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
-        String reissuedRefreshToken = jwtUtil.createRefreshToken(jwtUtil.getMemberId(refreshToken), jwtUtil.getProviderId(refreshToken), jwtUtil.getRole(refreshToken));
+        String reissuedAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProviderId(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
+        String reissuedRefreshToken = jwtUtil.createRefreshToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProviderId(refreshToken), jwtUtil.getName(refreshToken));
 
         // 새로운 Refresh Token을 DB나 Redis에 저장
-        storeRefreshToken(reissuedRefreshToken);
+        storeRefreshToken(reissuedRefreshToken, userId);
 
         // 기존 Refresh Token 폐기 (DB나 Redis에서 삭제)
         deleteRefreshToken(refreshToken);
 
-        sendTokens(response, reissuedAccessToken, reissuedRefreshToken);
-    }
-
-    private void sendTokens(HttpServletResponse response, String reissuedAccessToken,
-                            String reissuedRefreshToken) {
-        response.addCookie(cookieUtil.createCookie(accessHeader, reissuedAccessToken));
-        response.addCookie(cookieUtil.createCookie(refreshHeader, reissuedRefreshToken));
+        return ReissueResponse.builder()
+                .accessToken(reissuedAccessToken)
+                .refreshToken(reissuedRefreshToken)
+                .build();
     }
 }

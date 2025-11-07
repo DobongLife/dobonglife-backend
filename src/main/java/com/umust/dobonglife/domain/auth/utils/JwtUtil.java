@@ -1,44 +1,44 @@
 package com.umust.dobonglife.domain.auth.utils;
 
 import io.jsonwebtoken.*;
-
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import me.jooeon.mybeauty.global.common.exception.exception.auth.JwtException;
-import me.jooeon.mybeauty.global.common.model.enums.BaseResponseStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
 @Slf4j
 @Component
 public class JwtUtil {
 
-    private SecretKey secretKey;
+    private final SecretKey secretKey;
 
-    @Value("${secret.jwt-access-expired-in}")
+    @Value("${jwt.access.expiration}")
     private Long ACCESS_TOKEN_EXPIRED_IN;
 
-    @Value("${secret.jwt-refresh-expired-in}")
+    @Value("${jwt.refresh.expiration}")
     private Long REFRESH_TOKEN_EXPIRED_IN;
 
-    public final String BEARER = "Bearer ";
+    @Value("${jwt.access.header}")
+    private String ACCESS_HEADER;
 
-    public JwtUtil(@Value("${secret.jwt-secret-key}") String secret) {
+    @Value("${jwt.refresh.header}")
+    private String REFRESH_HEADER;
+
+    public final String BEARER_PREFIX = "Bearer ";
+
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public Long getMemberId(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
     }
 
     public String getProviderId(String token) {
@@ -65,30 +65,30 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createAccessToken(Long memberId, String providerId, String role, String name) {
+    public String createAccessToken(Long userId, String providerId, String role, String name) {
 
         return Jwts.builder()
                 .claim("tokenType", "access")
-                .claim("memberId", memberId)
+                .claim("userId", userId)
                 .claim("providerId", providerId)
-                .claim("role", role)
                 .claim("name", name)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRED_IN))
-                .signWith(secretKey)
+                .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
-    public String createRefreshToken(Long memberId, String providerId, String role) {
+    public String createRefreshToken(Long userId, String providerId, String name) {
 
         return Jwts.builder()
                 .claim("tokenType", "refresh")
-                .claim("memberId", memberId)
+                .claim("userId", userId)
                 .claim("providerId", providerId)
-                .claim("role", role)
+                .claim("name", name)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRED_IN))
-                .signWith(secretKey)
+                .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -100,17 +100,17 @@ public class JwtUtil {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (ExpiredJwtException e) { // 토큰 만료
-            throw new JwtException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN);
+            throw new CustomJwtException(ErrorCode.EXPIRED_ACCESS_TOKEN);
         } catch (UnsupportedJwtException e) { // 지원되지 않는 형식
-            throw new JwtException(BaseResponseStatus.UNSUPPORTED_TOKEN_TYPE);
+            throw new CustomJwtException(ErrorCode.UNSUPPORTED_TOKEN_TYPE);
         } catch (MalformedJwtException e) { // 구조가 잘못된 토큰
-            throw new JwtException(BaseResponseStatus.MALFORMED_TOKEN_TYPE);
+            throw new CustomJwtException(ErrorCode.MALFORMED_TOKEN_TYPE);
         } catch (SignatureException e) { // 서명 위조 (곧 지원 중단)
-            throw new JwtException(BaseResponseStatus.INVALID_SIGNATURE_JWT);
+            throw new CustomJwtException(ErrorCode.INVALID_SIGNATURE_JWT);
         } catch (IllegalArgumentException e) { // 토큰이 비어 있거나 Null
-            throw new JwtException(BaseResponseStatus.EMPTY_AUTHORIZATION_HEADER);
+            throw new CustomJwtException(ErrorCode.EMPTY_AUTHORIZATION_HEADER);
         } catch (Exception e) { // 기타 예외 상황
-            throw new JwtException(BaseResponseStatus.INVALID_ACCESS_TOKEN);
+            throw new CustomJwtException(ErrorCode.SECURITY_INVALID_TOKEN);
         }
     }
 
@@ -118,56 +118,15 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
     }
 
-    public String resolveAccessToken(HttpServletRequest request) {
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("ACCESS_TOKEN".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
+    public Optional<String> extractAccessToken(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(ACCESS_HEADER))
+                .filter(accessToken -> accessToken.startsWith(BEARER_PREFIX))
+                .map(accessToken -> accessToken.replace(BEARER_PREFIX, ""));
     }
 
-    public String resolveRefreshToken(HttpServletRequest request) {
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("REFRESH_TOKEN".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-//    public String resolveToken(HttpServletRequest request) {
-////        // 1. Authorization 헤더 방식
-////        String bearerToken = request.getHeader(AUTHORIZATION);
-////        log.info("token = {}", bearerToken);
-////        if((StringUtils.hasText(bearerToken)) && bearerToken.startsWith(BEARER)) {
-////            log.info("token = {}", bearerToken);
-////            return bearerToken.substring(BEARER.length());
-////        }
-//        // 2. 쿠키에서 ACCESS_TOKEN 조회
-//        if (request.getCookies() != null) {
-//            for (Cookie cookie : request.getCookies()) {
-//                if ("ACCESS_TOKEN".equals(cookie.getName())) {
-//                    return cookie.getValue();
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
-    public Optional<String> extractAccessToken(HttpServletRequest request, String accessHeader) {
-        return Optional.ofNullable(request.getHeader(accessHeader))
-                .filter(accessToken -> accessToken.startsWith(BEARER))
-                .map(accessToken -> accessToken.replace(BEARER, ""));
-    }
-
-    public Optional<String> extractRefreshToken(HttpServletRequest request, String refreshHeader) {
-        return Optional.ofNullable(request.getHeader(refreshHeader))
-                .filter(refreshToken -> refreshToken.startsWith(BEARER))
-                .map(refreshToken -> refreshToken.replace(BEARER, ""));
+    public Optional<String> extractRefreshToken(HttpServletRequest request) {
+        return Optional.ofNullable(request.getHeader(REFRESH_HEADER))
+                .filter(refreshToken -> refreshToken.startsWith(BEARER_PREFIX))
+                .map(refreshToken -> refreshToken.replace(BEARER_PREFIX, ""));
     }
 }
