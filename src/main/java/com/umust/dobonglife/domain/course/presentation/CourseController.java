@@ -28,7 +28,7 @@ public class CourseController {
 
     // 코스 상세보기 조회
     @GetMapping("/{courseId}")
-    public BaseResponse<CourseDetailResponse> getCourse(@PathVariable("courseId") Integer courseId){
+    public BaseResponse<CourseDetailResponse> getCourse(@PathVariable("courseId") Long courseId){
         CourseDetailResponse response = courseService.getCourse(courseId);
         return BaseResponse.ok(response);
     }

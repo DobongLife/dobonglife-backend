@@ -33,7 +33,7 @@ public class CourseService {
         return courses.map(CourseSummaryResponse::from);
     }
 
-    public CourseDetailResponse getCourse(Integer courseId) {
+    public CourseDetailResponse getCourse(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new CourseException(ErrorCode.INVALID_COURSE_ID));
 

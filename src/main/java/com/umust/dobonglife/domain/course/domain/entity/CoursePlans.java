@@ -14,10 +14,10 @@ public class CoursePlans {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "exclusions_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
-    private Integer courseId;
+    private Long courseId;
 
     @Column(nullable = false)
     private LocalDateTime dateTime;
@@ -28,14 +28,14 @@ public class CoursePlans {
     @Column(nullable = true)
     private String content;
 
-    private CoursePlans(Integer courseId, LocalDateTime dateTime, String title, String content) {
+    private CoursePlans(Long courseId, LocalDateTime dateTime, String title, String content) {
         this.courseId = courseId;
         this.dateTime = dateTime;
         this.title = title;
         this.content = content;
     }
 
-    public static CoursePlans create(Integer courseId, LocalDateTime dateTime, String title, String content) {
+    public static CoursePlans create(Long courseId, LocalDateTime dateTime, String title, String content) {
         return new CoursePlans(courseId, dateTime, title, content);
     }
 }

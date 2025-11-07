@@ -2,7 +2,7 @@ package com.umust.dobonglife.domain.course.infrastructure.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
-import com.umust.dobonglife.course.domain.entity.QCourse;
+import com.umust.dobonglife.domain.course.domain.entity.QCourse;
 import com.umust.dobonglife.domain.course.domain.repository.custom.CourseRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
