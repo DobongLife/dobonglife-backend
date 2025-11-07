@@ -4,7 +4,9 @@ import com.umust.dobonglife.course.domain.entity.Course;
 import com.umust.dobonglife.course.domain.entity.CoursePlans;
 import com.umust.dobonglife.course.domain.repository.CoursePlansRepository;
 import com.umust.dobonglife.course.exception.CourseException;
+import com.umust.dobonglife.course.presentation.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.course.presentation.dto.response.CourseDetailResponse;
+import com.umust.dobonglife.course.presentation.dto.response.CourseResponse;
 import com.umust.dobonglife.course.presentation.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.global.common.response.ErrorCode;
@@ -35,5 +37,43 @@ public class CourseService {
 
         List<CoursePlans> plans = coursePlansRepository.findByCourseIdOrderByDateTime(courseId);
         return CourseDetailResponse.from(course, plans);
+    }
+
+    @Transactional
+    public CourseResponse registerCourse(CreateCourseRequest request){
+        Course course = Course.create(
+                request.title(),
+                request.subTitle(),
+                request.themes(),
+                request.duration(),
+                request.level(),
+                request.tags(),
+                request.imageUrls(),
+                request.content(),
+                request.meetingPlace(),
+                request.contact(),
+                request.cost(),
+                request.maxNum(),
+                request.ageLimit(),
+                request.cancelPolicy(),
+                request.weatherPolicy(),
+                request.highlights(),
+                request.exclusions(),
+                request.inclusions()
+        );
+
+        Course savedCourse = courseRepository.save(course);
+
+        request.plans().forEach(planRequest -> {
+            CoursePlans plan = CoursePlans.create(
+                    savedCourse.getId(),
+                    planRequest.dateTime(),
+                    planRequest.title(),
+                    planRequest.content()
+            );
+            coursePlansRepository.save(plan);
+        });
+
+        return CourseResponse.from(savedCourse);
     }
 }

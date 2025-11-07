@@ -1,6 +1,7 @@
 package com.umust.dobonglife.course.domain.entity;
 
 import com.umust.dobonglife.course.domain.constant.CourseLevel;
+import com.umust.dobonglife.course.domain.constant.CourseTheme;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,6 +22,9 @@ public class Course {
     private String title;
     @Column(nullable = true)
     private String subTitle;
+    @Column(nullable = false)
+    @ElementCollection
+    private List<CourseTheme> themes;
     @Column(nullable = false)
     private Double duration;
     @Column(nullable = false)
@@ -68,4 +72,46 @@ public class Course {
     @ElementCollection
     @CollectionTable(name = "course_inclusions", joinColumns = @JoinColumn(name = "course_id"))
     private List<String> inclusions;
+
+    public Course(String title, String subTitle, List<CourseTheme> themes, Double duration, CourseLevel level, List<String> tags, List<String> imageUrls, String content, String meetingPlace, String contact, String cost, Integer maxNum, String ageLimit, String cancelPolicy, String weatherPolicy, List<String> highlights, List<String> exclusions, List<String> inclusions) {
+        this.title = title;
+        this.subTitle = subTitle;
+        this.themes = themes;
+        this.duration = duration;
+        this.level = level;
+        this.tags = tags;
+        this.imageUrls = imageUrls;
+        this.content = content;
+        this.meetingPlace = meetingPlace;
+        this.contact = contact;
+        this.cost = cost;
+        this.maxNum = maxNum;
+        this.ageLimit = ageLimit;
+        this.cancelPolicy = cancelPolicy;
+        this.weatherPolicy = weatherPolicy;
+        this.highlights = highlights;
+        this.exclusions = exclusions;
+        this.inclusions = inclusions;
+    }
+
+    public static Course create(String title, String subTitle, List<CourseTheme> themes, Double duration, CourseLevel level, List<String> tags, List<String> imageUrls, String content, String meetingPlace, String contact, String cost, int maxNum, String ageLimit, String cancelPolicy, String weatherPolicy, List<String> highlights, List<String> exclusions, List<String> inclusions) {
+        validateTitle(title);
+        validateDuration(duration);
+        validateLevel(level);
+        validateTag(tags);
+        validateImageUrl(imageUrls);
+        validateContent(content);
+        validateMeetingPlace(meetingPlace);
+        validateContact(contact);
+        validateCost(cost);
+        validateMaxNum(maxNum);
+        validateAgeLimit(ageLimit);
+        validateCancelPolicy(cancelPolicy);
+        validateWeatherPolicy(weatherPolicy);
+        validateHighlights(highlights);
+        validateExclusions(exclusions);
+        validateInclusions(inclusions);
+
+        return new Course(title, subTitle, themes, duration, level, tags, imageUrls, content, meetingPlace, contact, cost, maxNum, ageLimit, cancelPolicy, weatherPolicy, highlights, exclusions, inclusions);
+    }
 }

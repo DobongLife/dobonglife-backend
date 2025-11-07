@@ -1,9 +1,12 @@
 package com.umust.dobonglife.course.presentation;
 
+import com.umust.dobonglife.course.presentation.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.course.presentation.dto.response.CourseDetailResponse;
+import com.umust.dobonglife.course.presentation.dto.response.CourseResponse;
 import com.umust.dobonglife.course.presentation.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.course.service.CourseService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +30,13 @@ public class CourseController {
     @GetMapping("/{courseId}")
     public BaseResponse<CourseDetailResponse> getCourse(@PathVariable("courseId") Integer courseId){
         CourseDetailResponse response = courseService.getCourse(courseId);
+        return BaseResponse.ok(response);
+    }
+
+    // 코스 등록하기
+    @PostMapping
+    public BaseResponse<CourseResponse> registerCourse(@RequestBody @Valid CreateCourseRequest request){
+        CourseResponse response = courseService.registerCourse(request);
         return BaseResponse.ok(response);
     }
 }
