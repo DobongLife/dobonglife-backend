@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.config;
 
+import com.umust.dobonglife.global.common.resolver.CurrentUserIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
