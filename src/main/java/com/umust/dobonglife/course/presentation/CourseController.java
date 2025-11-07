@@ -2,6 +2,7 @@ package com.umust.dobonglife.course.presentation;
 
 import com.umust.dobonglife.course.presentation.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.course.service.CourseService;
+import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,9 @@ public class CourseController {
 
     // 홈 메인에서의 스토리 코스 목록 조회
     @GetMapping
-    public void getCourses(@RequestParam(defaultValue = "0") int page,
-                           @RequestParam(defaultValue = "2") int size) {
+    public BaseResponse<Page<CourseSummaryResponse>> getCourses(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "2") int size) {
         Page<CourseSummaryResponse> responses = courseService.getCourses(page, size);
+        return BaseResponse.ok(responses);
     }
 }
