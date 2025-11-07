@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.user.model;
 
+import com.umust.dobonglife.domain.auth.model.dto.Provider;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,6 +27,9 @@ public class User extends BaseEntity {
     @Column
     private String userName;
 
+    @Column(nullable = true)
+    private String password;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -39,4 +43,9 @@ public class User extends BaseEntity {
     @Column(length = 30)
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+    @Column(name = "provider_id")
+    private String providerId;
 }

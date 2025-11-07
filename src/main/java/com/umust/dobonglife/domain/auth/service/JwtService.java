@@ -1,18 +1,16 @@
-package com.umust.dobonglife.domain.auth.application;
+package com.umust.dobonglife.domain.auth.service;
 
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.repository.UserRepository;
 import com.umust.dobonglife.global.common.redis.RedisService;
-import jakarta.security.auth.message.AuthException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service

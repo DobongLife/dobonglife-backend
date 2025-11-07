@@ -1,7 +1,10 @@
-package com.umust.dobonglife.domain.auth.application;
+package com.umust.dobonglife.domain.auth.service;
 
-import com.umust.dobonglife.domain.auth.model.dto.CustomOAuth2User;
-import com.umust.dobonglife.domain.auth.model.dto.OAuth2Response;
+import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+import com.umust.dobonglife.domain.auth.model.dto.*;
+import com.umust.dobonglife.domain.user.model.Role;
+import com.umust.dobonglife.domain.user.model.User;
+import com.umust.dobonglife.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -36,31 +39,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
         }
 
-        String provider = oAuth2Response.getProvider();
-        String providerId = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
+        Provider provider = oAuth2Response.getProvider();
+        String providerId = oAuth2Response.getProvider().getValue() + "_" + oAuth2Response.getProviderId();
 
         // 기존 Auth 존재 여부 확인
-        Auth auth = authRepository.findByProviderId(providerId)
-                .orElseGet(() -> createAuth(oAuth2Response, provider, providerId));
+        User user = userRepository.findByProviderId(providerId)
+                .orElseGet(() -> createUser(oAuth2Response, provider, providerId));
 
-        return new CustomOAuth2User(AuthDto.from(auth.getMember(),auth), oAuth2User.getAuthorities());
-//        return new CustomOAuth2User(AuthDto.from(auth.getMember(), auth));
+        return UserPrincipal.builder()
+                .userId(user.getId())
+                .userName(user.getUserName())
+                .role(user.getRole())
+                .authorities(oAuth2User.getAuthorities())
+                .build();
     }
 
-    private Auth createAuth(OAuth2Response oAuth2Response, String provider, String providerId) {
+    private User createUser(OAuth2Response oAuth2Response, Provider provider, String providerId) {
 
-        // 새 Member 생성
-        Member member = Member.of(oAuth2Response.getEmail(), oAuth2Response.getName(), Role.MEMBER);
-        memberRepository.save(member);
-
-        // Auth 생성 및 저장
-        Auth auth = Auth.builder()
+        User user = User.builder()
+                .email(oAuth2Response.getEmail())
+                .userName(oAuth2Response.getName())
+                .role(Role.MEMBER)
                 .provider(provider)
                 .providerId(providerId)
-                .member(member)
-                .status(Status.ACTIVE)
                 .build();
-
-        return authRepository.save(auth);
+        return userRepository.save(user);
     }
 }

@@ -9,10 +9,9 @@ public class KakaoResponse implements OAuth2Response {
 
     private final Map<String, Object> attribute;
 
-
     @Override
-    public String getProvider() {
-        return "Kakao";
+    public Provider getProvider() {
+        return Provider.KAKAO;
     }
 
     @Override

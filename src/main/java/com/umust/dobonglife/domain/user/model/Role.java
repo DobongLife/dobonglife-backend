@@ -21,7 +21,7 @@ public enum Role {
     private final String value;
     private final String role;
 
-    // 파싱된 값에 맞는 Role을 반환하는 메서드
+    // 파싱된 값에 맞는 Role을 반환하는 메서드 (ROLE_MEMBER -> MEMBER)
     public static Optional<Role> fromRole(String roleString) {
         if (roleString != null && roleString.startsWith(PREFIX)) {
             String roleValue = roleString.substring(PREFIX.length());
@@ -32,7 +32,7 @@ public enum Role {
         return Optional.empty();
     }
 
-    // Role을 권한으로 변환하는 메서드
+    // Role을 권한으로 변환하는 메서드 (MEMBER -> ROLE_MEMBER)
     public GrantedAuthority toAuthority() {
         return new SimpleGrantedAuthority(PREFIX + this.value);
     }

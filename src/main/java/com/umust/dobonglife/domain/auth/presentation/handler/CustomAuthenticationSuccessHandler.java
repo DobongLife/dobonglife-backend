@@ -4,10 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.jooeon.mybeauty.domain.auth.application.JwtService;
-import me.jooeon.mybeauty.domain.auth.utils.JwtUtil;
-import me.jooeon.mybeauty.domain.auth.utils.AuthenticationUtil;
-import me.jooeon.mybeauty.domain.auth.utils.CookieUtil;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -37,7 +34,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String providerId = authenticationUtil.getProviderId();
         String role = authenticationUtil.getRole();
         Long memberId = authenticationUtil.getMemberId();
-        String userName = authenticationUtil.getUsername();
+        String userName = authenticationUtil.getUserName();
         String email = authenticationUtil.getEmail();
         log.info("[CustomAuthenticationSuccessHandler] providerId={}, role={}, memberId={}, email={}", providerId, role, memberId, email);
 

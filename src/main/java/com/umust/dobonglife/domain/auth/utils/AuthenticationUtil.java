@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.auth.utils;
 
-import me.jooeon.mybeauty.domain.auth.model.dto.CustomOAuth2User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

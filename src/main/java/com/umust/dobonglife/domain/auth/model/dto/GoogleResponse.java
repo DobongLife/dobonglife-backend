@@ -10,8 +10,8 @@ public class GoogleResponse implements OAuth2Response {
     private final Map<String, Object> attribute;
 
     @Override
-    public String getProvider() {
-        return "google";
+    public Provider getProvider() {
+        return Provider.GOOGLE;
     }
 
     @Override
