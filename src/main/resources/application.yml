@@ -97,3 +97,13 @@ spring:
       on-profile: prod-port
 server:
   port: 8001
+
+#cloud:
+#  aws:
+#    credentials:
+#      accessKey:
+#      secretKey:
+#    region:
+#      static: ap-northeast-2
+#    s3:
+#      bucket:

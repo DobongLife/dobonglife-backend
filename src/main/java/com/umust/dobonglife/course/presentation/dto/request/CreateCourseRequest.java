@@ -4,6 +4,7 @@ import com.umust.dobonglife.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.course.domain.constant.CourseTheme;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public record CreateCourseRequest(
 
         @NotEmpty(message = "이미지는 최소 1개 이상 필수입니다")
         @Size(min = 1, max = 5, message = "이미지는 1개 이상 5개 이하로 등록해야 합니다")
-        List<@NotBlank @Pattern(regexp = "^(https?://)?([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$") String> imageUrls,
+        List<@NotBlank @Pattern(regexp = "^(https?://)?([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$") MultipartFile> imageUrls,
 
         @NotBlank(message = "내용은 필수입니다")
         @Size(min = 10, message = "내용은 최소 10자 이상이어야 합니다")

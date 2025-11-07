@@ -41,8 +41,13 @@ public enum ErrorCode{
     INVALID_PASSWORD(618, HttpStatus.UNAUTHORIZED.value(), "기존 비밀번호가 유효하지 않습니다"),
 
     // Course
-    INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다");
+    INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),
 
+    // Img
+    FAIL_IMG(500, HttpStatus.INTERNAL_SERVER_ERROR.value(),"S3에 이미지를 업로드하는데 실패했습니다"),
+    INVALID_IMG(400, HttpStatus.BAD_REQUEST.value(), "잘못된 파일입니다. 파일 내용이 손상되었거나 유효하지 않습니다"),
+    INVALID_IMG_FORMAT(415, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), "잘못된 파일 형식입니다. 허용되지 않은 파일 형식입니다."),
+    NOT_FOUND_IMG(404, HttpStatus.NOT_FOUND.value(), "저장된 이미지가 없습니다");
     private final int code;
     private final int httpStatus;
     private final String message;

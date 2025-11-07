@@ -10,6 +10,7 @@ import com.umust.dobonglife.course.presentation.dto.response.CourseResponse;
 import com.umust.dobonglife.course.presentation.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.common.s3.S3Utils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import java.util.List;
 public class CourseService {
     private final CourseRepository courseRepository;
     private final CoursePlansRepository coursePlansRepository;
+    private final S3Utils s3Utils;
     @Transactional
     public Page<CourseSummaryResponse> getCourses(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -41,6 +43,8 @@ public class CourseService {
 
     @Transactional
     public CourseResponse registerCourse(CreateCourseRequest request){
+        List<String> images = s3Utils.uploadImages(request.imageUrls());
+
         Course course = Course.create(
                 request.title(),
                 request.subTitle(),
@@ -48,7 +52,7 @@ public class CourseService {
                 request.duration(),
                 request.level(),
                 request.tags(),
-                request.imageUrls(),
+                images,
                 request.content(),
                 request.meetingPlace(),
                 request.contact(),
