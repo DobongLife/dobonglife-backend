@@ -9,6 +9,5 @@ COPY ${JAR_FILE} app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java"]
-CMD ["-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", \
-     "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["java $JAVA_OPTS -jar app.jar"]
