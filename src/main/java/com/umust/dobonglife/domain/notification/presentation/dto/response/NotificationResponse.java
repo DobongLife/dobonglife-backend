@@ -16,9 +16,6 @@ public record NotificationResponse(
         LocalDateTime createdAt,
         String timeAgo // 화면에 표시될 "몇 시간 전", "2일 전" 정보
 ) {
-    /**
-     * 정적 팩토리 메서드: Notification 엔티티를 DTO로 변환하고 timeAgo를 계산합니다.
-     */
     public static NotificationResponse from(Notification notification) {
         String timeAgo = calculateTimeAgo(notification.getCreatedAt());
 
