@@ -10,8 +10,9 @@ if [ -z "$DOCKER_CONTAINER_REGISTRY" ] || [ -z "$GITHUB_SHA" ]; then
     exit 1
 fi
 
+export IMAGE_TAG=${GITHUB_SHA:0:7}
 echo "Registry: $DOCKER_CONTAINER_REGISTRY"
-echo "Version: $GITHUB_SHA"
+echo "Version: $IMAGE_TAG"
 
 echo "이미지 다운로드 중"
 docker-compose pull
