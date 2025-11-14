@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ReissueResponse {
+public class TokenResponse {
     private String accessToken;
     private String refreshToken;
 }

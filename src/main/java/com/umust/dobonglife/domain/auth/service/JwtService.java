@@ -2,7 +2,7 @@ package com.umust.dobonglife.domain.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.dto.request.RefreshTokenRequest;
-import com.umust.dobonglife.domain.auth.dto.response.ReissueResponse;
+import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
@@ -58,7 +58,7 @@ public class JwtService {
         invalidAccessToken(accessToken);
     }
 
-    public ReissueResponse reissueTokens(RefreshTokenRequest tokenRequest, Long userId) {
+    public TokenResponse reissueTokens(RefreshTokenRequest tokenRequest, Long userId) {
         String refreshToken = tokenRequest.getRefreshToken();
         jwtUtil.validateToken(refreshToken);
         if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
@@ -90,7 +90,7 @@ public class JwtService {
                 Duration.ofMillis(ACCESS_TOKEN_EXPIRED_IN));
     }
 
-    private ReissueResponse reissueAndSendTokens(String refreshToken, Long userId) {
+    private TokenResponse reissueAndSendTokens(String refreshToken, Long userId) {
 
         // 새로운 Refresh Token 발급
         String reissuedAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
@@ -102,7 +102,7 @@ public class JwtService {
         // 기존 Refresh Token 폐기 (DB나 Redis에서 삭제)
         deleteRefreshToken(refreshToken);
 
-        return ReissueResponse.builder()
+        return TokenResponse.builder()
                 .accessToken(reissuedAccessToken)
                 .refreshToken(reissuedRefreshToken)
                 .build();

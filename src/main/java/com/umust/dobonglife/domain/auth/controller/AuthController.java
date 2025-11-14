@@ -1,9 +1,8 @@
 package com.umust.dobonglife.domain.auth.controller;
 
 import com.umust.dobonglife.domain.auth.dto.request.RefreshTokenRequest;
-import com.umust.dobonglife.domain.auth.dto.response.ReissueResponse;
+import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.service.JwtService;
-import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,9 +40,9 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public BaseResponse<ReissueResponse> reissueTokens(@RequestBody RefreshTokenRequest tokenRequest,
-                                                       @CurrentUserId Long userId) {
-        ReissueResponse response = jwtService.reissueTokens(tokenRequest, userId);
+    public BaseResponse<TokenResponse> reissueTokens(@RequestBody RefreshTokenRequest tokenRequest,
+                                                     @CurrentUserId Long userId) {
+        TokenResponse response = jwtService.reissueTokens(tokenRequest, userId);
         return BaseResponse.ok(response);
     }
 }

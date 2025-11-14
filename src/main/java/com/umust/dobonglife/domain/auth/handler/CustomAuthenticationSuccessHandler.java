@@ -1,8 +1,11 @@
 package com.umust.dobonglife.domain.auth.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.AuthenticationUtil;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +26,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final AuthenticationUtil authenticationUtil;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
-
-    // 원래는 프론트에게 Rest API를 redirect 해야됨 추후 수정 예정
-    private static final String LOGIN_SUCCESS_URI = "http://localhost:8080/api/login/successPage";
+    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
@@ -45,8 +46,18 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         jwtService.storeRefreshToken(refreshToken, userId);
         log.info("[CustomAuthenticationSuccessHandler], refreshToken={}", refreshToken);
 
-        // 리다이렉션
-        response.sendRedirect(LOGIN_SUCCESS_URI);
+        TokenResponse tokenResponse = TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+        writeResponse(response, BaseResponse.ok(tokenResponse));
+    }
 
+    private void writeResponse(HttpServletResponse response, Object value) throws IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        String body = objectMapper.writeValueAsString(value);
+        response.getWriter().write(body);
     }
 }
