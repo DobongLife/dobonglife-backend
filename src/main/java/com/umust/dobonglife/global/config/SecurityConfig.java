@@ -2,7 +2,7 @@ package com.umust.dobonglife.global.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.controller.handler.CustomAuthenticationSuccessHandler;
+import com.umust.dobonglife.domain.auth.handler.CustomAuthenticationSuccessHandler;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAccessDeniedHandler;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAuthenticationEntryPoint;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomJsonAuthenticationFailureHandler;

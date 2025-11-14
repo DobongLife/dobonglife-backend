@@ -97,14 +97,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 소셜 로그인
                 authToken = new OAuth2AuthenticationToken(principal, authorities, principal.getProvider().getValue());
             }
-            log.info("Authentication set in SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication());
-            log.info("Authorities in SecurityContext: {}", authToken.getAuthorities());
-
-            log.info("JWT Filter Success : {}", request.getRequestURI());
             SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            log.info("Authentication set in SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication());
+            log.info("Authorities in SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+            log.info("JWT Filter Success : {}", request.getRequestURI());
             filterChain.doFilter(request, response);
-        } catch (CustomAuthenticationException | (AuthenticationException) e) {
-            customAuthenticationEntryPoint.commence(request, response, (AuthenticationException) e);
+        } catch (AuthenticationException e) {
+            customAuthenticationEntryPoint.commence(request, response, e);
         }
     }
     private boolean isPassUri(String uri) {

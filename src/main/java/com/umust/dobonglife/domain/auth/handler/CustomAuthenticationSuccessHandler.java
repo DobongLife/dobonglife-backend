@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.auth.controller.handler;
+package com.umust.dobonglife.domain.auth.handler;
 
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.AuthenticationUtil;
