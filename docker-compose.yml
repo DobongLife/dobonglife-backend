@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   dobonglife-backend:
-    image: "${DOCKER_CONTAINER_REGISTRY}/dobonglife-backend:${GITHUB_SHA}"
+    image: "${DOCKER_CONTAINER_REGISTRY}/dobonglife-backend:${IMAGE_TAG}"
     container_name: dobonglife-backend
     restart: unless-stopped
     environment:
