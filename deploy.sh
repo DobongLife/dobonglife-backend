@@ -14,6 +14,9 @@ export IMAGE_TAG=${GITHUB_SHA:0:7}
 echo "Registry: $DOCKER_CONTAINER_REGISTRY"
 echo "Version: $IMAGE_TAG"
 
+echo "기존 컨테이너 중지 및 삭제(docker-compose down)"
+docker-compose down || true
+
 echo "이미지 다운로드 중"
 docker-compose pull
 
