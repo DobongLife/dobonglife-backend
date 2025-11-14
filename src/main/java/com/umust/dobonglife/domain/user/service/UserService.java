@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.user.service;
 
+import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
+import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.dto.request.SignupRequest;
@@ -18,9 +20,6 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import com.umust.dobonglife.domain.user.model.User;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,11 +31,8 @@ public class UserService {
 
     @Transactional
     public void signUp(SignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isEmpty()) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
-        }
-        if (userRepository.existsByNickName(request.getNickName())) {
-            throw new BusinessException(ErrorCode.USER_DUPLICATE_NICKNAME);
         }
         User user = User.builder()
                 .email(request.getEmail())
@@ -60,7 +56,6 @@ public class UserService {
                 jwtService.invalidAccessToken(accessToken);
             }
         });
-
         SecurityContextHolder.clearContext();
     }
 }
