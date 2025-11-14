@@ -58,7 +58,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/dobongLife
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/dobonglife-backend
           tags: |
             type=sha,prefix=,format=short
             type=raw,value=latest,enable={{is_default_branch}}
@@ -121,6 +121,3 @@ jobs:
             export GITHUB_SHA=${{ github.sha }}
             chmod +x ./deploy.sh
             ./deploy.sh
-            
-            # 오래된 이미지 정리
-            docker image prune -af --filter "until=24h"
