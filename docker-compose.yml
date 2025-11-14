@@ -4,6 +4,8 @@ services:
   dobonglife-backend:
     image: "${DOCKER_CONTAINER_REGISTRY}/dobonglife-backend:${IMAGE_TAG}"
     container_name: dobonglife-backend
+    env_file:
+      - .env
     restart: unless-stopped
     environment:
       TZ: Asia/Seoul
