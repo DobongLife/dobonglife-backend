@@ -2,6 +2,8 @@ package com.umust.dobonglife.domain.user.service;
 
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.dto.request.SignupRequest;
+import com.umust.dobonglife.domain.user.model.Role;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.domain.user.repository.UserRepository;
 import com.umust.dobonglife.global.common.response.ErrorCode;
@@ -38,7 +40,7 @@ public class UserService {
         }
         User user = User.builder()
                 .email(request.getEmail())
-                .nickName(request.getNickName())
+                .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.MEMBER)
                 .build();

@@ -52,7 +52,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         return UserPrincipal.builder()
                 .userId(user.getId())
-                .userName(user.getUserName())
+                .userName(user.getName())
                 .role(user.getRole())
                 .authorities(oAuth2User.getAuthorities())
                 .build();
@@ -62,7 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         User user = User.builder()
                 .email(oAuth2Response.getEmail())
-                .userName(oAuth2Response.getName())
+                .name(oAuth2Response.getName())
                 .role(Role.MEMBER)
                 .provider(provider)
                 .providerId(providerId)
