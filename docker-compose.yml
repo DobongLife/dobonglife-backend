@@ -2,8 +2,10 @@ version: "3.8"
 
 services:
   dobonglife-backend:
-    image: "${DOCKER_CONTAINER_REGISTRY}/dobonglife-backend:${IMAGE_TAG}"
+    image: "${DOCKER_CONTAINER_REGISTRY}/dobonglife-backend:latest"
     container_name: dobonglife-backend
+    env_file:
+      - .env
     restart: unless-stopped
     environment:
       TZ: Asia/Seoul
@@ -77,6 +79,21 @@ services:
       options:
         max-size: "5m"
         max-file: "3"
+
+  nginx:
+    image: nginx:latest
+    container_name: dobonglife-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - dobonglife-backend
+    networks:
+      - dobonglife-network
 
 volumes:
   redis-data:
