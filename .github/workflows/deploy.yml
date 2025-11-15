@@ -123,9 +123,5 @@ jobs:
             export DOCKER_CONTAINER_REGISTRY=${{ secrets.DOCKERHUB_USERNAME }}
             export GITHUB_SHA=${{ github.sha }}
             
-            export DB_URL='${{ secrets.DB_URL }}'
-            export DB_USERNAME='${{ secrets.DB_USERNAME }}'
-            export DB_PASSWORD='${{ secrets.DB_PASSWORD }}'
-            
             chmod +x ./deploy.sh
             ./deploy.sh

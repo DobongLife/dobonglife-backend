@@ -79,7 +79,7 @@ services:
       options:
         max-size: "5m"
         max-file: "3"
-        
+
   nginx:
     image: nginx:latest
     container_name: dobonglife-nginx
