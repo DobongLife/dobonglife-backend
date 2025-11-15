@@ -21,7 +21,7 @@ echo "이미지 다운로드 중"
 docker-compose pull
 
 echo "컨테이너 재시작 중"
-docker-compose up -d --force-recreate dobonglife-backend
+docker-compose up -d --force-recreate dobonglife-backend nginx
 
 echo "헬스체크 대기 중"
 MAX_ATTEMPTS=30
