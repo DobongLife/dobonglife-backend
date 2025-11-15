@@ -2,7 +2,7 @@ spring:
   application:
     name: dobonglife
   profiles:
-    active: local
+    active: prod
   web:
     resources:
       add-mappings: false
