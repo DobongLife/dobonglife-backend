@@ -79,21 +79,6 @@ services:
       options:
         max-size: "5m"
         max-file: "3"
-        
-  nginx:
-    image: nginx:latest
-    container_name: dobonglife-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-    depends_on:
-      - dobonglife-backend
-    networks:
-      - dobonglife-network
 
   nginx:
     image: nginx:latest
