@@ -1,50 +1,42 @@
 #!/bin/bash
 set -e
 
-if [ -z "$DOCKER_CONTAINER_REGISTRY" ]; then
-    echo "DOCKER_CONTAINER_REGISTRY가 설정되지 않았습니다"
+echo "배포 시작"
+
+if [ -z "$DOCKER_CONTAINER_REGISTRY" ] || [ -z "$GITHUB_SHA" ]; then
+    echo "환경 변수가 설정되지 않았습니다"
+    echo "DOCKER_CONTAINER_REGISTRY: $DOCKER_CONTAINER_REGISTRY"
+    echo "GITHUB_SHA: $GITHUB_SHA"
     exit 1
 fi
 
-if [ -z "$GITHUB_SHA" ]; then
-    echo "GITHUB_SHA가 없습니다. latest 태그만 사용합니다"
-    DEPLOY_TAG="latest"
-else
-    DEPLOY_TAG="${GITHUB_SHA:0:7}"
-fi
-
+export IMAGE_TAG=${GITHUB_SHA:0:7}
 echo "Registry: $DOCKER_CONTAINER_REGISTRY"
-echo "Deploy Tag: $DEPLOY_TAG"
+echo "Version: $IMAGE_TAG"
 
-echo "현재 실행 중인 이미지 백업 중"
-CURRENT_IMAGE=$(docker inspect dobonglife-backend --format='{{.Config.Image}}' 2>/dev/null || echo "없음")
-echo "이전 이미지: $CURRENT_IMAGE"
+echo "기존 컨테이너 중지 및 삭제(docker-compose down)"
+docker-compose down || true
 
-echo "새 이미지 다운로드 중"
-docker pull "$DOCKER_CONTAINER_REGISTRY/dobonglife-backend:latest"
-
-if [ "$DEPLOY_TAG" != "latest" ]; then
-    docker pull "$DOCKER_CONTAINER_REGISTRY/dobonglife-backend:$DEPLOY_TAG" 2>/dev/null || echo "   SHA 태그 이미지 없음"
-fi
+echo "이미지 다운로드 중"
+docker-compose pull
 
 echo "컨테이너 재시작 중"
-docker-compose up -d --no-deps dobonglife-backend
+docker-compose up -d --force-recreate dobonglife-backend
 
 echo "헬스체크 대기 중"
 MAX_ATTEMPTS=30
 ATTEMPT=0
 
 while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-    if docker ps | grep -q "dobonglife-backend.*Up"; then
-        sleep 3
-        if docker exec dobonglife-backend curl -sf http://localhost:8080/actuator/health > /dev/null 2>&1; then
-            echo "헬스체크 성공"
-            break
-        fi
+    HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' dobonglife-backend 2>/dev/null || echo "starting")
+
+    if [ "$HEALTH_STATUS" = "healthy" ]; then
+        echo "헬스체크 성공"
+        break
     fi
 
     ATTEMPT=$((ATTEMPT + 1))
-    echo "   시도 $ATTEMPT/$MAX_ATTEMPTS..."
+    echo "   시도 $ATTEMPT/$MAX_ATTEMPTS... (상태: $HEALTH_STATUS)"
     sleep 2
 done
 
@@ -52,25 +44,14 @@ if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
     echo "배포 실패: 헬스체크 타임아웃"
     echo "최근 로그:"
     docker logs dobonglife-backend --tail 50
-    echo "이전 이미지: $CURRENT_IMAGE"
     exit 1
 fi
 
 echo "배포 성공"
 echo "실행 중인 컨테이너"
-docker ps --filter "name=dobonglife-backend" --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
+docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Image}}"
 
-echo "오래된 이미지 정리 중"
+echo "이미지 정리 중"
+docker image prune -af --filter "until=24h"
 
-docker image prune -f > /dev/null 2>&1
-
-echo "최신 5개 이미지만 유지"
-docker images "$DOCKER_CONTAINER_REGISTRY/dobonglife-backend" \
-    --format "{{.ID}} {{.CreatedAt}}" | \
-    sort -rk 2 | \
-    tail -n +6 | \
-    awk '{print $1}' | \
-    xargs -r docker rmi -f 2>/dev/null || true
-
-echo "보관 중인 이미지"
-docker images "$DOCKER_CONTAINER_REGISTRY/dobonglife-backend" --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.CreatedAt}}"
+echo "배포 완료"

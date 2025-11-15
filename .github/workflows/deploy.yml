@@ -63,10 +63,8 @@ jobs:
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/dobonglife-backend
           tags: |
-            type=raw,value=latest
             type=sha,prefix=,format=short
-          flavor: |
-            latest=true
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Docker Buildx 세팅
         uses: docker/setup-buildx-action@v3
