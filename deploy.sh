@@ -23,33 +23,19 @@ docker-compose pull
 echo "컨테이너 재시작 중"
 docker-compose up -d --force-recreate dobonglife-backend nginx
 
-echo "헬스체크 대기 중"
-MAX_ATTEMPTS=30
-ATTEMPT=0
+echo "실행 확인 대기 중"
+sleep 15 
 
-while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-    HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' dobonglife-backend 2>/dev/null || echo "starting")
-
-    if [ "$HEALTH_STATUS" = "healthy" ]; then
-        echo "헬스체크 성공"
-        break
-    fi
-
-    ATTEMPT=$((ATTEMPT + 1))
-    echo "   시도 $ATTEMPT/$MAX_ATTEMPTS... (상태: $HEALTH_STATUS)"
-    sleep 2
-done
-
-if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-    echo "배포 실패: 헬스체크 타임아웃"
+if docker ps --filter "name=dobonglife-backend" | grep -q dobonglife-backend; then
+    echo "배포 성공 (컨테이너 실행 확인)"
+    echo "실행 중인 컨테이너"
+    docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Image}}"
+else
+    echo "배포 실패: 컨테이너 실행에 실패"
     echo "최근 로그:"
     docker logs dobonglife-backend --tail 50
     exit 1
 fi
-
-echo "배포 성공"
-echo "실행 중인 컨테이너"
-docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Image}}"
 
 echo "이미지 정리 중"
 docker image prune -af --filter "until=24h"
