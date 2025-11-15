@@ -2,7 +2,12 @@ spring:
   application:
     name: dobonglife
   profiles:
-    active: prod
+    active: local
   web:
     resources:
       add-mappings: false
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /docs/swagger
