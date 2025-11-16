@@ -31,13 +31,14 @@ public class UserService {
 
     @Transactional
     public void signUp(SignupRequest request) {
-        if (userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isEmpty()) {
+        if (!userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isEmpty()) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
         User user = User.builder()
                 .email(request.getEmail())
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .provider(Provider.LOCAL)
                 .role(Role.MEMBER)
                 .build();
         userRepository.save(user);
