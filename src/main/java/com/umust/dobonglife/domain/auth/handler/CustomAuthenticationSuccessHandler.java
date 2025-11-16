@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.AuthenticationUtil;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
@@ -32,15 +33,15 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
-        String providerId = authenticationUtil.getProviderId();
+        String provider = authenticationUtil.getProvider();
         String role = authenticationUtil.getRole();
         Long userId = authenticationUtil.getUserId();
         String userName = authenticationUtil.getUserName();
-        log.info("[CustomAuthenticationSuccessHandler] providerId={}, role={}, userId={}", providerId, role, userId);
+        log.info("[CustomAuthenticationSuccessHandler] provider={}, role={}, userId={}", provider, role, userId);
 
         // 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(userId, providerId, role, userName);
-        String refreshToken = jwtUtil.createRefreshToken(userId, providerId, role);
+        String accessToken = jwtUtil.createAccessToken(userId, provider, role, userName);
+        String refreshToken = jwtUtil.createRefreshToken(userId, provider, role);
 
         // refresh token 저장
         jwtService.storeRefreshToken(refreshToken, userId);
