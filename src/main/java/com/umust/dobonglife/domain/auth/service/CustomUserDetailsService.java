@@ -1,10 +1,12 @@
 package com.umust.dobonglife.domain.auth.service;
 
 
+import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.auth.model.UserPrincipal;
 import com.umust.dobonglife.domain.user.model.Role;
 import com.umust.dobonglife.domain.user.model.User;
 import com.umust.dobonglife.domain.user.repository.UserRepository;
+import com.umust.dobonglife.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,8 +26,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserPrincipal loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByProviderId(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email + ": 해당 이메일의 사용자를 찾을 수 없습니다."));
+        User user = userRepository.findByEmailAndProvider(email, Provider.LOCAL)
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
 
         return UserPrincipal.builder()
                 .userId(user.getId())

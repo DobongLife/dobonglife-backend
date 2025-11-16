@@ -71,14 +71,14 @@ spring:
             client-secret: ${GOOGLE_CLIENT_SECRET}
             redirect-uri: ${GOOGLE_REDIRECT_URI}
             scope: profile, email
-#          kakao:
-#            client-id: ${KAKAO_CLIENT_ID}
-#            client-secret: ${KAKAO_CLIENT_SECRET}
-#            client-name: kakao
-#            client-authentication-method: client_secret_post
-#            redirect-uri: ${KAKAO_REDIRECT_URI}
-#            authorization-grant-type: authorization_code
-#            scope: profile_nickname, profile_image, account_email
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            client-name: kakao
+            client-authentication-method: client_secret_post
+            redirect-uri: ${KAKAO_REDIRECT_URI}
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, profile_image, account_email
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
