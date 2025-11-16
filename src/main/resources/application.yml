@@ -7,7 +7,7 @@ spring:
       prod: prod-db, prod-port, common
     active: local
 ---
-# ??? DB
+# Local DB
 spring:
   config:
     activate:
@@ -19,7 +19,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -30,7 +30,7 @@ spring:
       host: localhost
       port: 6379
 ---
-# ??? DB
+# Prod DB
 spring:
   config:
     activate:
@@ -53,7 +53,7 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
 ---
-# ?? ??
+# Common
 spring:
   config:
     activate:
@@ -62,6 +62,29 @@ spring:
   web:
     resources:
       add-mappings: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            scope: profile, email
+#          kakao:
+#            client-id: ${KAKAO_CLIENT_ID}
+#            client-secret: ${KAKAO_CLIENT_SECRET}
+#            client-name: kakao
+#            client-authentication-method: client_secret_post
+#            redirect-uri: ${KAKAO_REDIRECT_URI}
+#            authorization-grant-type: authorization_code
+#            scope: profile_nickname, profile_image, account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 #  mail:
 #    host: smtp.gmail.com
 #    port: 587
@@ -72,17 +95,17 @@ spring:
 #      mail.smtp.timeout: 5000
 #      mail.smtp.starttls.enable: true
 
-#jwt:
-#  secret: ${JWT_SECRET_KEY}
-#  access:
-#    expiration: ${JWT_ACCESS_EXPIRED_IN}
-#    header: Authorization
-#  refresh:
-#    expiration: ${JWT_REFRESH_EXPIRED_IN}
-#    header: Authorization-refresh
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access:
+    expiration: ${JWT_ACCESS_EXPIRED_IN}
+    header: Authorization
+  refresh:
+    expiration: ${JWT_REFRESH_EXPIRED_IN}
+    header: Authorization-refresh
 
 ---
-# ??? ??
+# Local Port
 spring:
   config:
     activate:
@@ -90,7 +113,7 @@ spring:
 server:
   port: 8000
 ---
-# ??? ??
+# Prod port
 spring:
   config:
     activate:

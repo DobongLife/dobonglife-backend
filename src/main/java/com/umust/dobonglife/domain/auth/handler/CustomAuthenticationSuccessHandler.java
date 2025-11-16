@@ -32,7 +32,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
-        String providerId = authenticationUtil.getProvider();
+        String providerId = authenticationUtil.getProviderId();
         String role = authenticationUtil.getRole();
         Long userId = authenticationUtil.getUserId();
         String userName = authenticationUtil.getUserName();

@@ -15,12 +15,12 @@ public enum Provider {
     private final String value;
 
     public static Provider fromProvider(String providerString) {
-        if (providerString == null) throw new CustomAuthenticationException("provider is null");
+        if (providerString == null) throw new IllegalArgumentException("provider is null");
         for (Provider p : values()) {
             if (p.value.equalsIgnoreCase(providerString) || p.name().equalsIgnoreCase(providerString)) {
                 return p;
             }
         }
-        throw new CustomAuthenticationException ("Unknown provider: " + providerString);
+        throw new IllegalArgumentException("Unknown provider: " + providerString);
     }
 }

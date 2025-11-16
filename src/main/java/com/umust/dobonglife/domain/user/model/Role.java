@@ -34,7 +34,7 @@ public enum Role {
         }
 
         // todo 예외 처리 로직 추가
-        throw new CustomAuthenticationException("Unknown role: " + roleString);
+        throw new IllegalArgumentException("Unknown role: " + roleString);
     }
 
     // Role을 권한으로 변환하는 메서드 (MEMBER -> ROLE_MEMBER)
