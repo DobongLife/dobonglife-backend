@@ -10,7 +10,7 @@ import java.util.List;
 public class PlaceResponseList {
     List<PlaceResponse> responseList;
 
-    public static PlaceResponseList of(final List<PlaceResponse> responseList) {
+    public static PlaceResponseList from(final List<PlaceResponse> responseList) {
         return builder().responseList(responseList).build();
     }
 }

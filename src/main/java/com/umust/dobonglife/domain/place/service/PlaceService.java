@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.course.model.Theme;
 import com.umust.dobonglife.domain.course.repository.CoursePlaceRepository;
 import com.umust.dobonglife.domain.place.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.dto.request.ThemeRequest;
+import com.umust.dobonglife.domain.place.dto.response.PlaceResponse;
 import com.umust.dobonglife.domain.place.dto.response.PlaceResponseList;
 import com.umust.dobonglife.domain.place.model.Amenity;
 import com.umust.dobonglife.domain.place.model.Place;
@@ -50,6 +51,11 @@ public class PlaceService {
                 .distinct()
                 .toList();
 
+        List<PlaceResponse> responses = places.stream()
+                .map(PlaceResponse::from)
+                .toList();
+
+        return PlaceResponseList.from(responses);
     }
 
 }
