@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.place.service;
 
 import com.umust.dobonglife.domain.place.dto.request.PlaceRegisterRequest;
+import com.umust.dobonglife.domain.place.model.Amenity;
 import com.umust.dobonglife.domain.place.model.Place;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,10 @@ public class PlaceService {
         Place place = Place.builder()
                 .name(request.getPlaceName())
                 .content(request.getContent())
-                .amenity(request.getAmenity())
+                .amenities(request.getAmenity()
+                        .stream()
+                        .map(Amenity::toEnum)
+                        .toList())
                 .address(request.getAddress())
                 .contact(request.getContact())
                 .operatingHour(request.getOperatingHour())

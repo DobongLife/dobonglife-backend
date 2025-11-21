@@ -4,6 +4,7 @@ package com.umust.dobonglife.domain.place.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +27,11 @@ public class Place {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @ElementCollection(targetClass = Amenity.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "place_amenity", joinColumns = @JoinColumn(name = "place_id"))
     @Enumerated(EnumType.STRING)
-    @Column(name = "amenity", nullable = false)
-    private Amenity amenity;
+    @Column(name = "amenities", nullable = false)
+    private List<Amenity> amenities = new ArrayList<>();
 
     @Column(name = "address", nullable = false)
     private String address;
@@ -39,7 +42,10 @@ public class Place {
     private List<String> placeImages = new ArrayList<>();
 
     @Column(name = "operating_hour", nullable = false)
-    private String operatingHour;
+    private LocalDateTime operatingHour;
+
+    @Column(name = "contact", nullable = false)
+    private String contact;
 }
 
 
