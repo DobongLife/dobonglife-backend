@@ -41,7 +41,7 @@ public class Place {
     private List<String> placeImages = new ArrayList<>();
 
     @Column(name = "operating_hour", nullable = false)
-    private LocalDateTime operatingHour;
+    private String operatingHour;
 
     @Column(name = "contact", nullable = false)
     private String contact;

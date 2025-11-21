@@ -21,5 +21,5 @@ public class PlaceRegisterRequest {
 
     private String contact;
 
-    private LocalDateTime operatingHour;
+    private String operatingHour;
 }
