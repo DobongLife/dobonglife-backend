@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "reviews")
-@Getter
+@Getter @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

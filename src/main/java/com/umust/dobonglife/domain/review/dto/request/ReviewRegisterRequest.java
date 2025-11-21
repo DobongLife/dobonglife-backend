@@ -10,19 +10,15 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewRegisterRequest {
 
+    private Long placeId;
+
+    private Long courseId;
+
     private Double rating;
 
-    String title;
+    private String title;
 
-    String content;
+    private String content;
 
-    List<String> templates;
-
-
-
-
-
-
-
-
+    private List<String> templates;
 }
