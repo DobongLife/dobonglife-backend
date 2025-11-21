@@ -4,10 +4,10 @@ import com.umust.dobonglife.domain.place.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -16,8 +16,9 @@ public class PlaceController {
     private final PlaceService placeService;
 
     @PostMapping
-    public BaseResponse<Void> registerPlace(@RequestBody PlaceRegisterRequest request){
-        placeService.registerPlace(request);
+    public BaseResponse<Void> registerPlace(@RequestBody PlaceRegisterRequest request,
+                                            @RequestPart(value = "file", required = false) List<MultipartFile> placeImageList){
+        placeService.registerPlace(request, placeImageList);
         return BaseResponse.ok(null);
     }
 

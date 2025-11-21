@@ -7,6 +7,9 @@ import com.umust.dobonglife.domain.place.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -15,7 +18,7 @@ public class PlaceService {
 
     private final PlaceRepository placeRepository;
 
-    public void registerPlace(PlaceRegisterRequest request){
+    public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> placeImageList){
 
         Place place = Place.builder()
                 .name(request.getPlaceName())
@@ -27,6 +30,7 @@ public class PlaceService {
                 .address(request.getAddress())
                 .contact(request.getContact())
                 .operatingHour(request.getOperatingHour())
+                // .placeImages(placeImageList)
                 .build();
 
         placeRepository.save(place);

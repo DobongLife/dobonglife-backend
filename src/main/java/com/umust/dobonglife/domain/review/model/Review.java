@@ -23,12 +23,15 @@ public class Review extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id", nullable = false)
+    @JoinColumn(name = "place_id", nullable = true)
     private Place place;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_id", nullable = true)
     private Course course;
+
+    @Column(name = "rating", nullable = false)
+    private Double rating;
 
     @Column(name = "title", nullable = false)
     private String title;
