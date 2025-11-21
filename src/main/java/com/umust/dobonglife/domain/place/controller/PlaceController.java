@@ -1,6 +1,8 @@
 package com.umust.dobonglife.domain.place.controller;
 
 import com.umust.dobonglife.domain.place.dto.request.PlaceRegisterRequest;
+import com.umust.dobonglife.domain.place.dto.request.ThemeRequest;
+import com.umust.dobonglife.domain.place.dto.response.PlaceResponseList;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,4 +24,9 @@ public class PlaceController {
         return BaseResponse.ok(null);
     }
 
+    @GetMapping
+    public BaseResponse<PlaceResponseList> getPlaceByTheme(@RequestBody ThemeRequest request){
+        PlaceResponseList response = placeService.getPlaceByTheme(request);
+        return BaseResponse.ok(response);
+    }
 }
