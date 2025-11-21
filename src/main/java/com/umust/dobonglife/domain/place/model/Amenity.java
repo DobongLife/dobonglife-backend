@@ -14,4 +14,8 @@ public enum Amenity {
         }
         throw new IllegalArgumentException("존재하지 않는 enum입니다: " + value);
     }
+
+    public String toValue() {
+        return name();
+    }
 }
