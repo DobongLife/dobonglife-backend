@@ -1,0 +1,107 @@
+version: "3.8"
+
+services:
+  dobonglife-backend:
+    image: "${DOCKER_CONTAINER_REGISTRY}/dobonglife-backend:${IMAGE_TAG}"
+    container_name: dobonglife-backend
+    env_file:
+      - .env
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Seoul
+      JAVA_OPTS: >-
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=75.0
+        -XX:+UseG1GC
+        -Dspring.profiles.active=prod
+    ports:
+      - '8080:8080'
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - dobonglife-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: dobonglife-redis
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Seoul
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    networks:
+      - dobonglife-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  nginx:
+    image: nginx:latest
+    container_name: dobonglife-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - dobonglife-backend
+    networks:
+      - dobonglife-network
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  dobonglife-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

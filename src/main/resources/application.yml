@@ -1,7 +1,8 @@
 spring:
   application:
-    name: Dobonglife
+    name: dobonglife
   profiles:
+<<<<<<< HEAD
     group:
       local : local-db, local-port, common
       prod: prod-db, prod-port, common
@@ -120,3 +121,12 @@ spring:
       on-profile: prod-port
 server:
   port: 8001
+  active: prod
+  web:
+    resources:
+      add-mappings: false
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /docs/swagger
