@@ -33,12 +33,9 @@ jobs:
 
       - name: YML 파일 세팅
         env:
-          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
           TEST_APPLICATION_PROPERTIES: ${{ secrets.TEST_APPLICATION_PROPERTIES }}
         run: |
-          mkdir -p src/main/resources
           mkdir -p src/test/resources
-          echo "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
           echo "$TEST_APPLICATION_PROPERTIES" > src/test/resources/application-test.yml
 
       - name: gradlew 권한 부여
