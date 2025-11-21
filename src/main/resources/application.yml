@@ -2,7 +2,6 @@ spring:
   application:
     name: dobonglife
   profiles:
-<<<<<<< HEAD
     group:
       local : local-db, local-port, common
       prod: prod-db, prod-port, common
