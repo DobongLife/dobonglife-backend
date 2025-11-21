@@ -20,5 +20,5 @@ public class ScheduleRegisterRequest {
 
     private String memo;
 
-    private ScheduleType scheduleType;
+    private String scheduleType;
 }
