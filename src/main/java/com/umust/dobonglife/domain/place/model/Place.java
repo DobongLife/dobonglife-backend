@@ -28,9 +28,8 @@ public class Place {
     private String content;
 
     @ElementCollection(targetClass = Amenity.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "place_amenity", joinColumns = @JoinColumn(name = "place_id"))
+    @CollectionTable(name = "amenities", joinColumns = @JoinColumn(name = "place_id"))
     @Enumerated(EnumType.STRING)
-    @Column(name = "amenities", nullable = false)
     private List<Amenity> amenities = new ArrayList<>();
 
     @Column(name = "address", nullable = false)
