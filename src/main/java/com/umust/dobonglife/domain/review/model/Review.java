@@ -41,8 +41,8 @@ public class Review extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private List<String> reviewImages = new ArrayList<>();
 
-    @ElementCollection(targetClass = Amenity.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "amenities", joinColumns = @JoinColumn(name = "review_id"))
+    @ElementCollection(targetClass = Template.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "templates", joinColumns = @JoinColumn(name = "review_id"))
     @Enumerated(EnumType.STRING)
-    private List<Amenity> amenities = new ArrayList<>();
+    private List<Template> templates = new ArrayList<>();
 }
