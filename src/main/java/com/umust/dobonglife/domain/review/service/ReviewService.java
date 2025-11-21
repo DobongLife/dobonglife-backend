@@ -6,6 +6,8 @@ import com.umust.dobonglife.domain.place.repository.PlaceRepository;
 import com.umust.dobonglife.domain.review.dto.request.ReviewRegisterRequest;
 import com.umust.dobonglife.domain.review.model.Review;
 import com.umust.dobonglife.domain.review.model.Template;
+import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,13 +32,13 @@ public class ReviewService {
 
         if(request.getPlaceId()!=null) {
             Place place = placeRepository.findById(request.getPlaceId())
-                    .orElse(null);
+                    .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
             review.setPlace(place);
         }
 
         if(request.getCourseId()!=null) {
-            Place place = placeRepository.findById(request.getPlaceId())
-                    .orElse(null);
+            Place place = placeRepository.findById(request.getCourseId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.COURSE_NOT_FOUND));
             review.setPlace(place);
         }
 
