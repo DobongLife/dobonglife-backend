@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.place.service;
 import com.umust.dobonglife.domain.place.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.model.Amenity;
 import com.umust.dobonglife.domain.place.model.Place;
+import com.umust.dobonglife.domain.place.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
+
+    private final PlaceRepository placeRepository;
 
     public void registerPlace(PlaceRegisterRequest request){
 
