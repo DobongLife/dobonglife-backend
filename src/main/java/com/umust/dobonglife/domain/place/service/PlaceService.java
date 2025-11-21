@@ -14,14 +14,14 @@ public class PlaceService {
     public void registerPlace(PlaceRegisterRequest request){
 
         Place place = Place.builder()
-
-
-
-
-
-
-
+                .name(request.getPlaceName())
+                .content(request.getContent())
+                .amenity(request.getAmenity())
+                .address(request.getAddress())
+                .contact(request.getContact())
+                .operatingHour(request.getOperatingHour())
                 .build();
 
+        placeRepository.save(place);
     }
 }
