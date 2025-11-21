@@ -1,11 +1,13 @@
 package com.umust.dobonglife.domain.review.service;
 
-import com.umust.dobonglife.domain.place.model.Amenity;
+import com.umust.dobonglife.domain.course.repository.CourseRepository;
+import com.umust.dobonglife.domain.course.model.Course;
 import com.umust.dobonglife.domain.place.model.Place;
 import com.umust.dobonglife.domain.place.repository.PlaceRepository;
 import com.umust.dobonglife.domain.review.dto.request.ReviewRegisterRequest;
 import com.umust.dobonglife.domain.review.model.Review;
 import com.umust.dobonglife.domain.review.model.Template;
+import com.umust.dobonglife.domain.review.repository.ReviewRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 public class ReviewService {
 
     private final PlaceRepository placeRepository;
+    private final CourseRepository courseRepository;
+    private final ReviewRepository reviewRepository;
 
     public void registerReview(ReviewRegisterRequest request) {
         Review review = Review.builder()
@@ -37,12 +41,12 @@ public class ReviewService {
         }
 
         if(request.getCourseId()!=null) {
-            Place place = placeRepository.findById(request.getCourseId())
+            Course course = courseRepository.findById(request.getCourseId())
                     .orElseThrow(() -> new BusinessException(ErrorCode.COURSE_NOT_FOUND));
-            review.setPlace(place);
+            review.setCourse(course);
         }
 
-        reviewR
+        reviewRepository.save(review);
     }
 
 
