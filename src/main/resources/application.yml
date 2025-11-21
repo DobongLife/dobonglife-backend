@@ -5,7 +5,7 @@ spring:
     group:
       local: local-db, common
       prod: prod-db, common
-    active: local
+    active: prod
 
   config:
     activate:
@@ -53,3 +53,13 @@ jwt:
   refresh:
     expiration: ${JWT_REFRESH_EXPIRED_IN}
     header: Authorization-refresh
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket: ${S3_BUCKET_NAME}

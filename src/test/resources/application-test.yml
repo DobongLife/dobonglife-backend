@@ -55,3 +55,13 @@ jwt:
   refresh:
     expiration: 604800
     header: Authorization-refresh
+
+cloud:
+  aws:
+    credentials:
+      accessKey: test_access_key
+      secretKey: test_secret_key
+    region:
+      static: region
+    s3:
+      bucket: bucket
