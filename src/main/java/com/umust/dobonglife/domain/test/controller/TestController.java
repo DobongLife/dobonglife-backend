@@ -1,9 +1,10 @@
 package com.umust.dobonglife.domain.test.controller;
 
+import com.umust.dobonglife.domain.test.model.Test;
+import com.umust.dobonglife.domain.test.repository.TestRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
