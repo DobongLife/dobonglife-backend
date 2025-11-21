@@ -24,11 +24,11 @@ public class CoursePlace extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id", nullable = true)
+    @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = true)
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
     @Enumerated(EnumType.STRING)
