@@ -1,10 +1,10 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
     username: sa
     password:
-
+  
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -13,7 +13,45 @@ spring:
         format_sql: true
         show_sql: false
         dialect: org.hibernate.dialect.H2Dialect
-
+  
   h2:
     console:
-      enabled: true
+      enabled: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: dummy-test-google-client-id
+            client-secret: dummy-test-google-secret
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+          kakao:
+            client-id: dummy-test-kakao-client-id
+            client-secret: dummy-test-kakao-secret
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            client-name: kakao
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, profile_image, account_email
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+jwt:
+  secret: test_secret_key_for_dobonglife_ci_1234567890
+  access:
+    expiration: 3600
+    header: Authorization
+  refresh:
+    expiration: 604800
+    header: Authorization-refresh
