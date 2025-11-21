@@ -1,10 +1,10 @@
 package com.umust.dobonglife.domain.place.model;
 
 
+import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Place {
+public class Place extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,48 @@
+package com.umust.dobonglife.domain.review.model;
+
+import com.umust.dobonglife.domain.place.model.Amenity;
+import com.umust.dobonglife.domain.place.model.Place;
+import com.umust.dobonglife.global.common.model.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "reviews")
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Review extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_id", nullable = false)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id", nullable = false)
+    private Place place;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
+
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "content", nullable = false)
+    private String content;
+
+    @ElementCollection
+    @CollectionTable(name = "review_images", joinColumns = @JoinColumn(name = "review_id"))
+    @Column(columnDefinition = "TEXT")
+    private List<String> reviewImages = new ArrayList<>();
+
+    @ElementCollection(targetClass = Amenity.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "amenities", joinColumns = @JoinColumn(name = "review_id"))
+    @Enumerated(EnumType.STRING)
+    private List<Amenity> amenities = new ArrayList<>();
+}
