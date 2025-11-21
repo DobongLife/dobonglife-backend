@@ -13,6 +13,7 @@ import com.umust.dobonglife.domain.place.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final CoursePlaceRepository coursePlaceRepository;
 
+    @Transactional
     public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> placeImageList){
 
         Place place = Place.builder()
@@ -43,6 +45,7 @@ public class PlaceService {
         placeRepository.save(place);
     }
 
+    @Transactional(readOnly = true)
     public PlaceResponseList getPlaceByTheme(ThemeRequest request){
         List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(Theme.toEnum(request.getTheme()));
 
