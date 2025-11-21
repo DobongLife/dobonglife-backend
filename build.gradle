@@ -51,11 +51,25 @@ dependencies {
 	// Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Spring OAuth 2.0
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// Jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.springframework.security:spring-security-test'
+
 	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'com.h2database:h2'
+
 }
 
 tasks.named('test') {
