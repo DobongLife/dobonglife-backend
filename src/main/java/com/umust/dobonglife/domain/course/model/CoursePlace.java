@@ -31,8 +31,7 @@ public class CoursePlace extends BaseEntity {
     @JoinColumn(name = "course_id", nullable = true)
     private Course course;
 
-    @ElementCollection(targetClass = Theme.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "themes", joinColumns = @JoinColumn(name = "course_place_id"))
     @Enumerated(EnumType.STRING)
-    private List<Theme> themes = new ArrayList<>();
+    @Column(name = "theme", nullable = false)
+    private Theme theme;
 }

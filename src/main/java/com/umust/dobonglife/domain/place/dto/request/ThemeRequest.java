@@ -10,5 +10,5 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ThemeRequest {
 
-    private List<String> themes;
+    private String theme;
 }
