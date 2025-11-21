@@ -15,7 +15,7 @@ public class PlaceRegisterRequest {
 
     private String content;
 
-    private List<String> amenity;
+    private List<String> amenities;
 
     private String address;
 

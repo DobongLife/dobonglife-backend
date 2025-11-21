@@ -23,7 +23,7 @@ public class PlaceService {
         Place place = Place.builder()
                 .name(request.getPlaceName())
                 .content(request.getContent())
-                .amenities(request.getAmenity()
+                .amenities(request.getAmenities()
                         .stream()
                         .map(Amenity::toEnum)
                         .toList())
@@ -35,4 +35,10 @@ public class PlaceService {
 
         placeRepository.save(place);
     }
+
+    public PlaceResponseList getPlaceByTheme(ThemeRequest request){
+
+
+    }
+
 }
