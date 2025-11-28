@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.review.controller;
 
 import com.umust.dobonglife.domain.review.controller.dto.request.ReviewRegisterRequest;
 import com.umust.dobonglife.domain.review.service.ReviewService;
+import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class ReviewController {
 
     @PostMapping
     public BaseResponse<Void> registerReview(@RequestBody ReviewRegisterRequest request) {
-        reviewService.registerReview(request);
+        reviewService.registerReview(request, 1L);
         return BaseResponse.ok(null);
     }
 }

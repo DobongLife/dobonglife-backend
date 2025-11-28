@@ -9,6 +9,8 @@ import com.umust.dobonglife.domain.review.controller.dto.request.ReviewRegisterR
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.domain.constant.Template;
 import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +26,16 @@ public class ReviewService {
     private final PlaceRepository placeRepository;
     private final CourseRepository courseRepository;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public void registerReview(ReviewRegisterRequest request) {
+    public void registerReview(ReviewRegisterRequest request, Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
         Review review = Review.builder()
+                .user(user)
                 // .reviewImages()
                 .title(request.getTitle())
                 .rating(request.getRating())
