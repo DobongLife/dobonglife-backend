@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.review.model;
+package com.umust.dobonglife.domain.review.domain.constant;
 
 public enum Template {
    GREAT, FAMILIAR, HEALING, KIND, PHOTO, RETRY;

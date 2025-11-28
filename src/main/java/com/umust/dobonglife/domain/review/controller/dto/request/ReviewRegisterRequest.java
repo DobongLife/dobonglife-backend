@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.review.dto.request;
+package com.umust.dobonglife.domain.review.controller.dto.request;
 
 import lombok.AccessLevel;
 import lombok.Getter;

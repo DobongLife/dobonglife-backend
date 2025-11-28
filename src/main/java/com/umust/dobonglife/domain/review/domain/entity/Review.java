@@ -1,8 +1,9 @@
-package com.umust.dobonglife.domain.review.model;
+package com.umust.dobonglife.domain.review.domain.entity;
 
 
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.review.domain.constant.Template;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.review.controller;
 
-import com.umust.dobonglife.domain.review.dto.request.ReviewRegisterRequest;
+import com.umust.dobonglife.domain.review.controller.dto.request.ReviewRegisterRequest;
 import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
