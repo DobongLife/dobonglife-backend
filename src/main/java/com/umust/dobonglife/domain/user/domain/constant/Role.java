@@ -1,11 +1,8 @@
-package com.umust.dobonglife.domain.user.model;
+package com.umust.dobonglife.domain.user.domain.constant;
 
-import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.Optional;
 
 @Getter
 public enum Role {

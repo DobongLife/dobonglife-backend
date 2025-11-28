@@ -1,8 +1,6 @@
 package com.umust.dobonglife.global.common.resolver;
 
 import com.umust.dobonglife.domain.auth.model.UserPrincipal;
-import com.umust.dobonglife.domain.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

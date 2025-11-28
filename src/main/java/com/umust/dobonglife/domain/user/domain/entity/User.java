@@ -1,6 +1,7 @@
-package com.umust.dobonglife.domain.user.model;
+package com.umust.dobonglife.domain.user.domain.entity;
 
 import com.umust.dobonglife.domain.auth.model.Provider;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

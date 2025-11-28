@@ -4,8 +4,8 @@ import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegis
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
 import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleRepository;
-import com.umust.dobonglife.domain.user.model.User;
-import com.umust.dobonglife.domain.user.repository.UserRepository;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;

@@ -2,12 +2,11 @@ package com.umust.dobonglife.global.config;
 
 import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.auth.model.UserPrincipal;
-import com.umust.dobonglife.domain.user.model.Role;
-import com.umust.dobonglife.domain.user.model.User;
-import com.umust.dobonglife.domain.user.repository.UserRepository;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

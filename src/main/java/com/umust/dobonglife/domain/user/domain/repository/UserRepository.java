@@ -1,7 +1,7 @@
-package com.umust.dobonglife.domain.user.repository;
+package com.umust.dobonglife.domain.user.domain.repository;
 
 import com.umust.dobonglife.domain.auth.model.Provider;
-import com.umust.dobonglife.domain.user.model.User;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
