@@ -1,6 +1,6 @@
-package com.umust.dobonglife.domain.schedule.respository;
+package com.umust.dobonglife.domain.schedule.domain.repository;
 
-import com.umust.dobonglife.domain.schedule.model.Schedule;
+import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {

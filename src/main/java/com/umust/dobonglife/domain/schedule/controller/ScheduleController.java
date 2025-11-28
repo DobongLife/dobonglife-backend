@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.schedule.controller;
 
-import com.umust.dobonglife.domain.schedule.dto.request.ScheduleRegisterRequest;
+import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
 import com.umust.dobonglife.domain.schedule.service.ScheduleService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;

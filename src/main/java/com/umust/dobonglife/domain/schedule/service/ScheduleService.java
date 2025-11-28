@@ -1,9 +1,9 @@
 package com.umust.dobonglife.domain.schedule.service;
 
-import com.umust.dobonglife.domain.schedule.dto.request.ScheduleRegisterRequest;
-import com.umust.dobonglife.domain.schedule.model.Schedule;
-import com.umust.dobonglife.domain.schedule.model.ScheduleType;
-import com.umust.dobonglife.domain.schedule.respository.ScheduleRepository;
+import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
+import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
+import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
+import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleRepository;
 import com.umust.dobonglife.domain.user.model.User;
 import com.umust.dobonglife.domain.user.repository.UserRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;

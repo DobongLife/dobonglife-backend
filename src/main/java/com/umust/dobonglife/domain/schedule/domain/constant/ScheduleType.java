@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.schedule.model;
+package com.umust.dobonglife.domain.schedule.domain.constant;
 
 public enum ScheduleType {
     PERSONAL,

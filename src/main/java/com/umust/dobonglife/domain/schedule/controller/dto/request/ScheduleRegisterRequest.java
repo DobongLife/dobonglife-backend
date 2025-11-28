@@ -1,7 +1,5 @@
-package com.umust.dobonglife.domain.schedule.dto.request;
+package com.umust.dobonglife.domain.schedule.controller.dto.request;
 
-import com.umust.dobonglife.domain.schedule.model.ScheduleType;
-import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
