@@ -43,6 +43,7 @@ dependencies {
 
 	// MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'org.hibernate.orm:hibernate-spatial'
 
 	// Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
@@ -50,9 +51,34 @@ dependencies {
 	// Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Spring OAuth 2.0
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// Jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// QueryDSL
+	implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
+	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	// S3
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter:3.1.1'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.767'  // AWS S3 SDK 추가
+	testImplementation 'io.findify:s3mock_2.13:0.2.6'
+
+	testImplementation 'org.springframework.security:spring-security-test'
+
 	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'com.h2database:h2'
 }

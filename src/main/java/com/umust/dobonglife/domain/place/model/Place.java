@@ -1,16 +1,20 @@
 package com.umust.dobonglife.domain.place.model;
 
+import com.umust.dobonglife.domain.auth.model.Provider;
+import com.umust.dobonglife.domain.user.model.Role;
 
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "places")
-@Getter
+@Getter @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,8 +49,7 @@ public class Place extends BaseEntity {
 
     @Column(name = "contact", nullable = false)
     private String contact;
-}
 
-
-
+    @Column
+    private String image;
 
