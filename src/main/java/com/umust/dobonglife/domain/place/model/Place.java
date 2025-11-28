@@ -49,8 +49,5 @@ public class Place extends BaseEntity {
 
     @Column(name = "contact", nullable = false)
     private String contact;
-
-    @Column
-    private String image;
 }
 

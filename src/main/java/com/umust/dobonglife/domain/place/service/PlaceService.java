@@ -1,13 +1,14 @@
 package com.umust.dobonglife.domain.place.service;
 
-import com.umust.dobonglife.domain.course.model.CoursePlace;
-import com.umust.dobonglife.domain.course.model.Theme;
-import com.umust.dobonglife.domain.course.repository.CoursePlaceRepository;
+
+import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
+import com.umust.dobonglife.domain.course.domain.repository.CoursePlaceRepository;
 import com.umust.dobonglife.domain.place.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.dto.response.PlaceResponse;
 import com.umust.dobonglife.domain.place.dto.response.PlaceResponseList;
 import com.umust.dobonglife.domain.place.model.Amenity;
+import com.umust.dobonglife.domain.place.model.CoursePlace;
 import com.umust.dobonglife.domain.place.model.Place;
 import com.umust.dobonglife.domain.place.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class PlaceService {
 
     @Transactional(readOnly = true)
     public PlaceResponseList getPlaceByTheme(ThemeRequest request){
-        List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(Theme.toEnum(request.getTheme()));
+        List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
 
         List<Place> places = coursePlaces.stream()
                 .map(CoursePlace::getPlace)

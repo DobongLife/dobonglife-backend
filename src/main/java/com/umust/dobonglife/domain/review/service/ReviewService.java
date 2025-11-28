@@ -1,7 +1,8 @@
 package com.umust.dobonglife.domain.review.service;
 
-import com.umust.dobonglife.domain.course.repository.CourseRepository;
-import com.umust.dobonglife.domain.course.model.Course;
+
+import com.umust.dobonglife.domain.course.domain.entity.Course;
+import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.place.model.Place;
 import com.umust.dobonglife.domain.place.repository.PlaceRepository;
 import com.umust.dobonglife.domain.review.dto.request.ReviewRegisterRequest;

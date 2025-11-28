@@ -25,6 +25,7 @@ public class AuthController {
     @GetMapping("/login/kakao")
     public void redirectToKakao(HttpServletResponse response) throws IOException {
         response.sendRedirect("/oauth2/authorization/kakao");
+
     }
 
     @GetMapping("/login/google")

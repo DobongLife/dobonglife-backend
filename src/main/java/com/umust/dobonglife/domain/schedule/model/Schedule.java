@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.schedule.model;
 
+import com.umust.dobonglife.domain.user.model.User;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
