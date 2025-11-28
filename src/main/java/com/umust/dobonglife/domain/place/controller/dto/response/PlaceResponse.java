@@ -1,7 +1,7 @@
-package com.umust.dobonglife.domain.place.dto.response;
+package com.umust.dobonglife.domain.place.controller.dto.response;
 
-import com.umust.dobonglife.domain.place.model.Amenity;
-import com.umust.dobonglife.domain.place.model.Place;
+import com.umust.dobonglife.domain.place.domain.constant.Amenity;
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import lombok.Builder;
 import lombok.Getter;
 

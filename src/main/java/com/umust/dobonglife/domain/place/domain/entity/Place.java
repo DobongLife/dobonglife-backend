@@ -1,14 +1,11 @@
-package com.umust.dobonglife.domain.place.model;
+package com.umust.dobonglife.domain.place.domain.entity;
 
-import com.umust.dobonglife.domain.auth.model.Provider;
-import com.umust.dobonglife.domain.user.model.Role;
+import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

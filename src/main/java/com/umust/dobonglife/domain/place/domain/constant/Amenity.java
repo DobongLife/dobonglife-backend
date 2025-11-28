@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.place.model;
+package com.umust.dobonglife.domain.place.domain.constant;
 
 public enum Amenity {
     PARKING,

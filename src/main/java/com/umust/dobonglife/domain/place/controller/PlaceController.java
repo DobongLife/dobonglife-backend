@@ -1,8 +1,8 @@
 package com.umust.dobonglife.domain.place.controller;
 
-import com.umust.dobonglife.domain.place.dto.request.PlaceRegisterRequest;
-import com.umust.dobonglife.domain.place.dto.request.ThemeRequest;
-import com.umust.dobonglife.domain.place.dto.response.PlaceResponseList;
+import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
+import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponseList;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;

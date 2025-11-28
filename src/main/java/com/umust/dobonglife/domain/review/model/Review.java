@@ -2,8 +2,7 @@ package com.umust.dobonglife.domain.review.model;
 
 
 import com.umust.dobonglife.domain.course.domain.entity.Course;
-import com.umust.dobonglife.domain.place.model.Amenity;
-import com.umust.dobonglife.domain.place.model.Place;
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

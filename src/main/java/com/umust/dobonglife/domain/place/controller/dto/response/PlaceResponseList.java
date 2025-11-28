@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.place.dto.response;
+package com.umust.dobonglife.domain.place.controller.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

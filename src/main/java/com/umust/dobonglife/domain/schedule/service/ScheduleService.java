@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.schedule.service;
 
-import com.umust.dobonglife.domain.place.model.Place;
 import com.umust.dobonglife.domain.schedule.dto.request.ScheduleRegisterRequest;
 import com.umust.dobonglife.domain.schedule.model.Schedule;
 import com.umust.dobonglife.domain.schedule.model.ScheduleType;
@@ -33,6 +32,7 @@ public class ScheduleService {
                 .endTime(request.getEndTime())
                 .memo(request.getMemo())
                 .scheduleType(ScheduleType.toEnum(request.getScheduleType()))
+                .user(user)
                 .build();
 
         scheduleRepository.save(schedule);

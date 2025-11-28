@@ -2,7 +2,7 @@ package com.umust.dobonglife.domain.course.domain.repository;
 
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.model.CoursePlace;
+import com.umust.dobonglife.domain.place.domain.entity.CoursePlace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
