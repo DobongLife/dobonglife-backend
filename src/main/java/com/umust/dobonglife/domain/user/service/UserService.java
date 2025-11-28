@@ -1,7 +1,7 @@
 package com.umust.dobonglife.domain.user.service;
 
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
-import com.umust.dobonglife.domain.auth.model.Provider;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;

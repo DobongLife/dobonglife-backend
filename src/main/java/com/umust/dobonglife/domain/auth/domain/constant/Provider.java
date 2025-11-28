@@ -1,6 +1,5 @@
-package com.umust.dobonglife.domain.auth.model;
+package com.umust.dobonglife.domain.auth.domain.constant;
 
-import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

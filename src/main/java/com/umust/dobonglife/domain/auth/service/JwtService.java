@@ -1,8 +1,8 @@
 package com.umust.dobonglife.domain.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.dto.request.RefreshTokenRequest;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.controller.dto.request.RefreshTokenRequest;
+import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;

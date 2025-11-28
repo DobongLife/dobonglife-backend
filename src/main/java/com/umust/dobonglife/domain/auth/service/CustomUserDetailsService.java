@@ -1,8 +1,8 @@
 package com.umust.dobonglife.domain.auth.service;
 
 
-import com.umust.dobonglife.domain.auth.model.Provider;
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.response.ErrorCode;

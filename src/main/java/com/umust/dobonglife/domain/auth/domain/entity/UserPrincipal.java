@@ -1,5 +1,6 @@
-package com.umust.dobonglife.domain.auth.model;
+package com.umust.dobonglife.domain.auth.domain.entity;
 
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
 import lombok.Builder;
 import lombok.Getter;

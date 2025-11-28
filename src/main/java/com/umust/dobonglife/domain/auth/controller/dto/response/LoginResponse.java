@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.auth.dto.response;
+package com.umust.dobonglife.domain.auth.controller.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

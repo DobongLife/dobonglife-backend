@@ -1,6 +1,6 @@
-package com.umust.dobonglife.domain.auth.dto.response;
+package com.umust.dobonglife.domain.auth.controller.dto.response;
 
-import com.umust.dobonglife.domain.auth.model.Provider;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;

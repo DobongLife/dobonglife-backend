@@ -1,6 +1,6 @@
 package com.umust.dobonglife.global.common.resolver;
 
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

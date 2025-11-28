@@ -1,7 +1,7 @@
 package com.umust.dobonglife.domain.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.dto.request.FormLoginRequest;
+import com.umust.dobonglife.domain.auth.controller.dto.request.FormLoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
