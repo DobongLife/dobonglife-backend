@@ -52,4 +52,5 @@ public class Place extends BaseEntity {
 
     @Column
     private String image;
+}
 

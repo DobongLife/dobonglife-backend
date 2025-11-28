@@ -3,12 +3,15 @@ package com.umust.dobonglife.domain.schedule.service;
 import com.umust.dobonglife.domain.schedule.dto.request.ScheduleRegisterRequest;
 import com.umust.dobonglife.domain.schedule.model.Schedule;
 import com.umust.dobonglife.domain.schedule.model.ScheduleType;
+import com.umust.dobonglife.domain.schedule.respository.ScheduleRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
@@ -23,7 +26,7 @@ public class ScheduleService {
                 .scheduleType(ScheduleType.toEnum(request.getScheduleType()))
                 .build();
 
-        sch
+        scheduleRepository.save(schedule);
     }
 
 
