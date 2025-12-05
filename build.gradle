@@ -26,6 +26,11 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+}
+
+
 dependencies {
 	// Spring Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
