@@ -2,12 +2,13 @@ package com.umust.dobonglife.domain.review.service;
 
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
-import com.umust.dobonglife.domain.course.controller.dto.ReviewStatsDto;
 import com.umust.dobonglife.domain.place.model.Place;
 import com.umust.dobonglife.domain.place.model.repository.PlaceRepository;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.infrastructure.repository.ReviewRepository;
 import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
+import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewResponse;
+import com.umust.dobonglife.domain.review.service.dto.ReviewStatsDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class ReviewService {
     private final PlaceRepository placeRepository;
 
     @Transactional
-    public Long createReview(CreateReviewRequest request) {
+    public ReviewResponse createReview(CreateReviewRequest request) {
         Long courseId = request.courseId();
         Long placeId = request.placeId();
 
@@ -38,52 +39,40 @@ public class ReviewService {
                 request.imageUrls()
         );
         review = reviewRepository.save(review);
+        ReviewStatsDto stats = new ReviewStatsDto(request.rating(), 1L);
 
         if(courseId != null){
-            updateCourseRatingAndCount(courseId);
-            return review.getId();
+            updateCourseRatingAndCount(courseId, stats);
+            return new ReviewResponse(review.getId(), request.title(), request.content());
         }
 
-        updatePlaceRatingAndCount(placeId);
-        return review.getId();
+        updatePlaceRatingAndCount(placeId, stats);
+        return new ReviewResponse(review.getId(), request.title(), request.content());
     }
 
     @Transactional
-    public void updateCourseRatingAndCount(Long courseId) {
+    public void updateCourseRatingAndCount(Long courseId, ReviewStatsDto stats) {
 
-        ReviewStatsDto stats = reviewRepository.getReviewStatsByCourseId(courseId);
-
-        Long reviewCount = stats.reviewCount();
-        Double totalRatingSum = stats.totalRatingSum();
-
-        Double averageRating = 0.0;
-        if (reviewCount > 0) {
-            averageRating = totalRatingSum / reviewCount;
-        }
-
-        Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findById(courseId) // TODO: 조회 방식 고민
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
 
-        course.updateRatingInfo(averageRating, reviewCount);
+
+        Long reviewCount = course.getReviewCount() + stats.reviewCount();
+        Double totalRatingSum = course.getAverageRating() + stats.totalRatingSum();
+
+        course.updateRatingInfo(totalRatingSum, reviewCount);
     }
 
     @Transactional
-    public void updatePlaceRatingAndCount(Long placeId) {
-
-        ReviewStatsDto stats = reviewRepository.getReviewStatsByPlaceId(placeId);
-
-        Long reviewCount = stats.reviewCount();
-        Double totalRatingSum = stats.totalRatingSum();
-
-        Double averageRating = 0.0;
-        if (reviewCount > 0) {
-            averageRating = totalRatingSum / reviewCount;
-        }
+    public void updatePlaceRatingAndCount(Long placeId, ReviewStatsDto stats) {
 
         Place place = placeRepository.findById(placeId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
 
-        place.updateRatingInfo(averageRating, reviewCount);
+        Long reviewCount = place.getReviewCount() + stats.reviewCount();
+        Double totalRatingSum = place.getAverageRating() + stats.totalRatingSum();
+
+        place.updateRatingInfo(totalRatingSum, reviewCount);
     }
 
     private void validateRating(Double rating) {

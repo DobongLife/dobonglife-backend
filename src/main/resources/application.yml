@@ -1,113 +1,65 @@
 spring:
   application:
-    name: Dobonglife
+    name: dobonglife
   profiles:
     group:
-      local : local-db, local-port, common
-      prod: prod-db, prod-port, common
+      local: local-db, common
+      prod: prod-db, common
     active: local
----
-# ??? DB
-spring:
-  config:
-    activate:
-      on-profile: local-db
-  datasource:
-    url: ${LOCAL_DATASOURCE_URL}
-    username: ${LOCAL_DATASOURCE_USERNAME}
-    password: ${LOCAL_DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-        highlight_sql: true
-  data:
-    redis:
-      host: localhost
-      port: 6379
----
-# ??? DB
-spring:
-  config:
-    activate:
-      on-profile: prod-db
-  datasource:
-    url: ${PROD_DATASOURCE_URL}
-    username: ${PROD_DATASOURCE_USERNAME}
-    password: ${PROD_DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-        highlight_sql: true
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
----
-# ?? ??
-spring:
+
   config:
     activate:
       on-profile: common
     import: optional:file:.env[.properties]
+
   web:
     resources:
-<<<<<<< Updated upstream
-      add-mappings: false
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: ${MAIL_ADDRESS}
-#    password: ${MAIL_PASSWORD}
-#    properties:
-#      mail.smtp.auth: true
-#      mail.smtp.timeout: 5000
-#      mail.smtp.starttls.enable: true
-=======
       add-mappings: true
->>>>>>> Stashed changes
 
-#jwt:
-#  secret: ${JWT_SECRET_KEY}
-#  access:
-#    expiration: ${JWT_ACCESS_EXPIRED_IN}
-#    header: Authorization
-#  refresh:
-#    expiration: ${JWT_REFRESH_EXPIRED_IN}
-#    header: Authorization-refresh
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+            scope: profile, email
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            client-name: kakao
+            client-authentication-method: client_secret_post
+            redirect-uri: ${KAKAO_REDIRECT_URI}
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, profile_image, account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /docs/swagger
 
----
-# ??? ??
-spring:
-  config:
-    activate:
-      on-profile: local-port
-server:
-  port: 8000
----
-# ??? ??
-spring:
-  config:
-    activate:
-      on-profile: prod-port
-server:
-  port: 8001
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access:
+    expiration: ${JWT_ACCESS_EXPIRED_IN}
+    header: Authorization
+  refresh:
+    expiration: ${JWT_REFRESH_EXPIRED_IN}
+    header: Authorization-refresh
 
-#cloud:
-#  aws:
-#    credentials:
-#      accessKey:
-#      secretKey:
-#    region:
-#      static: ap-northeast-2
-#    s3:
-#      bucket:
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket: ${S3_BUCKET_NAME}

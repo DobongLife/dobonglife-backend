@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.review.domain.entity;
 
-import com.umust.dobonglife.domain.review.domain.constant.ReviewTemplate;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -6,10 +6,7 @@ import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +17,7 @@ public class ReviewController {
 
     // 리뷰 등록하기
     @PostMapping
-    public BaseResponse<ReviewResponse> registerCourse(@RequestBody @Valid CreateReviewRequest request){
+    public BaseResponse<ReviewResponse> registerReview(@RequestBody @Valid CreateReviewRequest request){
         ReviewResponse response = reviewService.createReview(request);
         return BaseResponse.ok(response);
     }
