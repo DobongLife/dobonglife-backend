@@ -18,9 +18,8 @@ public class PlaceController {
     private final PlaceService placeService;
 
     @PostMapping
-    public BaseResponse<Void> registerPlace(@RequestBody PlaceRegisterRequest request,
-                                            @RequestPart(value = "file", required = false) List<MultipartFile> placeImageList){
-        placeService.registerPlace(request, placeImageList);
+    public BaseResponse<Void> registerPlace(@RequestBody PlaceRegisterRequest request){
+        placeService.registerPlace(request);
         return BaseResponse.ok(null);
     }
 
