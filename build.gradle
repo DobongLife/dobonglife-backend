@@ -94,6 +94,12 @@ dependencies {
 	testRuntimeOnly 'com.h2database:h2'
 }
 
+tasks.named('testClasses') {
+	doFirst {
+		delete file('build/docs/asciidoc')
+	}
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 	outputs.dir snippetsDir
