@@ -1,10 +1,13 @@
 package com.umust.dobonglife.domain.review.domain.entity;
 
+import com.umust.dobonglife.domain.review.domain.constant.ReviewStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,6 +27,9 @@ public class Review {
     @JoinColumn(name = "place_id", nullable = false)
     private Long placeId;
 
+    @JoinColumn(name = "user_id", nullable = false)
+    private Long userId;
+
     @Column(name = "rating", nullable = true)
     private Double rating;
 
@@ -33,24 +39,34 @@ public class Review {
     @Column(name = "content", nullable = true, columnDefinition = "VARCHAR(500)")
     private String content;
 
-    @ElementCollection
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ReviewStatus status = ReviewStatus.POSTED;
+
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "review_images", joinColumns = @JoinColumn(name = "review_id"))
-    private List<String> imageUrls;
+    private List<String> imageUrls = new ArrayList<>();
 
 
-    private Review(Long courseId, Long placeId, Double rating, String title, String content, List<String> imageUrls) {
+    private Review(Long courseId, Long userId, Long placeId, Double rating, String title, String content, List<String> imageUrls) {
         this.courseId = courseId;
         this.placeId = placeId;
+        this.userId = userId;
         this.rating = rating;
         this.title = title;
         this.content = content;
+        this.createdAt = LocalDateTime.now();
         this.imageUrls = imageUrls;
     }
 
-    public static Review create(Long courseId, Long placeId, Double rating,
+    public static Review create(Long courseId, Long userId, Long placeId, Double rating,
                                 String title, String content, List<String> imageUrls) {
         validateRating(rating);
-        return new Review(courseId, placeId, rating, title, content, imageUrls);
+        return new Review(courseId, placeId, userId, rating, title, content, imageUrls);
     }
 
     /**

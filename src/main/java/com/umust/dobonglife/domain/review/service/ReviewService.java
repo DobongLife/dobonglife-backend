@@ -5,14 +5,23 @@ import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.place.model.Place;
 import com.umust.dobonglife.domain.place.model.repository.PlaceRepository;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
-import com.umust.dobonglife.domain.review.infrastructure.repository.ReviewRepository;
+import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
 import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
+import com.umust.dobonglife.domain.review.presentation.dto.response.MyReviewsScreenResponse;
+import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewItem;
 import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewResponse;
+import com.umust.dobonglife.domain.review.service.dto.ReviewItemProjection;
 import com.umust.dobonglife.domain.review.service.dto.ReviewStatsDto;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +31,34 @@ public class ReviewService {
     private final CourseRepository courseRepository;
     private final PlaceRepository placeRepository;
 
+    public MyReviewsScreenResponse getMyReviewManagementData(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        long reviewNum = reviewRepository.findByUserId(userId).stream().count();
+        List<ReviewItem> reviewList = getMockReviewItems(userId, pageable);
+
+        return new MyReviewsScreenResponse(reviewNum, reviewList);
+    }
+    private List<ReviewItem> getMockReviewItems(Long userId, Pageable pageable) {
+        // Fetch Join을 사용한 N+1 문제 방지
+        Page<ReviewItemProjection> reviewPage = reviewRepository.findReviewItemsByUserId(userId, pageable);
+
+        return reviewPage.getContent().stream()
+                .map(projection -> new ReviewItem(
+                        projection.getReviewId(),
+                        projection.getCourseName(),
+                        projection.getPlaceName(),
+                        projection.getRating(),
+                        projection.getContentSummary(),
+                        projection.getWrittenDate(),
+                        projection.getLikeCount(),
+                        projection.getImageCount(),
+                        projection.getThumbnailUrl()
+                ))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
-    public ReviewResponse createReview(CreateReviewRequest request) {
+    public ReviewResponse createReview(Long userId, CreateReviewRequest request) {
         Long courseId = request.courseId();
         Long placeId = request.placeId();
 
@@ -33,6 +68,7 @@ public class ReviewService {
         Review review = Review.create(
                 courseId,
                 placeId,
+                userId,
                 request.rating(),
                 request.title(),
                 request.content(),
