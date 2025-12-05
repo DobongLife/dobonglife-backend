@@ -22,13 +22,17 @@ public class PlaceController {
 
     @GetMapping
     public BaseResponse<PlaceListResponse> getPlaceByTheme(@RequestBody ThemeRequest request){
-        PlaceListResponse response = placeService.getPlaceByTheme(request);
-        return BaseResponse.ok(response);
+        return BaseResponse.ok(placeService.getPlaceByTheme(request));
     }
 
     @PostMapping("/{placeId}/like")
     public BaseResponse<Void> likePlace(@PathVariable("placeId") Long placeId){
         placeService.toggleLikes(1L, placeId);
         return BaseResponse.ok(null);
+    }
+
+    @GetMapping("/like/my")
+    public BaseResponse<PlaceListResponse> getMyLikedPlace(){
+        return BaseResponse.ok(placeService.getLikedPlace(1L));
     }
 }

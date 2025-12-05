@@ -106,11 +106,17 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceListResponse getLikePlace(Long userId, Long placeId) {
-        List<PlaceLike> likes = placeLikeRepository.findByUser_IdAndStatus(userId, BaseStatus.ACTIVE);
-        List<Place> places = likes.stream()
-                .map(PlaceLike::getPlace)
+    public PlaceListResponse getLikedPlace(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        List<Place> likedPlaces = placeLikeRepository.findLikedPlacesByUserId(userId);
+
+        List<PlaceResponse> responses = likedPlaces.stream()
+                .map(PlaceResponse::from)
                 .toList();
+
+        return PlaceListResponse.from(responses);
     }
 
 }
