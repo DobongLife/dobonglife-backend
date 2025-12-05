@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.course.presentation.dto.request;
+package com.umust.dobonglife.domain.course.controller.dto.request;
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;

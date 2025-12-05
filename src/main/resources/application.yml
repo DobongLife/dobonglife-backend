@@ -61,6 +61,7 @@ spring:
     import: optional:file:.env[.properties]
   web:
     resources:
+<<<<<<< Updated upstream
       add-mappings: false
 #  mail:
 #    host: smtp.gmail.com
@@ -71,6 +72,9 @@ spring:
 #      mail.smtp.auth: true
 #      mail.smtp.timeout: 5000
 #      mail.smtp.starttls.enable: true
+=======
+      add-mappings: true
+>>>>>>> Stashed changes
 
 #jwt:
 #  secret: ${JWT_SECRET_KEY}

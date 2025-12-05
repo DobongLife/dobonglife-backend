@@ -24,6 +24,10 @@ public class Course {
     @Column(nullable = true)
     private String subTitle;
     @Column(nullable = false)
+    private Double averageRating = 0.0;
+    @Column(nullable = true)
+    private Long reviewCount = 0L;
+    @Column(nullable = false)
     @ElementCollection
     private List<CourseTheme> themes;
     @Column(nullable = false)
@@ -100,6 +104,11 @@ public class Course {
         validateAgeLimit(ageLimit);
 
         return new Course(title, subTitle, themes, duration, level, tags, imageUrls, content, meetingPlace, contact, cost, maxNum, ageLimit, cancelPolicy, weatherPolicy, highlights, exclusions, inclusions);
+    }
+
+    public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
+        this.averageRating = newAverageRating;
+        this.reviewCount = newReviewCount;
     }
 
     // 검증 메서드

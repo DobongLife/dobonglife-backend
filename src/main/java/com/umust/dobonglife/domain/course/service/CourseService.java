@@ -3,12 +3,12 @@ package com.umust.dobonglife.domain.course.service;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.entity.CoursePlans;
 import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
-import com.umust.dobonglife.domain.course.exception.CourseException;
-import com.umust.dobonglife.domain.course.presentation.dto.request.CreateCourseRequest;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseDetailResponse;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseResponse;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
+import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.s3.S3Utils;
 import jakarta.transaction.Transactional;
@@ -35,7 +35,7 @@ public class CourseService {
 
     public CourseDetailResponse getCourse(Long courseId) {
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseException(ErrorCode.INVALID_COURSE_ID));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
 
         List<CoursePlans> plans = coursePlansRepository.findByCourseIdOrderByDateTime(courseId);
         return CourseDetailResponse.from(course, plans);

@@ -1,9 +1,9 @@
-package com.umust.dobonglife.domain.course.presentation;
+package com.umust.dobonglife.domain.course.controller;
 
-import com.umust.dobonglife.domain.course.presentation.dto.request.CreateCourseRequest;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseDetailResponse;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseResponse;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.course.presentation.dto.response;
+package com.umust.dobonglife.domain.course.controller.dto.response;
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
@@ -11,6 +11,8 @@ public record CourseDetailResponse(
         Integer id,
         String title,
         String subTitle,
+        Double reviewRating,
+        int reviewNum,
         Double duration,
         CourseLevel level,
         List<String> tags,
@@ -34,6 +36,8 @@ public record CourseDetailResponse(
                 course.getId(),
                 course.getTitle(),
                 course.getSubTitle(),
+                course.getReviewRating(),
+                course.getReviewNum(),
                 course.getDuration(),
                 course.getLevel(),
                 course.getTags(),

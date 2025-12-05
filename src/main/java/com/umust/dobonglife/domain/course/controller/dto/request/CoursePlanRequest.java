@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.course.presentation.dto.request;
+package com.umust.dobonglife.domain.course.controller.dto.request;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
