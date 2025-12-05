@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.schedule.service;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
+import com.umust.dobonglife.domain.schedule.controller.dto.response.DailyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -67,6 +70,41 @@ public class ScheduleService {
                 .toList();
 
         return ScheduleListResponse.from(responses);
+    }
+
+    @Transactional(readOnly = true)
+    public ScheduleMonthResponse getMonthlySchedules(Long userId, int year, int month) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        // 9월이면: [9/1 00:00:00 ~ 10/1 00:00:00)
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = startDate.plusMonths(1).atStartOfDay();
+
+        List<Schedule> schedules = scheduleRepository.findMonthlySchedules(user.getId(), start, end);
+
+        // 엔티티 → ScheduleResponse 변환
+        List<ScheduleResponse> responses = schedules.stream()
+                .map(ScheduleResponse::from)
+                .toList();
+
+        // 날짜별 그룹핑 (TreeMap으로 날짜 순 정렬)
+        Map<LocalDate, List<ScheduleResponse>> groupedByDate =
+                responses.stream()
+                        .collect(Collectors.groupingBy(
+                                r -> r.getStartTime().toLocalDate(),
+                                TreeMap::new,
+                                Collectors.toList()
+                        ));
+
+        // Map → DailyScheduleResponse 리스트로 변환
+        List<DailyScheduleResponse> dailySchedules = groupedByDate.entrySet().stream()
+                .map(entry -> DailyScheduleResponse.of(entry.getKey(), entry.getValue()))
+                .toList();
+
+        return ScheduleMonthResponse.of(year, month, dailySchedules);
     }
 
 }
