@@ -6,8 +6,14 @@ public enum ScheduleType {
     ACTIVITY;
 
     public static ScheduleType toEnum(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("scheduleType 이 null 입니다");
+        }
+
+        String normalized = value.trim(); // 앞뒤 공백 제거
+
         for (ScheduleType scheduleType : ScheduleType.values()) {
-            if (scheduleType.name().equalsIgnoreCase(value)) {
+            if (scheduleType.name().equalsIgnoreCase(normalized)) {
                 return scheduleType;
             }
         }
