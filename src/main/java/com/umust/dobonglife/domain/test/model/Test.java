@@ -1,12 +1,12 @@
-package com.umust.dobonglife.domain.test.controller;
+package com.umust.dobonglife.domain.test.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.NONE)
 public class Test {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -22,6 +22,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -41,14 +42,23 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomLoginFilter customLoginFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomLoginFilter customLoginFilter,
+                                                   CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
                 // 기본 옵션, 폼 로그인 비활성화
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(b -> b.disable())
                 .formLogin(fl -> fl.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http
+                // 인가 규칙
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/**").permitAll()
+                        // 나머지 모든 요청은 인증 필요
+                        .anyRequest().authenticated()
+                );
 
         http
                 .addFilterBefore(jwtExceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
@@ -60,14 +70,6 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                         .accessDeniedHandler(customAccessDeniedHandler)
-                );
-
-        http
-                // 인가 규칙
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
-                        // 나머지 모든 요청은 인증 필요
-                        .anyRequest().authenticated()
                 );
 
         // OAuth2 소셜 로그인 설정

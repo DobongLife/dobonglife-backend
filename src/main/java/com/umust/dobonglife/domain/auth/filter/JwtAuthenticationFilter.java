@@ -42,7 +42,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public final static List<String> PASS_URIS = Arrays.asList(
             "/api/users/signup",
             "/api/auth/login/**",
-            "/login/oauth2/**"
+            "/login/oauth2/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/docs/**",
+            "/api/test/**"
     );
 
     private static final AntPathMatcher ANT = new AntPathMatcher();
