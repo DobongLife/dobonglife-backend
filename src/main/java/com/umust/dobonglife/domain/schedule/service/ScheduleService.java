@@ -1,6 +1,9 @@
 package com.umust.dobonglife.domain.schedule.service;
 
+import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
+import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
 import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleRepository;
@@ -24,11 +27,13 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final PlaceRepository placeRepository;
 
     @Transactional
     public void registerSchedule(ScheduleRegisterRequest request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
 
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())
@@ -38,6 +43,12 @@ public class ScheduleService {
                 .scheduleType(ScheduleType.toEnum(request.getScheduleType()))
                 .user(user)
                 .build();
+
+        if(request.getPlaceId()!=null) {
+            Place place = placeRepository.findById(request.getPlaceId())
+                    .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
+            schedule.setPlace(place);
+        }
 
         scheduleRepository.save(schedule);
     }
@@ -49,6 +60,10 @@ public class ScheduleService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         List<Schedule> schedules = scheduleRepository.findTodaySchedules(user.getId(), LocalDate.now());
+
+        List<ScheduleResponse> responses = schedules.stream()
+                .map(ScheduleResponse::from)
+                .toList();
 
         return schedules;
     }

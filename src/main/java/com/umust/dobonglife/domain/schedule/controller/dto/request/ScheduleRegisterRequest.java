@@ -13,4 +13,5 @@ public class ScheduleRegisterRequest {
     private LocalDateTime endTime;
     private String memo;
     private String scheduleType;
+    private Long placeId;
 }

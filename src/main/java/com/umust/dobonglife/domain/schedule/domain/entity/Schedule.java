@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.schedule.domain.entity;
 
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.model.BaseEntity;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "schedules")
-@Getter
+@Getter @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,4 +41,8 @@ public class Schedule extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id", nullable = true)
+    private Place place;
 }
