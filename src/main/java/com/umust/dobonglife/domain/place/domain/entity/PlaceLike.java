@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.place.domain.entity;
 
-
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import com.umust.dobonglife.global.common.model.BaseStatus;
@@ -12,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "place_likes")
 @Getter
 @Setter
-@Builder @SuperBuilder
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PlaceLike extends BaseEntity {
