@@ -103,12 +103,24 @@ tasks.named('testClasses') {
 tasks.named('test') {
 	useJUnitPlatform()
 	outputs.dir snippetsDir
+	finalizedBy asciidoctor
 }
 
-asciidoctor {
-	inputs.dir snippetsDir
+tasks.named('asciidoctor') {
+	dependsOn test
 	configurations 'asciidoctorExt'
-	depensOn test
+	inputs.dir snippetsDir
+	finalizedBy copyDocument
+
+	doFirst {
+		delete file('src/main/resources/static/docs')
+	}
+}
+
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file('build/docs/asciidoc')
+	into file('src/main/resources/static/docs')
 }
 
 bootJar {
