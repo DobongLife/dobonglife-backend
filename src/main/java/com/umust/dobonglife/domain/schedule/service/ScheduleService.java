@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.DailyScheduleResponse;
+import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
@@ -73,7 +74,7 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public ScheduleMonthResponse getMonthlySchedules(Long userId, int year, int month) {
+    public MonthlyScheduleResponse getMonthlySchedules(Long userId, int year, int month) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
@@ -85,7 +86,6 @@ public class ScheduleService {
 
         List<Schedule> schedules = scheduleRepository.findMonthlySchedules(user.getId(), start, end);
 
-        // 엔티티 → ScheduleResponse 변환
         List<ScheduleResponse> responses = schedules.stream()
                 .map(ScheduleResponse::from)
                 .toList();
@@ -99,12 +99,11 @@ public class ScheduleService {
                                 Collectors.toList()
                         ));
 
-        // Map → DailyScheduleResponse 리스트로 변환
         List<DailyScheduleResponse> dailySchedules = groupedByDate.entrySet().stream()
                 .map(entry -> DailyScheduleResponse.of(entry.getKey(), entry.getValue()))
                 .toList();
 
-        return ScheduleMonthResponse.of(year, month, dailySchedules);
+        return MonthlyScheduleResponse.of(year, month, dailySchedules);
     }
 
 }
