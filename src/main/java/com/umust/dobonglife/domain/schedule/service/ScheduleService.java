@@ -21,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -79,31 +78,27 @@ public class ScheduleService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // 9월이면: [9/1 00:00:00 ~ 10/1 00:00:00)
+        // ex) 9월이면: [9/1 00:00:00 ~ 10/1 00:00:00)
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDateTime start = startDate.atStartOfDay();
         LocalDateTime end = startDate.plusMonths(1).atStartOfDay();
 
         List<Schedule> schedules = scheduleRepository.findMonthlySchedules(user.getId(), start, end);
 
-        List<ScheduleResponse> responses = schedules.stream()
+        // 날짜별로(Key) 그루핑
+        Map<LocalDate, List<ScheduleResponse>> groupedByDate = schedules.stream()
                 .map(ScheduleResponse::from)
-                .toList();
-
-        // 날짜별 그룹핑 (TreeMap으로 날짜 순 정렬)
-        Map<LocalDate, List<ScheduleResponse>> groupedByDate =
-                responses.stream()
-                        .collect(Collectors.groupingBy(
-                                r -> r.getStartTime().toLocalDate(),
-                                TreeMap::new,
-                                Collectors.toList()
-                        ));
+                .collect(Collectors.groupingBy(
+                        r -> r.getStartTime().toLocalDate(),
+                        TreeMap::new,
+                        Collectors.toList()
+                ));
 
         List<DailyScheduleResponse> dailySchedules = groupedByDate.entrySet().stream()
                 .map(entry -> DailyScheduleResponse.of(entry.getKey(), entry.getValue()))
                 .toList();
 
-        return MonthlyScheduleResponse.of(year, month, dailySchedules);
+        return MonthlyScheduleResponse.from(dailySchedules);
     }
 
 }

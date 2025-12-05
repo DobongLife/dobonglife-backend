@@ -33,5 +33,21 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                 .orderBy(schedule.startTime.asc())
                 .fetch();
     }
+
+    @Override
+    public List<Schedule> findMonthlySchedules(Long userId, LocalDateTime start, LocalDateTime end) {
+
+        QSchedule schedule = QSchedule.schedule;
+
+        return queryFactory
+                .selectFrom(schedule)
+                .where(
+                        schedule.user.id.eq(userId),
+                        schedule.startTime.goe(start),
+                        schedule.startTime.lt(end)
+                )
+                .orderBy(schedule.startTime.asc())
+                .fetch();
+    }
 }
 

@@ -9,14 +9,10 @@ import java.util.List;
 @Builder
 public class MonthlyScheduleResponse {
 
-    private int year;
-    private int month;
     private List<DailyScheduleResponse> days;
 
-    public static MonthlyScheduleResponse of(int year, int month, List<DailyScheduleResponse> days) {
+    public static MonthlyScheduleResponse from(List<DailyScheduleResponse> days) {
         return MonthlyScheduleResponse.builder()
-                .year(year)
-                .month(month)
                 .days(days)
                 .build();
     }
