@@ -11,6 +11,7 @@ import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.CoursePlace;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.entity.PlaceLike;
+import com.umust.dobonglife.domain.place.domain.repository.PlaceLikeRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final UserRepository userRepository;
+    private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
 
     @Transactional
@@ -74,34 +76,33 @@ public class PlaceService {
     }
 
     @Transactional
-    public boolean toggleLikes(Long userId, Long placeId) {
+    public void toggleLikes(Long userId, Long placeId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         Place place = placeRepository.findById(placeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
 
-        Optional<PlaceLike> articleLikesOptional = articleLikesRepository.findByMemberIdAndArticleId(member.getId(), article.getId());
+        Optional<PlaceLike> articleLikesOptional = placeLikeRepository.findByUserIdAndPlaceId(user.getId(), place.getId());
 
         if(articleLikesOptional.isPresent()) {
-            PlaceLike articleLikes = articleLikesOptional.get();
+            PlaceLike placeLike = articleLikesOptional.get();
 
-            if(articleLikes.getStatus() == Status.DELETED) {
-                articleLikes.restore();
-                return true;
+            if(placeLike.getStatus() == BaseStatus.INACTIVE) {
+                placeLike.restore();
+                return;
             }
             else {
-                articleLikes.softDelete();
-                return false;
+                placeLike.softDelete();
+                return;
             }
         }
 
-        PlaceLike articleLikes = ArticleLikes.builder()
-                .member(member)
-                .article(article)
+        PlaceLike placeLike = PlaceLike.builder()
+                .user(user)
+                .place(place)
                 .build();
-        articleLikesRepository.save(articleLikes);
-        return true;
+        placeLikeRepository.save(placeLike);
     }
 
 
