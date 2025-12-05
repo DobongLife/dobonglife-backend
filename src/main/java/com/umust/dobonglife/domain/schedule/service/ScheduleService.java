@@ -13,6 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,7 +42,15 @@ public class ScheduleService {
         scheduleRepository.save(schedule);
     }
 
+    @Transactional (readOnly = true)
+    public List<Schedule> getTodaySchedule(Long userId) {
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        List<Schedule> schedules = scheduleRepository.findTodaySchedules(user.getId(), LocalDate.now());
+
+        return schedules;
+    }
 
 }
