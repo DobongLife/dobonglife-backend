@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.schedule.service;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
+import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
@@ -54,7 +55,7 @@ public class ScheduleService {
     }
 
     @Transactional (readOnly = true)
-    public List<Schedule> getTodaySchedule(Long userId) {
+    public ScheduleListResponse getTodaySchedule(Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
@@ -65,7 +66,7 @@ public class ScheduleService {
                 .map(ScheduleResponse::from)
                 .toList();
 
-        return schedules;
+        return ScheduleListResponse.from(responses);
     }
 
 }

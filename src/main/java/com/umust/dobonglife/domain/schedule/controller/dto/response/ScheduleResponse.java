@@ -1,7 +1,5 @@
 package com.umust.dobonglife.domain.schedule.controller.dto.response;
 
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
