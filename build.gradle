@@ -98,3 +98,9 @@ tasks.named('test') {
 	useJUnitPlatform()
 	outputs.dir snippetsDir
 }
+
+asciidoctor {
+	inputs.dir snippetsDir
+	configurations 'asciidoctorExt'
+	depensOn test
+}
