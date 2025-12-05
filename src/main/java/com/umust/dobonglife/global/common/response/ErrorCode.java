@@ -54,7 +54,12 @@ public enum ErrorCode{
     INVALID_NOTIFICATION_ID(400, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 알림 ID입니다."),
 
     // Coupon
-    INVALID_COUPON_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 쿠폰 아이디 입니다.");
+    INVALID_COUPON_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 쿠폰 아이디 입니다."),
+    INVALID_CODE(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 인증코드 입니다."),
+
+    // Promotion
+    INVALID_PROMOTION_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 프로모션 아이디 입니다.");
+
 
     private final int code;
     private final int httpStatus;

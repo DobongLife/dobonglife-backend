@@ -2,7 +2,9 @@ package com.umust.dobonglife.domain.coupon.service;
 
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
+import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.CouponRepository;
+import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.coupon.presentation.dto.request.CouponCodeRequest;
 import com.umust.dobonglife.domain.coupon.presentation.dto.response.CouponItem;
 import com.umust.dobonglife.domain.coupon.presentation.dto.response.MyCouponResponse;
@@ -22,6 +24,7 @@ import java.util.List;
 public class CouponService {
 
     private final CouponRepository couponRepository;
+    private final PromotionRepository promotionRepository;
 
     public MyCouponResponse getMyCoupon(Long userId) {
         MyCouponStatus myCouponStatus = getMyCouponStatus(userId);
@@ -40,12 +43,22 @@ public class CouponService {
 
     @Transactional
     public UsedCouponResponse useMyCoupon(CouponCodeRequest request) {
+        if(!validateCode(request.promotionId(), request.code()))
+            throw new BusinessException(ErrorCode.INVALID_CODE);
+
         Coupon coupon = couponRepository.findById(request.couponId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COUPON_ID));
         coupon.updateCouponStatus();
-
         couponRepository.save(coupon);
 
         return new UsedCouponResponse(request.couponId(), CouponStatus.USED);
     }
+
+    private boolean validateCode(Long promotionId, String code) {
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_PROMOTION_ID));
+        return promotion.getCode().equals(code);
+    }
+
+
 }
