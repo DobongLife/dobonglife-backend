@@ -84,6 +84,10 @@ dependencies {
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.767'  // AWS S3 SDK 추가
 	testImplementation 'io.findify:s3mock_2.13:0.2.6'
 
+	// Spring Rest Docs
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	testImplementation 'com.h2database:h2'
@@ -92,4 +96,5 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	outputs.dir snippetsDir
 }
