@@ -51,7 +51,10 @@ public enum ErrorCode{
 
     // Notification
     FORBIDDEN_USER_ID(403, HttpStatus.FORBIDDEN.value(), "이 알림에 대한 권한이 없습니다."),
-    INVALID_NOTIFICATION_ID(400, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 알림 ID입니다.");
+    INVALID_NOTIFICATION_ID(400, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 알림 ID입니다."),
+
+    // Coupon
+    INVALID_COUPON_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 쿠폰 아이디 입니다.");
 
     private final int code;
     private final int httpStatus;
