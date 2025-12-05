@@ -104,3 +104,11 @@ asciidoctor {
 	configurations 'asciidoctorExt'
 	depensOn test
 }
+
+bootJar {
+	dependsOn asciidoctor
+
+	from( "${asciidoctor.outputDir}") {
+		into 'static/docs'
+	}
+}
