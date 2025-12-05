@@ -6,7 +6,7 @@ import com.umust.dobonglife.domain.course.domain.repository.CoursePlaceRepositor
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponseList;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.CoursePlace;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
@@ -60,7 +60,7 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceResponseList getPlaceByTheme(ThemeRequest request){
+    public PlaceListResponse getPlaceByTheme(ThemeRequest request){
         List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
 
         List<Place> places = coursePlaces.stream()
@@ -72,7 +72,7 @@ public class PlaceService {
                 .map(PlaceResponse::from)
                 .toList();
 
-        return PlaceResponseList.from(responses);
+        return PlaceListResponse.from(responses);
     }
 
     @Transactional
@@ -105,5 +105,12 @@ public class PlaceService {
         placeLikeRepository.save(placeLike);
     }
 
+    @Transactional(readOnly = true)
+    public PlaceListResponse getLikePlace(Long userId, Long placeId) {
+        List<PlaceLike> likes = placeLikeRepository.findByUser_IdAndStatus(userId, BaseStatus.ACTIVE);
+        List<Place> places = likes.stream()
+                .map(PlaceLike::getPlace)
+                .toList();
+    }
 
 }

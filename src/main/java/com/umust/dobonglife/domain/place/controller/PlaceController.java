@@ -2,14 +2,11 @@ package com.umust.dobonglife.domain.place.controller;
 
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponseList;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,8 +21,14 @@ public class PlaceController {
     }
 
     @GetMapping
-    public BaseResponse<PlaceResponseList> getPlaceByTheme(@RequestBody ThemeRequest request){
-        PlaceResponseList response = placeService.getPlaceByTheme(request);
+    public BaseResponse<PlaceListResponse> getPlaceByTheme(@RequestBody ThemeRequest request){
+        PlaceListResponse response = placeService.getPlaceByTheme(request);
         return BaseResponse.ok(response);
+    }
+
+    @PostMapping("/{placeId}/like")
+    public BaseResponse<Void> likePlace(@PathVariable("placeId") Long placeId){
+        placeService.toggleLikes(1L, placeId);
+        return BaseResponse.ok(null);
     }
 }

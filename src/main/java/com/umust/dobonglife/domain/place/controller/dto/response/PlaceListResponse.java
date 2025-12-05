@@ -7,10 +7,10 @@ import java.util.List;
 
 @Getter
 @Builder
-public class PlaceResponseList {
+public class PlaceListResponse {
     List<PlaceResponse> responseList;
 
-    public static PlaceResponseList from(final List<PlaceResponse> responseList) {
+    public static PlaceListResponse from(final List<PlaceResponse> responseList) {
         return builder().responseList(responseList).build();
     }
 }
