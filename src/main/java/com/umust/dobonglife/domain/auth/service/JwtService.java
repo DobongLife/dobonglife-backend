@@ -78,7 +78,7 @@ public class JwtService {
         redisService.setValues(REFRESH_TOKEN_KEY_PREFIX+refreshToken, String.valueOf(userId), Duration.ofMillis(REFRESH_TOKEN_EXPIRED_IN));
     }
 
-    private void deleteRefreshToken(String refreshToken){
+    public void deleteRefreshToken(String refreshToken){
         if(refreshToken == null){
             throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
         }
