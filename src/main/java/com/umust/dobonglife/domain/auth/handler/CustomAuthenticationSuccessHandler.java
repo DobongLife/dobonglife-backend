@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -46,18 +48,32 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         jwtService.storeRefreshToken(refreshToken, userId);
         log.info("[CustomAuthenticationSuccessHandler], refreshToken={}", refreshToken);
 
-        TokenResponse tokenResponse = TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-        writeResponse(response, BaseResponse.ok(tokenResponse));
+        // ⚠ URL에 실을 거라 인코딩 한번 해주는 게 안전
+        String encodedAccess = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
+        String encodedRefresh = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
+
+        // 👉 앱이랑 약속한 딥링크 주소 (앱 개발자랑 scheme/host/path 맞춰야 함)
+        String redirectUri = "dobonglife://auth/kakao"
+                + "?accessToken=" + encodedAccess
+                + "&refreshToken=" + encodedRefresh;
+
+        response.sendRedirect(redirectUri);
+
+
     }
 
-    private void writeResponse(HttpServletResponse response, Object value) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        String body = objectMapper.writeValueAsString(value);
-        response.getWriter().write(body);
-    }
+//        TokenResponse tokenResponse = TokenResponse.builder()
+//                .accessToken(accessToken)
+//                .refreshToken(refreshToken)
+//                .build();
+//        writeResponse(response, BaseResponse.ok(tokenResponse));
+//    }
+//
+//    private void writeResponse(HttpServletResponse response, Object value) throws IOException {
+//        response.setStatus(HttpServletResponse.SC_OK);
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//        String body = objectMapper.writeValueAsString(value);
+//        response.getWriter().write(body);
+//    }
 }
