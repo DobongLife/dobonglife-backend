@@ -41,7 +41,7 @@ public class PlaceService {
     @Transactional
     public void registerPlace(PlaceRegisterRequest request){
 
-        List<String> images = s3Utils.uploadImages(request.getImageUrls());
+        List<String> images = s3Utils.uploadImages(request.getImages());
 
         Place place = Place.builder()
                 .name(request.getPlaceName())
