@@ -31,7 +31,7 @@ public class Place extends BaseEntity {
     @ElementCollection(targetClass = Amenity.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "amenities", joinColumns = @JoinColumn(name = "place_id"))
     @Enumerated(EnumType.STRING)
-    private List<Amenity> amenities = new ArrayList<>();
+    private List<Amenity> amenities;
 
     @Column(name = "address", nullable = false)
     private String address;
@@ -39,7 +39,7 @@ public class Place extends BaseEntity {
     @ElementCollection
     @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
     @Column(columnDefinition = "TEXT")
-    private List<String> placeImages = new ArrayList<>();
+    private List<String> placeImages;
 
     @Column(name = "operating_hour", nullable = false)
     private String operatingHour;
