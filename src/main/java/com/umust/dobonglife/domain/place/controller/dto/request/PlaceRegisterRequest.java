@@ -28,7 +28,7 @@ public class PlaceRegisterRequest {
 
     private String operatingHour;
 
-    @NotEmpty(message = "이미지는 최소 1개 이상 필수입니다")
-    @Size(min = 1, max = 5, message = "이미지는 1개 이상 5개 이하로 등록해야 합니다")
-    private List<@NotBlank @Pattern(regexp = "^(https?://)?([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$") MultipartFile> imageUrls;
+    @NotEmpty(message = "이미지는 최소 1개 이상 필수입니다.")
+    @Size(min = 1, max = 5, message = "이미지는 1개 이상 5개 이하로 등록해야 합니다.")
+    private List<MultipartFile> images;
 }
