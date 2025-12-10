@@ -5,11 +5,13 @@ import com.umust.dobonglife.domain.schedule.domain.entity.QSchedule;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import com.umust.dobonglife.domain.schedule.domain.repository.custom.ScheduleRepositoryCustom;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Repository
 @RequiredArgsConstructor
 public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
 
