@@ -83,6 +83,22 @@ dependencies {
 	testRuntimeOnly 'com.h2database:h2'
 }
 
+
+def generated = "$buildDir/generated/sources/annotationProcessor/java/main"
+
+sourceSets {
+	main {
+		java {
+			srcDir generated
+		}
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.annotationProcessorGeneratedSourcesDirectory = file(generated)
+}
+
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

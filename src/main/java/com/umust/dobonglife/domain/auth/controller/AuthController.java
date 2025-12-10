@@ -1,7 +1,7 @@
 package com.umust.dobonglife.domain.auth.controller;
 
-import com.umust.dobonglife.domain.auth.dto.request.RefreshTokenRequest;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.controller.dto.request.RefreshTokenRequest;
+import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -25,6 +25,7 @@ public class AuthController {
     @GetMapping("/login/kakao")
     public void redirectToKakao(HttpServletResponse response) throws IOException {
         response.sendRedirect("/oauth2/authorization/kakao");
+
     }
 
     @GetMapping("/login/google")

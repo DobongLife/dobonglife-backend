@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 import com.umust.dobonglife.domain.user.service.UserService;
-import com.umust.dobonglife.domain.user.dto.request.SignupRequest;
+import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 
 
 @Slf4j
