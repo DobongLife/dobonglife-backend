@@ -8,6 +8,9 @@ import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.common.response.slice.Cursor;
+import com.umust.dobonglife.global.common.response.slice.SliceResponse;
+import com.umust.dobonglife.global.common.response.slice.SortResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,16 +34,49 @@ public class PointService {
     private final PointRepository pointRepository;
 
     @Transactional(readOnly = true)
-    public PointListResponse getMyPoint (Long userId){
-        User user = userRepository.findById(userId)
+    public SliceResponse<PointResponse> getMyPoint(
+            Long userId,
+            int size,
+            String cursor
+    ) {
+        // 1. 사용자 존재 확인 (선택이지만 보통 유지)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        List<Point> points = pointRepository.findMyPoint(userId);
+        // 2. cursor decode
+        Cursor decodedCursor = Cursor.decode(cursor);
 
+        // 3. size + 1 조회
+        List<Point> points = pointRepository.findMyPoint(
+                userId,
+                size,
+                decodedCursor
+        );
+
+        // 4. hasNext 판단
+        boolean hasNext = points.size() > size;
+        if (hasNext) {
+            points = points.subList(0, size);
+        }
+
+        // 5. response 변환
         List<PointResponse> responses = points.stream()
                 .map(PointResponse::from)
                 .toList();
 
-        return PointListResponse.from(responses);
+        // 6. nextCursor 생성
+        String nextCursor = null;
+        if (hasNext && !points.isEmpty()) {
+            Point last = points.get(points.size() - 1);
+            nextCursor = new Cursor(last.getCreatedAt(), last.getId()).encode();
+        }
+
+        // 7. SliceResponse 반환
+        return new SliceResponse<>(
+                responses,
+                new SortResponse("createdAt,id", "DESC"),
+                hasNext,
+                nextCursor
+        );
     }
 }
