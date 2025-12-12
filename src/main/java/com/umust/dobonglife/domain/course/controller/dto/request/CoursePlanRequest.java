@@ -1,4 +1,9 @@
+<<<<<<< Updated upstream:src/main/java/com/umust/dobonglife/domain/course/presentation/dto/request/CoursePlanRequest.java
 package com.umust.dobonglife.domain.course.presentation.dto.request;
+=======
+package com.umust.dobonglife.domain.course.controller.dto.request;
+
+>>>>>>> Stashed changes:src/main/java/com/umust/dobonglife/domain/course/controller/dto/request/CoursePlanRequest.java
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -3,11 +3,19 @@ package com.umust.dobonglife.domain.course.service;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.entity.CoursePlans;
 import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
+<<<<<<< Updated upstream
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.presentation.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.presentation.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.presentation.dto.response.CourseResponse;
 import com.umust.dobonglife.domain.course.presentation.dto.response.CourseSummaryResponse;
+=======
+import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
+>>>>>>> Stashed changes
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.s3.S3Utils;

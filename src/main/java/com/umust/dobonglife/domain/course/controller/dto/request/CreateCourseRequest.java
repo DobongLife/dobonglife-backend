@@ -1,4 +1,9 @@
+<<<<<<< Updated upstream:src/main/java/com/umust/dobonglife/domain/course/presentation/dto/request/CreateCourseRequest.java
 package com.umust.dobonglife.domain.course.presentation.dto.request;
+=======
+package com.umust.dobonglife.domain.course.controller.dto.request;
+
+>>>>>>> Stashed changes:src/main/java/com/umust/dobonglife/domain/course/controller/dto/request/CreateCourseRequest.java
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import jakarta.validation.Valid;
