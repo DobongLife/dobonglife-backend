@@ -24,7 +24,7 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
                 .where(
                         point.user.id.eq(userId)
                 )
-                .orderBy()
+                .orderBy(point.createdAt.desc())
                 .fetch();
     }
 }
