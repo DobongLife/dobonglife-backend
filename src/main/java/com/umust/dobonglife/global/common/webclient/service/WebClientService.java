@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.webclient;
+package com.umust.dobonglife.global.common.webclient.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
