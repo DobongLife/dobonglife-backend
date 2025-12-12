@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.point.service;
 
+import com.umust.dobonglife.domain.point.controller.dto.response.PointListResponse;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
