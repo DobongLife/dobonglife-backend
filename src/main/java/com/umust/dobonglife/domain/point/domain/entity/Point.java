@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.point.domain.entity;
 
+import com.umust.dobonglife.domain.point.domain.constant.PointType;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
