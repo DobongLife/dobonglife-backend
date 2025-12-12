@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.point.service;
 
 import com.umust.dobonglife.domain.point.controller.dto.response.PointListResponse;
+import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -9,6 +10,7 @@ import com.umust.dobonglife.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,13 +27,19 @@ import java.util.List;
 public class PointService {
 
     private final UserRepository userRepository;
+    private final PointRepository pointRepository;
 
+    @Transactional(readOnly = true)
     public PointListResponse getMyPoint (Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        List<Point>
+        List<Point> points = pointRepository.;
 
+        List<PointResponse> responses = points.stream()
+                .map(PointResponse::from)
+                .toList();
 
+        return PointListResponse.from(responses);
     }
 }

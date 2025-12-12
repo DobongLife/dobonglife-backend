@@ -13,7 +13,7 @@ public class PointListResponse {
 
     List<PointResponse> pointList;
 
-    public static PointListResponse build(List<PointResponse> pointList) {
+    public static PointListResponse from(List<PointResponse> pointList) {
         return PointListResponse.builder().pointList(pointList).build();
     }
 }
