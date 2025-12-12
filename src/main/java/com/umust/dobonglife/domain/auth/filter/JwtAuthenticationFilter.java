@@ -48,7 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/swagger-resources/**",
             "/docs/**",
             "/api/test/**",
-            "/api/**"
+            "/api/**",
+            "/business/check"
     );
 
     private static final AntPathMatcher ANT = new AntPathMatcher();

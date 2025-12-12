@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.business.service;
 
 
+import com.umust.dobonglife.domain.business.controller.dto.request.BusinessNumberRequest;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -25,7 +26,7 @@ public class BusinessService {
     private static final String VALID_CODE = "01";
 
     @Transactional
-    public void checkBusinessStatus(BusinessRequestDto request, Long memberId) {
+    public void checkBusinessStatus(BusinessNumberRequest request, Long memberId) {
 
         User user = userRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
@@ -38,6 +39,7 @@ public class BusinessService {
             throw new IllegalStateException("유효하지 않은 사업자 번호입니다.");
         }
 
-        user.setRole(Role.MANAGER);
+        return;
+        // user.setRole(Role.MANAGER);
     }
 }
