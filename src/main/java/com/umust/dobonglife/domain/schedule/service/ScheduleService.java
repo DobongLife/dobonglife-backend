@@ -31,7 +31,6 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
-    private final PlaceRepository placeRepository;
 
     @Transactional
     public void registerSchedule(ScheduleRegisterRequest request, Long userId) {
@@ -46,13 +45,8 @@ public class ScheduleService {
                 .memo(request.getMemo())
                 .scheduleType(ScheduleType.toEnum(request.getScheduleType()))
                 .user(user)
+                .placeName(request.getPlaceName())
                 .build();
-
-        if(request.getPlaceId()!=null) {
-            Place place = placeRepository.findById(request.getPlaceId())
-                    .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
-            schedule.setPlace(place);
-        }
 
         scheduleRepository.save(schedule);
     }

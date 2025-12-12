@@ -35,9 +35,7 @@ public class ScheduleResponse {
                 .endTime(schedule.getEndTime())
                 .memo(schedule.getMemo())
                 .scheduleType(schedule.getScheduleType())
-                .placeName(Optional.ofNullable(schedule.getPlace())
-                        .map(Place::getName)
-                        .orElse(null))
+                .placeName(schedule.getPlaceName())
                 .build();
     }
 }
