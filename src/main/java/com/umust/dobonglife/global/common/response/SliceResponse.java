@@ -9,8 +9,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SliceResponse<T> {
     private final List<T> content;
-    private final SortResponse sort;   // 유지
-    private final int size;            // 요청 size 그대로(선택)
-    private final boolean hasNext;     // 다음 페이지 존재 여부
+    private final SortResponse sort;
+    private final int size;
+    private final boolean hasNext;
     private final String nextCursor;
 }
