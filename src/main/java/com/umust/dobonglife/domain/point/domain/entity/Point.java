@@ -20,8 +20,8 @@ public class Point extends BaseEntity {
     @Column(name = "point_id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String amount;
+    @Column(name = "amount", nullable = false)
+    private int amount;
 
     @Column(name = "reason", nullable = false)
     private String reason;
