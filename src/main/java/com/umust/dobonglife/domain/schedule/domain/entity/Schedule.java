@@ -34,6 +34,9 @@ public class Schedule extends BaseEntity {
     @Column(name = "memo", nullable = true)
     private String memo;
 
+    @Column(name = "place_name", nullable = true)
+    private String placeName;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "schedule_type", nullable = true)
     private ScheduleType scheduleType;
@@ -41,8 +44,4 @@ public class Schedule extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id", nullable = true)
-    private Place place;
 }
