@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.response;
+package com.umust.dobonglife.global.common.response.slice;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
