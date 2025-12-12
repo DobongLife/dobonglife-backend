@@ -8,7 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 public enum Role {
 
     MEMBER("MEMBER"),
-    ADMIN("ADMIN");
+    ADMIN("ADMIN"),
+    MANAGER("MANAGER");
 
     Role(String value) {
         this.value = value;
