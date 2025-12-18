@@ -1,10 +1,12 @@
 package com.umust.dobonglife.global.common.response;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 @Getter
+@Slf4j
 public class CursorResponse<T> {
     private List<T> content;
     private Long lastId;
@@ -16,10 +18,16 @@ public class CursorResponse<T> {
         this.lastId = content.isEmpty() ? null : extractId(content.get(content.size() - 1));
     }
 
-    private Long extractId(T lastItem) {
-        // 응답 객체에서 ID를 뽑아내는 로직 (예: reflection이나 인터페이스 활용)
-        // 여기서는 간단하게 CourseSummaryResponse라고 가정하거나
-        // Service에서 직접 계산해서 넘겨주는 방식을 추천합니다.
-        return null;
+    private Long extractId(T lastItem) { // TODO: 인터페이스로 처리 고려
+        if (lastItem == null) return null;
+
+        try {
+            java.lang.reflect.Field field = lastItem.getClass().getDeclaredField("id");
+            field.setAccessible(true);
+            return (Long) field.get(lastItem);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            log.error("ID 추출 실패: {}", e.getMessage());
+            return null;
+        }
     }
 }
