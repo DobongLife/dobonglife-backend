@@ -1,9 +1,4 @@
-<<<<<<< Updated upstream:src/main/java/com/umust/dobonglife/domain/course/presentation/dto/response/CourseDetailResponse.java
-package com.umust.dobonglife.domain.course.presentation.dto.response;
-=======
 package com.umust.dobonglife.domain.course.controller.dto.response;
-
->>>>>>> Stashed changes:src/main/java/com/umust/dobonglife/domain/course/controller/dto/response/CourseDetailResponse.java
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.entity.CoursePlans;
@@ -16,11 +11,8 @@ public record CourseDetailResponse(
         String title,
         String subTitle,
         Double reviewRating,
-<<<<<<< Updated upstream:src/main/java/com/umust/dobonglife/domain/course/presentation/dto/response/CourseDetailResponse.java
         Long reviewNum,
-=======
-        int reviewNum,
->>>>>>> Stashed changes:src/main/java/com/umust/dobonglife/domain/course/controller/dto/response/CourseDetailResponse.java
+
         Double duration,
         CourseLevel level,
         List<String> tags,
@@ -44,13 +36,8 @@ public record CourseDetailResponse(
                 course.getId(),
                 course.getTitle(),
                 course.getSubTitle(),
-<<<<<<< Updated upstream:src/main/java/com/umust/dobonglife/domain/course/presentation/dto/response/CourseDetailResponse.java
                 course.getAverageRating(),
                 course.getReviewCount(),
-=======
-                course.getReviewRating(),
-                course.getReviewNum(),
->>>>>>> Stashed changes:src/main/java/com/umust/dobonglife/domain/course/controller/dto/response/CourseDetailResponse.java
                 course.getDuration(),
                 course.getLevel(),
                 course.getTags(),

@@ -6,9 +6,11 @@ import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,9 +22,9 @@ public class CourseController {
 
     // 홈 메인에서의 스토리 코스 목록 조회
     @GetMapping
-    public BaseResponse<Page<CourseSummaryResponse>> getCourses(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "2") int size) {
-        Page<CourseSummaryResponse> responses = courseService.getCourses(page, size);
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@RequestParam(required = false) Long lastCourseId,
+                                                                          @RequestParam(defaultValue = "2") int size) {
+        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(lastCourseId, size);
         return BaseResponse.ok(responses);
     }
 

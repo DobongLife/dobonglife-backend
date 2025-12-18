@@ -3,30 +3,25 @@ package com.umust.dobonglife.domain.course.service;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.entity.CoursePlans;
 import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
-<<<<<<< Updated upstream
-import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
-import com.umust.dobonglife.domain.course.presentation.dto.request.CreateCourseRequest;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseDetailResponse;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseResponse;
-import com.umust.dobonglife.domain.course.presentation.dto.response.CourseSummaryResponse;
-=======
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
->>>>>>> Stashed changes
 import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.s3.S3Utils;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +29,18 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CoursePlansRepository coursePlansRepository;
     private final S3Utils s3Utils;
-    @Transactional
-    public Page<CourseSummaryResponse> getCourses(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Course> courses = courseRepository.findAllRandomOrder(pageable);
-        return courses.map(CourseSummaryResponse::from);
+
+    @Transactional(readOnly = true)
+    public CursorResponse<CourseSummaryResponse> getCourses(Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Course> courses = courseRepository.findCoursesNoOffset(lastId, pageable);
+
+        List<CourseSummaryResponse> content = courses.getContent()
+                .stream()
+                .map(CourseSummaryResponse::from)
+                .collect(Collectors.toList());
+
+        return new CursorResponse<>(content, courses.hasNext());
     }
 
     public CourseDetailResponse getCourse(Long courseId) {

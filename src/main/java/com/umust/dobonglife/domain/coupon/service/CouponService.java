@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,11 +35,13 @@ public class CouponService {
     }
 
     private List<CouponItem> getCouponItemList(Long userId) {
-        return couponRepository.getCouponItemList(userId);
+        //return couponRepository.getCouponItemList(userId);
+        return new ArrayList<>();
     }
 
     private MyCouponStatus getMyCouponStatus(Long userId) {
-        return couponRepository.getMyCouponStatus(userId);
+        //return couponRepository.getMyCouponStatus(userId);
+        return new MyCouponStatus(0,0,0);
     }
 
     @Transactional

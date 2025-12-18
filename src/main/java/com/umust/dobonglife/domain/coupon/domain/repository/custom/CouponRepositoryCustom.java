@@ -6,7 +6,7 @@ import com.umust.dobonglife.domain.coupon.presentation.dto.response.MyCouponStat
 import java.util.List;
 
 public interface CouponRepositoryCustom {
-    List<CouponItem> getCouponItemList(Long userId);
-    MyCouponStatus getMyCouponStatus(Long userId);
+    //List<CouponItem> getCouponItemList(Long userId);
+    //MyCouponStatus getMyCouponStatus(Long userId);
 
 }
