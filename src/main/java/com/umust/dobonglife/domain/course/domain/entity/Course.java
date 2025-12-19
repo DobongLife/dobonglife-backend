@@ -106,6 +106,15 @@ public class Course {
         this.reviewStats.update(newAverageRating, newReviewCount);
     }
 
+    public void applyNewReview(Double newRating) {
+        double totalScore = (this.getAverageRating() * this.getReviewCount()) + newRating;
+        Long reviewCount = this.getReviewCount();
+        reviewCount = reviewCount + 1;
+        Double averageRating = totalScore / reviewCount;
+
+        reviewStats.update(averageRating, reviewCount);
+    }
+
     public void addPlan(CoursePlans plan) {
         this.plans.add(plan);
         plan.assignCourse(this);

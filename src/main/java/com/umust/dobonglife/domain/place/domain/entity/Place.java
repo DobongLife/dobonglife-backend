@@ -58,5 +58,12 @@ public class Place extends BaseEntity {
         this.averageRating = newAverageRating;
         this.reviewCount = newReviewCount;
     }
+
+    public void applyNewReview(Double newRating) { // TODO: Course 처럼 분리할지 고민
+        double totalScore = (this.averageRating * this.reviewCount) + newRating;
+        Long reviewCount = this.reviewCount + 1;
+        reviewCount = reviewCount + 1;
+        this.averageRating = totalScore / reviewCount;
+    }
 }
 

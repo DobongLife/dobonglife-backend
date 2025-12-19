@@ -52,7 +52,7 @@ public class CourseController {
     }
 
     // 코스 수정하기
-    @PostMapping("/{courseId}")
+    @PutMapping("/{courseId}")
     public BaseResponse<CourseRegisterResponse> updateCourse(
             @PathVariable("courseId") Long courseId,
             @RequestPart("request") @Valid UpdateCourseRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
