@@ -2,13 +2,14 @@ package com.umust.dobonglife.global.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.handler.CustomAuthenticationSuccessHandler;
+import com.umust.dobonglife.domain.auth.handler.OAuth2AuthenticationSuccessHandler;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAccessDeniedHandler;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAuthenticationEntryPoint;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomJsonAuthenticationFailureHandler;
 import com.umust.dobonglife.domain.auth.exception.handler.JwtExceptionHandlerFilter;
 import com.umust.dobonglife.domain.auth.filter.CustomLoginFilter;
 import com.umust.dobonglife.domain.auth.filter.JwtAuthenticationFilter;
+import com.umust.dobonglife.domain.auth.handler.FormAuthenticationSuccessHandler;
 import com.umust.dobonglife.domain.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,9 +30,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    // Custom한 것들은 Component로 주입하기 (싱글턴 Bean)
-    // private final CustomOAuth2UserService customOuth2UserService;
-    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final FormAuthenticationSuccessHandler formAuthenticationSuccessHandler;
+    private final OAuth2AuthenticationSuccessHandler OAuth2AuthenticationSuccessHandler;
     private final CustomJsonAuthenticationFailureHandler customJsonAuthenticationFailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
@@ -77,7 +77,7 @@ public class SecurityConfig {
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
-                        .successHandler(customAuthenticationSuccessHandler));
+                        .successHandler(OAuth2AuthenticationSuccessHandler));
         return http.build();
     }
 
@@ -91,7 +91,7 @@ public class SecurityConfig {
         return new CustomLoginFilter(
                 authenticationManager(),
                 objectMapper,
-                customAuthenticationSuccessHandler,
+                formAuthenticationSuccessHandler,
                 customJsonAuthenticationFailureHandler
         );
     }
