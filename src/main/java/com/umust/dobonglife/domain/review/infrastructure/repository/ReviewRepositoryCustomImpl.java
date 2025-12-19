@@ -29,74 +29,75 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
     @Override
     public Page<ReviewItemProjection> findReviewItemsByUserId(Long userId, Pageable pageable) {
-        List<ReviewItemProjectionImpl> content = queryFactory
-                .select(Projections.constructor(ReviewItemProjectionImpl.class,
-                        review.id,
-                        course.title,
-                        place.name,
-                        review.rating,
-                        Expressions.stringTemplate("SUBSTRING({0}, 1, 100)", review.content),
-                        Expressions.dateTemplate(LocalDate.class, "CAST({0} AS date)", review.createdAt),
-                        reviewLike.id.countDistinct().intValue().coalesce(0),
-                        Expressions.constant(0),
-                        Expressions.constant("")
-                ))
-                .from(review)
-                .leftJoin(course).on(review.courseId.eq(course.id))
-                .leftJoin(place).on(review.placeId.eq(place.id))
-                .leftJoin(reviewLike).on(reviewLike.id.eq(review.id))
-                .where(review.userId.eq(userId))
-                .groupBy(
-                        review.id,
-                        course.title,
-                        place.name,
-                        review.rating,
-                        review.content,
-                        review.createdAt
-                )
-                .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        // 조회된 후기가 없으면 빈 페이지 반환
-        if (content.isEmpty()) {
-            return Page.empty(pageable);
-        }
-
-        List<Long> reviewIds = content.stream()
-                .map(ReviewItemProjection::getReviewId)
-                .collect(Collectors.toList());
-
-        Map<Long, ImageInfo> imageInfoMap = fetchImageInfoBatch(reviewIds);
-
-        List<ReviewItemProjection> result = content.stream()
-                .map(item -> {
-                    ImageInfo imageInfo = imageInfoMap.getOrDefault(
-                            item.getReviewId(),
-                            new ImageInfo(0, null)
-                    );
-                    return new ReviewItemProjectionImpl(
-                            item.getReviewId(),
-                            item.getCourseName(),
-                            item.getPlaceName(),
-                            item.getRating(),
-                            item.getContentSummary(),
-                            item.getWrittenDate(),
-                            item.getLikeCount(),
-                            imageInfo.imageCount,
-                            imageInfo.thumbnailUrl
-                    );
-                })
-                .collect(Collectors.toList());
-
-        // Count 쿼리
-        JPAQuery<Long> countQuery = queryFactory
-                .select(review.count())
-                .from(review)
-                .where(review.userId.eq(userId));
-
-        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
+        return null;
+//        List<ReviewItemProjectionImpl> content = queryFactory
+//                .select(Projections.constructor(ReviewItemProjectionImpl.class,
+//                        review.id,
+//                        course.title,
+//                        place.name,
+//                        review.rating,
+//                        Expressions.stringTemplate("SUBSTRING({0}, 1, 100)", review.content),
+//                        Expressions.dateTemplate(LocalDate.class, "CAST({0} AS date)", review.createdAt),
+//                        reviewLike.id.countDistinct().intValue().coalesce(0),
+//                        Expressions.constant(0),
+//                        Expressions.constant("")
+//                ))
+//                .from(review)
+//                .leftJoin(course).on(review.courseId.eq(course.id))
+//                .leftJoin(place).on(review.placeId.eq(place.id))
+//                .leftJoin(reviewLike).on(reviewLike.id.eq(review.id))
+//                .where(review.userId.eq(userId))
+//                .groupBy(
+//                        review.id,
+//                        course.title,
+//                        place.name,
+//                        review.rating,
+//                        review.content,
+//                        review.createdAt
+//                )
+//                .orderBy(review.createdAt.desc())
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .fetch();
+//
+//        // 조회된 후기가 없으면 빈 페이지 반환
+//        if (content.isEmpty()) {
+//            return Page.empty(pageable);
+//        }
+//
+//        List<Long> reviewIds = content.stream()
+//                .map(ReviewItemProjection::getReviewId)
+//                .collect(Collectors.toList());
+//
+//        Map<Long, ImageInfo> imageInfoMap = fetchImageInfoBatch(reviewIds);
+//
+//        List<ReviewItemProjection> result = content.stream()
+//                .map(item -> {
+//                    ImageInfo imageInfo = imageInfoMap.getOrDefault(
+//                            item.getReviewId(),
+//                            new ImageInfo(0, null)
+//                    );
+//                    return new ReviewItemProjectionImpl(
+//                            item.getReviewId(),
+//                            item.getCourseName(),
+//                            item.getPlaceName(),
+//                            item.getRating(),
+//                            item.getContentSummary(),
+//                            item.getWrittenDate(),
+//                            item.getLikeCount(),
+//                            imageInfo.imageCount,
+//                            imageInfo.thumbnailUrl
+//                    );
+//                })
+//                .collect(Collectors.toList());
+//
+//        // Count 쿼리
+//        JPAQuery<Long> countQuery = queryFactory
+//                .select(review.count())
+//                .from(review)
+//                .where(review.userId.eq(userId));
+//
+//        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
     }
 
 

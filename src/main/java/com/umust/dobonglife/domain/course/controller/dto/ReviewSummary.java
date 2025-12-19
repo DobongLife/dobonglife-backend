@@ -6,7 +6,7 @@ import com.umust.dobonglife.domain.course.domain.entity.Course;
  * 리뷰 요약 정보
  * 여러 DTO에서 재사용
  */
-record ReviewSummary(
+public record ReviewSummary(
         Double rating,
         Long count
 ) {

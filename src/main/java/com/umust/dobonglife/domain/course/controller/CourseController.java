@@ -1,7 +1,10 @@
 package com.umust.dobonglife.domain.course.controller;
 
-import com.umust.dobonglife.domain.course.controller.dto.CourseDetailResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseDeleteResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
+import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -34,8 +37,26 @@ public class CourseController {
 
     // 코스 등록하기
     @PostMapping
-    public BaseResponse<CourseResponse> registerCourse(@RequestBody @Valid CreateCourseRequest request){
-        CourseResponse response = courseService.registerCourse(request);
+    public BaseResponse<CourseRegisterResponse> createCourse(
+            @ModelAttribute @Valid CreateCourseRequest request){
+        CourseRegisterResponse response = courseService.createCourse(request);
+        return BaseResponse.ok(response);
+    }
+
+    // 코스 수정하기
+    @PostMapping("/{courseId}")
+    public BaseResponse<CourseRegisterResponse> updateCourse(
+            @PathVariable("courseId") Long courseId,
+            @ModelAttribute @Valid UpdateCourseRequest request){
+        CourseRegisterResponse response = courseService.updateCourse(courseId, request);
+        return BaseResponse.ok(response);
+    }
+
+    @DeleteMapping("/{courseId}")
+    public BaseResponse<CourseDeleteResponse> deleteCourse(
+            @PathVariable("courseId") Long courseId,
+            @ModelAttribute @Valid UpdateCourseRequest request){
+        CourseDeleteResponse response = courseService.deleteCourse(courseId);
         return BaseResponse.ok(response);
     }
 }

@@ -1,5 +1,6 @@
-package com.umust.dobonglife.domain.course.controller.dto;
+package com.umust.dobonglife.domain.course.controller.dto.response;
 
+import com.umust.dobonglife.domain.course.controller.dto.ReviewSummary;
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;

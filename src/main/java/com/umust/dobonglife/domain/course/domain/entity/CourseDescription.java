@@ -19,7 +19,7 @@ import java.util.List;
 public class CourseDescription {
 
     @Id
-    private Long courseId;
+    private Long courseDescriptionId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
@@ -49,6 +49,17 @@ public class CourseDescription {
                              List<String> exclusions,
                              List<String> inclusions) {
         this.course = course;
+        this.content = content;
+        this.highlights = highlights != null ? highlights : new ArrayList<>();
+        this.exclusions = exclusions != null ? exclusions : new ArrayList<>();
+        this.inclusions = inclusions != null ? inclusions : new ArrayList<>();
+    }
+
+    public void assignCourse(Course course) {
+        this.course = course;
+    }
+
+    public void update(String content, List<String> highlights, List<String> exclusions, List<String> inclusions) {
         this.content = content;
         this.highlights = highlights != null ? highlights : new ArrayList<>();
         this.exclusions = exclusions != null ? exclusions : new ArrayList<>();

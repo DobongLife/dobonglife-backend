@@ -37,5 +37,9 @@ public class CoursePlans {
         this.title = title;
         this.content = content;
     }
+
+    public void assignCourse(Course course) {
+        this.course = course;
+    }
 }
 

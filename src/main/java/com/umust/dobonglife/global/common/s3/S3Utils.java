@@ -103,4 +103,10 @@ public class S3Utils {
             throw new BusinessException(ErrorCode.NOT_FOUND_IMG);
         }
     }
+
+    public void deleteImages(List<String> images) {
+        for(String img : images){
+            deleteImage(img);
+        }
+    }
 }

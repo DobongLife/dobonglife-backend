@@ -63,8 +63,16 @@ public class Course {
     @OneToOne(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private CourseDescription description;
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CoursePlans> plans = new ArrayList<>();
+
     @Builder
-    public Course(CourseBasicInfo basicInfo, CourseOperationInfo operationInfo, CoursePolicyInfo policyInfo, CourseReviewStats reviewStats, List<CourseTheme> themes, List<String> tags, List<String> imageUrls, CourseDescription description) {
+    public Course(CourseBasicInfo basicInfo, CourseOperationInfo operationInfo,
+                  CoursePolicyInfo policyInfo, CourseReviewStats reviewStats,
+                  List<CourseTheme> themes, List<String> tags, List<String> imageUrls,
+                  CourseDescription description, List<CoursePlans> plans) {
+
+        validateCourse(basicInfo, operationInfo);
         this.basicInfo = basicInfo;
         this.operationInfo = operationInfo;
         this.policyInfo = policyInfo;
@@ -73,10 +81,29 @@ public class Course {
         this.tags = tags;
         this.imageUrls = imageUrls;
         this.description = description;
+
+        if (description != null) {
+            description.assignCourse(this);
+        }
+
+        this.plans = new ArrayList<>();
+        if (plans != null) {
+            plans.forEach(this::addPlan);
+        }
+    }
+
+    private void validateCourse(CourseBasicInfo basicInfo, CourseOperationInfo operationInfo) {
+        if (basicInfo == null) throw new IllegalArgumentException("기본 정보는 필수입니다.");
+        if (operationInfo == null) throw new IllegalArgumentException("운영 정보는 필수입니다.");
     }
 
     public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
         this.reviewStats.update(newAverageRating, newReviewCount);
+    }
+
+    public void addPlan(CoursePlans plan) {
+        this.plans.add(plan);
+        plan.assignCourse(this);
     }
 
     // TODO: Getter 편의 메서드, 불필요시 삭제
@@ -94,5 +121,24 @@ public class Course {
 
     public Long getReviewCount() {
         return reviewStats.getReviewCount();
+    }
+
+    public void updateBasicInfo(CourseBasicInfo basicInfo) {
+        this.basicInfo = basicInfo;
+    }
+
+    public void updateOperationInfo(CourseOperationInfo operationInfo) {
+        this.operationInfo = operationInfo;
+    }
+
+    public void updatePolicyInfo(CoursePolicyInfo policyInfo) {
+        this.policyInfo = policyInfo;
+    }
+
+    public void updatePlans(List<CoursePlans> newPlans) {
+        this.plans.clear();
+        if (newPlans != null) {
+            newPlans.forEach(this::addPlan);
+        }
     }
 }

@@ -1,13 +1,12 @@
 package com.umust.dobonglife.domain.course.controller.dto.request;
-import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
+
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
-public record CreateCourseRequest(
+public record UpdateCourseRequest(
         @NotBlank(message = "제목은 필수입니다")
         @Size(max = 100, message = "제목은 100자를 초과할 수 없습니다")
         String title,
@@ -32,6 +31,8 @@ public record CreateCourseRequest(
         @NotEmpty(message = "이미지는 최소 1개 이상 필수입니다")
         @Size(min = 1, max = 5, message = "이미지는 1개 이상 5개 이하로 등록해야 합니다")
         List<@NotBlank @Pattern(regexp = "^(https?://)?([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$") MultipartFile> imageFiles,
+
+        List<String> urlsToDelete,
 
         @NotBlank(message = "내용은 필수입니다")
         @Size(min = 10, message = "내용은 최소 10자 이상이어야 합니다")
@@ -76,7 +77,7 @@ public record CreateCourseRequest(
         @Size(max = 20, message = "일정은 최대 20개까지 등록할 수 있습니다")
         List<CoursePlanRequest> plans
 ) {
-    public CreateCourseRequest {
+    public UpdateCourseRequest {
         // null인 List를 빈 List로 변환
         if (tags == null) {
             tags = List.of();
@@ -92,3 +93,4 @@ public record CreateCourseRequest(
         }
     }
 }
+
