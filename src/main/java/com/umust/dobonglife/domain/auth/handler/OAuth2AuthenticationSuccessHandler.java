@@ -1,12 +1,8 @@
 package com.umust.dobonglife.domain.auth.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
-import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.AuthenticationUtil;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
-import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final AuthenticationUtil authenticationUtil;
     private final JwtUtil jwtUtil;
@@ -38,13 +34,13 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String role = authenticationUtil.getRole();
         Long userId = authenticationUtil.getUserId();
         String userName = authenticationUtil.getUserName();
-        log.info("[CustomAuthenticationSuccessHandler] provider={}, role={}, userId={}", provider, role, userId);
+        log.info("[OAuth2AuthenticationSuccessHandler] provider={}, role={}, userId={}", provider, role, userId);
 
         String accessToken = jwtUtil.createAccessToken(userId, provider, role, userName);
         String refreshToken = jwtUtil.createRefreshToken(userId, provider, role);
 
         jwtService.storeRefreshToken(refreshToken, userId);
-        log.info("[CustomAuthenticationSuccessHandler], refreshToken={}", refreshToken);
+        log.info("[OAuth2AuthenticationSuccessHandler], refreshToken={}", refreshToken);
 
         String encodedAccess = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
         String encodedRefresh = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);

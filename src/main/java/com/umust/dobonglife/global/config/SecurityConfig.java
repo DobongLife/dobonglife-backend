@@ -2,7 +2,7 @@ package com.umust.dobonglife.global.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.handler.CustomAuthenticationSuccessHandler;
+import com.umust.dobonglife.domain.auth.handler.OAuth2AuthenticationSuccessHandler;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAccessDeniedHandler;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAuthenticationEntryPoint;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomJsonAuthenticationFailureHandler;
@@ -31,7 +31,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     private final FormAuthenticationSuccessHandler formAuthenticationSuccessHandler;
-    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final OAuth2AuthenticationSuccessHandler OAuth2AuthenticationSuccessHandler;
     private final CustomJsonAuthenticationFailureHandler customJsonAuthenticationFailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
@@ -77,7 +77,7 @@ public class SecurityConfig {
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService)))
-                        .successHandler(customAuthenticationSuccessHandler));
+                        .successHandler(OAuth2AuthenticationSuccessHandler));
         return http.build();
     }
 
