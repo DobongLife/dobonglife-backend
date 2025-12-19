@@ -29,7 +29,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final AuthenticationUtil authenticationUtil;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
-    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
@@ -41,40 +40,19 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String userName = authenticationUtil.getUserName();
         log.info("[CustomAuthenticationSuccessHandler] provider={}, role={}, userId={}", provider, role, userId);
 
-        // 토큰 생성
         String accessToken = jwtUtil.createAccessToken(userId, provider, role, userName);
         String refreshToken = jwtUtil.createRefreshToken(userId, provider, role);
 
-        // refresh token 저장
         jwtService.storeRefreshToken(refreshToken, userId);
         log.info("[CustomAuthenticationSuccessHandler], refreshToken={}", refreshToken);
 
-        // ⚠ URL에 실을 거라 인코딩 한번 해주는 게 안전
         String encodedAccess = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
         String encodedRefresh = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
 
-        // 👉 앱이랑 약속한 딥링크 주소 (앱 개발자랑 scheme/host/path 맞춰야 함)
         String redirectUri = "dobonglife://auth/kakao"
                 + "?accessToken=" + encodedAccess
                 + "&refreshToken=" + encodedRefresh;
 
         response.sendRedirect(redirectUri);
-
-
     }
-
-//        TokenResponse tokenResponse = TokenResponse.builder()
-//                .accessToken(accessToken)
-//                .refreshToken(refreshToken)
-//                .build();
-//        writeResponse(response, BaseResponse.ok(tokenResponse));
-//    }
-//
-//    private void writeResponse(HttpServletResponse response, Object value) throws IOException {
-//        response.setStatus(HttpServletResponse.SC_OK);
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        String body = objectMapper.writeValueAsString(value);
-//        response.getWriter().write(body);
-//    }
 }
