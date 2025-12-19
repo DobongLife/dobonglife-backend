@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.courseLike.domain.entity;
+package com.umust.dobonglife.domain.reviewLike.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CourseLike {
+public class ReviewLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_id", nullable = false)
@@ -21,10 +21,13 @@ public class CourseLike {
     @Column(name = "course_id")
     private Long courseId;
 
+    @Column(name = "place_id")
+    private Long placeId;
+
     @Builder
-    public CourseLike(Long userId, Long courseId) {
+    public ReviewLike(Long userId, Long courseId, Long placeId) {
         this.userId = userId;
         this.courseId = courseId;
+        this.placeId = placeId;
     }
 }
-
