@@ -20,6 +20,12 @@ public enum ErrorCode{
     USER_DUPLICATE_NICKNAME(202, HttpStatus.BAD_REQUEST.value(), "중복된 닉네임의 사용자가 있습니다."),
     USER_MAIL_NOT_FOUND(203, HttpStatus.NOT_FOUND.value(), "해당 이메일의 사용자를 찾을 수 없습니다."),
 
+    // Place
+    PLACE_NOT_FOUND(300, HttpStatus.NOT_FOUND.value(), "장소를 찾을 수 없습니다."),
+
+    // Course
+    COURSE_NOT_FOUND(400, HttpStatus.NOT_FOUND.value(), "코스를 찾을 수 없습니다."),
+
     // Auth
     SECURITY_UNAUTHORIZED(600,HttpStatus.UNAUTHORIZED.value(), "인증 정보가 유효하지 않습니다"),
     SECURITY_INVALID_TOKEN(602, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 token입니다."),

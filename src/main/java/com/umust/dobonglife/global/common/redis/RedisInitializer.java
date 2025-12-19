@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@Profile("local")
+@Profile("local-db")
 @RequiredArgsConstructor
 public class RedisInitializer {
 

@@ -1,8 +1,7 @@
 package com.umust.dobonglife.domain.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
-import com.umust.dobonglife.domain.auth.model.Provider;
+import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.utils.AuthenticationUtil;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.global.common.response.BaseResponse;
