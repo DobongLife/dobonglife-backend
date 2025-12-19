@@ -22,6 +22,7 @@ import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.s3.S3Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -30,9 +31,11 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
@@ -69,7 +72,10 @@ public class CourseService {
     @Transactional
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {
         // 이미지
-        List<String> imageUrls = s3Utils.uploadImages(imageFiles);
+        List<String> imageUrls = new ArrayList<>();
+        if(imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
+            imageUrls = s3Utils.uploadImages(imageFiles);
+        }
 
         // vo
         CourseBasicInfo basicInfo = new CourseBasicInfo(request.title(), request.subTitle(), request.duration(), CourseLevel.valueOf(request.level()));
@@ -138,14 +144,14 @@ public class CourseService {
     }
 
     private void updateImageUrls(Course course, List<String> urlsToDelete, List<MultipartFile> newFiles) {
-        if (urlsToDelete != null) {
+        if (urlsToDelete != null && !urlsToDelete.isEmpty() && !urlsToDelete.get(0).isEmpty()) {
             urlsToDelete.forEach(url -> {
                 s3Utils.deleteImage(url);
                 course.getImageUrls().remove(url);
             });
         }
 
-        if (newFiles != null && !newFiles.isEmpty()) {
+        if (newFiles != null && !newFiles.isEmpty() && !newFiles.get(0).isEmpty()) {
             List<String> images = s3Utils.uploadImages(newFiles);
             course.getImageUrls().addAll(images);
         }
