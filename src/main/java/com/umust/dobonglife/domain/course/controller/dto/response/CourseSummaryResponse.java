@@ -17,9 +17,9 @@ public record CourseSummaryResponse(
                 course.getId(),
                 course.getImageUrls(),
                 course.getTitle(),
-                course.getSubTitle(),
+                course.getTitle(),
                 course.getTags(),
-                course.getLevel()
+                course.getBasicInfo().getLevel()
         );
     }
 }
