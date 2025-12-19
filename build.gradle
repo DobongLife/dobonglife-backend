@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.7'
@@ -29,8 +31,9 @@ repositories {
 
 ext {
 	set('snippetsDir', file("build/generated-snippets"))
+	set('openapiOutDir', file("build/api-spec"))                 // ✅ openapi 산출 고정
+	set('openapiStaticDir', file("build/resources/main/static/docs"))
 }
-
 
 dependencies {
 	// Spring Web
@@ -95,52 +98,80 @@ dependencies {
 	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
 }
 
-tasks.named('testClasses') {
-	doFirst {
-		delete file('build/docs/asciidoc')
-	}
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+	// openapi 결과를 한곳에 고정
+	set('openapiOutDir', file("$buildDir/api-spec"))
+	// swagger-ui가 읽을 파일을 static 아래에 두기
+	set('openapiStaticDir', file("$buildDir/resources/main/static/docs"))
 }
 
+// 2. 테스트 및 asciidoctor 설정
 tasks.named('test') {
 	useJUnitPlatform()
 	outputs.dir snippetsDir
-	finalizedBy asciidoctor
 }
 
 tasks.named('asciidoctor') {
 	dependsOn test
 	configurations 'asciidoctorExt'
 	inputs.dir snippetsDir
-	finalizedBy copyDocument
+	// 출력 위치를 build 내부로 한정하는 것이 좋습니다.
+	outputDir file('build/docs/asciidoc')
+}
 
-	doFirst {
-		delete file('src/main/resources/static/docs')
+// 3. OpenAPI 보안 주입 로직 (파일 경로 명확화)
+tasks.register("injectSecurityDefinition") {
+	mustRunAfter tasks.matching { it.name == 'openapi3' }
+	doLast {
+		File f = file("${openapiOutDir}/openapi3.json")
+		if (f.exists()) {
+			// 외부 라이브러리 없이 직접 문자열 치환 시도 (가장 안전한 방법)
+			String content = f.text
+			// components가 있는지 확인하고 securitySchemes 주입
+			if (!content.contains("securitySchemes")) {
+				// 간단한 JSON 조작을 위해 다시 Slurper 사용
+				def json = new groovy.json.JsonSlurper().parseText(content)
+				json.components = json.components ?: [:]
+				json.components.securitySchemes = [
+						BearerAuth: [type: "http", scheme: "bearer", bearerFormat: "JWT"]
+				]
+				json.security = [[BearerAuth: []]]
+				f.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json))
+			}
+			println "✅ Security Injected"
+		}
 	}
 }
 
-task copyDocument(type: Copy) {
-	dependsOn asciidoctor
-	from file('build/docs/asciidoc')
-	into file('src/main/resources/static/docs')
-}
-
-bootJar {
-	dependsOn asciidoctor
-	doFirst {
-		delete file('static/docs')
-	}
-	from( "${asciidoctor.outputDir}") {
-		into 'static/docs'
+// 4. 복사 작업 (가장 중요)
+tasks.register("copyOpenApiToStatic") {
+	dependsOn "injectSecurityDefinition"
+	doLast {
+		copy {
+			from openapiOutDir
+			include "openapi3.json"
+			into openapiStaticDir
+		}
 	}
 }
 
-openapi3 {
-	servers = [
-			{ url = 'http://localhost:8080' },
-			{ url = 'https://api.dobonlife.co.kr' }
-	]
-	title = 'Post Service API'
-	description = 'Post Service API description'
-	version = '1.0.0'
-	format = 'json'
+// 5. 빌드 파이프라인 정리
+// 빌드(jar 생성) 시에만 문서 복사가 포함되도록 설정
+tasks.named('bootJar') {
+	// 1. 테스트 실행 -> 2. 문서 생성 -> 3. 보안 주입 -> 4. 복사 -> 5. 빌드
+	dependsOn tasks.named('copyOpenApiToStatic')
+	dependsOn tasks.named('asciidoctor')
+
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+	// 복사된 결과물을 jar 내부의 static/docs에 포함
+	from("${openapiOutDir}") {
+		include "openapi3.json"
+		into 'BOOT-INF/classes/static/docs'
+	}
+
+	from("${asciidoctor.outputDir}") {
+		into 'BOOT-INF/classes/static/docs'
+	}
 }
