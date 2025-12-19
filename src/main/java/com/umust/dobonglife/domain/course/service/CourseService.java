@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.course.service;
 
-import com.umust.dobonglife.domain.auth.service.UserService;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.request.CoursePlanRequest;
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
@@ -18,6 +17,7 @@ import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseOperationInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CoursePolicyInfo;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
