@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,6 +28,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 
 
 @AutoConfigureRestDocs
@@ -77,7 +77,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().is3xxRedirection())
-                .andDo(MockMvcRestDocumentation.document(
+                .andDo(document(
                         "auth-login",                              // 🔹 스니펫 이름 (폴더 이름)
                         preprocessRequest(prettyPrint()),          // 요청 JSON 예쁘게
                         preprocessResponse(prettyPrint()),         // 응답 JSON 예쁘게

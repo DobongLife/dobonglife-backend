@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
+	id 'com.epages.restdocs-api-spec' version '0.18.4'
 }
 
 group = 'com.umust'
@@ -90,6 +91,8 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'com.h2database:h2'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
 }
 
 tasks.named('testClasses') {
@@ -129,4 +132,15 @@ bootJar {
 	from( "${asciidoctor.outputDir}") {
 		into 'static/docs'
 	}
+}
+
+openapi3 {
+	servers = [
+			{ url = 'http://localhost:8080' },
+			{ url = 'https://api.dobonlife.co.kr' }
+	]
+	title = 'Post Service API'
+	description = 'Post Service API description'
+	version = '1.0.0'
+	format = 'json'
 }
