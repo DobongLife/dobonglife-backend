@@ -18,16 +18,12 @@ public class ReviewLike {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "course_id")
-    private Long courseId;
-
-    @Column(name = "place_id")
-    private Long placeId;
+    @Column(name = "review_id")
+    private Long reviewId;
 
     @Builder
-    public ReviewLike(Long userId, Long courseId, Long placeId) {
+    public ReviewLike(Long userId, Long reviewId) {
         this.userId = userId;
-        this.courseId = courseId;
-        this.placeId = placeId;
+        this.reviewId = reviewId;
     }
 }
