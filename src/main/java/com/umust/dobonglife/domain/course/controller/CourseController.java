@@ -1,16 +1,13 @@
 package com.umust.dobonglife.domain.course.controller;
 
+import com.umust.dobonglife.domain.course.controller.dto.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

@@ -19,7 +19,7 @@ public record CourseSummaryResponse(
                 course.getTitle(),
                 course.getTitle(),
                 course.getTags(),
-                course.getBasicInfo().getLevel()
+                course.getLevel()
         );
     }
 }

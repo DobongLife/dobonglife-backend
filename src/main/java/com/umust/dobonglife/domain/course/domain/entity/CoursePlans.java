@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.course.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +17,9 @@ public class CoursePlans {
     @Column(name = "exclusions_id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private Long courseId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;
 
     @Column(nullable = false)
     private LocalDateTime dateTime;
@@ -28,15 +30,12 @@ public class CoursePlans {
     @Column(nullable = true)
     private String content;
 
-    private CoursePlans(Long courseId, LocalDateTime dateTime, String title, String content) {
-        this.courseId = courseId;
+    @Builder
+    public CoursePlans(Course course, LocalDateTime dateTime, String title, String content) {
+        this.course = course;
         this.dateTime = dateTime;
         this.title = title;
         this.content = content;
-    }
-
-    public static CoursePlans create(Long courseId, LocalDateTime dateTime, String title, String content) {
-        return new CoursePlans(courseId, dateTime, title, content);
     }
 }
 

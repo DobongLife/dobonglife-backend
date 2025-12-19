@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.course.domain.vo.CoursePolicyInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseReviewStats;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -62,52 +63,15 @@ public class Course {
     @OneToOne(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private CourseDescription description;
 
-    private Course(CourseBasicInfo basicInfo,
-                   CourseOperationInfo operationInfo,
-                   CoursePolicyInfo policyInfo,
-                   List<CourseTheme> themes,
-                   List<String> tags,
-                   List<String> imageUrls) {
+    @Builder
+    public Course(CourseBasicInfo basicInfo, CourseOperationInfo operationInfo, CoursePolicyInfo policyInfo, CourseReviewStats reviewStats, List<CourseTheme> themes, List<String> tags, List<String> imageUrls, CourseDescription description) {
         this.basicInfo = basicInfo;
         this.operationInfo = operationInfo;
         this.policyInfo = policyInfo;
-        this.reviewStats = new CourseReviewStats(0.0, 0L);
-        this.themes = themes != null ? themes : new ArrayList<>();
-        this.tags = tags != null ? tags : new ArrayList<>();
-        this.imageUrls = imageUrls != null ? imageUrls : new ArrayList<>();
-    }
-
-    public static Course create(
-            String title, String subTitle, Double duration, String level,
-            String meetingPlace, String contact, String cost, int maxNum, String ageLimit,
-            String cancelPolicy, String weatherPolicy,
-            List<CourseTheme> themes, List<String> tags, List<String> imageUrls,
-            String content, List<String> highlights, List<String> exclusions, List<String> inclusions) {
-
-        CourseBasicInfo basicInfo = new CourseBasicInfo(
-                title, subTitle, duration, CourseLevel.valueOf(level)
-        );
-
-        CourseOperationInfo operationInfo = new CourseOperationInfo(
-                meetingPlace, contact, cost, maxNum, ageLimit
-        );
-
-        CoursePolicyInfo policyInfo = new CoursePolicyInfo(
-                cancelPolicy, weatherPolicy
-        );
-
-        Course course = new Course(basicInfo, operationInfo, policyInfo, themes, tags, imageUrls);
-
-        // 상세 설명 설정
-        CourseDescription description = new CourseDescription(
-                course, content, highlights, exclusions, inclusions
-        );
-        course.setDescription(description);
-
-        return course;
-    }
-
-    private void setDescription(CourseDescription description) {
+        this.reviewStats = reviewStats;
+        this.themes = themes;
+        this.tags = tags;
+        this.imageUrls = imageUrls;
         this.description = description;
     }
 
