@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.support;
 
+import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.user.model.Role;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
@@ -10,9 +11,8 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = WithMockCustomUserSecurityContextFactory.class)
 public @interface WithMockCustomUser {
 
-    String email() default "test@naver.com";
+    String username() default "test@example.com";
     String password() default  "1234";
-    String username() default "test";
-
     Role role() default Role.MEMBER;
+    Provider provider() default Provider.LOCAL;
 }
