@@ -17,6 +17,7 @@ import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseOperationInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CoursePolicyInfo;
+import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -42,6 +43,7 @@ public class CourseService {
     private final CoursePlansRepository coursePlansRepository;
     private final S3Utils s3Utils;
     private final UserService userService;
+    private final CourseLikeService courseLikeService;
 
     @Transactional(readOnly = true)
     public CursorResponse<CourseSummaryResponse> getCourses(Long lastId, int size) {
@@ -59,14 +61,17 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public CourseDetailResponse getCourse(Long courseId) {
+    public CourseDetailResponse getCourse(Long userId, Long courseId) {
+        boolean isRemoved = userService.isCourseRemoved(userId, courseId);
+        boolean isFavorite = courseLikeService.isCourseFavorite(userId, courseId);
+
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
 
         List<CoursePlans> plans = coursePlansRepository
                 .findByCourseIdOrderByDateTime(courseId);
 
-        return CourseDetailResponse.from(course, plans);
+        return CourseDetailResponse.from(course, plans, isRemoved, isFavorite);
     }
 
     @Transactional

@@ -17,6 +17,7 @@ import java.util.List;
  */
 public record CourseDetailResponse(
         Long id,
+        UserInfo userInfo,
         BasicInfo basicInfo,
         OperationInfo operationInfo,
         PolicyInfo policyInfo,
@@ -25,9 +26,10 @@ public record CourseDetailResponse(
         List<String> imageUrls,
         List<CoursePlanDto> plans
 ) {
-    public static CourseDetailResponse from(Course course, List<CoursePlans> plans) {
+    public static CourseDetailResponse from(Course course, List<CoursePlans> plans, boolean isRemoved, boolean isFavorite) {
         return new CourseDetailResponse(
                 course.getId(),
+                UserInfo.from(isRemoved, isFavorite),
                 BasicInfo.from(course),
                 OperationInfo.from(course),
                 PolicyInfo.from(course),
@@ -38,7 +40,20 @@ public record CourseDetailResponse(
         );
     }
 
-
+    /**
+     * 사용자 정보
+     */
+    public record UserInfo(
+            boolean isRemoved,
+            boolean isFavorite
+    ) {
+        public static UserInfo from(boolean isRemoved, boolean isFavorite) {
+            return new UserInfo(
+                    isRemoved,
+                    isFavorite
+            );
+        }
+    }
 
     /**
      * 기본 정보
