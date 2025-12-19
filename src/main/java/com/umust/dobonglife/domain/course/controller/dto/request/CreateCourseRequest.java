@@ -28,11 +28,6 @@ public record CreateCourseRequest(
 
         @Size(max = 5, message = "태그는 최대 5개까지 등록할 수 있습니다")
         List<@NotBlank @Size(max = 20) String> tags,
-
-        @NotEmpty(message = "이미지는 최소 1개 이상 필수입니다")
-        @Size(min = 1, max = 5, message = "이미지는 1개 이상 5개 이하로 등록해야 합니다")
-        List<@NotBlank @Pattern(regexp = "^(https?://)?([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$") MultipartFile> imageFiles,
-
         @NotBlank(message = "내용은 필수입니다")
         @Size(min = 10, message = "내용은 최소 10자 이상이어야 합니다")
         String content,

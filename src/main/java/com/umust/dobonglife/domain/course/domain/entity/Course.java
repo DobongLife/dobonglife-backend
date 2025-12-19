@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseOperationInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CoursePolicyInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseReviewStats;
+import com.umust.dobonglife.domain.user.model.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,6 +25,9 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_id", nullable = false)
     private Long id;
+
+    @Column(name = "user_id")
+    private Long userId;
 
     // 기본 정보
     @Embedded
@@ -67,19 +71,21 @@ public class Course {
     private List<CoursePlans> plans = new ArrayList<>();
 
     @Builder
-    public Course(CourseBasicInfo basicInfo, CourseOperationInfo operationInfo,
+    public Course(Long userId, CourseBasicInfo basicInfo, CourseOperationInfo operationInfo,
                   CoursePolicyInfo policyInfo, CourseReviewStats reviewStats,
                   List<CourseTheme> themes, List<String> tags, List<String> imageUrls,
                   CourseDescription description, List<CoursePlans> plans) {
 
         validateCourse(basicInfo, operationInfo);
+        this.userId = userId;
         this.basicInfo = basicInfo;
         this.operationInfo = operationInfo;
         this.policyInfo = policyInfo;
-        this.reviewStats = reviewStats;
-        this.themes = themes;
-        this.tags = tags;
-        this.imageUrls = imageUrls;
+
+        this.reviewStats = (reviewStats != null) ? reviewStats : new CourseReviewStats(0.0, 0L);
+        this.themes = themes != null ? themes : new ArrayList<>();
+        this.tags = tags != null ? tags : new ArrayList<>();
+        this.imageUrls = imageUrls != null ? imageUrls : new ArrayList<>();
         this.description = description;
 
         if (description != null) {

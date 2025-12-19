@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.course.service;
 
+import com.umust.dobonglife.domain.auth.service.UserService;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.request.CoursePlanRequest;
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
@@ -37,6 +38,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CoursePlansRepository coursePlansRepository;
     private final S3Utils s3Utils;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public CursorResponse<CourseSummaryResponse> getCourses(Long lastId, int size) {
@@ -65,9 +67,9 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseRegisterResponse createCourse(CreateCourseRequest request) {
+    public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {
         // 이미지
-        List<String> imageUrls = s3Utils.uploadImages(request.imageFiles());
+        List<String> imageUrls = s3Utils.uploadImages(imageFiles);
 
         // vo
         CourseBasicInfo basicInfo = new CourseBasicInfo(request.title(), request.subTitle(), request.duration(), CourseLevel.valueOf(request.level()));
@@ -82,6 +84,7 @@ public class CourseService {
         List<CoursePlans> plans = convertToPlans(request.plans());
 
         Course course = Course.builder()
+                .userId(userId)
                 .basicInfo(basicInfo)
                 .operationInfo(operationInfo)
                 .policyInfo(policyInfo)
@@ -98,11 +101,11 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseRegisterResponse updateCourse(Long courseId, UpdateCourseRequest request) {
+    public CourseRegisterResponse updateCourse(Long courseId, UpdateCourseRequest request, List<MultipartFile> imageFiles) {
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
 
-        updateImageUrls(course, request.urlsToDelete(), request.imageFiles());
+        updateImageUrls(course, request.urlsToDelete(), imageFiles);
 
         course.updateBasicInfo(new CourseBasicInfo(request.title(), request.subTitle(), request.duration(), CourseLevel.valueOf(request.level())));
         course.updateOperationInfo(new CourseOperationInfo(request.meetingPlace(), request.contact(), request.cost(), request.maxNum(), request.ageLimit()));
@@ -157,9 +160,13 @@ public class CourseService {
 
     // TODO: 삭제할때 특정조건 고려
     @Transactional
-    public CourseDeleteResponse deleteCourse(Long courseId) {
+    public CourseDeleteResponse deleteCourse(Long userId, Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
+
+        boolean isRemoved = userService.isCourseRemoved(userId, course.getUserId());
+        if(!isRemoved)
+            throw new BusinessException(ErrorCode.NOT_COURSE_OWNER);
 
         if (course.getImageUrls() != null && !course.getImageUrls().isEmpty()) {
             s3Utils.deleteImages(course.getImageUrls());

@@ -27,11 +27,6 @@ public record UpdateCourseRequest(
 
         @Size(max = 5, message = "태그는 최대 5개까지 등록할 수 있습니다")
         List<@NotBlank @Size(max = 20) String> tags,
-
-        @NotEmpty(message = "이미지는 최소 1개 이상 필수입니다")
-        @Size(min = 1, max = 5, message = "이미지는 1개 이상 5개 이하로 등록해야 합니다")
-        List<@NotBlank @Pattern(regexp = "^(https?://)?([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$") MultipartFile> imageFiles,
-
         List<String> urlsToDelete,
 
         @NotBlank(message = "내용은 필수입니다")

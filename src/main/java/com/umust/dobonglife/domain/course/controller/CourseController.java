@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.course.controller;
 
+import com.umust.dobonglife.domain.auth.model.UserPrincipal;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDeleteResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
@@ -11,7 +12,11 @@ import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,8 +43,10 @@ public class CourseController {
     // 코스 등록하기
     @PostMapping
     public BaseResponse<CourseRegisterResponse> createCourse(
-            @ModelAttribute @Valid CreateCourseRequest request){
-        CourseRegisterResponse response = courseService.createCourse(request);
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestPart("request") @Valid CreateCourseRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
+        Long userId = userPrincipal.getUserId();
+        CourseRegisterResponse response = courseService.createCourse(userId, request, imageFiles);
         return BaseResponse.ok(response);
     }
 
@@ -47,16 +54,17 @@ public class CourseController {
     @PostMapping("/{courseId}")
     public BaseResponse<CourseRegisterResponse> updateCourse(
             @PathVariable("courseId") Long courseId,
-            @ModelAttribute @Valid UpdateCourseRequest request){
-        CourseRegisterResponse response = courseService.updateCourse(courseId, request);
+            @RequestPart("request") @Valid UpdateCourseRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
+        CourseRegisterResponse response = courseService.updateCourse(courseId, request,imageFiles);
         return BaseResponse.ok(response);
     }
 
     @DeleteMapping("/{courseId}")
     public BaseResponse<CourseDeleteResponse> deleteCourse(
-            @PathVariable("courseId") Long courseId,
-            @ModelAttribute @Valid UpdateCourseRequest request){
-        CourseDeleteResponse response = courseService.deleteCourse(courseId);
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable("courseId") Long courseId){
+        Long userId = userPrincipal.getUserId();
+        CourseDeleteResponse response = courseService.deleteCourse(userId, courseId);
         return BaseResponse.ok(response);
     }
 }
