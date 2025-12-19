@@ -35,8 +35,9 @@ public class CourseController {
 
     // 코스 상세보기 조회
     @GetMapping("/{courseId}")
-    public BaseResponse<CourseDetailResponse> getCourse(@PathVariable("courseId") Long courseId){
-        CourseDetailResponse response = courseService.getCourse(courseId);
+    public BaseResponse<CourseDetailResponse> getCourse(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable("courseId") Long courseId){
+        Long userId = userPrincipal.getUserId();
+        CourseDetailResponse response = courseService.getCourse(userId, courseId);
         return BaseResponse.ok(response);
     }
 

@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.courseLike.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,4 +20,10 @@ public class CourseLike {
 
     @Column(name = "course_id")
     private Long courseId;
+
+    @Builder
+    public CourseLike(Long userId, Long courseId) {
+        this.userId = userId;
+        this.courseId = courseId;
+    }
 }
