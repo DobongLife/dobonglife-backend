@@ -1,11 +1,7 @@
 package com.umust.dobonglife.domain.review.presentation;
 
 import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
-import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
-import com.umust.dobonglife.domain.review.presentation.dto.response.MyReviewsScreenResponse;
 import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewDetailResponse;
 import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewResponse;
 import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewSummaryResponse;
@@ -64,13 +60,12 @@ public class ReviewController {
     }
 
     // 내후기 - 리뷰 조회하기
-    @GetMapping
-    public BaseResponse<MyReviewsScreenResponse> getMyReview(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                                             @RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "2") int size){
+    @GetMapping("/my")
+    public BaseResponse<CursorResponse<ReviewSummaryResponse>> getMyReviews(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                                          @RequestParam(required = false) Long lastReviewId,
+                                                                          @RequestParam(defaultValue = "2") int size) {
         Long userId = userPrincipal.getUserId();
-        MyReviewsScreenResponse response = reviewService.getMyReviewManagementData(userId, page, size);
-
-        return BaseResponse.ok(response);
+        CursorResponse<ReviewSummaryResponse> responses = reviewService.getMyReviews(userId, lastReviewId, size);
+        return BaseResponse.ok(responses);
     }
 }

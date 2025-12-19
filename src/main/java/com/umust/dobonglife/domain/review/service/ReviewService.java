@@ -40,30 +40,30 @@ public class ReviewService {
     private final S3Utils s3Utils;
     private final UserService userService;
 
-    public MyReviewsScreenResponse getMyReviewManagementData(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        long reviewNum = reviewRepository.findByUserId(userId).stream().count();
-        List<ReviewItem> reviewList = getMockReviewItems(userId, pageable);
-
-        return new MyReviewsScreenResponse(reviewNum, reviewList);
+    public CursorResponse<ReviewSummaryResponse> getReviews(Long userId, Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Review> reviews = reviewRepository.findReviewsNoOffset(lastId, pageable);
+        return convertToReviewResponse(userId, reviews);
     }
-    private List<ReviewItem> getMockReviewItems(Long userId, Pageable pageable) {
-        // Fetch Join을 사용한 N+1 문제 방지
-        Page<ReviewItemProjection> reviewPage = reviewRepository.findReviewItemsByUserId(userId, pageable);
 
-        return reviewPage.getContent().stream()
-                .map(projection -> new ReviewItem(
-                        projection.getReviewId(),
-                        projection.getCourseName(),
-                        projection.getPlaceName(),
-                        projection.getRating(),
-                        projection.getContentSummary(),
-                        projection.getWrittenDate(),
-                        projection.getLikeCount(),
-                        projection.getImageCount(),
-                        projection.getThumbnailUrl()
-                ))
-                .collect(Collectors.toList());
+    public ReviewDetailResponse getReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Review 엔티티를 찾을 수 없습니다: " + reviewId));
+
+        return ReviewDetailResponse.from(review);
+    }
+
+    private CursorResponse<ReviewSummaryResponse> convertToReviewResponse(Long userId, Slice<Review> reviews) {
+        List<ReviewSummaryResponse> content = reviews.getContent().stream()
+                .map(review -> ReviewSummaryResponse.from(userId, review))
+                .toList();
+        return new CursorResponse<>(content, reviews.hasNext());
+    }
+
+    public CursorResponse<ReviewSummaryResponse> getMyReviews(Long userId, Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Review> reviews = reviewRepository.findMyReviewsNoOffset(userId, lastId, pageable);
+        return convertToReviewResponse(userId, reviews);
     }
 
     // TODO: 생성과 수정 중복로직 공통인터페이스로 빼기
@@ -96,7 +96,7 @@ public class ReviewService {
     public ReviewResponse updateReview(Long reviewId, Long userId, CreateReviewRequest request, List<MultipartFile> imageFiles) {
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new EntityNotFoundException("리뷰 엔티티가 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("해당 Review 엔티티가 존재하지 않습니다: " + reviewId));
 
         if(review.getId() != userId) throw new BusinessException(ErrorCode.NOT_REVIEW_OWNER);
 
@@ -111,6 +111,7 @@ public class ReviewService {
             updatePlaceRatingAndCount(request.placeId(), request.rating());
         }
 
+        review.update(request, imageUrls); // TODO: 여기서 넣을까, 안에서 넣을까
         reviewRepository.save(review);
 
         return ReviewResponse.from(review);
@@ -131,26 +132,6 @@ public class ReviewService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
         place.applyNewReview(rating);
         placeRepository.save(place);
-    }
-
-    public CursorResponse<ReviewSummaryResponse> getReviews(Long userId, Long lastId, int size) {
-        Pageable pageable = PageRequest.of(0, size);
-        Slice<Review> reviews = reviewRepository.findCoursesNoOffset(lastId, pageable);
-        return convertToReviewResponse(userId, reviews);
-    }
-
-    private CursorResponse<ReviewSummaryResponse> convertToReviewResponse(Long userId, Slice<Review> reviews) {
-        List<ReviewSummaryResponse> content = reviews.getContent().stream()
-                .map(review -> ReviewSummaryResponse.from(userId, review))
-                .toList();
-        return new CursorResponse<>(content, reviews.hasNext());
-    }
-
-    public ReviewDetailResponse getReview(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Review 엔티티를 찾을 수 없습니다: " + reviewId));
-
-        return ReviewDetailResponse.from(review);
     }
 
 

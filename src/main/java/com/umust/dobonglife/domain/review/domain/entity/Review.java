@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.review.domain.entity;
 import com.umust.dobonglife.domain.review.domain.constant.ReviewStatus;
+import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -67,5 +68,14 @@ public class Review {
         if (rating < 0.0 || rating > 5.0) {
             throw new IllegalArgumentException("평점은 0.0 이상 5.0 이하여야 합니다.");
         }
+    }
+
+    public void update(CreateReviewRequest request, List<String> imageUrls) {
+        this.courseId = request.courseId();
+        this.placeId = request.placeId();
+        this.rating = request.rating();
+        this.content = request.content();
+        this.imageUrls = imageUrls;
+        this.updatedAt = LocalDateTime.now();
     }
 }
