@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.course.controller;
 
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDeleteResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;

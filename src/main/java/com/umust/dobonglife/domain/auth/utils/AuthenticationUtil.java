@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.auth.utils;
 
-import com.umust.dobonglife.domain.auth.model.Provider;
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

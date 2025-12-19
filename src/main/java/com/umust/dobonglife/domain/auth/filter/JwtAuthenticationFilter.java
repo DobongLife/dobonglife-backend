@@ -3,11 +3,11 @@ package com.umust.dobonglife.domain.auth.filter;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAuthenticationEntryPoint;
-import com.umust.dobonglife.domain.auth.model.Provider;
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
-import com.umust.dobonglife.domain.user.model.Role;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/swagger-resources/**",
             "/docs/**",
             "/api/test/**",
-            "/course/**"
+            "/api/**"
     );
 
     private static final AntPathMatcher ANT = new AntPathMatcher();

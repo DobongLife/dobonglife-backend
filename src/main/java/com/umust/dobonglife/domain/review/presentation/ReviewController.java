@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.review.presentation;
 
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
 import com.umust.dobonglife.domain.review.presentation.dto.response.MyReviewsScreenResponse;
 import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewResponse;

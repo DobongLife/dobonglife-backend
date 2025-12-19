@@ -1,12 +1,10 @@
 package com.umust.dobonglife.domain.coupon.presentation;
 
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.coupon.presentation.dto.request.CouponCodeRequest;
 import com.umust.dobonglife.domain.coupon.presentation.dto.response.MyCouponResponse;
 import com.umust.dobonglife.domain.coupon.presentation.dto.response.UsedCouponResponse;
 import com.umust.dobonglife.domain.coupon.service.CouponService;
-import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
-import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewResponse;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

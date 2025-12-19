@@ -1,13 +1,13 @@
 package com.umust.dobonglife.domain.user.service;
 
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
-import com.umust.dobonglife.domain.auth.model.Provider;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
-import com.umust.dobonglife.domain.user.dto.request.SignupRequest;
-import com.umust.dobonglife.domain.user.model.Role;
+import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.common.exception.BusinessException;
-import com.umust.dobonglife.domain.user.repository.UserRepository;
+import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import com.umust.dobonglife.domain.user.model.User;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 
 @Slf4j
 @Service

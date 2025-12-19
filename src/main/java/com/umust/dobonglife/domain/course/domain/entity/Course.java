@@ -6,7 +6,6 @@ import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseOperationInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CoursePolicyInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseReviewStats;
-import com.umust.dobonglife.domain.user.model.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

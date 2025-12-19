@@ -1,14 +1,14 @@
 package com.umust.dobonglife.domain.auth.service;
 
-import com.umust.dobonglife.domain.auth.dto.response.GoogleResponse;
-import com.umust.dobonglife.domain.auth.dto.response.KakaoResponse;
-import com.umust.dobonglife.domain.auth.dto.response.NaverResponse;
-import com.umust.dobonglife.domain.auth.dto.response.OAuth2Response;
-import com.umust.dobonglife.domain.auth.model.Provider;
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
-import com.umust.dobonglife.domain.user.model.Role;
-import com.umust.dobonglife.domain.user.model.User;
-import com.umust.dobonglife.domain.user.repository.UserRepository;
+import com.umust.dobonglife.domain.auth.controller.dto.response.GoogleResponse;
+import com.umust.dobonglife.domain.auth.controller.dto.response.KakaoResponse;
+import com.umust.dobonglife.domain.auth.controller.dto.response.NaverResponse;
+import com.umust.dobonglife.domain.auth.controller.dto.response.OAuth2Response;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -55,7 +57,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .userName(user.getName())
                 .role(user.getRole())
                 .provider(provider)
-                .authorities(oAuth2User.getAuthorities())
+                .authorities(List.of(user.getRole().toAuthority()))
                 .build();
     }
 

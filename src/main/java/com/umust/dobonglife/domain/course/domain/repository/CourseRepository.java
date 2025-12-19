@@ -40,5 +40,4 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseRep
             @Param("lastId") Long lastId,
             Pageable pageable
     );
-
 }

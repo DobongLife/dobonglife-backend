@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.test.controller;
 
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
 import com.umust.dobonglife.domain.test.model.Test;
 import com.umust.dobonglife.domain.test.model.UploadImageRequest;
 import com.umust.dobonglife.domain.test.model.UploadImageResponse;
