@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.review.service;
 
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
@@ -7,12 +8,12 @@ import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
 import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
-import com.umust.dobonglife.domain.review.presentation.dto.response.MyReviewsScreenResponse;
-import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewItem;
-import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewResponse;
+import com.umust.dobonglife.domain.review.presentation.dto.response.*;
 import com.umust.dobonglife.domain.review.service.dto.ReviewItemProjection;
 import com.umust.dobonglife.domain.review.service.dto.ReviewStatsDto;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.s3.S3Utils;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,6 +38,7 @@ public class ReviewService {
     private final CourseRepository courseRepository;
     private final PlaceRepository placeRepository;
     private final S3Utils s3Utils;
+    private final UserService userService;
 
     public MyReviewsScreenResponse getMyReviewManagementData(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -80,7 +83,7 @@ public class ReviewService {
         Review review = Review.builder()
                 .courseId(request.courseId())
                 .placeId(request.placeId())
-                .userId(userId)
+                .user(userService.findById(userId))
                 .rating(request.rating())
                 .content(request.content())
                 .imageUrls(imageUrls)
@@ -108,7 +111,6 @@ public class ReviewService {
             updatePlaceRatingAndCount(request.placeId(), request.rating());
         }
 
-
         reviewRepository.save(review);
 
         return ReviewResponse.from(review);
@@ -116,7 +118,6 @@ public class ReviewService {
 
     @Transactional
     public void updateCourseRatingAndCount(Long courseId, Double rating) {
-
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         course.applyNewReview(rating);
@@ -131,4 +132,26 @@ public class ReviewService {
         place.applyNewReview(rating);
         placeRepository.save(place);
     }
+
+    public CursorResponse<ReviewSummaryResponse> getReviews(Long userId, Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Review> reviews = reviewRepository.findCoursesNoOffset(lastId, pageable);
+        return convertToReviewResponse(userId, reviews);
+    }
+
+    private CursorResponse<ReviewSummaryResponse> convertToReviewResponse(Long userId, Slice<Review> reviews) {
+        List<ReviewSummaryResponse> content = reviews.getContent().stream()
+                .map(review -> ReviewSummaryResponse.from(userId, review))
+                .toList();
+        return new CursorResponse<>(content, reviews.hasNext());
+    }
+
+    public ReviewDetailResponse getReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Review 엔티티를 찾을 수 없습니다: " + reviewId));
+
+        return ReviewDetailResponse.from(review);
+    }
+
+
 }

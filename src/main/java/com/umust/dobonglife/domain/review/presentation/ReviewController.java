@@ -2,11 +2,16 @@ package com.umust.dobonglife.domain.review.presentation;
 
 import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
 import com.umust.dobonglife.domain.review.presentation.dto.response.MyReviewsScreenResponse;
+import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewDetailResponse;
 import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewResponse;
+import com.umust.dobonglife.domain.review.presentation.dto.response.ReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,9 +46,22 @@ public class ReviewController {
         return BaseResponse.ok(response);
     }
 
-    // 전체 리뷰 조회하기
+    // 리뷰 전체보기
+    @GetMapping
+    public BaseResponse<CursorResponse<ReviewSummaryResponse>> getReviews(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                                          @RequestParam(required = false) Long lastReviewId,
+                                                                          @RequestParam(defaultValue = "2") int size) {
+        Long userId = userPrincipal.getUserId();
+        CursorResponse<ReviewSummaryResponse> responses = reviewService.getReviews(userId, lastReviewId, size);
+        return BaseResponse.ok(responses);
+    }
 
-    // 특정 리뷰 조회하기
+    // 코스 상세보기 조회 (특정 리뷰)
+    @GetMapping("/{reviewId}")
+    public BaseResponse<ReviewDetailResponse> getReview(@PathVariable("reviewId") Long reviewId){
+        ReviewDetailResponse response = reviewService.getReview(reviewId);
+        return BaseResponse.ok(response);
+    }
 
     // 내후기 - 리뷰 조회하기
     @GetMapping

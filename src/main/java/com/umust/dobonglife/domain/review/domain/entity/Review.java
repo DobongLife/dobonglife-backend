@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.review.domain.entity;
 import com.umust.dobonglife.domain.review.domain.constant.ReviewStatus;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,8 +27,9 @@ public class Review {
     @JoinColumn(name = "place_id", nullable = false)
     private Long placeId;
 
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Long userId;
+    private User user;
 
     @Column(name = "rating", nullable = true)
     private Double rating;
@@ -35,8 +37,8 @@ public class Review {
     @Column(name = "content", nullable = true, columnDefinition = "VARCHAR(500)")
     private String content;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "updated_at", nullable = false, updatable = false)
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -47,14 +49,14 @@ public class Review {
     private List<String> imageUrls = new ArrayList<>();
 
     @Builder
-    private Review(Long courseId, Long userId, Long placeId, Double rating, String content, List<String> imageUrls) {
-        validateRating(rating);
+    public Review(Long courseId, Long placeId, User user, Double rating, String content, LocalDateTime updatedAt, ReviewStatus status, List<String> imageUrls) {
         this.courseId = courseId;
         this.placeId = placeId;
-        this.userId = userId;
+        this.user = user;
         this.rating = rating;
         this.content = content;
-        this.createdAt = LocalDateTime.now();
+        this.updatedAt = updatedAt;
+        this.status = status;
         this.imageUrls = imageUrls;
     }
 

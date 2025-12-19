@@ -9,6 +9,7 @@ import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.response.ErrorCode;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,11 @@ public class UserService {
 
     public boolean isCourseRemoved(Long id1, Long id2) {
         return id1 == id2;
+    }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 User 엔티티가 존재하지 않습니다: " + userId));
     }
 }
 
