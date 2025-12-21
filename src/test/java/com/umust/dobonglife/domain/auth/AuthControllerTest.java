@@ -2,14 +2,14 @@ package com.umust.dobonglife.domain.auth;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.dto.request.FormLoginRequest;
-import com.umust.dobonglife.domain.auth.dto.request.RefreshTokenRequest;
-import com.umust.dobonglife.domain.auth.model.Provider;
-import com.umust.dobonglife.domain.auth.model.UserPrincipal;
+
+import com.umust.dobonglife.domain.auth.controller.dto.request.FormLoginRequest;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.auth.service.CustomUserDetailsService;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
-import com.umust.dobonglife.domain.user.model.Role;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.support.WithMockCustomUser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -93,7 +93,7 @@ class AuthControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().is3xxRedirection())
+                .andExpect(status().isOk())
                 .andDo(document(
                         "auth-login",                              // 스니펫 이름 (폴더 이름)
                         preprocessRequest(prettyPrint()),

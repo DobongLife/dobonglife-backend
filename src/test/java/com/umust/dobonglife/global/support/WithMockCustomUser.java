@@ -1,7 +1,7 @@
 package com.umust.dobonglife.global.support;
 
-import com.umust.dobonglife.domain.auth.model.Provider;
-import com.umust.dobonglife.domain.user.model.Role;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.lang.annotation.Retention;
