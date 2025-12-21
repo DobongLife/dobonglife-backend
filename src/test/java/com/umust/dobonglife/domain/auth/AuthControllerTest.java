@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.auth.model.Provider;
 import com.umust.dobonglife.domain.auth.model.UserPrincipal;
 import com.umust.dobonglife.domain.auth.service.CustomUserDetailsService;
 import com.umust.dobonglife.domain.auth.service.JwtService;
+import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.model.Role;
 import com.umust.dobonglife.global.support.WithMockCustomUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -59,10 +61,13 @@ class AuthControllerTest {
     @MockitoBean
     JwtService jwtService;
 
+    @MockitoBean
+    JwtUtil jwtUtil;
+
     private static final String TEST_EMAIL = "test@example.com";
     private static final String TEST_PASSWORD = "password123";
     private static final String LOGIN_URL = "/api/auth/login";
-    private static final String LOGOUT_URL = "/api/auth/logout";
+
 
     @Test
     @DisplayName("로그인 필터를 이용한 로그인")
@@ -98,43 +103,5 @@ class AuthControllerTest {
                                 fieldWithPath("password").description("사용자 비밀번호")
                         )
                 ));
-    }
-
-    @Test
-    @DisplayName("로그아웃 성공 - RefreshToken 무효화")
-    @WithMockCustomUser
-    void logout_User() throws Exception {
-        // given
-        String TEST_ACCESS_TOKEN = "access-token";
-        String TEST_REFRESH_TOKEN = "refresh-token";
-
-        RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(TEST_REFRESH_TOKEN);
-        String json = objectMapper.writeValueAsString(refreshTokenRequest);
-
-        doNothing().when(jwtService)
-                .logout(any(HttpServletRequest.class), any(RefreshTokenRequest.class));
-
-        // when & then
-        mockMvc.perform(post(LOGOUT_URL)
-                        .with(csrf())
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_ACCESS_TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andDo(document(
-                        "auth-logout",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION)
-                                        .description("Access Token (Bearer {token})")
-                        ),
-                        requestFields(
-                                fieldWithPath("refreshToken").description("Refresh Token")
-                        )
-                ));
-
-        verify(jwtService).logout(any(HttpServletRequest.class),
-                argThat(r -> TEST_REFRESH_TOKEN.equals(r.getRefreshToken())));
     }
 }

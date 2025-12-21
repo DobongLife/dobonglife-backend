@@ -120,9 +120,17 @@ tasks.named('asciidoctor') {
 	outputDir file('build/docs/asciidoc')
 }
 
+openapi3 {
+	server = 'http://localhost:8080'
+	title = '도봉생활 API 문서'
+	description = 'Spring RestDocs를 이용해 생성된 OpenAPI 3.0 문서입니다.'
+	version = '1.0.0'
+	format = 'json'
+}
+
 // 3. OpenAPI 보안 주입 로직 (파일 경로 명확화)
 tasks.register("injectSecurityDefinition") {
-	mustRunAfter tasks.matching { it.name == 'openapi3' }
+	dependsOn tasks.named("openapi3")
 	doLast {
 		File f = file("${openapiOutDir}/openapi3.json")
 		if (f.exists()) {
@@ -132,6 +140,12 @@ tasks.register("injectSecurityDefinition") {
 			if (!content.contains("securitySchemes")) {
 				// 간단한 JSON 조작을 위해 다시 Slurper 사용
 				def json = new groovy.json.JsonSlurper().parseText(content)
+
+				def serverUrl = (project.findProperty("openapiServer")
+						?: System.getenv("OPENAPI_SERVER")
+						?: "http://localhost:8080")
+
+				json.servers = [[ url: serverUrl ]]
 				json.components = json.components ?: [:]
 				json.components.securitySchemes = [
 						BearerAuth: [type: "http", scheme: "bearer", bearerFormat: "JWT"]
