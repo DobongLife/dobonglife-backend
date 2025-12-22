@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -49,12 +50,6 @@ public class AuthLogoutTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @MockitoBean
-    CustomUserDetailsService customUserDetailsService;
-
     @MockitoBean
     JwtService jwtService;
 
@@ -70,16 +65,12 @@ public class AuthLogoutTest {
         // given
         String TEST_ACCESS_TOKEN = "access-token";
         String TEST_REFRESH_TOKEN = "refresh-token";
-
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(TEST_REFRESH_TOKEN);
         String json = objectMapper.writeValueAsString(refreshTokenRequest);
 
-
-        // 1) 필터가 request에서 토큰을 뽑아가는 단계 (프로젝트에 이 메서드가 있다면)
+        // when & then
         when(jwtUtil.extractAccessToken(any(HttpServletRequest.class)))
                 .thenReturn(Optional.of(TEST_ACCESS_TOKEN));
-
-        // when & then
         mockMvc.perform(post(LOGOUT_URL)
                         .with(csrf())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + TEST_ACCESS_TOKEN)
@@ -92,10 +83,16 @@ public class AuthLogoutTest {
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION)
-                                        .description("Access Token (Bearer {token})")
+                                        .description("인증된 사용자의 Access Token (Bearer {accessToken} 형식)")
                         ),
                         requestFields(
-                                fieldWithPath("refreshToken").description("Refresh Token")
+                                fieldWithPath("refreshToken")
+                                        .type(JsonFieldType.STRING)
+                                        .description(
+                                                "로그아웃 처리 대상이 되는 Refresh Token\n" +
+                                                        "- 서버에 저장된 토큰을 무효화하기 위해 사용됨\n" +
+                                                        "- Access Token 만료 여부와 관계없이 필수"
+                                        )
                         )
                 ));
         verify(jwtService).logout(any(HttpServletRequest.class),
