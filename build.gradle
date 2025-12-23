@@ -116,45 +116,65 @@ tasks.named('asciidoctor') {
 	dependsOn test
 	configurations 'asciidoctorExt'
 	inputs.dir snippetsDir
-	// 출력 위치를 build 내부로 한정하는 것이 좋습니다.
 	outputDir file('build/docs/asciidoc')
 }
 
 openapi3 {
 	server = 'http://localhost:8080'
-	title = '도봉생활 API 문서'
-	description = 'Spring RestDocs를 이용해 생성된 OpenAPI 3.0 문서입니다.'
+	title = '도봉라이프 API'
+	description = '도봉구 스토리 관광 가이드'
 	version = '1.0.0'
 	format = 'json'
 }
 
-// 3. OpenAPI 보안 주입 로직 (파일 경로 명확화)
 tasks.register("injectSecurityDefinition") {
 	dependsOn tasks.named("openapi3")
 	doLast {
 		File f = file("${openapiOutDir}/openapi3.json")
-		if (f.exists()) {
-			// 외부 라이브러리 없이 직접 문자열 치환 시도 (가장 안전한 방법)
-			String content = f.text
-			// components가 있는지 확인하고 securitySchemes 주입
-			if (!content.contains("securitySchemes")) {
-				// 간단한 JSON 조작을 위해 다시 Slurper 사용
-				def json = new groovy.json.JsonSlurper().parseText(content)
-
-				def serverUrl = (project.findProperty("openapiServer")
-						?: System.getenv("OPENAPI_SERVER")
-						?: "http://localhost:8080")
-
-				json.servers = [[ url: serverUrl ]]
-				json.components = json.components ?: [:]
-				json.components.securitySchemes = [
-						BearerAuth: [type: "http", scheme: "bearer", bearerFormat: "JWT"]
-				]
-				json.security = [[BearerAuth: []]]
-				f.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json))
-			}
-			println "✅ Security Injected"
+		if (!f.exists()) {
+			println "openapi3.json not found"
+			return
 		}
+
+		def json = new groovy.json.JsonSlurper().parseText(f.text)
+
+		// info 최종 정리
+		json.info = [
+				title      : "도봉라이프 API",
+				description: "도봉구 스토리 관광 가이드",
+				version    : "1.0.0"
+		]
+
+		// 서버 2개 명시
+		json.servers = [
+				[
+						url        : "http://localhost:8080",
+						description: "로컬 개발 서버"
+				],
+				[
+						url        : "https://api.dobonglife.co.kr",
+						description: "운영 서버"
+				]
+		]
+
+		// security scheme
+		json.components = json.components ?: [:]
+		json.components.securitySchemes = [
+				BearerAuth: [
+						type        : "http",
+						scheme      : "bearer",
+						bearerFormat: "JWT"
+				]
+		]
+
+		// 전역 security 적용
+		json.security = [[BearerAuth: []]]
+
+		f.text = groovy.json.JsonOutput.prettyPrint(
+				groovy.json.JsonOutput.toJson(json)
+		)
+
+		println "✅ OpenAPI info / servers / security injected successfully"
 	}
 }
 
