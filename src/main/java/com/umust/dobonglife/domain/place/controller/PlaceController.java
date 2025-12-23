@@ -49,7 +49,7 @@ public class PlaceController {
     @Operation(summary = "장소 좋아요", description = "장소를 좋아요합니다.")
     @ApiResponse(
             responseCode = "200",
-            description = "장소 좋아요 에 성공하였습니다."
+            description = "장소 좋아요에 성공하였습니다."
     )
     @PostMapping("/{placeId}/like")
     public BaseResponse<Void> likePlace(@CurrentUserId Long userId,
