@@ -38,7 +38,7 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("도봉라이프 API")
+                .title("도봉라이프 API (Spring Doc)")
                 .description("도봉구 스토리 관광 가이드")
                 .version("1.0.0");
     }

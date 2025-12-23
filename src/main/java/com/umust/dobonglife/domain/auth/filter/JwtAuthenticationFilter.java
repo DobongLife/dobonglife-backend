@@ -1,10 +1,10 @@
 package com.umust.dobonglife.domain.auth.filter;
 
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAuthenticationEntryPoint;
-import com.umust.dobonglife.domain.auth.domain.constant.Provider;
-import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
@@ -47,8 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/v3/api-docs/**",
             "/swagger-resources/**",
             "/docs/**",
-            "/api/test/**",
-            "/api/**"
+            "/api/test/**"
     );
 
     private static final AntPathMatcher ANT = new AntPathMatcher();
