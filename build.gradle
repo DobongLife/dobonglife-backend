@@ -108,6 +108,9 @@ ext {
 
 // 2. 테스트 및 asciidoctor 설정
 tasks.named('test') {
+	doFirst {
+		delete file("build/generated-snippets")
+	}
 	useJUnitPlatform()
 	outputs.dir snippetsDir
 }
