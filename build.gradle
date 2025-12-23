@@ -1,7 +1,11 @@
+import groovy.json.JsonSlurper
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.7'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.asciidoctor.jvm.convert' version '3.3.2'
+	id 'com.epages.restdocs-api-spec' version '0.18.4'
 }
 
 group = 'com.umust'
@@ -18,10 +22,17 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	asciidoctorExt
 }
 
 repositories {
 	mavenCentral()
+}
+
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+	set('openapiOutDir', file("build/api-spec"))                 // ✅ openapi 산출 고정
+	set('openapiStaticDir', file("build/resources/main/static/docs"))
 }
 
 dependencies {
@@ -80,28 +91,123 @@ dependencies {
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.767'  // AWS S3 SDK 추가
 	testImplementation 'io.findify:s3mock_2.13:0.2.6'
 
-	testImplementation 'org.springframework.security:spring-security-test'
+	// Spring Rest Docs
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
+	// Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'com.h2database:h2'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
+}
+
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+	// openapi 결과를 한곳에 고정
+	set('openapiOutDir', file("$buildDir/api-spec"))
+	// swagger-ui가 읽을 파일을 static 아래에 두기
+	set('openapiStaticDir', file("$buildDir/resources/main/static/docs"))
+}
+
+// 2. 테스트 및 asciidoctor 설정
+tasks.named('test') {
+	doFirst {
+		delete file("build/generated-snippets")
+	}
+	useJUnitPlatform()
+	outputs.dir snippetsDir
+}
+
+openapi3 {
+	server = 'http://localhost:8080'
+	title = '도봉라이프 API (Rest Docs)'
+	description = '도봉구 스토리 관광 가이드'
+	version = '1.0.0'
+	format = 'json'
+}
+
+tasks.register("injectSecurityDefinition") {
+	dependsOn tasks.named("openapi3")
+	doLast {
+		File f = file("${openapiOutDir}/openapi3.json")
+		if (!f.exists()) {
+			println "openapi3.json not found"
+			return
+		}
+
+		def json = new groovy.json.JsonSlurper().parseText(f.text)
+
+		json.servers = [
+				[
+						url        : "http://localhost:8080",
+						description: "로컬 개발 서버"
+				],
+				[
+						url        : "https://api.dobonglife.co.kr",
+						description: "운영 서버"
+				]
+		]
+
+		json.components = json.components ?: [:]
+		json.components.securitySchemes = [
+				BearerAuth: [
+						type        : "http",
+						scheme      : "bearer",
+						bearerFormat: "JWT"
+				]
+		]
+
+		json.security = [[BearerAuth: []]]
+
+		f.text = groovy.json.JsonOutput.prettyPrint(
+				groovy.json.JsonOutput.toJson(json)
+		)
+
+		println "✅ OpenAPI info / servers / security injected successfully"
+	}
 }
 
 
-def generated = "$buildDir/generated/sources/annotationProcessor/java/main"
 
-sourceSets {
-	main {
-		java {
-			srcDir generated
+// 4. 복사 작업
+tasks.register("copyOpenApiToStatic") {
+	dependsOn "injectSecurityDefinition"
+	doLast {
+		copy {
+			from openapiOutDir
+			include "openapi3.json"
+			into openapiStaticDir
 		}
 	}
 }
 
-tasks.withType(JavaCompile).configureEach {
-	options.annotationProcessorGeneratedSourcesDirectory = file(generated)
+tasks.named('asciidoctor') {
+	dependsOn test
+	configurations 'asciidoctorExt'
+	inputs.dir snippetsDir
+	outputDir file('build/docs/asciidoc')
 }
 
+// 5. 빌드 파이프라인 정리
+// 빌드(jar 생성) 시에만 문서 복사가 포함되도록 설정
+tasks.named('bootJar') {
+	// 1. 테스트 실행 -> 2. 문서 생성 -> 3. 보안 주입 -> 4. 복사 -> 5. 빌드
+	dependsOn tasks.named('copyOpenApiToStatic')
+	dependsOn tasks.named('asciidoctor')
 
-tasks.named('test') {
-	useJUnitPlatform()
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+	// 복사된 결과물을 jar 내부의 static/docs에 포함
+	from("${openapiOutDir}") {
+		include "openapi3.json"
+		into 'BOOT-INF/classes/static/docs'
+	}
+
+	from("${asciidoctor.outputDir}") {
+		into 'BOOT-INF/classes/static/docs'
+	}
 }
