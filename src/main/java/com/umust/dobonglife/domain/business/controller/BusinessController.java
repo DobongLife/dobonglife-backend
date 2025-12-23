@@ -19,4 +19,11 @@ public class BusinessController {
         businessService.checkBusinessStatus(request, 1L);
         return BaseResponse.ok(null);
     }
+
+    @PostMapping
+    public BaseResponse<Void> registerBusiness(@CurrentUserId Long userId,
+            @RequestBody BusinessRequest request) {
+        businessService.registerBusiness(request, userId);
+        return BaseResponse.ok(null);
+    }
 }

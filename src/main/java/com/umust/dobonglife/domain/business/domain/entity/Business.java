@@ -7,7 +7,7 @@ import lombok.*;
 
 
 @Entity
-@Table(name = "business")
+@Table(name = "businesses")
 @Getter
 @Setter
 @Builder
