@@ -49,6 +49,7 @@ springdoc:
         url: /v3/api-docs
       - name: RestDocs
         url: /docs/openapi3.json
+    urls-primary-name: Springdoc
 jwt:
   secret: ${JWT_SECRET_KEY}
   access:
