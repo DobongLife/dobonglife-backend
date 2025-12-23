@@ -5,7 +5,6 @@ spring:
     group:
       local: local-db, common
       prod: prod-db, common
-      test: test-db, common
     active: prod
 
   config:
