@@ -115,16 +115,9 @@ tasks.named('test') {
 	outputs.dir snippetsDir
 }
 
-tasks.named('asciidoctor') {
-	dependsOn test
-	configurations 'asciidoctorExt'
-	inputs.dir snippetsDir
-	outputDir file('build/docs/asciidoc')
-}
-
 openapi3 {
 	server = 'http://localhost:8080'
-	title = '도봉라이프 API'
+	title = '도봉라이프 API (Rest Docs)'
 	description = '도봉구 스토리 관광 가이드'
 	version = '1.0.0'
 	format = 'json'
@@ -141,14 +134,6 @@ tasks.register("injectSecurityDefinition") {
 
 		def json = new groovy.json.JsonSlurper().parseText(f.text)
 
-		// info 최종 정리
-		json.info = [
-				title      : "도봉라이프 API",
-				description: "도봉구 스토리 관광 가이드",
-				version    : "1.0.0"
-		]
-
-		// 서버 2개 명시
 		json.servers = [
 				[
 						url        : "http://localhost:8080",
@@ -160,7 +145,6 @@ tasks.register("injectSecurityDefinition") {
 				]
 		]
 
-		// security scheme
 		json.components = json.components ?: [:]
 		json.components.securitySchemes = [
 				BearerAuth: [
@@ -170,7 +154,6 @@ tasks.register("injectSecurityDefinition") {
 				]
 		]
 
-		// 전역 security 적용
 		json.security = [[BearerAuth: []]]
 
 		f.text = groovy.json.JsonOutput.prettyPrint(
@@ -181,7 +164,9 @@ tasks.register("injectSecurityDefinition") {
 	}
 }
 
-// 4. 복사 작업 (가장 중요)
+
+
+// 4. 복사 작업
 tasks.register("copyOpenApiToStatic") {
 	dependsOn "injectSecurityDefinition"
 	doLast {
@@ -191,6 +176,13 @@ tasks.register("copyOpenApiToStatic") {
 			into openapiStaticDir
 		}
 	}
+}
+
+tasks.named('asciidoctor') {
+	dependsOn test
+	configurations 'asciidoctorExt'
+	inputs.dir snippetsDir
+	outputDir file('build/docs/asciidoc')
 }
 
 // 5. 빌드 파이프라인 정리
