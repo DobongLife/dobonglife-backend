@@ -18,7 +18,7 @@ public class BusinessRequest {
 
     private String introduction;
 
-    private String contact;
+    private String phoneNumber;
 
     private String email;
 
@@ -30,7 +30,7 @@ public class BusinessRequest {
 
     private String businessNumber;
 
-    private String category;
+    private String businessCategory;
 
-    private List<String> service;
+    private List<String> businessService;
 }

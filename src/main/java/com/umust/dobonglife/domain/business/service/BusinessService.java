@@ -12,6 +12,8 @@ import com.umust.dobonglife.global.common.webclient.service.WebClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
+
 
 import java.util.Map;
 
@@ -42,4 +44,19 @@ public class BusinessService {
         return;
         // user.setRole(Role.MANAGER);
     }
+
+    @Transactional
+    public void registerBusiness(BusinessRequest request, Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+
+
+
+
+
+
+    }
+
+
 }
