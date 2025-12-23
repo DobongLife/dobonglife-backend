@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.umust.dobonglife.global.common.model.BaseStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,9 +40,9 @@ public class PlaceService {
     private final S3Utils s3Utils;
 
     @Transactional
-    public void registerPlace(PlaceRegisterRequest request){
+    public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
 
-        List<String> images = s3Utils.uploadImages(request.getImages());
+        List<String> imagesUrl = s3Utils.uploadImages(images);
 
         Place place = Place.builder()
                 .name(request.getPlaceName())
@@ -53,7 +54,7 @@ public class PlaceService {
                 .address(request.getAddress())
                 .contact(request.getContact())
                 .operatingHour(request.getOperatingHour())
-                .placeImages(images)
+                .placeImages(imagesUrl)
                 .build();
 
         placeRepository.save(place);
