@@ -15,12 +15,6 @@ public class BusinessController {
 
     private final BusinessService businessService;
 
-    @PostMapping("/check")
-    public BaseResponse<Void> checkBusiness(@RequestBody BusinessNumberRequest request) {
-        businessService.checkBusinessStatus(request, 1L);
-        return BaseResponse.ok(null);
-    }
-
     @PostMapping
     public BaseResponse<Void> registerBusiness(@CurrentUserId Long userId,
             @RequestBody BusinessRequest request) {

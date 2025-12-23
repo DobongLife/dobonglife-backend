@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.business.domain.entity;
 
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
+import com.umust.dobonglife.domain.business.domain.constant.BusinessCategory;
+import com.umust.dobonglife.domain.business.domain.constant.BusinessAmenity;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
@@ -45,15 +46,18 @@ public class Business extends BaseEntity {
     private String operatingHour;
 
     @Column(nullable = false)
-    private String mangerName;
+    private String managerName;
+
+    @Column(nullable = false)
+    private String introduction;
 
     @Column(name = "business_catergory", nullable = false)
-    private String businessCategory;
+    private BusinessCategory businessCategory;
 
-    @ElementCollection(targetClass = Amenity.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "amenities", joinColumns = @JoinColumn(name = "place_id"))
+    @ElementCollection(targetClass = BusinessAmenity.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "business_amenity", joinColumns = @JoinColumn(name = "business_id"))
     @Enumerated(EnumType.STRING)
-    private List<String> businessService;
+    private List<BusinessAmenity> businessAmenity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_id")

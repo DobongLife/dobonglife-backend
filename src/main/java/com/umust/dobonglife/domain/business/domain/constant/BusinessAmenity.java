@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.business.domain.constant;
 
-public enum BusinessService {
+public enum BusinessAmenity {
     DELIVERY,
     TAKE_OUT,
     PARKING,
@@ -10,8 +10,8 @@ public enum BusinessService {
     GROUP,
     DISABLED;
 
-    public static BusinessService toEnum(String value) {
-        for (BusinessService amenity : BusinessService.values()) {
+    public static BusinessAmenity toEnum(String value) {
+        for (BusinessAmenity amenity : BusinessAmenity.values()) {
             if (amenity.name().equalsIgnoreCase(value)) {
                 return amenity;
             }

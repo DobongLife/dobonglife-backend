@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.auth;
 
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.service.CustomUserDetailsService;
 import com.umust.dobonglife.domain.auth.service.JwtService;
@@ -20,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import com.umust.dobonglife.domain.auth.controller.dto.request.RefreshTokenRequest;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 
 import java.util.Optional;
 
@@ -81,6 +83,24 @@ public class AuthLogoutTest {
                         "auth-logout",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("인증 인가 API")
+                                .summary("로그아웃")
+                                .description("RefreshToken을 무효화하여 로그아웃 처리합니다.")
+                                .requestHeaders(
+                                        headerWithName(HttpHeaders.AUTHORIZATION)
+                                                .description("Bearer {accessToken}")
+                                )
+                                .requestFields(
+                                        fieldWithPath("refreshToken")
+                                                .type(JsonFieldType.STRING)
+                                                .description("무효화할 Refresh Token")
+                                )
+                                // (선택) 응답 필드까지 있으면 더 예쁨
+                                // .responseFields(...)
+                                .build()),
+
+                        // ✅ REST Docs 스니펫도 계속 만들고 싶으면 같이 둬도 됨
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION)
                                         .description("인증된 사용자의 Access Token (Bearer {accessToken} 형식)")
@@ -88,11 +108,7 @@ public class AuthLogoutTest {
                         requestFields(
                                 fieldWithPath("refreshToken")
                                         .type(JsonFieldType.STRING)
-                                        .description(
-                                                "로그아웃 처리 대상이 되는 Refresh Token\n" +
-                                                        "- 서버에 저장된 토큰을 무효화하기 위해 사용됨\n" +
-                                                        "- Access Token 만료 여부와 관계없이 필수"
-                                        )
+                                        .description("로그아웃 처리 대상 Refresh Token")
                         )
                 ));
         verify(jwtService).logout(any(HttpServletRequest.class),

@@ -26,7 +26,7 @@ public class BusinessRequest {
 
     private String operatingHour;
 
-    private String mangerName;
+    private String managerName;
 
     private String businessNumber;
 
