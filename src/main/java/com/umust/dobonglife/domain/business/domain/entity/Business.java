@@ -32,6 +32,16 @@ public class Business extends BaseEntity {
     @Column(nullable = true)
     private String businessNumber;
 
+
+
+
+
+
+
+
+
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_id")
     private User user;

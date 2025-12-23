@@ -26,9 +26,9 @@ public class BusinessService {
     private static final String VALID_CODE = "01";
 
     @Transactional
-    public void checkBusinessStatus(BusinessNumberRequest request, Long memberId) {
+    public void checkBusinessStatus(BusinessNumberRequest request, Long userId) {
 
-        User user = userRepository.findById(memberId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Map<String, Object> response = webClientService.getCompanyStatus(request.getBusinessNumber());
