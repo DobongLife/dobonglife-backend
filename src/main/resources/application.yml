@@ -5,7 +5,7 @@ spring:
     group:
       local: local-db, common
       prod: prod-db, common
-    active: prod
+    active: local
 
   config:
     activate:
@@ -39,6 +39,12 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 50MB
+
 springdoc:
   api-docs:
     path: /v3/api-docs

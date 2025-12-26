@@ -48,12 +48,26 @@ public enum ErrorCode{
 
     // Course
     INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),
+    NOT_COURSE_OWNER(403, HttpStatus.FORBIDDEN.value(), "해당 코스를 삭제할 권한이 없습니다."),
 
     // Img
     FAIL_IMG(500, HttpStatus.INTERNAL_SERVER_ERROR.value(),"S3에 이미지를 업로드하는데 실패했습니다"),
     INVALID_IMG(400, HttpStatus.BAD_REQUEST.value(), "잘못된 파일입니다. 파일 내용이 손상되었거나 유효하지 않습니다"),
     INVALID_IMG_FORMAT(415, HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), "잘못된 파일 형식입니다. 허용되지 않은 파일 형식입니다."),
-    NOT_FOUND_IMG(404, HttpStatus.NOT_FOUND.value(), "저장된 이미지가 없습니다");
+    NOT_FOUND_IMG(404, HttpStatus.NOT_FOUND.value(), "저장된 이미지가 없습니다"),
+
+    // Notification
+    FORBIDDEN_USER_ID(403, HttpStatus.FORBIDDEN.value(), "이 알림에 대한 권한이 없습니다."),
+    INVALID_NOTIFICATION_ID(400, HttpStatus.BAD_REQUEST.value(), "존재하지 않는 알림 ID입니다."),
+
+    // Coupon
+    INVALID_COUPON_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 쿠폰 아이디 입니다."),
+    INVALID_CODE(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 인증코드 입니다."),
+
+    // Promotion
+    INVALID_PROMOTION_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 프로모션 아이디 입니다.");
+
+
     private final int code;
     private final int httpStatus;
     private final String message;

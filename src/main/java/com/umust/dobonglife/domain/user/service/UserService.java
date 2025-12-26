@@ -59,5 +59,9 @@ public class UserService {
         });
         SecurityContextHolder.clearContext();
     }
+
+    public boolean isCourseRemoved(Long id1, Long id2) {
+        return id1 == id2;
+    }
 }
 

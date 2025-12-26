@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CoursePlansRepository extends JpaRepository<CoursePlans, Integer> {
-    @Query("SELECT c FROM Course c WHERE c.id = :courseId")
-    List<CoursePlans> findByCourseIdOrderByDateTime(@Param("courseId") Integer courseId);
+public interface CoursePlansRepository extends JpaRepository<CoursePlans, Long> {
+    @Query("SELECT c FROM CoursePlans c WHERE c.id = :courseId")
+    List<CoursePlans> findByCourseIdOrderByDateTime(@Param("courseId") Long courseId);
 }
