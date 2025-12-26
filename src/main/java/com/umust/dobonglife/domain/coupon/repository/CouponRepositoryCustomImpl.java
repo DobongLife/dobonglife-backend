@@ -1,20 +1,9 @@
 package com.umust.dobonglife.domain.coupon.repository;
 
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.repository.custom.CouponRepositoryCustom;
-import com.umust.dobonglife.domain.coupon.presentation.dto.response.CouponItem;
-import com.umust.dobonglife.domain.coupon.presentation.dto.response.MyCouponStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import static com.umust.dobonglife.domain.coupon.domain.entity.QCoupon.coupon;
-import static com.umust.dobonglife.domain.coupon.domain.entity.QPromotion.promotion;
 
 @Repository
 @RequiredArgsConstructor

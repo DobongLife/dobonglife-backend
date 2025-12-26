@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.review.presentation.dto.response;
+package com.umust.dobonglife.domain.review.controller.dto.response;
 
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 

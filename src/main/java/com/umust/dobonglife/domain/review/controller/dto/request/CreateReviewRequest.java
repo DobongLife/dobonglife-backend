@@ -1,8 +1,6 @@
-package com.umust.dobonglife.domain.review.presentation.dto.request;
+package com.umust.dobonglife.domain.review.controller.dto.request;
 
 import jakarta.validation.constraints.NotNull;
-
-import java.util.List;
 
 public record CreateReviewRequest(Long courseId,
                                   Long placeId,

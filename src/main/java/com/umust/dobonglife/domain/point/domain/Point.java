@@ -5,6 +5,8 @@ import com.umust.dobonglife.domain.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "points")
 @Getter
@@ -27,8 +29,11 @@ public class Point {
     private User user;
 
     @Column(name = "amount", nullable = false)
-    private int amount;
+    private Long amount;
 
-    @Column(name = "reason", nullable = false)
-    private String reason;
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

@@ -30,4 +30,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             @Param("lastId") Long lastId,
             Pageable pageable
     );
+
+    @Query("SELECT COUNT(r) FROM Review r WHERE r.user.id = :userId")
+    int countByUserId(Long userId);
 }

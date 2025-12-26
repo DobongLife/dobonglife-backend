@@ -1,9 +1,5 @@
-package com.umust.dobonglife.domain.review.presentation.dto.response;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
+package com.umust.dobonglife.domain.review.controller.dto.response;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public record ReviewResponse(Long reviewId,
                              String content) {

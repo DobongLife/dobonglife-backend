@@ -1,8 +1,6 @@
-package com.umust.dobonglife.domain.coupon.presentation.dto.response;
+package com.umust.dobonglife.domain.coupon.controller.dto.response;
 
-import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

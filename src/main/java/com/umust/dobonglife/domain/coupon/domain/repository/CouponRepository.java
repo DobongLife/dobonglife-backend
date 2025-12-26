@@ -3,16 +3,12 @@ package com.umust.dobonglife.domain.coupon.domain.repository;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.repository.custom.CouponRepositoryCustom;
-import com.umust.dobonglife.domain.coupon.presentation.dto.response.CouponItem;
-import com.umust.dobonglife.domain.course.domain.entity.Course;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.swing.text.html.Option;
-import java.util.List;
 import java.util.Optional;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRepositoryCustom {

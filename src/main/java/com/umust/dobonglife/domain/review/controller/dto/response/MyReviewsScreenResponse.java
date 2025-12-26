@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.review.presentation.dto.response;
+package com.umust.dobonglife.domain.review.controller.dto.response;
 
 import java.util.List;
 

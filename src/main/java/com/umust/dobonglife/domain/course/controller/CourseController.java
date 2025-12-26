@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseReq
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.service.CourseService;
+import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import jakarta.validation.Valid;
@@ -37,8 +38,7 @@ public class CourseController {
 
     // 코스 상세보기 조회
     @GetMapping("/{courseId}")
-    public BaseResponse<CourseDetailResponse> getCourse(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable("courseId") Long courseId){
-        Long userId = userPrincipal.getUserId();
+    public BaseResponse<CourseDetailResponse> getCourse(@CurrentUserId Long userId, @PathVariable("courseId") Long courseId){
         CourseDetailResponse response = courseService.getCourse(userId, courseId);
         return BaseResponse.ok(response);
     }
@@ -46,9 +46,8 @@ public class CourseController {
     // 코스 등록하기
     @PostMapping
     public BaseResponse<CourseRegisterResponse> createCourse(
-            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @CurrentUserId Long userId,
             @RequestPart("request") @Valid CreateCourseRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
-        Long userId = userPrincipal.getUserId();
         CourseRegisterResponse response = courseService.createCourse(userId, request, imageFiles);
         return BaseResponse.ok(response);
     }
@@ -64,9 +63,8 @@ public class CourseController {
 
     @DeleteMapping("/{courseId}")
     public BaseResponse<CourseDeleteResponse> deleteCourse(
-            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @CurrentUserId Long userId,
             @PathVariable("courseId") Long courseId){
-        Long userId = userPrincipal.getUserId();
         CourseDeleteResponse response = courseService.deleteCourse(userId, courseId);
         return BaseResponse.ok(response);
     }

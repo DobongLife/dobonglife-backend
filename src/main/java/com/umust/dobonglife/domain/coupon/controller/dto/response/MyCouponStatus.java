@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.coupon.presentation.dto.response;
+package com.umust.dobonglife.domain.coupon.controller.dto.response;
 
 public record MyCouponStatus(int available,
                              int used,

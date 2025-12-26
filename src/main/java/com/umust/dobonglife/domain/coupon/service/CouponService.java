@@ -5,13 +5,11 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.CouponRepository;
 import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
-import com.umust.dobonglife.domain.coupon.presentation.dto.request.CouponCodeRequest;
-import com.umust.dobonglife.domain.coupon.presentation.dto.response.CouponItem;
-import com.umust.dobonglife.domain.coupon.presentation.dto.response.MyCouponResponse;
-import com.umust.dobonglife.domain.coupon.presentation.dto.response.MyCouponStatus;
-import com.umust.dobonglife.domain.coupon.presentation.dto.response.UsedCouponResponse;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
-import com.umust.dobonglife.domain.course.domain.entity.Course;
+import com.umust.dobonglife.domain.coupon.controller.dto.request.CouponCodeRequest;
+import com.umust.dobonglife.domain.coupon.controller.dto.response.CouponItem;
+import com.umust.dobonglife.domain.coupon.controller.dto.response.MyCouponResponse;
+import com.umust.dobonglife.domain.coupon.controller.dto.response.MyCouponStatus;
+import com.umust.dobonglife.domain.coupon.controller.dto.response.UsedCouponResponse;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
@@ -20,10 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -83,4 +79,7 @@ public class CouponService {
         return new CursorResponse<>(content, coupons.hasNext());
     }
 
+    public int getOwnedCouponCount(Long userId) {
+        return couponRepository.countByUserIdAndStatus(userId, CouponStatus.AVAILABLE);
+    }
 }
