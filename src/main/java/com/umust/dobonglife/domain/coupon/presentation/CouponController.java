@@ -18,15 +18,19 @@ public class CouponController {
 
     private final CouponService couponService;
     @GetMapping("/my")
-    public BaseResponse<MyCouponResponse> getMyCoupon(@AuthenticationPrincipal UserPrincipal userPrincipal){
+    public BaseResponse<MyCouponResponse> getMyCoupon(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                      @RequestParam(required = false) Long lastId,
+                                                      @RequestParam(defaultValue = "2") int size){
         Long userId = userPrincipal.getUserId();
-        MyCouponResponse response = couponService.getMyCoupon(userId);
+        MyCouponResponse response = couponService.getMyCoupon(userId, lastId, size);
         return BaseResponse.ok(response);
     }
 
     @PostMapping("/my")
-    public BaseResponse<UsedCouponResponse> useMyCoupon(CouponCodeRequest request){
-        UsedCouponResponse response = couponService.useMyCoupon(request);
+    public BaseResponse<UsedCouponResponse> useMyCoupon(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                        CouponCodeRequest request){
+        Long userId = userPrincipal.getUserId();
+        UsedCouponResponse response = couponService.useMyCoupon(userId, request);
         return BaseResponse.ok(response);
     }
 

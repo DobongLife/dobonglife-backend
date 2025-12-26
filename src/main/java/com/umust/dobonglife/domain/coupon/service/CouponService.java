@@ -10,10 +10,16 @@ import com.umust.dobonglife.domain.coupon.presentation.dto.response.CouponItem;
 import com.umust.dobonglife.domain.coupon.presentation.dto.response.MyCouponResponse;
 import com.umust.dobonglife.domain.coupon.presentation.dto.response.MyCouponStatus;
 import com.umust.dobonglife.domain.coupon.presentation.dto.response.UsedCouponResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -27,29 +33,35 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final PromotionRepository promotionRepository;
 
-    public MyCouponResponse getMyCoupon(Long userId) {
+    public MyCouponResponse getMyCoupon(Long userId, Long lastId, int size) {
         MyCouponStatus myCouponStatus = getMyCouponStatus(userId);
-        List<CouponItem> myCouponItemList = getCouponItemList(userId);
+        CursorResponse<CouponItem> myCouponItemList = getCouponItemList(userId, lastId, size);
 
         return new MyCouponResponse(myCouponStatus, myCouponItemList);
     }
 
-    private List<CouponItem> getCouponItemList(Long userId) {
-        //return couponRepository.getCouponItemList(userId);
-        return new ArrayList<>();
+    private CursorResponse<CouponItem> getCouponItemList(Long userId, Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+
+        Slice<Coupon> coupons = couponRepository.findCouponsNoOffset(userId, lastId, pageable);
+
+        return convertToCursorResponse(coupons);
     }
 
     private MyCouponStatus getMyCouponStatus(Long userId) {
-        //return couponRepository.getMyCouponStatus(userId);
-        return new MyCouponStatus(0,0,0);
+        int available = couponRepository.countByUserIdAndStatus(userId, CouponStatus.AVAILABLE);
+        int used = couponRepository.countByUserIdAndStatus(userId, CouponStatus.USED);
+        int expired = couponRepository.countByUserIdAndStatus(userId, CouponStatus.EXPIRED);
+
+        return new MyCouponStatus(available, used, expired);
     }
 
     @Transactional
-    public UsedCouponResponse useMyCoupon(CouponCodeRequest request) {
+    public UsedCouponResponse useMyCoupon(Long userId, CouponCodeRequest request) {
         if(!validateCode(request.promotionId(), request.code()))
             throw new BusinessException(ErrorCode.INVALID_CODE);
 
-        Coupon coupon = couponRepository.findById(request.couponId())
+        Coupon coupon = couponRepository.findByUserIdAndCouponId(userId, request.couponId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COUPON_ID));
         coupon.updateCouponStatus();
         couponRepository.save(coupon);
@@ -63,5 +75,12 @@ public class CouponService {
         return promotion.getCode().equals(code);
     }
 
+    private CursorResponse<CouponItem> convertToCursorResponse(Slice<Coupon> coupons) {
+        List<CouponItem> content = coupons.getContent().stream()
+                .map(CouponItem::from)
+                .toList();
+
+        return new CursorResponse<>(content, coupons.hasNext());
+    }
 
 }

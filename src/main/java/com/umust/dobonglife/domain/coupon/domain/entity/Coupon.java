@@ -23,11 +23,9 @@ public class Coupon {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "promotion_id", nullable = false)
-    private Long promotionId;
-
-    @Column(name = "promotion_name")
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promotion_id", nullable = false)
+    private Promotion promotion;
 
     @Column(name = "issue_start_date", nullable = false)
     private LocalDate issueStartDate;
@@ -39,10 +37,9 @@ public class Coupon {
     @Column(name = "coupon_status", nullable = false)
     private CouponStatus couponStatus = CouponStatus.AVAILABLE;
 
-    public Coupon(Long userId, Long promotionId, String name, LocalDate issueStartDate, LocalDate issueEndDate, CouponStatus couponStatus) {
+    public Coupon(Long userId, Promotion promotion, LocalDate issueStartDate, LocalDate issueEndDate, CouponStatus couponStatus) {
         this.userId = userId;
-        this.promotionId = promotionId;
-        this.name = name;
+        this.promotion = promotion;
         this.issueStartDate = issueStartDate;
         this.issueEndDate = issueEndDate;
         this.couponStatus = couponStatus;
