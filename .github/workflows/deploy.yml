@@ -49,7 +49,7 @@ jobs:
           path: build/reports/tests/test
 
       - name: 스프링부트 빌드
-        run: ./gradlew build -x test
+        run: ./gradlew build -x test -x asciidoctor
 
       - name: Docker 메타데이터 추출
         id: meta
