@@ -5,5 +5,4 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ReviewRepositoryCustom {
-    Page<ReviewItemProjection> findReviewItemsByUserId(Long userId, Pageable pageable);
 }

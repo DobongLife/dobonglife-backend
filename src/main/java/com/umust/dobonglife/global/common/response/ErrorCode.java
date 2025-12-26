@@ -65,8 +65,10 @@ public enum ErrorCode{
     INVALID_CODE(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 인증코드 입니다."),
 
     // Promotion
-    INVALID_PROMOTION_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 프로모션 아이디 입니다.");
+    INVALID_PROMOTION_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 프로모션 아이디 입니다."),
 
+    // Review
+    NOT_REVIEW_OWNER(403, HttpStatus.FORBIDDEN.value(), "해당 리뷰에 대한 권한이 없습니다.");
 
     private final int code;
     private final int httpStatus;
