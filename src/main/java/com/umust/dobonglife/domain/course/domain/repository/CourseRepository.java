@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.course.domain.repository;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.custom.CourseRepositoryCustom;
+import com.umust.dobonglife.domain.review.service.dto.ReviewStatsDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
