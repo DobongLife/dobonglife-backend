@@ -41,15 +41,15 @@ jobs:
       - name: gradlew 권한 부여
         run: chmod +x gradlew
 
+      - name: 테스트 수행
+        run: ./gradlew test
+        
       - name: 테스트 리포트 아티팩트 업로드
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-report
           path: build/reports/tests/test
-
-      - name: 테스트 수행
-        run: ./gradlew test
         
       - name: 스프링부트 빌드
         run: ./gradlew build -x test
