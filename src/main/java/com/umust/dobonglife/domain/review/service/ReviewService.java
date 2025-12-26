@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.review.domain.constant.ReviewStatus;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
 import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;

@@ -12,12 +12,14 @@ import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/course")
@@ -27,9 +29,9 @@ public class CourseController {
 
     // 홈 메인에서의 스토리 코스 목록 조회
     @GetMapping
-    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@RequestParam(required = false) Long lastCourseId,
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@RequestParam(required = false) Long lastId,
                                                                           @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(lastCourseId, size);
+        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(lastId, size);
         return BaseResponse.ok(responses);
     }
 

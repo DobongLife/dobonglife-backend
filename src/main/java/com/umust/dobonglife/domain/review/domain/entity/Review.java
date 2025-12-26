@@ -50,14 +50,14 @@ public class Review {
     private List<String> imageUrls = new ArrayList<>();
 
     @Builder
-    public Review(Long courseId, Long placeId, User user, Double rating, String content, LocalDateTime updatedAt, ReviewStatus status, List<String> imageUrls) {
+    public Review(Long courseId, Long placeId, User user, Double rating, String content, List<String> imageUrls) {
         this.courseId = courseId;
         this.placeId = placeId;
         this.user = user;
         this.rating = rating;
         this.content = content;
-        this.updatedAt = updatedAt;
-        this.status = status;
+        this.updatedAt = LocalDateTime.now();
+        this.status = ReviewStatus.POSTED;
         this.imageUrls = imageUrls;
     }
 
