@@ -24,9 +24,11 @@ public class PromotionController {
         return BaseResponse.ok(response);
     }
 
-    @PostMapping
-    public BaseResponse<UsedCouponResponse> changePointToCoupon(){
-        UsedCouponResponse response = promotionService.changePointToCoupon(request);
+    @PostMapping("/{promotionId}")
+    public BaseResponse<UsedCouponResponse> changePointToCoupon(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                                @PathVariable(name = "promotionId") Long promotionId){
+        Long userId = userPrincipal.getUserId();
+        UsedCouponResponse response = promotionService.changePointToCoupon(userId, promotionId);
         return BaseResponse.ok(response);
     }
 }

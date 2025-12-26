@@ -9,7 +9,17 @@ import org.springframework.stereotype.Service;
 public class PointService {
 
     private final PointRepository pointRepository;
+    public boolean processUserPoint(Long userId) {
+        Long currentPoint = getUserPoint(userId);
+        return isValid(currentPoint);
+    }
+
     public Long getUserPoint(Long userId) {
-        return pointRepository.sumAmountByUserId(userId);
+        Long amount = pointRepository.sumAmountByUserId(userId);
+        return (amount != null) ? amount : 0L;
+    }
+
+    private boolean isValid(Long point) {
+        return point != null && point >= 0;
     }
 }

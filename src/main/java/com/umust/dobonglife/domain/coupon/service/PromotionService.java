@@ -1,12 +1,15 @@
 package com.umust.dobonglife.domain.coupon.service;
 
+import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.coupon.presentation.dto.response.*;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.point.service.PointService;
+import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
+import com.umust.dobonglife.global.common.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +38,13 @@ public class PromotionService {
                 .map(PromotionItem::from)
                 .toList();
         return new CursorResponse<>(content, promotions.hasNext());
+    }
+
+    public UsedCouponResponse changePointToCoupon(Long userId, Long promotionId) {
+        if(!pointService.processUserPoint(userId))
+            throw new BusinessException(ErrorCode.INVALID_POINT);
+        // TODO: 쿠폰 발급 시스템
+        Long couponId = 0L;
+        return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
     }
 }
