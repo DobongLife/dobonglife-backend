@@ -48,9 +48,11 @@ public class Place extends BaseEntity {
     @Column(name = "contact", nullable = false)
     private String contact;
 
+    @Builder.Default
     @Column(name = "average_rating", nullable = false)
     private Double averageRating = 0.0;
 
+    @Builder.Default
     @Column(name = "review_count", nullable = false)
     private Long reviewCount = 0L;
 
