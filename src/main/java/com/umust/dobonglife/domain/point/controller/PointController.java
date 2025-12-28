@@ -20,13 +20,11 @@ public class PointController {
 
     @GetMapping("/my")
     public BaseResponse<SliceResponse<PointResponse>> getMyPoints(
-            @RequestParam Long userId,
+            @CurrentUserId Long userId,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "desc") String order
+            @RequestParam(defaultValue = "DESC") String order
     ) {
-        return BaseResponse.ok(
-                pointService.getMyPoint(userId, size, cursor, order)
-        );
+        return BaseResponse.ok(pointService.getPoints(userId, size, cursor, order));
     }
 }

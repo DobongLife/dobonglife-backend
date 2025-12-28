@@ -12,7 +12,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SliceResponse<T> {
     private final List<T> content;
-    private final SortResponse sort;
     private final int size;
     private final boolean hasNext;
     private final String nextCursor;

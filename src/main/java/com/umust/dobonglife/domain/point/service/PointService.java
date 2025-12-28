@@ -1,14 +1,14 @@
 package com.umust.dobonglife.domain.point.service;
 
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
-import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.response.slice.Cursor;
 import com.umust.dobonglife.global.common.response.slice.SliceResponse;
-import com.umust.dobonglife.global.common.response.slice.SortResponse;
+import com.umust.dobonglife.global.common.response.slice.SortOrder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,11 +32,23 @@ public class PointService {
     private final PointRepository pointRepository;
 
     @Transactional(readOnly = true)
-    public SliceResponse<PointResponse> getMyPoint(
+    public SliceResponse<PointResponse> getPoints(
             Long userId,
             int size,
-            String cursor
+            String cursor,
+            String order
     ) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        Cursor parsedCursor = Cursor.from(cursor);
+        SortOrder parsedOrder = SortOrder.from(order);
+
+        return pointRepository.findPointsByCursor(
+                userId,
+                size,
+                parsedCursor,
+                parsedOrder
+        );
     }
 }
