@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class SortResponse {
-    private final String by;
     private final String direction;
 }
 

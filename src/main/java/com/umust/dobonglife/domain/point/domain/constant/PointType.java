@@ -3,9 +3,9 @@ package com.umust.dobonglife.domain.point.domain.constant;
 import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
 
 public enum PointType {
-    EARNED,
+    SAVED,
     USED,
-    EXPIRED;
+    NORMAL;
 
     public static ScheduleType toEnum(String value) {
         if (value == null) {
