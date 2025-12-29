@@ -48,4 +48,7 @@ public class User extends BaseEntity {
 
     @Column(name = "provider_id")
     private String providerId;
+
+    @Column
+    private int balance;
 }

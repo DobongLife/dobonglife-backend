@@ -30,7 +30,13 @@ public class Point extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "point_type", nullable = true)
-    private PointType pointType;
+    @Column(name = "is_used")
+    private boolean isUsed;
+
+    public void markUsed() {
+        if (this.isUsed) {
+            throw new IllegalStateException("이미 사용된 포인트입니다.");
+        }
+        this.isUsed = true;
+    }
 }
