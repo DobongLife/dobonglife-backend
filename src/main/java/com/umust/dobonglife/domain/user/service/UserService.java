@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
@@ -21,6 +22,8 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
+    private final PointRepository pointRepository;
 
     @Transactional
     public void signUp(SignupRequest request) {
@@ -62,8 +66,34 @@ public class UserService {
     }
 
     @Transactional
-    public MyPageResponse viewMyPage(Long userId){
+    public MyPageResponse getMyPage(Long userId) {
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        int eventCount = eventRepository.countByUserId(userId);
+        int couponCount = couponRepository.countByUserId(userId);
+        int reviewCount = reviewRepository.countByUserId(userId);
+        int totalEarnedPoint = pointRepository.sumEarnedPoint(userId);
+
+        return new MyPageResponse(
+                new MyPageResponse.Profile(
+                        user.getName(),
+                        user.getEmail(),
+                        formatJoinedAt(user.getCreatedAt()),
+                        user.getBalance()
+                ),
+                new MyPageResponse.Summary(
+                        eventCount,
+                        couponCount,
+                        reviewCount,
+                        totalEarnedPoint
+                )
+        );
+    }
+
+    private String formatJoinedAt(LocalDateTime createdAt) {
+        return createdAt.getYear() + "년 " + createdAt.getMonthValue() + "월";
     }
 }
 
