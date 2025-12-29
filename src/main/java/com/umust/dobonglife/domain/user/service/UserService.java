@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
+import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -58,6 +59,11 @@ public class UserService {
             }
         });
         SecurityContextHolder.clearContext();
+    }
+
+    @Transactional
+    public MyPageResponse viewMyPage(Long userId){
+
     }
 }
 
