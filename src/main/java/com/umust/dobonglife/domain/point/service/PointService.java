@@ -59,21 +59,19 @@ public class PointService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.POINT_NOT_FOUND));
 
         if (!point.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("본인 포인트만 사용할 수 있습니다.");
+            throw new BusinessException(ErrorCode.POINT_PRINCIPAL_ONLY);
         }
 
         if (point.isUsed()) {
-            throw new IllegalStateException("이미 사용된 포인트입니다.");
+            throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
         }
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // 3️⃣ 잔액 차감
         int amount = point.getAmount();
         user.decreaseBalance(amount);
 
-        // 4️⃣ 포인트 사용 처리
         point.markUsed();
     }
 }
