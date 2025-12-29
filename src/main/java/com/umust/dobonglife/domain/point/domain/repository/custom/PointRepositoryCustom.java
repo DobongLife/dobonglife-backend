@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface PointRepositoryCustom {
     SliceResponse<PointResponse> findPointsByCursor(Long userId, int size, Cursor cursor, SortOrder order);
+    long markUsed(Long userId, Long pointId);
 }

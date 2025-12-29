@@ -15,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
  * 포인트 계산 결과 필드를 User 엔티티에 두는 이유
  * 비록 포인트가 갱신될때마다 필드로 갱신해줘야 되서 쿼리가 1개 늘어나긴 하지만,
@@ -48,24 +46,19 @@ public class PointService {
         Point point = pointRepository.findById(pointId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POINT_NOT_FOUND));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        if (!point.getUser().getId().equals(userId)) {
-            throw new BusinessException(ErrorCode.POINT_PRINCIPAL_ONLY);
-        }
-
         if (point.isUsed()) {
             throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
         }
-
         int amount = point.getAmount();
-        long updated = userRepository.decreaseBalance(userId, amount);
 
-        if (updated == 0) {
+        long balanceUpdated = userRepository.decreaseBalance(userId, amount);
+        if (balanceUpdated == 0) {
             throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
         }
 
-        pointRepository.markUsed(pointId);
+        long pointUpdated = pointRepository.markUsed(userId, pointId);
+        if (pointUpdated == 0) {
+            throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
+        }
     }
 }

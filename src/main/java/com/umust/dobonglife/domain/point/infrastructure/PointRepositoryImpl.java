@@ -63,6 +63,15 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
                 .build();
     }
 
+    @Override
+    public long markUsed(Long userId, Long pointId) {
+        return queryFactory
+                .update(point)
+                .set(point.isUsed, true)
+                .where(point.id.eq(pointId), point.user.id.eq(userId), point.isUsed.isFalse())
+                .execute();
+    }
+
     private BooleanExpression cursorCondition(Cursor cursor, SortOrder order) {
         if (cursor == null) return null;
 
