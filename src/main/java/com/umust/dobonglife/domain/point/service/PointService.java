@@ -33,30 +33,23 @@ public class PointService {
     private final PointRepository pointRepository;
 
     @Transactional(readOnly = true)
-    public SliceResponse<PointResponse> getPoints(
-            Long userId,
-            int size,
-            String cursor,
-            String order
-    ) {
+    public SliceResponse<PointResponse> getPoints(Long userId, int size, String cursor, String order) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Cursor parsedCursor = Cursor.from(cursor);
         SortOrder parsedOrder = SortOrder.from(order);
 
-        return pointRepository.findPointsByCursor(
-                userId,
-                size,
-                parsedCursor,
-                parsedOrder
-        );
+        return pointRepository.findPointsByCursor(userId, size, parsedCursor, parsedOrder);
     }
 
     @Transactional
     public void usePoint(Long userId, Long pointId) {
         Point point = pointRepository.findById(pointId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POINT_NOT_FOUND));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         if (!point.getUser().getId().equals(userId)) {
             throw new BusinessException(ErrorCode.POINT_PRINCIPAL_ONLY);
@@ -66,12 +59,13 @@ public class PointService {
             throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
         int amount = point.getAmount();
-        user.decreaseBalance(amount);
+        long updated = userRepository.decreaseBalance(userId, amount);
 
-        point.markUsed();
+        if (updated == 0) {
+            throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
+        }
+
+        pointRepository.markUsed(pointId);
     }
 }

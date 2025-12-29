@@ -30,8 +30,7 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
                 .select(new QPointResponse(
                         point.id,
                         point.reason,
-                        point.amount,
-                        point.pointType
+                        point.amount
                 ))
                 .from(point)
                 .where(
