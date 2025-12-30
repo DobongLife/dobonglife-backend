@@ -45,9 +45,12 @@ public class Course {
     private CourseReviewStats reviewStats;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "course_themes", joinColumns = @JoinColumn(name = "course_id"))
-    @Enumerated(EnumType.STRING)
+    @CollectionTable(
+            name = "course_themes",
+            joinColumns = @JoinColumn(name = "course_id")
+    )
     @Column(name = "theme")
+    @Enumerated(EnumType.STRING) // Enum 사용 시 필수
     private List<CourseTheme> themes = new ArrayList<>();
 
     // 태그 (선택, 자주 필요)
