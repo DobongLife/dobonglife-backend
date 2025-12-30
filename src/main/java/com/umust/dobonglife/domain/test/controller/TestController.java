@@ -5,6 +5,8 @@ import com.umust.dobonglife.domain.test.model.UploadImageRequest;
 import com.umust.dobonglife.domain.test.model.UploadImageResponse;
 import com.umust.dobonglife.domain.test.repository.TestRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.common.notification.NotificationRequest;
+import com.umust.dobonglife.global.common.notification.NotificationUtil;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.s3.S3Utils;
@@ -24,6 +26,7 @@ import java.util.List;
 public class TestController {
 
     private final TestRepository testRepository;
+    private final NotificationUtil notificationUtil;
     private final S3Utils s3Utils;
 
     @GetMapping("/health-check")
@@ -43,6 +46,18 @@ public class TestController {
     public BaseResponse<Void> errorTest() {
         log.info("=== Test Controller errorTest 진입 ===");
         throw new BusinessException(ErrorCode.SERVER_ERROR);
+    }
+
+    @PostMapping("/topic")
+    public BaseResponse<String> sendTopicNotification(@RequestBody NotificationRequest request) {
+        notificationUtil.sendToTopic(request);
+        return BaseResponse.ok("알림 전송 성공");
+    }
+
+    @PostMapping("/subscribe")
+    public BaseResponse<String> subscribe(@RequestParam String token, @RequestParam String topic) {
+        notificationUtil.subscribeTopic(token, topic);
+        return BaseResponse.ok("구독 성공");
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

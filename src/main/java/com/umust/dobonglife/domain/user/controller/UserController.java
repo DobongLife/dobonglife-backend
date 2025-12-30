@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.user.controller;
 
+import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
+import com.umust.dobonglife.domain.user.service.MyPageApplicationService;
 import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 public class UserController {
 
     private final UserService userService;
+    private final MyPageApplicationService myPageApplicationService;
 
     @PostMapping("/signup")
     public BaseResponse<Void> signUp(@RequestBody SignupRequest request) {
@@ -32,6 +35,12 @@ public class UserController {
                                             @CurrentUserId Long userId) {
         userService.deleteAccount(request, userId);
         return BaseResponse.ok(null);
+    }
+
+    @GetMapping
+    public BaseResponse<MyPageResponse> getMyPage(@CurrentUserId Long userId) {
+        MyPageResponse response = myPageApplicationService.getMyPage(userId);
+        return BaseResponse.ok(response);
     }
 }
 

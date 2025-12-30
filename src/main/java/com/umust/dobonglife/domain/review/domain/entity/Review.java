@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.review.domain.entity;
 import com.umust.dobonglife.domain.review.domain.constant.ReviewStatus;
-import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
+import com.umust.dobonglife.domain.review.controller.dto.request.CreateReviewRequest;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

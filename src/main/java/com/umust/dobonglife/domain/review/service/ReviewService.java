@@ -1,17 +1,13 @@
 package com.umust.dobonglife.domain.review.service;
 
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
-import com.umust.dobonglife.domain.review.domain.constant.ReviewStatus;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
-import com.umust.dobonglife.domain.review.presentation.dto.request.CreateReviewRequest;
-import com.umust.dobonglife.domain.review.presentation.dto.response.*;
-import com.umust.dobonglife.domain.review.service.dto.ReviewItemProjection;
-import com.umust.dobonglife.domain.review.service.dto.ReviewStatsDto;
+import com.umust.dobonglife.domain.review.controller.dto.request.CreateReviewRequest;
+import com.umust.dobonglife.domain.review.controller.dto.response.*;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -20,7 +16,6 @@ import com.umust.dobonglife.global.common.s3.S3Utils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -29,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -136,4 +130,7 @@ public class ReviewService {
     }
 
 
+    public int getWrittenReviewCount(Long userId) {
+        return reviewRepository.countByUserId(userId);
+    }
 }

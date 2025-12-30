@@ -36,7 +36,7 @@ jobs:
           TEST_APPLICATION_PROPERTIES: ${{ secrets.TEST_APPLICATION_PROPERTIES }}
         run: |
           mkdir -p src/test/resources
-          echo "$TEST_APPLICATION_PROPERTIES" > src/test/resources/application-test.yml
+          echo "$TEST_APPLICATION_PROPERTIES" > src/test/resources/application.yml
 
       - name: gradlew 권한 부여
         run: chmod +x gradlew

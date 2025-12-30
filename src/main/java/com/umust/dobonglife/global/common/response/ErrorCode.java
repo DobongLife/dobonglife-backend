@@ -68,7 +68,16 @@ public enum ErrorCode{
     INVALID_PROMOTION_ID(401, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 프로모션 아이디 입니다."),
 
     // Review
-    NOT_REVIEW_OWNER(403, HttpStatus.FORBIDDEN.value(), "해당 리뷰에 대한 권한이 없습니다.");
+    NOT_REVIEW_OWNER(403, HttpStatus.FORBIDDEN.value(), "해당 리뷰에 대한 권한이 없습니다."),
+
+    // Point
+    INVALID_POINT(400, HttpStatus.BAD_REQUEST.value(), "포인트가 부족합니다."),
+
+    // FireBase
+    SERVER_ERROR_FIREBASE(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase 초기화에 실패했습니다."),
+    SERVER_ERROR_MESSAGE(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 메시지 전송을 실패했습니다."),
+    SERVER_ERROR_TOPIC(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 토픽 구독을 실패했습니다."),
+    SERVER_ERROR_TOPIC_CANCEL(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 토픽 구독 취소를 실패했습니다.");
 
     private final int code;
     private final int httpStatus;

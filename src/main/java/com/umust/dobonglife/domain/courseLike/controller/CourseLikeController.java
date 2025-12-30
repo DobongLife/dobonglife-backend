@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryR
 import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.domain.courseLike.controller.dto.request.CourseLikeResponse;
 import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
+import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,7 @@ public class CourseLikeController {
     @PostMapping("/{courseId}")
     public BaseResponse<CourseLikeResponse> updateCourseLike(
             @PathVariable("courseId") Long courseId,
-            @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Long userId = userPrincipal.getUserId();
+            @CurrentUserId Long userId) {
         CourseLikeResponse responses = courseLikeService.updateCourseLike(courseId, userId);
         return BaseResponse.ok(responses);
     }
