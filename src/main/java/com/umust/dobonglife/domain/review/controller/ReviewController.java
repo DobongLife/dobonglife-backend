@@ -8,6 +8,8 @@ import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,11 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // 리뷰 등록하기
+    @Operation(summary = "리뷰 등록", description = "리뷰를 등록합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
     @PostMapping
     public BaseResponse<ReviewResponse> registerReview(@CurrentUserId Long userId,
                                                        @RequestPart("request") @Valid CreateReviewRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
@@ -31,6 +38,11 @@ public class ReviewController {
     }
 
     // 리뷰 수정하기
+    @Operation(summary = "리뷰 수정", description = "리뷰를 수정합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
     @PutMapping("/{reviewId}")
     public BaseResponse<ReviewResponse> updateReview(@CurrentUserId Long userId,
                                                        @PathVariable("reviewId") Long reviewId,
@@ -40,6 +52,11 @@ public class ReviewController {
     }
 
     // 리뷰 전체보기
+    @Operation(summary = "리뷰 조회", description = "리뷰를 전체조회 합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
     @GetMapping
     public BaseResponse<CursorResponse<ReviewSummaryResponse>> getReviews(@CurrentUserId Long userId,
                                                                           @RequestParam(required = false) Long lastReviewId,
@@ -48,7 +65,12 @@ public class ReviewController {
         return BaseResponse.ok(responses);
     }
 
-    // 코스 상세보기 조회 (특정 리뷰)
+    // 리뷰 상세보기 조회 (특정 리뷰)
+    @Operation(summary = "리뷰 상세 조회", description = "리뷰를 상세 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
     @GetMapping("/{reviewId}")
     public BaseResponse<ReviewDetailResponse> getReview(@PathVariable("reviewId") Long reviewId){
         ReviewDetailResponse response = reviewService.getReview(reviewId);
@@ -56,6 +78,11 @@ public class ReviewController {
     }
 
     // 내후기 - 리뷰 조회하기
+    @Operation(summary = "내후기 조회", description = "내 리뷰를 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
     @GetMapping("/my")
     public BaseResponse<CursorResponse<ReviewSummaryResponse>> getMyReviews(@CurrentUserId Long userId,
                                                                           @RequestParam(required = false) Long lastReviewId,
