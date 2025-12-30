@@ -14,6 +14,12 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
+    static {
+        org.springdoc.core.utils.SpringDocUtils.getConfig().addAnnotationsToIgnore(
+                com.umust.dobonglife.global.common.resolver.CurrentUserId.class
+        );
+    }
     @Bean
     public OpenAPI openAPI() {
         List<Server> servers = new ArrayList<>();
