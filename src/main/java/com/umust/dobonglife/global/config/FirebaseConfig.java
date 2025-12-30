@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Configuration
+// @Configuration
 public class FirebaseConfig {
 
 //    @Value("${firebase.adminsdk.account.path}")
