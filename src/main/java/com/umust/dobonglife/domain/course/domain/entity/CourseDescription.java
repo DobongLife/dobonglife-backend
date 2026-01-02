@@ -34,35 +34,19 @@ public class CourseDescription {
     @Column(name = "highlight")
     private List<String> highlights = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "course_exclusions", joinColumns = @JoinColumn(name = "course_id"))
-    @Column(name = "exclusion")
-    private List<String> exclusions = new ArrayList<>();
-
-    @ElementCollection
-    @CollectionTable(name = "course_inclusions", joinColumns = @JoinColumn(name = "course_id"))
-    @Column(name = "inclusion")
-    private List<String> inclusions = new ArrayList<>();
-
     public CourseDescription(Course course, String content,
-                             List<String> highlights,
-                             List<String> exclusions,
-                             List<String> inclusions) {
+                             List<String> highlights) {
         this.course = course;
         this.content = content;
         this.highlights = highlights != null ? highlights : new ArrayList<>();
-        this.exclusions = exclusions != null ? exclusions : new ArrayList<>();
-        this.inclusions = inclusions != null ? inclusions : new ArrayList<>();
     }
 
     public void assignCourse(Course course) {
         this.course = course;
     }
 
-    public void update(String content, List<String> highlights, List<String> exclusions, List<String> inclusions) {
+    public void update(String content, List<String> highlights) {
         this.content = content;
         this.highlights = highlights != null ? highlights : new ArrayList<>();
-        this.exclusions = exclusions != null ? exclusions : new ArrayList<>();
-        this.inclusions = inclusions != null ? inclusions : new ArrayList<>();
     }
 }

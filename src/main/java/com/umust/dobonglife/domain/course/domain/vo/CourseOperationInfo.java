@@ -38,7 +38,7 @@ public class CourseOperationInfo {
         this.meetingPlace = meetingPlace;
         this.contact = contact;
         this.cost = cost;
-        this.maxNum = maxNum;
+        this.maxNum = maxNum; // 50 - 예외처리
         this.ageLimit = ageLimit;
     }
 
@@ -57,6 +57,7 @@ public class CourseOperationInfo {
     }
 
     private void validateAgeLimit(String ageLimit) {
+        // 선 제한 없음, 숫자만 들어가도록
         if (ageLimit == null || ageLimit.trim().isEmpty()) {
             throw new IllegalArgumentException("나이 제한 정보는 필수입니다");
         }

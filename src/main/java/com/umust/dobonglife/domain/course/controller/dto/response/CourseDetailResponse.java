@@ -19,8 +19,6 @@ public record CourseDetailResponse(
         Long id,
         UserInfo userInfo,
         BasicInfo basicInfo,
-        OperationInfo operationInfo,
-        PolicyInfo policyInfo,
         DescriptionInfo descriptionInfo,
         ReviewSummary reviewSummary,
         List<String> imageUrls,
@@ -31,8 +29,6 @@ public record CourseDetailResponse(
                 course.getId(),
                 UserInfo.from(isRemoved, isFavorite),
                 BasicInfo.from(course),
-                OperationInfo.from(course),
-                PolicyInfo.from(course),
                 DescriptionInfo.from(course.getDescription()),
                 ReviewSummary.from(course),
                 course.getImageUrls(),
@@ -61,7 +57,7 @@ public record CourseDetailResponse(
     public record BasicInfo(
             String title,
             String subTitle,
-            Double duration,
+            Long duration,
             CourseLevel level,
             List<CourseTheme> themes,
             List<String> tags
@@ -79,59 +75,19 @@ public record CourseDetailResponse(
     }
 
     /**
-     * 운영 정보
-     */
-    public record OperationInfo(
-            String meetingPlace,
-            String contact,
-            String cost,
-            Integer maxNum,
-            String ageLimit
-    ) {
-        public static OperationInfo from(Course course) {
-            return new OperationInfo(
-                    course.getOperationInfo().getMeetingPlace(),
-                    course.getOperationInfo().getContact(),
-                    course.getOperationInfo().getCost(),
-                    course.getOperationInfo().getMaxNum(),
-                    course.getOperationInfo().getAgeLimit()
-            );
-        }
-    }
-
-    /**
-     * 정책 정보
-     */
-    public record PolicyInfo(
-            String cancelPolicy,
-            String weatherPolicy
-    ) {
-        public static PolicyInfo from(Course course) {
-            return new PolicyInfo(
-                    course.getPolicyInfo().getCancelPolicy(),
-                    course.getPolicyInfo().getWeatherPolicy()
-            );
-        }
-    }
-
-    /**
      * 상세 설명 정보
      */
     public record DescriptionInfo(
             String content,
-            List<String> highlights,
-            List<String> inclusions,
-            List<String> exclusions
+            List<String> highlights
     ) {
         public static DescriptionInfo from(CourseDescription description) {
             if (description == null) {
-                return new DescriptionInfo("", List.of(), List.of(), List.of());
+                return new DescriptionInfo("", List.of());
             }
             return new DescriptionInfo(
                     description.getContent(),
-                    description.getHighlights(),
-                    description.getInclusions(),
-                    description.getExclusions()
+                    description.getHighlights()
             );
         }
     }

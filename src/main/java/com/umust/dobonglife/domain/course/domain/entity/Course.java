@@ -32,14 +32,6 @@ public class Course {
     @Embedded
     private CourseBasicInfo basicInfo;
 
-    // 운영 정보
-    @Embedded
-    private CourseOperationInfo operationInfo;
-
-    // 정책 정보
-    @Embedded
-    private CoursePolicyInfo policyInfo;
-
     // 리뷰 통계
     @Embedded
     private CourseReviewStats reviewStats;
@@ -73,16 +65,10 @@ public class Course {
     private List<CoursePlans> plans = new ArrayList<>();
 
     @Builder
-    public Course(Long userId, CourseBasicInfo basicInfo, CourseOperationInfo operationInfo,
-                  CoursePolicyInfo policyInfo, CourseReviewStats reviewStats,
-                  List<CourseTheme> themes, List<String> tags, List<String> imageUrls,
-                  CourseDescription description, List<CoursePlans> plans) {
-
-        validateCourse(basicInfo, operationInfo);
+    public Course(Long userId, CourseBasicInfo basicInfo, CourseReviewStats reviewStats, List<CourseTheme> themes, List<String> tags, List<String> imageUrls, CourseDescription description, List<CoursePlans> plans) {
+        validateCourse(basicInfo);
         this.userId = userId;
         this.basicInfo = basicInfo;
-        this.operationInfo = operationInfo;
-        this.policyInfo = policyInfo;
 
         this.reviewStats = (reviewStats != null) ? reviewStats : new CourseReviewStats(0.0, 0L);
         this.themes = themes != null ? themes : new ArrayList<>();
@@ -100,9 +86,8 @@ public class Course {
         }
     }
 
-    private void validateCourse(CourseBasicInfo basicInfo, CourseOperationInfo operationInfo) {
+    private void validateCourse(CourseBasicInfo basicInfo) {
         if (basicInfo == null) throw new IllegalArgumentException("기본 정보는 필수입니다.");
-        if (operationInfo == null) throw new IllegalArgumentException("운영 정보는 필수입니다.");
     }
 
     public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
@@ -142,14 +127,6 @@ public class Course {
 
     public void updateBasicInfo(CourseBasicInfo basicInfo) {
         this.basicInfo = basicInfo;
-    }
-
-    public void updateOperationInfo(CourseOperationInfo operationInfo) {
-        this.operationInfo = operationInfo;
-    }
-
-    public void updatePolicyInfo(CoursePolicyInfo policyInfo) {
-        this.policyInfo = policyInfo;
     }
 
     public void updatePlans(List<CoursePlans> newPlans) {

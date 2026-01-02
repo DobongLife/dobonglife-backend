@@ -25,13 +25,15 @@ public class CourseBasicInfo {
     private String subTitle;
 
     @Column(nullable = false)
-    private Double duration;
+    private Long duration;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CourseLevel level;
 
-    public CourseBasicInfo(String title, String subTitle, Double duration, CourseLevel level) {
+    // tag
+
+    public CourseBasicInfo(String title, String subTitle, Long duration, CourseLevel level) {
         this.title = title;
         this.subTitle = subTitle;
         this.duration = duration;

@@ -92,7 +92,7 @@ public class ReviewService {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Review 엔티티가 존재하지 않습니다: " + reviewId));
-
+        
         if(review.getId() != userId) throw new BusinessException(ErrorCode.NOT_REVIEW_OWNER);
 
         List<String> imageUrls = new ArrayList<>();

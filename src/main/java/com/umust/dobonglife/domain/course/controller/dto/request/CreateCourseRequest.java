@@ -1,89 +1,110 @@
 package com.umust.dobonglife.domain.course.controller.dto.request;
-import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
+
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public record CreateCourseRequest(
+@Getter
+@Setter
+@Schema(description = "코스 생성 요청")
+public class CreateCourseRequest {
+
+        @Schema(
+                description = "코스 제목",
+                example = "도봉구 역사 탐방 코스",
+                required = true,
+                maxLength = 100
+        )
         @NotBlank(message = "제목은 필수입니다")
         @Size(max = 100, message = "제목은 100자를 초과할 수 없습니다")
-        String title,
+        private String title;
 
+        @Schema(
+                description = "코스 부제목",
+                example = "도봉구의 숨겨진 역사를 찾아서",
+                required = false,
+                nullable = true,
+                maxLength = 200
+        )
         @Size(max = 200, message = "부제목은 200자를 초과할 수 없습니다")
-        String subTitle,
+        private String subTitle;
 
+        @Schema(
+                description = "코스 테마 목록 (1~6개 선택)",
+                example = "[\"HISTORY\", \"CULTURE\"]",
+                required = true,
+                minLength = 1,
+                maxLength = 6,
+                allowableValues = {"HISTORY", "CULTURE", "NATURE", "FOOD", "CAFE", "SHOPPING"}
+        )
         @NotNull(message = "카테고리는 필수입니다")
-        List<CourseTheme> themes,
+        @Size(min = 1, max = 6, message = "테마는 1~6개를 선택해야 합니다")
+        private List<CourseTheme> themes = new ArrayList<>();
 
+        @Schema(
+                description = "소요 시간 (분 단위)",
+                example = "180",
+                required = true,
+                minimum = "1",
+                maximum = "1440"
+        )
         @NotNull(message = "소요시간은 필수입니다")
         @Positive(message = "소요시간은 0보다 커야 합니다")
-        @Max(value = 24, message = "소요시간은 24시간을 초과할 수 없습니다")
-        Double duration,
+        @Max(value = 1440, message = "소요시간은 24시간(1440분)을 초과할 수 없습니다")
+        private Long duration;
 
+        @Schema(
+                description = "난이도",
+                example = "BEGINNER",
+                required = true,
+                allowableValues = {"BEGINNER", "INTERMEDIATE", "ADVANCED"}
+        )
         @NotNull(message = "레벨은 필수입니다")
-        String level,
+        private String level;
 
+        @Schema(
+                description = "태그 목록 (최대 5개, 각 태그는 20자 이하)",
+                example = "[\"역사\", \"문화\", \"가족\"]",
+                required = false,
+                nullable = true,
+                maxLength = 5
+        )
         @Size(max = 5, message = "태그는 최대 5개까지 등록할 수 있습니다")
-        List<@NotBlank @Size(max = 20) String> tags,
+        private List<@NotBlank @Size(max = 20) String> tags = new ArrayList<>();
+
+        @Schema(
+                description = "코스 상세 내용 (최소 10자)",
+                example = "도봉구의 역사적 장소를 둘러보는 코스입니다. 조선시대부터 현대까지의 흔적을 따라가며...",
+                required = true,
+                minLength = 10
+        )
         @NotBlank(message = "내용은 필수입니다")
         @Size(min = 10, message = "내용은 최소 10자 이상이어야 합니다")
-        String content,
+        private String content;
 
-        @NotBlank(message = "만남 장소는 필수입니다")
-        @Size(max = 200, message = "만남 장소는 200자를 초과할 수 없습니다")
-        String meetingPlace,
-
-        @NotBlank(message = "연락처는 필수입니다")
-        @Pattern(regexp = "^01[0-9]-?[0-9]{3,4}-?[0-9]{4}$",
-                message = "올바른 전화번호 형식이 아닙니다 (예: 010-1234-5678)")
-        String contact,
-
-        @Size(max = 20, message = "비용은 20자를 초과할 수 없습니다")
-        String cost,
-
-        @NotNull(message = "최대 인원은 필수입니다")
-        @Min(value = 1, message = "최대 인원은 1명 이상이어야 합니다")
-        @Max(value = 100, message = "최대 인원은 100명을 초과할 수 없습니다")
-        Integer maxNum,
-
-        @NotBlank(message = "나이 제한 정보는 필수입니다")
-        @Size(max = 30, message = "나이 제한은 30자를 초과할 수 없습니다")
-        String ageLimit,
-
-        @Size(max = 200, message = "취소 정책은 200자를 초과할 수 없습니다")
-        String cancelPolicy,
-
-        @Size(max = 200, message = "날씨 정책은 200자를 초과할 수 없습니다")
-        String weatherPolicy,
-
+        @Schema(
+                description = "코스 하이라이트 (최대 10개, 각 항목은 100자 이하)",
+                example = "[\"조선시대 유적 탐방\", \"전통 시장 체험\", \"도봉산 둘레길 산책\"]",
+                required = false,
+                nullable = true,
+                maxLength = 10
+        )
         @Size(max = 10, message = "하이라이트는 최대 10개까지 등록할 수 있습니다")
-        List<@NotBlank @Size(max = 100) String> highlights,
+        private List<@NotBlank @Size(max = 100) String> highlights = new ArrayList<>();
 
-        @Size(max = 10, message = "불포함 사항은 최대 10개까지 등록할 수 있습니다")
-        List<@NotBlank @Size(max = 100) String> exclusions,
-
-        @Size(max = 10, message = "포함 사항은 최대 10개까지 등록할 수 있습니다")
-        List<@NotBlank @Size(max = 100) String> inclusions,
+        @Schema(
+                description = "코스 일정 목록 (최대 6개)",
+                required = true,
+                maxLength = 6
+        )
         @Valid
-        @Size(max = 20, message = "일정은 최대 20개까지 등록할 수 있습니다")
-        List<CoursePlanRequest> plans
-) {
-    public CreateCourseRequest {
-        // null인 List를 빈 List로 변환
-        if (tags == null) {
-            tags = List.of();
-        }
-        if (highlights == null) {
-            highlights = List.of();
-        }
-        if (exclusions == null) {
-            exclusions = List.of();
-        }
-        if (inclusions == null) {
-            inclusions = List.of();
-        }
-    }
+        @NotNull(message = "일정은 필수입니다")
+        @Size(min = 1, max = 6, message = "일정은 최소 1개, 최대 6개까지 등록할 수 있습니다")
+        private List<CoursePlanRequest> plans = new ArrayList<>();
 }

@@ -17,6 +17,7 @@ import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseOperationInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CoursePolicyInfo;
+import com.umust.dobonglife.domain.course.domain.vo.CourseReviewStats;
 import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.exception.BusinessException;
@@ -62,11 +63,11 @@ public class CourseService {
 
     @Transactional(readOnly = true)
     public CourseDetailResponse getCourse(Long userId, Long courseId) {
-        boolean isRemoved = userService.isCourseRemoved(userId, courseId);
-        boolean isFavorite = courseLikeService.isCourseFavorite(userId, courseId);
-
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
+
+        boolean isRemoved = userService.isCourseRemoved(userId, course.getUserId());
+        boolean isFavorite = courseLikeService.isCourseFavorite(userId, courseId);
 
         List<CoursePlans> plans = coursePlansRepository
                 .findByCourseIdOrderByDateTime(courseId);
@@ -83,24 +84,27 @@ public class CourseService {
         }
 
         // vo
-        CourseBasicInfo basicInfo = new CourseBasicInfo(request.title(), request.subTitle(), request.duration(), CourseLevel.valueOf(request.level()));
-        CourseOperationInfo operationInfo = new CourseOperationInfo(request.meetingPlace(), request.contact(), request.cost(), request.maxNum(), request.ageLimit());
-        CoursePolicyInfo policyInfo = new CoursePolicyInfo(request.cancelPolicy(), request.weatherPolicy());
+        CourseBasicInfo basicInfo = new CourseBasicInfo(
+                request.getTitle(),
+                request.getSubTitle(),
+                request.getDuration(),
+                CourseLevel.valueOf(request.getLevel())
+        );
 
         // 상세 설명
         CourseDescription description = new CourseDescription(
-                null, request.content(), request.highlights(), request.exclusions(), request.inclusions()
+                null,
+                request.getContent(),
+                request.getHighlights()
         );
 
-        List<CoursePlans> plans = convertToPlans(request.plans());
+        List<CoursePlans> plans = convertToPlans(request.getPlans());
 
         Course course = Course.builder()
                 .userId(userId)
                 .basicInfo(basicInfo)
-                .operationInfo(operationInfo)
-                .policyInfo(policyInfo)
-                .themes(request.themes())
-                .tags(request.tags())
+                .themes(request.getThemes())
+                .tags(request.getTags())
                 .imageUrls(imageUrls)
                 .description(description)
                 .plans(plans)
@@ -119,15 +123,11 @@ public class CourseService {
         updateImageUrls(course, request.urlsToDelete(), imageFiles);
 
         course.updateBasicInfo(new CourseBasicInfo(request.title(), request.subTitle(), request.duration(), CourseLevel.valueOf(request.level())));
-        course.updateOperationInfo(new CourseOperationInfo(request.meetingPlace(), request.contact(), request.cost(), request.maxNum(), request.ageLimit()));
-        course.updatePolicyInfo(new CoursePolicyInfo(request.cancelPolicy(), request.weatherPolicy()));
 
         updateCollection(course.getThemes(), request.themes());
         updateCollection(course.getTags(), request.tags());
 
-        course.getDescription().update(
-                request.content(), request.highlights(), request.exclusions(), request.inclusions()
-        );
+        course.getDescription().update(request.content(), request.highlights());
 
         if (request.plans() != null) {
             List<CoursePlans> newPlans = convertToPlans(request.plans());
@@ -141,9 +141,9 @@ public class CourseService {
         if (planDtos == null) return List.of();
         return planDtos.stream()
                 .map(dto -> CoursePlans.builder()
-                        .dateTime(dto.dateTime())
-                        .title(dto.title())
-                        .content(dto.content())
+                        .dateTime(dto.getDateTime())
+                        .title(dto.getTitle())
+                        .content(dto.getContent())
                         .build())
                 .toList();
     }
