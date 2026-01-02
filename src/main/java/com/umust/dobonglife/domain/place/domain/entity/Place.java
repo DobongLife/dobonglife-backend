@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.place.domain.entity;
 
+import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 
 import com.umust.dobonglife.global.common.model.BaseEntity;
@@ -55,6 +56,15 @@ public class Place extends BaseEntity {
     @Builder.Default
     @Column(name = "review_count", nullable = false)
     private Long reviewCount = 0L;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "course_themes",
+            joinColumns = @JoinColumn(name = "course_id")
+    )
+    @Column(name = "theme")
+    @Enumerated(EnumType.STRING) // Enum 사용 시 필수
+    private List<CourseTheme> themes = new ArrayList<>();
 
     public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
         this.averageRating = newAverageRating;
