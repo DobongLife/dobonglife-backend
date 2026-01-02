@@ -16,14 +16,12 @@ public record CourseListResponse(
         Long id,
         String title,
         String subTitle,
-        Double duration,
+        Long duration,
         CourseLevel level,
         List<CourseTheme> themes,
         List<String> tags,
         String thumbnailUrl, // 첫 번째 이미지만
-        ReviewSummary reviewSummary,
-        String cost,
-        String ageLimit
+        ReviewSummary reviewSummary
 ) {
     public static CourseListResponse from(Course course) {
         return new CourseListResponse(
@@ -35,9 +33,7 @@ public record CourseListResponse(
                 course.getThemes(),
                 course.getTags(),
                 course.getImageUrls().isEmpty() ? null : course.getImageUrls().get(0),
-                ReviewSummary.from(course),
-                course.getOperationInfo().getCost(),
-                course.getOperationInfo().getAgeLimit()
+                ReviewSummary.from(course)
         );
     }
 }

@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +42,7 @@ public class CourseController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping
-    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@RequestParam(required = false) Long lastId,
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@RequestParam(required = false, defaultValue = "5") Long lastId,
                                                                           @RequestParam(defaultValue = "2") int size) {
         CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(lastId, size);
         return BaseResponse.ok(responses);
@@ -65,10 +66,11 @@ public class CourseController {
             responseCode = "200",
             description = "요청에 성공하였습니다."
     )
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<CourseRegisterResponse> createCourse(
             @CurrentUserId Long userId,
-            @RequestPart("request") @Valid CreateCourseRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
+            @RequestPart @Valid CreateCourseRequest request,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
         CourseRegisterResponse response = courseService.createCourse(userId, request, imageFiles);
         return BaseResponse.ok(response);
     }

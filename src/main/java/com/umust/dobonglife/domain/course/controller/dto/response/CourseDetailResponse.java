@@ -57,7 +57,7 @@ public record CourseDetailResponse(
     public record BasicInfo(
             String title,
             String subTitle,
-            Double duration,
+            Long duration,
             CourseLevel level,
             List<CourseTheme> themes,
             List<String> tags
