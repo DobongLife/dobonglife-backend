@@ -31,6 +31,8 @@ public class CourseBasicInfo {
     @Enumerated(EnumType.STRING)
     private CourseLevel level;
 
+    // tag
+
     public CourseBasicInfo(String title, String subTitle, Double duration, CourseLevel level) {
         this.title = title;
         this.subTitle = subTitle;

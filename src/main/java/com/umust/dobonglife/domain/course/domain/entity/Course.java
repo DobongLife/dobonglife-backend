@@ -71,6 +71,7 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CoursePlans> plans = new ArrayList<>();
+    // 일정,  1개 필수, 최대 6개
 
     @Builder
     public Course(Long userId, CourseBasicInfo basicInfo, CourseOperationInfo operationInfo,
