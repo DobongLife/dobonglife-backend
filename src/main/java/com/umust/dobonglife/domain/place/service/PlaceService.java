@@ -119,4 +119,19 @@ public class PlaceService {
         return PlaceListResponse.from(responses);
     }
 
+    @Transactional(readOnly = true)
+    public PlaceAndCourseListResponse getPlaceAndCourseByTheme(ThemeRequest request){
+        List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
+
+        List<Place> places = coursePlaces.stream()
+                .map(CoursePlace::getPlace)
+                .distinct()
+                .toList();
+
+        List<PlaceResponse> responses = places.stream()
+                .map(PlaceResponse::from)
+                .toList();
+
+        return PlaceListResponse.from(responses);
+    }
 }

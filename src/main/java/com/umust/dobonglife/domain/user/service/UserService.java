@@ -65,35 +65,31 @@ public class UserService {
         SecurityContextHolder.clearContext();
     }
 
-    @Transactional
-    public MyPageResponse getMyPage(Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        int eventCount = eventRepository.countByUserId(userId);
-        int couponCount = couponRepository.countByUserId(userId);
-        int reviewCount = reviewRepository.countByUserId(userId);
-        int totalEarnedPoint = pointRepository.sumEarnedPoint(userId);
-
-        return new MyPageResponse(
-                new MyPageResponse.Profile(
-                        user.getName(),
-                        user.getEmail(),
-                        formatJoinedAt(user.getCreatedAt()),
-                        user.getBalance()
-                ),
-                new MyPageResponse.Summary(
-                        eventCount,
-                        couponCount,
-                        reviewCount,
-                        totalEarnedPoint
-                )
-        );
-    }
-
-    private String formatJoinedAt(LocalDateTime createdAt) {
-        return createdAt.getYear() + "년 " + createdAt.getMonthValue() + "월";
-    }
+//    @Transactional
+//    public MyPageResponse getMyPage(Long userId) {
+//
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+//
+//        int eventCount = eventRepository.countByUserId(userId);
+//        int couponCount = couponRepository.countByUserId(userId);
+//        int reviewCount = reviewRepository.countByUserId(userId);
+//        int totalEarnedPoint = pointRepository.sumEarnedPoint(userId);
+//
+//        return new MyPageResponse(
+//                new MyPageResponse.Profile(
+//                        user.getName(),
+//                        user.getEmail(),
+//                        user.getCreatedAt(),
+//                        user.getBalance()
+//                ),
+//                new MyPageResponse.Summary(
+//                        eventCount,
+//                        couponCount,
+//                        reviewCount,
+//                        totalEarnedPoint
+//                )
+//        );
+//    }
 }
 

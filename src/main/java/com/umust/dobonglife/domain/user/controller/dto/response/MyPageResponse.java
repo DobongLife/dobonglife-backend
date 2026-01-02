@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.user.controller.dto.response;
 
+import java.time.LocalDateTime;
+
 public record MyPageResponse(
         Profile profile,
         Summary summary
@@ -8,7 +10,7 @@ public record MyPageResponse(
     public record Profile(
             String name,
             String email,
-            String joinedAt,
+            LocalDateTime joinedAt,
             int balancePoint
     ) {}
 

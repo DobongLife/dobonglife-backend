@@ -41,7 +41,7 @@ public class PlaceController {
             responseCode = "200",
             description = "주간 테마별 장소 조회에 성공하였습니다."
     )
-    @GetMapping
+    @GetMapping("/theme")
     public BaseResponse<PlaceListResponse> getPlaceByTheme(@RequestBody ThemeRequest request){
         return BaseResponse.ok(placeService.getPlaceByTheme(request));
     }
@@ -65,6 +65,16 @@ public class PlaceController {
     )
     @GetMapping("/like/my")
     public BaseResponse<PlaceListResponse> getMyLikedPlace(@CurrentUserId Long userId){
+        return BaseResponse.ok(placeService.getLikedPlace(userId));
+    }
+
+    @Operation(summary = "주간 테마별 홈 화면 조회", description = "주간 테마별 홈 화면을 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "주간 테마별 홈 화면 조회에 성공하였습니다."
+    )
+    @GetMapping("/home")
+    public BaseResponse<PlaceListResponse> getHomeByTheme(@CurrentUserId Long userId){
         return BaseResponse.ok(placeService.getLikedPlace(userId));
     }
 }

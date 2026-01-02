@@ -5,7 +5,11 @@ import com.umust.dobonglife.domain.course.presentation.dto.response.CourseDetail
 import com.umust.dobonglife.domain.course.presentation.dto.response.CourseResponse;
 import com.umust.dobonglife.domain.course.presentation.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.service.CourseService;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
+import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,5 +42,15 @@ public class CourseController {
     public BaseResponse<CourseResponse> registerCourse(@RequestBody @Valid CreateCourseRequest request){
         CourseResponse response = courseService.registerCourse(request);
         return BaseResponse.ok(response);
+    }
+
+    @Operation(summary = "주간 테마별 코스 조회", description = "주간 테마별 코스를 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "주간 테마별 코스 조회에 성공하였습니다."
+    )
+    @GetMapping("/theme")
+    public BaseResponse<PlaceListResponse> getCourseByTheme(@CurrentUserId Long userId){
+        return BaseResponse.ok(courseService.getLikedPlace(userId));
     }
 }
