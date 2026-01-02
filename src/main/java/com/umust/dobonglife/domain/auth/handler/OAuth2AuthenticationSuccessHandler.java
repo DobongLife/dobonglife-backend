@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -22,9 +23,16 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    @Value("${jwt.access.header}")
+    private String ACCESS_HEADER;
+
+    @Value("${jwt.refresh.header}")
+    private String REFRESH_HEADER;
+
     private final AuthenticationUtil authenticationUtil;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
+    private final String REDIRECT_URI = "dobonglife://auth-callback";
 
     @Override
     @Transactional
@@ -42,13 +50,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         jwtService.storeRefreshToken(refreshToken, userId);
         log.info("[OAuth2AuthenticationSuccessHandler], refreshToken={}", refreshToken);
 
-        String encodedAccess = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
-        String encodedRefresh = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
-
-        String redirectUri = "dobonglife://auth/kakao"
-                + "?accessToken=" + encodedAccess
-                + "&refreshToken=" + encodedRefresh;
-
-        response.sendRedirect(redirectUri);
+        response.setHeader(ACCESS_HEADER, accessToken);
+        response.setHeader(REFRESH_HEADER, refreshToken);
+        response.sendRedirect(REDIRECT_URI);
     }
 }

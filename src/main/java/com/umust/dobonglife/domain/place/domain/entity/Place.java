@@ -60,10 +60,10 @@ public class Place extends BaseEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "course_themes",
-            joinColumns = @JoinColumn(name = "course_id")
+            joinColumns = @JoinColumn(name = "place_id")
     )
     @Column(name = "theme")
-    @Enumerated(EnumType.STRING) // Enum 사용 시 필수
+    @Enumerated(EnumType.STRING)
     private List<CourseTheme> themes = new ArrayList<>();
 
     public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {

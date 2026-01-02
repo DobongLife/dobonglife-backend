@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.umust.dobonglife.domain.place.domain.entity.QPlace.place;
 
@@ -19,12 +18,24 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
+    public List<Place> findByTheme(CourseTheme theme){
+
+        return queryFactory
+                .selectDistinct(place)
+                .from(place)
+                .where(place.themes.contains(theme))
+                .orderBy(place.id.desc())
+                .fetch();
+    }
+
+    @Override
     public List<Place> findDistinctPlacesByThemeLimit3(CourseTheme theme) {
 
         return queryFactory
                 .selectDistinct(place)
                 .from(place)
-                .where(place.themes.eq(theme))
+                .where(place.themes.contains(theme))
+                .orderBy(place.id.desc())
                 .limit(3)
                 .fetch();
     }

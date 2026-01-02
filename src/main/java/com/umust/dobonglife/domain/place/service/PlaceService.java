@@ -2,13 +2,11 @@ package com.umust.dobonglife.domain.place.service;
 
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.course.domain.repository.CoursePlaceRepository;
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
-import com.umust.dobonglife.domain.place.domain.entity.CoursePlace;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.entity.PlaceLike;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceLikeRepository;
@@ -34,7 +32,6 @@ import java.util.Optional;
 public class PlaceService {
 
     private final PlaceRepository placeRepository;
-    private final CoursePlaceRepository coursePlaceRepository;
     private final UserRepository userRepository;
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
@@ -61,12 +58,7 @@ public class PlaceService {
 
     @Transactional(readOnly = true)
     public PlaceListResponse getPlaceByTheme(ThemeRequest request){
-        List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
-
-        List<Place> places = coursePlaces.stream()
-                .map(CoursePlace::getPlace)
-                .distinct()
-                .toList();
+        List<Place> places = placeRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
 
         List<PlaceResponse> responses = places.stream()
                 .map(PlaceResponse::from)
@@ -121,17 +113,11 @@ public class PlaceService {
 
     @Transactional(readOnly = true)
     public PlaceAndCourseListResponse getPlaceAndCourseByTheme(ThemeRequest request){
-        List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
-
-        List<Place> places = coursePlaces.stream()
-                .map(CoursePlace::getPlace)
-                .distinct()
-                .toList();
+        List<Place> places = placeRepository.findDistinctPlacesByThemeLimit3(CourseTheme.toEnum(request.getTheme()));
 
         List<PlaceResponse> responses = places.stream()
                 .map(PlaceResponse::from)
                 .toList();
 
-        return PlaceListResponse.from(responses);
     }
 }
