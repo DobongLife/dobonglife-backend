@@ -5,7 +5,7 @@ spring:
     group:
       local: local-db, common
       prod: prod-db, common
-    active: local
+    active: prod
 
   config:
     activate:
@@ -39,6 +39,12 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -47,9 +53,8 @@ springdoc:
     urls:
       - name: Springdoc
         url: /v3/api-docs
-      - name: RestDocs
-        url: /docs/openapi3.json
-    urls-primary-name: Springdoc
+#      - name: RestDocs
+#        url: /docs/openapi3.json
 jwt:
   secret: ${JWT_SECRET_KEY}
   access:
@@ -68,3 +73,8 @@ cloud:
       static: ${AWS_REGION}
     s3:
       bucket: ${S3_BUCKET_NAME}
+
+#firebase:
+#  adminsdk:
+#    account:
+#      path: firebase/firebase-adminsdk-account.json

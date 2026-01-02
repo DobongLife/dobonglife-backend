@@ -1,23 +1,26 @@
 package com.umust.dobonglife.domain.user.controller.dto.response;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 public record MyPageResponse(
-        Profile profile,
-        Summary summary
+        String name,
+        String email,
+        String joinDate,
+        ActivitySummary activity,
+        Long currentPoint,
+        List<PointHistoryDto> recentHistories
 ) {
-
-    public record Profile(
-            String name,
-            String email,
-            LocalDateTime joinedAt,
-            int balancePoint
-    ) {}
-
-    public record Summary(
-            int participatedEventCount,
+    public record ActivitySummary(
+            int eventCount,
             int couponCount,
             int reviewCount,
-            int totalEarnedPoint
+            Long totalEarnedPoint
+    ) {}
+
+    public record PointHistoryDto(
+            String title,
+            String date,
+            Long amount,
+            String type
     ) {}
 }

@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
@@ -11,6 +12,7 @@ import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.response.ErrorCode;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import com.umust.dobonglife.domain.user.domain.entity.User;
 
 import java.time.LocalDateTime;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -65,31 +70,13 @@ public class UserService {
         SecurityContextHolder.clearContext();
     }
 
-//    @Transactional
-//    public MyPageResponse getMyPage(Long userId) {
-//
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-//
-//        int eventCount = eventRepository.countByUserId(userId);
-//        int couponCount = couponRepository.countByUserId(userId);
-//        int reviewCount = reviewRepository.countByUserId(userId);
-//        int totalEarnedPoint = pointRepository.sumEarnedPoint(userId);
-//
-//        return new MyPageResponse(
-//                new MyPageResponse.Profile(
-//                        user.getName(),
-//                        user.getEmail(),
-//                        user.getCreatedAt(),
-//                        user.getBalance()
-//                ),
-//                new MyPageResponse.Summary(
-//                        eventCount,
-//                        couponCount,
-//                        reviewCount,
-//                        totalEarnedPoint
-//                )
-//        );
-//    }
+    public boolean isCourseRemoved(Long id1, Long id2) {
+        return id1 == id2;
+    }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 User 엔티티가 존재하지 않습니다: " + userId));
+    }
 }
 

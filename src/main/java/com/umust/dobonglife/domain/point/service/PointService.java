@@ -10,10 +10,16 @@ import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.response.slice.Cursor;
 import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 import com.umust.dobonglife.global.common.response.slice.SortOrder;
+import com.umust.dobonglife.domain.point.domain.Point;
+import com.umust.dobonglife.domain.point.infrastructure.repository.PointRepository;
+import com.umust.dobonglife.domain.user.controller.dto.PointHistoryDomainDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 포인트 계산 결과 필드를 User 엔티티에 두는 이유
@@ -29,6 +35,9 @@ public class PointService {
 
     private final UserRepository userRepository;
     private final PointRepository pointRepository;
+    public boolean processUserPoint(Long userId) {
+        Long currentPoint = getUserPoint(userId);
+        return isValid(currentPoint);
 
     @Transactional(readOnly = true)
     public SliceResponse<PointResponse> getPoints(Long userId, int size, String cursor, String order) {
@@ -41,21 +50,41 @@ public class PointService {
         return pointRepository.findPointsByCursor(userId, size, parsedCursor, parsedOrder);
     }
 
+    public Long getUserPoint(Long userId) {
+        Long amount = pointRepository.sumAmountByUserId(userId);
+        return (amount != null) ? amount : 0L;
+    }
     @Transactional
     public void usePoint(Long userId, Long pointId) {
         Point point = pointRepository.findById(pointId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POINT_NOT_FOUND));
 
+    private boolean isValid(Long point) {
+        return point != null && point >= 0;
+    }
         if (point.isUsed()) {
             throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
         }
         int amount = point.getAmount();
 
+    public Long getTotalEarnedPoints(Long userId) {
+        return pointRepository.sumPositiveAmountByUserId(userId);
+    }
         long balanceUpdated = userRepository.decreaseBalance(userId, amount);
         if (balanceUpdated == 0) {
             throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
         }
 
+    public List<PointHistoryDomainDto> getRecentHistories(Long userId, int limit) {
+        List<Point> points = pointRepository.findTopNByUserId(userId, PageRequest.of(0, limit));
+
+        return points.stream()
+                .map(point -> new PointHistoryDomainDto(
+                        point.getTitle(),
+                        point.getAmount(),
+                        point.getCreatedAt()
+                ))
+                .toList();
         long pointUpdated = pointRepository.markUsed(userId, pointId);
         if (pointUpdated == 0) {
             throw new BusinessException(ErrorCode.POINT_ALREADY_USED);

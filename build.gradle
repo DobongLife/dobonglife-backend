@@ -95,6 +95,9 @@ dependencies {
 	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
+	// FireBase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
 
 	implementation 'org.apache.poi:poi:5.2.5'
 	implementation 'org.apache.poi:poi-ooxml:5.2.5'
