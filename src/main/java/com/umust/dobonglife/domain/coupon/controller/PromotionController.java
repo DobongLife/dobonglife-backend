@@ -1,24 +1,25 @@
 package com.umust.dobonglife.domain.coupon.controller;
 
+import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionItem;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionResponse;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.UsedCouponResponse;
 import com.umust.dobonglife.domain.coupon.service.PromotionService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/promotion")
+@RequestMapping("/api/promotion")
 public class PromotionController {
     private final PromotionService promotionService;
 
     @GetMapping
-    public BaseResponse<PromotionResponse> getPromotion(@CurrentUserId Long userId,
-                                                        @RequestParam(required = false) Long lastId,
+    public BaseResponse<CursorResponse<PromotionItem>> getPromotion(@RequestParam(required = false) Long lastId,
                                                         @RequestParam(defaultValue = "2") int size){
-        PromotionResponse response = promotionService.getPromotion(userId, lastId, size);
+        CursorResponse<PromotionItem> response = promotionService.getPromotion(lastId, size);
         return BaseResponse.ok(response);
     }
 
