@@ -48,7 +48,7 @@ public class CreateCourseRequest {
         private List<CourseTheme> themes = new ArrayList<>();
 
         @Schema(
-                description = "소요 시간 (분 단위)",
+                description = "소요 시간 (긱 단위)",
                 example = "180",
                 required = true,
                 minimum = "1",
