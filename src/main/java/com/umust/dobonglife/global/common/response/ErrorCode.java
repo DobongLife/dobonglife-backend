@@ -19,6 +19,7 @@ public enum ErrorCode{
     USER_DUPLICATE_EMAIL(201, HttpStatus.BAD_REQUEST.value(), "중복된 이메일의 사용자가 있습니다."),
     USER_DUPLICATE_NICKNAME(202, HttpStatus.BAD_REQUEST.value(), "중복된 닉네임의 사용자가 있습니다."),
     USER_MAIL_NOT_FOUND(203, HttpStatus.NOT_FOUND.value(), "해당 이메일의 사용자를 찾을 수 없습니다."),
+    USER_ROLE_BAD_REQUEST(203, HttpStatus.BAD_REQUEST.value(), "잘못된 Role의 요청값 입니다."),
 
     // Place
     PLACE_NOT_FOUND(300, HttpStatus.NOT_FOUND.value(), "장소를 찾을 수 없습니다."),
@@ -45,6 +46,7 @@ public enum ErrorCode{
     INVALID_SIGNATURE_JWT(616, HttpStatus.UNAUTHORIZED.value(), "인증 시그니처가 올바르지 않습니다"),
     INVALID_EMAIL_OR_PASSWORD(617, HttpStatus.UNAUTHORIZED.value(), "이메일 또는 비밀번호가 올바르지 않습니다."),
     INVALID_PASSWORD(618, HttpStatus.UNAUTHORIZED.value(), "기존 비밀번호가 유효하지 않습니다"),
+    REFRESH_TOKEN_NOT_FOUND(619, HttpStatus.UNAUTHORIZED.value(), "RefreshToken이 존재하지 않습니다"),
 
     // Course
     INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),

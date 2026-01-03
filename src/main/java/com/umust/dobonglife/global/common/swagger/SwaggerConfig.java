@@ -3,6 +3,7 @@ package com.umust.dobonglife.global.common.swagger;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,13 +33,27 @@ public class SwaggerConfig {
                 .url("https://api.dobonglife.co.kr")
                 .description("운영 서버"));
 
+        Components components = new Components()
+                // ✅ Access Token (Authorization: Bearer <token>)
+                .addSecuritySchemes("BearerAuth",
+                        new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .description("Access Token: Authorization 헤더에 Bearer {accessToken}"))
+                // ✅ Refresh Token (Authorization-refresh: Bearer <token>)
+                .addSecuritySchemes("RefreshAuth",
+                        new SecurityScheme()
+                                .type(SecurityScheme.Type.APIKEY)
+                                .in(SecurityScheme.In.HEADER)
+                                .name("Authorization-refresh")
+                                .description("Refresh Token: Authorization-refresh 헤더에 Bearer {refreshToken}"));
+
         return new OpenAPI()
-                .components(new Components().addSecuritySchemes("BearerAuth", new SecurityScheme()
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT")))
+                .components(components)
                 .info(apiInfo())
-                .servers(servers);
+                .servers(servers)
+                .addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
     }
 
 

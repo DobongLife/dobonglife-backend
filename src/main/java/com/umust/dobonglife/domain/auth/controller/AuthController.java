@@ -6,7 +6,10 @@ import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,15 +62,30 @@ public class AuthController {
         return BaseResponse.ok(null);
     }
 
-    @Operation(summary = "토큰 재발급", description = "토큰을 재발급합니다.")
+    @Operation(summary = "토큰 재발급", description = "토큰을 재발급합니다." +
+            " 리프레쉬 토큰의 헤더는 Authorization-refresh 입니다.")
     @ApiResponse(
             responseCode = "200",
-            description = "엑세스 토큰 재발급 성공하였습니다."
+            description = "엑세스 토큰 재발급 성공하였습니다.",
+            headers = {
+            @Header(
+                    name = "Authorization",
+                    description = "재발급된 Access Token (Bearer {accessToken})",
+                    schema = @Schema(type = "string")
+            ),
+            @Header(
+                    name = "Authorization-refresh",
+                    description = "재발급된 Refresh Token (Bearer {refreshToken})",
+                    schema = @Schema(type = "string")
+            )
+    }
     )
+    @SecurityRequirement(name = "RefreshAuth")
     @PostMapping("/reissue")
-    public BaseResponse<TokenResponse> reissueTokens(@RequestBody RefreshTokenRequest tokenRequest,
+    public BaseResponse<Void> reissueTokens(HttpServletRequest request,
+                                                     HttpServletResponse response,
                                                      @CurrentUserId Long userId) {
-        TokenResponse response = jwtService.reissueTokens(tokenRequest, userId);
-        return BaseResponse.ok(response);
+        jwtService.reissueTokens(request, userId, response);
+        return BaseResponse.ok(null);
     }
 }
