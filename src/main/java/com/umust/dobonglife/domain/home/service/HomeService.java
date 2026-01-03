@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.home.service;
 
+import com.umust.dobonglife.domain.banners.service.BannerService;
+import com.umust.dobonglife.domain.banners.service.dto.BannerSummaryResponse;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionItem;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionResponse;
 import com.umust.dobonglife.domain.coupon.service.CouponService;
@@ -18,11 +20,13 @@ public class HomeService {
 
     private final CourseService courseService;
     private final PromotionService promotionService;
+    private final BannerService bannerService;
 
     @Transactional(readOnly = true)
     public HomeSummaryResponse getHomeSummary(Long lastId, int size) {
         CursorResponse<CourseSummaryResponse> courses = courseService.getCourses(lastId, size);
         CursorResponse<PromotionItem> promotions = promotionService.getPromotion(lastId, size);
-        return new HomeSummaryResponse(courses, promotions);
+        CursorResponse<BannerSummaryResponse> banners = bannerService.getBanners(lastId, size);
+        return new HomeSummaryResponse(banners, courses, promotions);
     }
 }

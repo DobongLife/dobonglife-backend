@@ -6,7 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface BannerRepository extends JpaRepository<Long, Banner> {
+public interface BannerRepository extends JpaRepository<Banner, Long> {
 
     @Query("SELECT c FROM Banner c " +
             "WHERE (:lastId IS NULL OR c.id < :lastId) " +
