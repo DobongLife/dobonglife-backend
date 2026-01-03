@@ -65,9 +65,10 @@ public class AuthController {
             description = "엑세스 토큰 재발급 성공하였습니다."
     )
     @PostMapping("/reissue")
-    public BaseResponse<TokenResponse> reissueTokens(@RequestBody RefreshTokenRequest tokenRequest,
+    public BaseResponse<TokenResponse> reissueTokens(HttpServletRequest request,
+                                                     HttpServletResponse response,
                                                      @CurrentUserId Long userId) {
-        TokenResponse response = jwtService.reissueTokens(tokenRequest, userId);
-        return BaseResponse.ok(response);
+        jwtService.reissueTokens(request, userId, response);
+        return BaseResponse.ok(null);
     }
 }

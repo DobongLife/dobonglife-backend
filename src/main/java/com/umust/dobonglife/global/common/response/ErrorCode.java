@@ -46,6 +46,7 @@ public enum ErrorCode{
     INVALID_SIGNATURE_JWT(616, HttpStatus.UNAUTHORIZED.value(), "인증 시그니처가 올바르지 않습니다"),
     INVALID_EMAIL_OR_PASSWORD(617, HttpStatus.UNAUTHORIZED.value(), "이메일 또는 비밀번호가 올바르지 않습니다."),
     INVALID_PASSWORD(618, HttpStatus.UNAUTHORIZED.value(), "기존 비밀번호가 유효하지 않습니다"),
+    REFRESH_TOKEN_NOT_FOUND(619, HttpStatus.UNAUTHORIZED.value(), "RefreshToken이 존재하지 않습니다"),
 
     // Course
     INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),
