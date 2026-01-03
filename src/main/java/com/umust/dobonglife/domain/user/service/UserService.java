@@ -39,7 +39,7 @@ public class UserService {
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .provider(Provider.LOCAL)
-                .role(Role.MEMBER)
+                .role(Role.fromValue(request.getRole()))
                 .build();
         userRepository.save(user);
     }

@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 public enum Role {
 
     MEMBER("MEMBER"),
+    MANAGER("MANAGER"),
     ADMIN("ADMIN");
 
     Role(String value) {
@@ -37,5 +38,19 @@ public enum Role {
     // Role을 권한으로 변환하는 메서드 (MEMBER -> ROLE_MEMBER)
     public GrantedAuthority toAuthority() {
         return new SimpleGrantedAuthority(PREFIX + this.value);
+    }
+
+    public static Role fromValue(String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Role이 비어있습니다.");
+        }
+
+        for (Role role : Role.values()) {
+            if (role.value.equalsIgnoreCase(value)) {
+                return role;
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown role: " + value);
     }
 }

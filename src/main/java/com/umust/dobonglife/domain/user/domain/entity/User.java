@@ -9,6 +9,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
