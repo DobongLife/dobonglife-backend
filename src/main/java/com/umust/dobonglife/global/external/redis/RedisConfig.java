@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.config;
+package com.umust.dobonglife.global.external.redis;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.config;
+package com.umust.dobonglife.global.auth;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

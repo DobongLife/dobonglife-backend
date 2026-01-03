@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.config;
+package com.umust.dobonglife.global.auth;
 
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;

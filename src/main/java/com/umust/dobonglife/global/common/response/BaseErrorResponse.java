@@ -1,6 +1,7 @@
 package com.umust.dobonglife.global.common.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.Getter;
 
 

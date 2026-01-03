@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.redis;
+package com.umust.dobonglife.global.external.redis;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

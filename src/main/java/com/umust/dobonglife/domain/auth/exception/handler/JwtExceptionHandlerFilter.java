@@ -2,7 +2,7 @@ package com.umust.dobonglife.domain.auth.exception.handler;
 
 
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
-import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

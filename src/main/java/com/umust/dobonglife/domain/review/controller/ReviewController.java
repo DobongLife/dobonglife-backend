@@ -5,7 +5,7 @@ import com.umust.dobonglife.domain.review.controller.dto.response.ReviewDetailRe
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewResponse;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.service.ReviewService;
-import com.umust.dobonglife.global.common.resolver.CurrentUserId;
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.redis;
+package com.umust.dobonglife.global.external.redis;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

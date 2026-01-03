@@ -1,18 +1,4 @@
-package com.umust.dobonglife.global.config;
-
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.umust.dobonglife.global.common.exception.BusinessException;
-import com.umust.dobonglife.global.common.response.ErrorCode;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
-
-import java.io.IOException;
-import java.io.InputStream;
+package com.umust.dobonglife.global.external.firebase;
 
 // @Configuration
 public class FirebaseConfig {

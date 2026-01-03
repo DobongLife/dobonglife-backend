@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.config;
+package com.umust.dobonglife.global.external.s3;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

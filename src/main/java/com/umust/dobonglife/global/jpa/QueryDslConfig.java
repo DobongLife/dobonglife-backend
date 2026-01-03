@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.config;
+package com.umust.dobonglife.global.jpa;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

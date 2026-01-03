@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.exception;
+package com.umust.dobonglife.global.error.exception;
 
 
 import com.umust.dobonglife.global.common.response.BaseErrorResponse;
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.Objects;
 
-import static com.umust.dobonglife.global.common.response.ErrorCode.*;
+import static com.umust.dobonglife.global.error.ErrorCode.*;
 
 
 @Order(Ordered.LOWEST_PRECEDENCE)

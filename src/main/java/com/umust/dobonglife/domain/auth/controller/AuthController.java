@@ -3,7 +3,7 @@ package com.umust.dobonglife.domain.auth.controller;
 import com.umust.dobonglife.domain.auth.controller.dto.request.RefreshTokenRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.service.JwtService;
-import com.umust.dobonglife.global.common.resolver.CurrentUserId;
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

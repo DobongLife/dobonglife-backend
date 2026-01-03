@@ -1,7 +1,7 @@
-package com.umust.dobonglife.global.common.exception;
+package com.umust.dobonglife.global.error.exception;
 
 
-import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.Getter;
 
 @Getter

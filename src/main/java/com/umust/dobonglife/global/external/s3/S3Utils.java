@@ -1,12 +1,12 @@
-package com.umust.dobonglife.global.common.s3;
+package com.umust.dobonglife.global.external.s3;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.umust.dobonglife.global.common.exception.BusinessException;
-import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

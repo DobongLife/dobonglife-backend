@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.response;
+package com.umust.dobonglife.global.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

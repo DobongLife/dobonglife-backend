@@ -1,12 +1,11 @@
-package com.umust.dobonglife.global.common.notification;
+package com.umust.dobonglife.global.external.firebase;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.umust.dobonglife.global.common.exception.BusinessException;
-import com.umust.dobonglife.global.common.response.ErrorCode;
-import org.springframework.http.HttpStatus;
+import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

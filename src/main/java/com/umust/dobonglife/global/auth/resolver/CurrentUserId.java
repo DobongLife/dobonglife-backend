@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.resolver;
+package com.umust.dobonglife.global.auth.resolver;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

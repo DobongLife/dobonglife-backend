@@ -4,7 +4,7 @@ import com.umust.dobonglife.domain.coupon.controller.dto.request.CouponCodeReque
 import com.umust.dobonglife.domain.coupon.controller.dto.response.MyCouponResponse;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.UsedCouponResponse;
 import com.umust.dobonglife.domain.coupon.service.CouponService;
-import com.umust.dobonglife.global.common.resolver.CurrentUserId;
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

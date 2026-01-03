@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.notification;
+package com.umust.dobonglife.global.external.firebase;
 
 public record NotificationRequest(
         String topic,

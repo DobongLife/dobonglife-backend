@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.common.resolver;
+package com.umust.dobonglife.global.auth.resolver;
 
 import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import org.springframework.core.MethodParameter;
