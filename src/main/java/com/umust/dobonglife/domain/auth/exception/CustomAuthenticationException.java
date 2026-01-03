@@ -1,7 +1,7 @@
 package com.umust.dobonglife.domain.auth.exception;
 
 
-import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.Getter;
 import org.springframework.security.core.AuthenticationException;
 

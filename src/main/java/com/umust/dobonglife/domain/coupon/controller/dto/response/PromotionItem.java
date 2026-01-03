@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 public record PromotionItem(Long promotionId, String category, String title,
                             String description, String img, DiscountType discountType, BigDecimal discountValue,
-                            Long point, LocalDate endDate) {
+                            Long point, Long minPrice, Long maxPrice, LocalDate endDate) {
     public static PromotionItem from(Promotion promotion) {
         return new PromotionItem(
                 promotion.getId(),
@@ -19,6 +19,8 @@ public record PromotionItem(Long promotionId, String category, String title,
                 promotion.getDiscountType(),
                 promotion.getDiscountValue(),
                 promotion.getPoint(),
+                promotion.getMinPrice(),
+                promotion.getMaxPrice(),
                 promotion.getEndDate()
         );
     }

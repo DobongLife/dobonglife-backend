@@ -4,10 +4,11 @@ import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.*;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.point.service.PointService;
-import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
-import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,12 +24,11 @@ public class PromotionService {
 
     private final PointService pointService;
 
-    public PromotionResponse getPromotion(Long userId, Long lastId, int size) {
+    public CursorResponse<PromotionItem> getPromotion(Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
-        Long point = pointService.getUserPoint(userId);
         Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(lastId, pageable);
 
-        return new PromotionResponse(point, convertToCursorResponse(promotions));
+        return convertToCursorResponse(promotions);
     }
 
     private CursorResponse<PromotionItem> convertToCursorResponse(Slice<Promotion> promotions) {
