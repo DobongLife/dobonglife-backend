@@ -9,12 +9,12 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Getter
 @Setter
-@Table(name = "users")
 public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
