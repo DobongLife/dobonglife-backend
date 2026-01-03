@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.user.domain.constant;
 
+import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.common.response.ErrorCode;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,8 +32,6 @@ public enum Role {
                 }
             }
         }
-
-        // todo 예외 처리 로직 추가
         throw new IllegalArgumentException("Unknown role: " + roleString);
     }
 
@@ -42,7 +42,7 @@ public enum Role {
 
     public static Role fromValue(String value) {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("Role이 비어있습니다.");
+            throw new BusinessException(ErrorCode.USER_ROLE_BAD_REQUEST);
         }
 
         for (Role role : Role.values()) {
@@ -51,6 +51,6 @@ public enum Role {
             }
         }
 
-        throw new IllegalArgumentException("Unknown role: " + value);
+        throw new BusinessException(ErrorCode.USER_ROLE_BAD_REQUEST);
     }
 }

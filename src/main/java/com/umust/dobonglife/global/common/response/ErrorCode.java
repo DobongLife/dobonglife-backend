@@ -19,6 +19,7 @@ public enum ErrorCode{
     USER_DUPLICATE_EMAIL(201, HttpStatus.BAD_REQUEST.value(), "중복된 이메일의 사용자가 있습니다."),
     USER_DUPLICATE_NICKNAME(202, HttpStatus.BAD_REQUEST.value(), "중복된 닉네임의 사용자가 있습니다."),
     USER_MAIL_NOT_FOUND(203, HttpStatus.NOT_FOUND.value(), "해당 이메일의 사용자를 찾을 수 없습니다."),
+    USER_ROLE_BAD_REQUEST(203, HttpStatus.BAD_REQUEST.value(), "잘못된 Role의 요청값 입니다."),
 
     // Place
     PLACE_NOT_FOUND(300, HttpStatus.NOT_FOUND.value(), "장소를 찾을 수 없습니다."),
