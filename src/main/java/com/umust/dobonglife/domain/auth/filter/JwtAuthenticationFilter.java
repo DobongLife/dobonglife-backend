@@ -1,10 +1,10 @@
 package com.umust.dobonglife.domain.auth.filter;
 
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
+import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.exception.handler.CustomAuthenticationEntryPoint;
-import com.umust.dobonglife.domain.auth.domain.constant.Provider;
-import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
@@ -40,7 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 인증을 안해도 되니 토큰이 필요없는 URL들 (에러: 로그인이 필요합니다)
     public final static List<String> PASS_URIS = Arrays.asList(
-            "/api/users/signup",
             "/api/auth/login/**",
             "/login/oauth2/**",
             "/swagger-ui/**",
@@ -48,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/swagger-resources/**",
             "/docs/**",
             "/api/test/**",
-            "/api/**"
+            "/api/users/signup"
     );
 
     private static final AntPathMatcher ANT = new AntPathMatcher();

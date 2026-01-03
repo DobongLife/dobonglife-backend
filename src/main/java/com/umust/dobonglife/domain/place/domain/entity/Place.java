@@ -6,6 +6,7 @@ import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,5 +47,25 @@ public class Place extends BaseEntity {
 
     @Column(name = "contact", nullable = false)
     private String contact;
+
+    @Builder.Default
+    @Column(name = "average_rating", nullable = false)
+    private Double averageRating = 0.0;
+
+    @Builder.Default
+    @Column(name = "review_count", nullable = false)
+    private Long reviewCount = 0L;
+
+    public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
+        this.averageRating = newAverageRating;
+        this.reviewCount = newReviewCount;
+    }
+
+    public void applyNewReview(Double newRating) { // TODO: Course 처럼 분리할지 고민
+        double totalScore = (this.averageRating * this.reviewCount) + newRating;
+        Long reviewCount = this.reviewCount + 1;
+        reviewCount = reviewCount + 1;
+        this.averageRating = totalScore / reviewCount;
+    }
 }
 

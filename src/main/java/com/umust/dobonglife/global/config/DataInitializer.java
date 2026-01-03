@@ -36,6 +36,8 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.count() == 0) {
             User masterUser = User.builder()
                     .name("master")
+                    .email("master@gmail.com")
+                    .password("1234")
                     .role(Role.ADMIN)
                     .provider(Provider.LOCAL)
                     .build();

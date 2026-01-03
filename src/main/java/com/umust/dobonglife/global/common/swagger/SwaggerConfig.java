@@ -14,6 +14,12 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
+    static {
+        org.springdoc.core.utils.SpringDocUtils.getConfig().addAnnotationsToIgnore(
+                com.umust.dobonglife.global.common.resolver.CurrentUserId.class
+        );
+    }
     @Bean
     public OpenAPI openAPI() {
         List<Server> servers = new ArrayList<>();
@@ -38,7 +44,7 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-                .title("도봉라이프 API")
+                .title("도봉라이프 API (Spring Doc)")
                 .description("도봉구 스토리 관광 가이드")
                 .version("1.0.0");
     }

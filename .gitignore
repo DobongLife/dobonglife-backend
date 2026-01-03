@@ -42,3 +42,14 @@ out/
 .DS_Store
 src/main/resources/application-local.yml
 src/test/resources/application-test.yml
+
+
+# 테스트가 생성하는 스니펫
+/build/generated-snippets/
+
+# Asciidoctor로 생성된 문서 (HTML)
+/build/docs/
+/build/asciidoc/
+/src/main/resources/static/docs/
+# Firebase Admin SDK Secret Key
+src/main/resources/firebase/firebase-adminsdk-account.json
