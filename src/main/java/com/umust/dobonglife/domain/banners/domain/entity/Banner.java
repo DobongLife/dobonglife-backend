@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Banners extends BaseEntity {
+public class Banner extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class Banners extends BaseEntity {
     private Boolean isActive;
 
     @Builder
-    public Banners(String title, String description, String imageUrl, String link, Integer priority, Boolean isActive) {
+    public Banner(String title, String description, String imageUrl, String link, Integer priority, Boolean isActive) {
         this.title = title;
         this.description = description;
         this.imageUrl = imageUrl;
