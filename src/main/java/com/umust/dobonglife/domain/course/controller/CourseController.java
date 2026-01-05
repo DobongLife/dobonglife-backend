@@ -34,7 +34,7 @@ public class CourseController {
     private final CourseService courseService;
 
     // 홈 메인에서의 스토리 코스 목록 조회
-    @Operation(summary = "코스 목록 조회 (홈메인)", description = "코스를 조회합니다.")
+    @Operation(summary = "코스 목록 조회", description = "코스를 조회합니다.")
     @ApiResponse(
             responseCode = "200",
             description = "요청에 성공하였습니다."

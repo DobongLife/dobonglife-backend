@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CourseLikeService {
@@ -19,16 +21,16 @@ public class CourseLikeService {
 
     @Transactional
     public CourseLikeResponse updateCourseLike(Long courseId, Long userId) {
-        CourseLike courseLike = courseLikeRepository.findByCourseIdAndUserId(courseId, userId)
-                .orElseThrow(() -> new EntityExistsException("코스 좋아요 엔티티를 찾을 수 없습니다."));
 
-        if(courseLike != null){
-            courseLikeRepository.delete(courseLike);
-            return CourseLikeResponse.from(userId, courseId, false);
-        }
-
-        CourseLike newCourseLike = new CourseLike(courseId, userId);
-        courseLikeRepository.save(newCourseLike);
-        return CourseLikeResponse.from(userId, courseId, true);
+        return courseLikeRepository.findByCourseIdAndUserId(courseId, userId)
+                .map(like -> {
+                    courseLikeRepository.delete(like);
+                    return CourseLikeResponse.from(userId, courseId, false);
+                })
+                .orElseGet(() -> {
+                    CourseLike newCourseLike = new CourseLike(courseId, userId);
+                    courseLikeRepository.save(newCourseLike);
+                    return CourseLikeResponse.from(userId, courseId, true);
+                });
     }
 }
