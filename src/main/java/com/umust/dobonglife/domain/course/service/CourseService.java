@@ -63,7 +63,7 @@ public class CourseService {
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
 
-        boolean isRemoved = userService.isCourseRemoved(userId, course.getUserId());
+        boolean isRemoved = userService.validateOwner(userId, course.getUserId());
         boolean isFavorite = courseLikeService.isCourseFavorite(userId, courseId);
 
         List<CoursePlans> plans = coursePlansRepository
@@ -113,17 +113,17 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseRegisterResponse updateCourse(Long courseId, UpdateCourseRequest request, List<MultipartFile> imageFiles) {
+    public CourseRegisterResponse updateCourse(Long userId, Long courseId, UpdateCourseRequest request, List<MultipartFile> imageFiles) {
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
 
+        boolean isOwner = userService.validateOwner(userId, course.getUserId());
+        if(!isOwner) throw new BusinessException(ErrorCode.NOT_OWNER);
+
         updateImageUrls(course, request.urlsToDelete(), imageFiles);
-
         course.updateBasicInfo(new CourseBasicInfo(request.title(), request.subTitle(), request.duration(), CourseLevel.valueOf(request.level())));
-
         updateCollection(course.getThemes(), request.themes());
         updateCollection(course.getTags(), request.tags());
-
         course.getDescription().update(request.content(), request.highlights());
 
         if (request.plans() != null) {
@@ -172,9 +172,9 @@ public class CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
 
-        boolean isRemoved = userService.isCourseRemoved(userId, course.getUserId());
+        boolean isRemoved = userService.validateOwner(userId, course.getUserId());
         if(!isRemoved)
-            throw new BusinessException(ErrorCode.NOT_COURSE_OWNER);
+            throw new BusinessException(ErrorCode.NOT_OWNER);
 
         if (course.getImageUrls() != null && !course.getImageUrls().isEmpty()) {
             s3Utils.deleteImages(course.getImageUrls());
@@ -189,4 +189,5 @@ public class CourseService {
                 .toList();
         return new CursorResponse<>(content, courses.hasNext());
     }
+    // TODO: 트랜잭션의 범위, 외부 시스템
 }

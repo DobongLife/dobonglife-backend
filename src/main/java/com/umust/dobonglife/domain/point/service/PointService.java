@@ -3,9 +3,11 @@ package com.umust.dobonglife.domain.point.service;
 import com.umust.dobonglife.domain.point.domain.Point;
 import com.umust.dobonglife.domain.point.infrastructure.repository.PointRepository;
 import com.umust.dobonglife.domain.user.controller.dto.PointHistoryDomainDto;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,5 +44,16 @@ public class PointService {
                         point.getCreatedAt()
                 ))
                 .toList();
+    }
+
+    @Transactional
+    public void earnPoint(User user, String title, Long amount) {
+        Point point = Point.builder()
+                .user(user)
+                .title(title)
+                .amount(amount)
+                .build();
+
+        pointRepository.save(point);
     }
 }

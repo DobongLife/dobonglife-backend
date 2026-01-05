@@ -1,9 +1,11 @@
 package com.umust.dobonglife.domain.review.service;
 
+import com.umust.dobonglife.domain.coupon.service.CouponService;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
 import com.umust.dobonglife.domain.review.controller.dto.request.CreateReviewRequest;
@@ -34,6 +36,7 @@ public class ReviewService {
     private final PlaceRepository placeRepository;
     private final S3Utils s3Utils;
     private final UserService userService;
+    private final PointService pointService;
 
     public CursorResponse<ReviewSummaryResponse> getReviews(Long userId, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
@@ -84,6 +87,7 @@ public class ReviewService {
                 .imageUrls(imageUrls)
                 .build();
         reviewRepository.save(review);
+        pointService.earnPoint(userService.findById(userId),"리뷰 등록", 10L);
 
         return ReviewResponse.from(review);
     }

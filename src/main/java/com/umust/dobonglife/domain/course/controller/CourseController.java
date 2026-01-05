@@ -81,9 +81,10 @@ public class CourseController {
     )
     @PutMapping("/{courseId}")
     public BaseResponse<CourseRegisterResponse> updateCourse(
+            @CurrentUserId Long userId,
             @PathVariable("courseId") Long courseId,
             @RequestPart("request") @Valid UpdateCourseRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
-        CourseRegisterResponse response = courseService.updateCourse(courseId, request,imageFiles);
+        CourseRegisterResponse response = courseService.updateCourse(userId, courseId, request,imageFiles);
         return BaseResponse.ok(response);
     }
 

@@ -61,8 +61,11 @@ public class UserService {
         SecurityContextHolder.clearContext();
     }
 
-    public boolean isCourseRemoved(Long id1, Long id2) {
-        return id1 == id2;
+    public boolean validateOwner(Long userId, Long ownerId) {
+        if (!userId.equals(ownerId)) {
+            return false;
+        }
+        return true;
     }
 
     public User findById(Long userId) {
