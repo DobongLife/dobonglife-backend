@@ -1,6 +1,5 @@
-package com.umust.dobonglife.domain.point.domain;
+package com.umust.dobonglife.domain.point.domain.entity;
 
-import com.umust.dobonglife.domain.point.domain.PointType;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

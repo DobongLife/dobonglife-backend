@@ -22,6 +22,7 @@ import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.external.s3.S3Utils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -215,5 +216,13 @@ public class CourseService {
         if (next != null) {
             current.addAll(next);
         }
+    }
+
+    @Transactional
+    public void updateCourseRatingAndCount(Long courseId, Double rating) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
+        course.applyNewReview(rating);
+        courseRepository.save(course);
     }
 }
