@@ -17,6 +17,7 @@ import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
 import com.umust.dobonglife.domain.user.service.UserService;
+import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -28,6 +29,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -47,15 +50,15 @@ public class CourseService {
     public CursorResponse<CourseSummaryResponse> getCourses(Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findCoursesNoOffset(lastId, pageable);
-        return convertToCursorResponse(courses);
+        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
     }
 
-    // TODO: 종윤님께서 주간테마 코스 조회 시 사용할 함수
+    // TODO: 주간테마 코스 조회 시 사용할 함수
     @Transactional(readOnly = true)
     public CursorResponse<CourseSummaryResponse> getCourses(CourseTheme theme, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findByThemeNoOffset(theme, lastId, pageable);
-        return convertToCursorResponse(courses);
+        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
     }
 
     @Transactional(readOnly = true)
@@ -72,31 +75,43 @@ public class CourseService {
         return CourseDetailResponse.from(course, plans, isRemoved, isFavorite);
     }
 
-    @Transactional
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {
-        // 이미지
         List<String> imageUrls = new ArrayList<>();
-        if(imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
+        if (imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
             imageUrls = s3Utils.uploadImages(imageFiles);
         }
 
-        // vo
-        CourseBasicInfo basicInfo = new CourseBasicInfo(
-                request.getTitle(),
-                request.getSubTitle(),
-                request.getDuration(),
-                CourseLevel.valueOf(request.getLevel())
-        );
+        try {
+            Course savedCourse = saveCourse(userId, request, imageUrls);
+            return CourseRegisterResponse.from(savedCourse);
+        } catch (Exception e) {
+            if (!imageUrls.isEmpty()) {
+                try {
+                    s3Utils.deleteImages(imageUrls);
+                } catch (Exception cleanupEx) {
+                    log.error("S3 이미지 정리 실패: {}", imageUrls, cleanupEx);
+                }
+                log.error("코스 등록 실패: {}", request.getTitle());
+            }
+            throw new BusinessException(ErrorCode.COURSE_SERVER_ERROR);
+        }
+    }
 
-        // 상세 설명
-        CourseDescription description = new CourseDescription(
-                null,
-                request.getContent(),
-                request.getHighlights()
-        );
+    @Transactional
+    protected Course saveCourse(Long userId, CreateCourseRequest request, List<String> imageUrls) {
+        CourseBasicInfo basicInfo = CourseBasicInfo.builder()
+                .title(request.getTitle())
+                .subTitle(request.getSubTitle())
+                .duration(request.getDuration())
+                .level(CourseLevel.valueOf(request.getLevel()))
+                .build();
+
+        CourseDescription description = CourseDescription.builder()
+                .content(request.getContent())
+                .highlights(request.getHighlights())
+                .build();
 
         List<CoursePlans> plans = convertToPlans(request.getPlans());
-
         Course course = Course.builder()
                 .userId(userId)
                 .basicInfo(basicInfo)
@@ -108,8 +123,7 @@ public class CourseService {
                 .build();
 
         Course savedCourse = courseRepository.save(course);
-
-        return CourseRegisterResponse.from(savedCourse);
+        return savedCourse;
     }
 
     @Transactional
@@ -120,8 +134,39 @@ public class CourseService {
         boolean isOwner = userService.validateOwner(userId, course.getUserId());
         if(!isOwner) throw new BusinessException(ErrorCode.NOT_OWNER);
 
-        updateImageUrls(course, request.urlsToDelete(), imageFiles);
-        course.updateBasicInfo(new CourseBasicInfo(request.title(), request.subTitle(), request.duration(), CourseLevel.valueOf(request.level())));
+        if (imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
+            List<String> images = s3Utils.uploadImages(imageFiles);
+            course.getImageUrls().addAll(images);
+        }
+        List<String> urlsToDelete = (request.urlsToDelete() != null) ? new ArrayList<>(request.urlsToDelete()) : new ArrayList<>();
+        urlsToDelete.forEach(url -> course.getImageUrls().remove(url));
+
+        try {
+            saveCourse(request, course);
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    if (!urlsToDelete.isEmpty()) {
+                        s3Utils.deleteImages(urlsToDelete);
+                    }
+                }
+            });
+            return CourseRegisterResponse.from(course);
+        } catch (Exception e) {
+            log.error("코스 업데이트 실패: {}", request.title());
+            throw new BusinessException(ErrorCode.COURSE_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    protected void saveCourse(UpdateCourseRequest request, Course course) {
+        course.updateBasicInfo(CourseBasicInfo.builder()
+                .title(request.title())
+                .subTitle(request.subTitle())
+                .duration(request.duration())
+                .level(CourseLevel.valueOf(request.level()))
+                .build());
+
         updateCollection(course.getThemes(), request.themes());
         updateCollection(course.getTags(), request.tags());
         course.getDescription().update(request.content(), request.highlights());
@@ -130,8 +175,6 @@ public class CourseService {
             List<CoursePlans> newPlans = convertToPlans(request.plans());
             course.updatePlans(newPlans);
         }
-
-        return CourseRegisterResponse.from(course);
     }
 
     private List<CoursePlans> convertToPlans(List<CoursePlanRequest> planDtos) {
@@ -145,18 +188,26 @@ public class CourseService {
                 .toList();
     }
 
-    private void updateImageUrls(Course course, List<String> urlsToDelete, List<MultipartFile> newFiles) {
-        if (urlsToDelete != null && !urlsToDelete.isEmpty() && !urlsToDelete.get(0).isEmpty()) {
-            urlsToDelete.forEach(url -> {
-                s3Utils.deleteImage(url);
-                course.getImageUrls().remove(url);
-            });
+    @Transactional
+    public CourseDeleteResponse deleteCourse(Long userId, Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
+
+        if (!userService.validateOwner(userId, course.getUserId())) {
+            throw new BusinessException(ErrorCode.NOT_OWNER);
         }
 
-        if (newFiles != null && !newFiles.isEmpty() && !newFiles.get(0).isEmpty()) {
-            List<String> images = s3Utils.uploadImages(newFiles);
-            course.getImageUrls().addAll(images);
-        }
+        List<String> imagesToDelete = new ArrayList<>(course.getImageUrls());
+        courseRepository.delete(course);
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                if (!imagesToDelete.isEmpty()) {
+                    s3Utils.deleteImages(imagesToDelete);
+                }
+            }
+        });
+        return CourseDeleteResponse.from(courseId);
     }
 
     private <T> void updateCollection(List<T> current, List<T> next) {
@@ -165,29 +216,4 @@ public class CourseService {
             current.addAll(next);
         }
     }
-
-    // TODO: 삭제할때 특정조건 고려
-    @Transactional
-    public CourseDeleteResponse deleteCourse(Long userId, Long courseId) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
-
-        boolean isRemoved = userService.validateOwner(userId, course.getUserId());
-        if(!isRemoved)
-            throw new BusinessException(ErrorCode.NOT_OWNER);
-
-        if (course.getImageUrls() != null && !course.getImageUrls().isEmpty()) {
-            s3Utils.deleteImages(course.getImageUrls());
-        }
-        courseRepository.delete(course);
-        return CourseDeleteResponse.from(courseId);
-    }
-
-    private CursorResponse<CourseSummaryResponse> convertToCursorResponse(Slice<Course> courses) {
-        List<CourseSummaryResponse> content = courses.getContent().stream()
-                .map(CourseSummaryResponse::from)
-                .toList();
-        return new CursorResponse<>(content, courses.hasNext());
-    }
-    // TODO: 트랜잭션의 범위, 외부 시스템
 }

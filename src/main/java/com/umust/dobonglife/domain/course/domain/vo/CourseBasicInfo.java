@@ -6,6 +6,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +34,7 @@ public class CourseBasicInfo {
 
     // tag
 
+    @Builder
     public CourseBasicInfo(String title, String subTitle, Long duration, CourseLevel level) {
         this.title = title;
         this.subTitle = subTitle;
