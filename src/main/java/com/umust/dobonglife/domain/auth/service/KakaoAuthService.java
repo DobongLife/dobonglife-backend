@@ -43,6 +43,7 @@ public class KakaoAuthService {
         return TokenResponse.builder()
                 .accessToken(access)
                 .refreshToken(refresh)
+                .role(Role.PREFIX + user.getRole().name())
                 .build();
     }
 
