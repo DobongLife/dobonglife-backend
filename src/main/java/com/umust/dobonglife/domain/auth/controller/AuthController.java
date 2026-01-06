@@ -1,8 +1,11 @@
 package com.umust.dobonglife.domain.auth.controller;
 
+import com.umust.dobonglife.domain.auth.controller.dto.request.GoogleLoginRequest;
+import com.umust.dobonglife.domain.auth.controller.dto.request.KakaoLoginRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.request.RefreshTokenRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.service.JwtService;
+import com.umust.dobonglife.domain.auth.service.KakaoAuthService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,8 +16,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.umust.dobonglife.domain.auth.service.GoogleAuthService;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +33,8 @@ import java.io.IOException;
 public class AuthController {
 
     private final JwtService jwtService;
+    private final GoogleAuthService googleAuthService;
+    private final KakaoAuthService kakaoAuthService;
 
     @Operation(summary = "카카오 로그인", description = "카카오 로그인을 합니다.")
     @ApiResponse(
@@ -35,9 +42,8 @@ public class AuthController {
             description = "카카오 소셜 로그인에 성공하였습니다."
     )
     @GetMapping("/login/kakao")
-    public void redirectToKakao(HttpServletResponse response) throws IOException {
-        response.sendRedirect("/oauth2/authorization/kakao");
-
+    public BaseResponse<TokenResponse> loginKakao(@RequestBody @Valid KakaoLoginRequest request) {
+        return BaseResponse.ok(kakaoAuthService.login(request.getAccessToken()));
     }
 
     @Operation(summary = "구글 로그인", description = "구글 로그인을 합니다.")
@@ -46,8 +52,8 @@ public class AuthController {
             description = "구글 소셜 로그인에 성공하였습니다."
     )
     @GetMapping("/login/google")
-    public void redirectToGoogle(HttpServletResponse response) throws IOException {
-        response.sendRedirect("/oauth2/authorization/google");
+    public BaseResponse<TokenResponse> loginGoogle(@RequestBody @Valid GoogleLoginRequest request) {
+        return BaseResponse.ok(googleAuthService.login(request.getIdToken()));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
@@ -56,9 +62,8 @@ public class AuthController {
             description = "로그아웃에 성공하였습니다."
     )
     @PostMapping("/logout")
-    public BaseResponse<Void> logout(HttpServletRequest request,
-                                     @RequestBody RefreshTokenRequest tokenRequest){
-        jwtService.logout(request, tokenRequest);
+    public BaseResponse<Void> logout(HttpServletRequest request){
+        jwtService.logout(request);
         return BaseResponse.ok(null);
     }
 
@@ -82,10 +87,9 @@ public class AuthController {
     )
     @SecurityRequirement(name = "RefreshAuth")
     @PostMapping("/reissue")
-    public BaseResponse<Void> reissueTokens(HttpServletRequest request,
-                                                     HttpServletResponse response,
+    public BaseResponse<TokenResponse> reissueTokens(HttpServletRequest request,
                                                      @CurrentUserId Long userId) {
-        jwtService.reissueTokens(request, userId, response);
-        return BaseResponse.ok(null);
+        TokenResponse response = jwtService.reissueTokens(request, userId);
+        return BaseResponse.ok(response);
     }
 }

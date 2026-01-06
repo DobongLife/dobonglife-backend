@@ -18,7 +18,7 @@ public enum Role {
         this.role = PREFIX + value;
     }
 
-    private static final String PREFIX = "ROLE_";
+    public static final String PREFIX = "ROLE_";
     private final String value;
     private final String role;
 
@@ -40,6 +40,7 @@ public enum Role {
         return new SimpleGrantedAuthority(PREFIX + this.value);
     }
 
+    // MEMBER String을 enum으로
     public static Role fromValue(String value) {
         if (value == null || value.isBlank()) {
             throw new BusinessException(ErrorCode.USER_ROLE_BAD_REQUEST);

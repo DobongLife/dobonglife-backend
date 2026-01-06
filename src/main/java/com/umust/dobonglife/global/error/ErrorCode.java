@@ -47,6 +47,8 @@ public enum ErrorCode{
     INVALID_EMAIL_OR_PASSWORD(617, HttpStatus.UNAUTHORIZED.value(), "이메일 또는 비밀번호가 올바르지 않습니다."),
     INVALID_PASSWORD(618, HttpStatus.UNAUTHORIZED.value(), "기존 비밀번호가 유효하지 않습니다"),
     REFRESH_TOKEN_NOT_FOUND(619, HttpStatus.UNAUTHORIZED.value(), "RefreshToken이 존재하지 않습니다"),
+    INVALID_GOOGLE_ID_TOKEN(620, HttpStatus.BAD_REQUEST.value(),"유효하지 않은 idToken값 입니다."),
+    INVALID_KAKAO_ACCESS_TOKEN(620, HttpStatus.BAD_REQUEST.value(),"유효하지 않은 Kakao 엑세스 토큰값 입니다."),
 
     // Course
     INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),
