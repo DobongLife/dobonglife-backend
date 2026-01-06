@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.auth.service;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -36,8 +37,8 @@ public class KakaoAuthService {
                 Provider.KAKAO, providerId, email, name
         );
 
-        String access = jwtUtil.createAccessToken(user.getId(), Provider.KAKAO.getValue(), user.getRole().name(), user.getName());
-        String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.KAKAO.getValue(), user.getRole().name());
+        String access = jwtUtil.createAccessToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
+        String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name());
 
         return TokenResponse.builder()
                 .accessToken(access)

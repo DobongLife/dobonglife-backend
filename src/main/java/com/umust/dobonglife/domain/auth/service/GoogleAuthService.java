@@ -41,8 +41,8 @@ public class GoogleAuthService {
                 Provider.GOOGLE, providerId, email, name
         );
 
-        String access = jwtUtil.createAccessToken(user.getId(), Provider.GOOGLE.getValue(), user.getRole().name(), user.getName());
-        String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.GOOGLE.getValue(), user.getRole().name());
+        String access = jwtUtil.createAccessToken(user.getId(), Provider.GOOGLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
+        String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.GOOGLE.getValue(), Role.PREFIX + user.getRole().name());
 
         return TokenResponse.builder()
                 .accessToken(access)
