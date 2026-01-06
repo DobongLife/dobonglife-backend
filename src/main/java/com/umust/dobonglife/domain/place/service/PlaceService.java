@@ -61,17 +61,6 @@ public class PlaceService {
         placeRepository.save(place);
     }
 
-    @Transactional(readOnly = true)
-    public PlaceListResponse getPlaceByTheme(ThemeRequest request){
-        List<Place> places = placeRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
-
-        List<PlaceResponse> responses = places.stream()
-                .map(PlaceResponse::from)
-                .toList();
-
-        return PlaceListResponse.from(responses);
-    }
-
     @Transactional
     public void toggleLikes(Long userId, Long placeId) {
 
@@ -118,11 +107,7 @@ public class PlaceService {
 
     @Transactional(readOnly = true)
     public PlaceAndCourseListResponse getPlaceAndCourseByTheme(ThemeRequest request){
-        List<Place> places = placeRepository.findDistinctPlacesByThemeLimit3(CourseTheme.toEnum(request.getTheme()));
-
-        List<PlaceResponse> placeResponses = places.stream()
-                .map(PlaceResponse::from)
-                .toList();
+        List<PlaceResponse> placeResponses = placeRepository.fetchPlaceResponsesByTheme(CourseTheme.toEnum(request.getTheme()), 3);
 
         List<Course> courses = courseRepository.findDistinctPlacesByThemeLimit3(CourseTheme.toEnum(request.getTheme()));
 
@@ -130,4 +115,16 @@ public class PlaceService {
 
         return PlaceAndCourseListResponse.from(placeResponses, courseResponses);
     }
+
+    @Transactional(readOnly = true)
+    public PlaceListResponse getPlaceByTheme(ThemeRequest request){
+        List<Place> places = placeRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
+
+        List<PlaceResponse> responses = places.stream()
+                .map(PlaceResponse::from)
+                .toList();
+
+        return PlaceListResponse.from(responses);
+    }
+
 }

@@ -1,8 +1,11 @@
 package com.umust.dobonglife.domain.place.infrasructure;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryResponse;
 import com.umust.dobonglife.domain.place.domain.repository.custom.PlaceRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -18,25 +21,33 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Place> findByTheme(CourseTheme theme){
+    public List<PlaceSummaryResponse> findPlaceSummariesByTheme(CourseTheme theme, Integer size) {
 
-        return queryFactory
-                .selectDistinct(place)
+        JPAQuery<Tuple> query = queryFactory
+                .select(
+                        place.id,
+                        place.name,
+                        place.imageUrls.any(),
+                        place.averageRating,
+                        place.reviewCount
+                )
                 .from(place)
                 .where(place.themes.any().eq(theme))
-                .orderBy(place.id.desc())
-                .fetch();
+                .orderBy(place.id.desc());
+
+        if (size != null) query.limit(size);
+
+        List<Tuple> rows = query.fetch();
+        return rows.stream().map(this::toSummary).toList();
     }
 
-    @Override
-    public List<Place> findDistinctPlacesByThemeLimit3(CourseTheme theme) {
-
-        return queryFactory
-                .selectDistinct(place)
-                .from(place)
-                .where(place.themes.contains(theme))
-                .orderBy(place.id.desc())
-                .limit(3)
-                .fetch();
+    private PlaceSummaryResponse toSummary(Tuple t) {
+        return PlaceSummaryResponse.builder()
+                .placeId(t.get(place.id))
+                .placeName(t.get(place.name))
+                .thumbnailUrl(t.get(place.imageUrls.any()))
+                .averageRating(t.get(place.averageRating))
+                .reviewCount(t.get(place.reviewCount))
+                .build();
     }
 }
