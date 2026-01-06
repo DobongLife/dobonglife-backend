@@ -47,6 +47,7 @@ public class FormLoginAuthenticationSuccessHandler implements AuthenticationSucc
         TokenResponse tokenResponse = TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .role(role)
                 .build();
         writeResponse(response, BaseResponse.ok(tokenResponse));
     }
