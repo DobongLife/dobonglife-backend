@@ -41,7 +41,7 @@ public class AuthController {
             responseCode = "200",
             description = "카카오 소셜 로그인에 성공하였습니다."
     )
-    @GetMapping("/login/kakao")
+    @PostMapping("/login/kakao")
     public BaseResponse<TokenResponse> loginKakao(@RequestBody @Valid KakaoLoginRequest request) {
         return BaseResponse.ok(kakaoAuthService.login(request.getAccessToken()));
     }
@@ -51,7 +51,7 @@ public class AuthController {
             responseCode = "200",
             description = "구글 소셜 로그인에 성공하였습니다."
     )
-    @GetMapping("/login/google")
+    @PostMapping("/login/google")
     public BaseResponse<TokenResponse> loginGoogle(@RequestBody @Valid GoogleLoginRequest request) {
         return BaseResponse.ok(googleAuthService.login(request.getIdToken()));
     }
