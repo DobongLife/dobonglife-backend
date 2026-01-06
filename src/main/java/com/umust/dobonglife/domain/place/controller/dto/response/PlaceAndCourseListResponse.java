@@ -9,10 +9,10 @@ import java.util.List;
 @Getter
 @Builder
 public class PlaceAndCourseListResponse {
-    List<PlaceResponse> placeResponseList;
+    List<PlaceSummaryResponse> placeResponseList;
     List<CourseResponse> courseResponseList;
 
-    public static PlaceAndCourseListResponse from(final List<PlaceResponse> placeResponseList,
+    public static PlaceAndCourseListResponse from(final List<PlaceSummaryResponse> placeResponseList,
                                          final List<CourseResponse> courseResponseList) {
         return PlaceAndCourseListResponse.builder()
                 .placeResponseList(placeResponseList)

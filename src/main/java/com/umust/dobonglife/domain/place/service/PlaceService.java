@@ -7,8 +7,7 @@ import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.*;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.entity.PlaceLike;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.web.multipart.MultipartFile;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceAndCourseListResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -107,24 +105,15 @@ public class PlaceService {
 
     @Transactional(readOnly = true)
     public PlaceAndCourseListResponse getPlaceAndCourseByTheme(ThemeRequest request){
-        List<PlaceResponse> placeResponses = placeRepository.fetchPlaceResponsesByTheme(CourseTheme.toEnum(request.getTheme()), 3);
-
-        List<Course> courses = courseRepository.findDistinctPlacesByThemeLimit3(CourseTheme.toEnum(request.getTheme()));
-
+        List<PlaceSummaryResponse> placeResponses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), 3);
         List<CourseResponse> courseResponses = courseRepository.findCourseResponsesByTheme(CourseTheme.toEnum(request.getTheme()));
 
         return PlaceAndCourseListResponse.from(placeResponses, courseResponses);
     }
 
     @Transactional(readOnly = true)
-    public PlaceListResponse getPlaceByTheme(ThemeRequest request){
-        List<Place> places = placeRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
-
-        List<PlaceResponse> responses = places.stream()
-                .map(PlaceResponse::from)
-                .toList();
-
-        return PlaceListResponse.from(responses);
+    public PlaceSummaryListResponse getPlaceByTheme(ThemeRequest request){
+        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), null);
+        return PlaceSummaryListResponse.from(responses);
     }
-
 }
