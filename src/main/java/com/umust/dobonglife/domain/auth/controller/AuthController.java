@@ -88,10 +88,9 @@ public class AuthController {
     )
     @SecurityRequirement(name = "RefreshAuth")
     @PostMapping("/reissue")
-    public BaseResponse<Void> reissueTokens(HttpServletRequest request,
-                                                     HttpServletResponse response,
+    public BaseResponse<TokenResponse> reissueTokens(@RequestBody RefreshTokenRequest tokenRequest,
                                                      @CurrentUserId Long userId) {
-        jwtService.reissueTokens(request, userId, response);
-        return BaseResponse.ok(null);
+        TokenResponse response = jwtService.reissueTokens(tokenRequest, userId);
+        return BaseResponse.ok(response);
     }
 }

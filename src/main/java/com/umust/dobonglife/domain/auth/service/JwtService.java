@@ -60,14 +60,13 @@ public class JwtService {
         invalidAccessToken(accessToken);
     }
 
-    public void reissueTokens(HttpServletRequest request, Long userId, HttpServletResponse response) {
-        String refreshToken = jwtUtil.extractRefreshToken(request)
-                .orElseThrow(() -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
+    public TokenResponse reissueTokens(RefreshTokenRequest tokenRequest, Long userId) {
+        String refreshToken = tokenRequest.getRefreshToken();
         jwtUtil.validateToken(refreshToken);
         if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
             throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
         }
-        reissueAndSendTokens(refreshToken, userId, response);
+        return reissueAndSendTokens(refreshToken, userId);
     }
 
     public void checkLogout(String accessToken) {
@@ -93,7 +92,7 @@ public class JwtService {
                 Duration.ofMillis(ACCESS_TOKEN_EXPIRED_IN));
     }
 
-    private void reissueAndSendTokens(String refreshToken, Long userId, HttpServletResponse response) {
+    private TokenResponse reissueAndSendTokens(String refreshToken, Long userId) {
 
         // 새로운 Refresh Token 발급
         String reissuedAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
@@ -105,7 +104,9 @@ public class JwtService {
         // 기존 Refresh Token 폐기 (DB나 Redis에서 삭제)
         deleteRefreshToken(refreshToken);
 
-        response.setHeader(ACCESS_HEADER, reissuedAccessToken);
-        response.setHeader(REFRESH_HEADER, reissuedRefreshToken);
+        return TokenResponse.builder()
+                .accessToken(reissuedAccessToken)
+                .refreshToken(reissuedRefreshToken)
+                .build();
     }
 }
