@@ -186,6 +186,10 @@ tasks.named('asciidoctor') {
 	configurations 'asciidoctorExt'
 	inputs.dir snippetsDir
 	outputDir file('build/docs/asciidoc')
+	// snippets 없으면 asciidoctor 자체를 실행하지 않음
+	onlyIf {
+		file(snippetsDir).exists() && file(snippetsDir).listFiles()?.length
+	}
 }
 
 // 5. 빌드 파이프라인 정리
