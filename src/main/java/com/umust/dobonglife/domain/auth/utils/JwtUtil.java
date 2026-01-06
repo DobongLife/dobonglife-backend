@@ -80,13 +80,14 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String createRefreshToken(Long userId, String provider, String name) {
+    public String createRefreshToken(Long userId, String provider, String role, String name) {
 
         return Jwts.builder()
                 .claim("tokenType", "refresh")
                 .claim("userId", userId)
-                .claim("providerId", provider)
+                .claim("provider", provider)
                 .claim("name", name)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRED_IN))
                 .signWith(secretKey, Jwts.SIG.HS256)

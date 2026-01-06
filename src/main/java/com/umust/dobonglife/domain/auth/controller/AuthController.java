@@ -62,9 +62,8 @@ public class AuthController {
             description = "로그아웃에 성공하였습니다."
     )
     @PostMapping("/logout")
-    public BaseResponse<Void> logout(HttpServletRequest request,
-                                     @RequestBody RefreshTokenRequest tokenRequest){
-        jwtService.logout(request, tokenRequest);
+    public BaseResponse<Void> logout(HttpServletRequest request){
+        jwtService.logout(request);
         return BaseResponse.ok(null);
     }
 
@@ -88,9 +87,9 @@ public class AuthController {
     )
     @SecurityRequirement(name = "RefreshAuth")
     @PostMapping("/reissue")
-    public BaseResponse<TokenResponse> reissueTokens(@RequestBody RefreshTokenRequest tokenRequest,
+    public BaseResponse<TokenResponse> reissueTokens(HttpServletRequest request,
                                                      @CurrentUserId Long userId) {
-        TokenResponse response = jwtService.reissueTokens(tokenRequest, userId);
+        TokenResponse response = jwtService.reissueTokens(request, userId);
         return BaseResponse.ok(response);
     }
 }

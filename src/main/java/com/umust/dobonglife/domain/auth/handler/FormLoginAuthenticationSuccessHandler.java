@@ -39,7 +39,7 @@ public class FormLoginAuthenticationSuccessHandler implements AuthenticationSucc
         log.info("[FormLoginAuthenticationSuccessHandler] provider={}, role={}, userId={}", provider, role, userId);
 
         String accessToken = jwtUtil.createAccessToken(userId, provider, role, userName);
-        String refreshToken = jwtUtil.createRefreshToken(userId, provider, role);
+        String refreshToken = jwtUtil.createRefreshToken(userId, provider, role, userName);
 
         jwtService.storeRefreshToken(refreshToken, userId);
         log.info("[FormLoginAuthenticationSuccessHandler], refreshToken={}", refreshToken);
