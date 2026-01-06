@@ -2,9 +2,11 @@ package com.umust.dobonglife.domain.place.service;
 
 
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
+import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.controller.dto.response.*;
@@ -16,6 +18,7 @@ import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.exception.BusinessException;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.s3.S3Utils;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +41,7 @@ public class PlaceService {
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
     private final CourseRepository courseRepository;
+    private final CourseService courseService;
 
     @Transactional
     public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
@@ -106,7 +110,7 @@ public class PlaceService {
     @Transactional(readOnly = true)
     public PlaceAndCourseListResponse getPlaceAndCourseByTheme(ThemeRequest request){
         List<PlaceSummaryResponse> placeResponses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), 3);
-        List<CourseResponse> courseResponses = courseRepository.findCourseResponsesByTheme(CourseTheme.toEnum(request.getTheme()));
+        CursorResponse<CourseSummaryResponse> courseResponses = courseService.getCourses(CourseTheme.toEnum(request.getTheme()), 1L, 3);
 
         return PlaceAndCourseListResponse.from(placeResponses, courseResponses);
     }

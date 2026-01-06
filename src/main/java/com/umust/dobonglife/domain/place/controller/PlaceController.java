@@ -2,7 +2,9 @@ package com.umust.dobonglife.domain.place.controller;
 
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceAndCourseListResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryListResponse;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.common.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -36,13 +38,23 @@ public class PlaceController {
         return BaseResponse.ok(null);
     }
 
+    @Operation(summary = "주간 테마별 홈 화면 조회", description = "주간 테마별 홈 화면을 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "주간 테마별 홈 화면 조회에 성공하였습니다."
+    )
+    @GetMapping("/home")
+    public BaseResponse<PlaceAndCourseListResponse> getHomeByTheme(@RequestBody ThemeRequest request){
+        return BaseResponse.ok(placeService.getPlaceAndCourseByTheme(request));
+    }
+
     @Operation(summary = "주간 테마별 장소 조회", description = "주간 테마별 장소를 조회합니다.")
     @ApiResponse(
             responseCode = "200",
             description = "주간 테마별 장소 조회에 성공하였습니다."
     )
     @GetMapping("/theme")
-    public BaseResponse<PlaceListResponse> getPlaceByTheme(@RequestBody ThemeRequest request){
+    public BaseResponse<PlaceSummaryListResponse> getPlaceByTheme(@RequestBody ThemeRequest request){
         return BaseResponse.ok(placeService.getPlaceByTheme(request));
     }
 
@@ -65,16 +77,6 @@ public class PlaceController {
     )
     @GetMapping("/like/my")
     public BaseResponse<PlaceListResponse> getMyLikedPlace(@CurrentUserId Long userId){
-        return BaseResponse.ok(placeService.getLikedPlace(userId));
-    }
-
-    @Operation(summary = "주간 테마별 홈 화면 조회", description = "주간 테마별 홈 화면을 조회합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "주간 테마별 홈 화면 조회에 성공하였습니다."
-    )
-    @GetMapping("/home")
-    public BaseResponse<PlaceListResponse> getHomeByTheme(@CurrentUserId Long userId){
         return BaseResponse.ok(placeService.getLikedPlace(userId));
     }
 }
