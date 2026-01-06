@@ -69,11 +69,11 @@ public class UserService {
                 .orElseGet(() -> createOAuthUserSafely(provider, providerUserId, email, name));
     }
 
-    private User createOAuthUserSafely(Provider provider, String providerUserId, String email, String name) {
+    private User createOAuthUserSafely(Provider provider, String providerId, String email, String name) {
         try {
             User user = User.builder()
                     .provider(provider)
-                    .providerId(providerUserId)
+                    .providerId(providerId)
                     .email(email)
                     .name(name != null ? name : "이름 없는 사용자")
                     .role(Role.MEMBER)
@@ -83,7 +83,7 @@ public class UserService {
 
         } catch (DataIntegrityViolationException e) {
             // 동시 로그인 등으로 이미 생성된 경우(유니크 충돌) 재조회해서 반환
-            return userRepository.findByProviderAndProviderId(provider, providerUserId)
+            return userRepository.findByProviderAndProviderId(provider, providerId)
                     .orElseThrow(() -> e);
         }
     }

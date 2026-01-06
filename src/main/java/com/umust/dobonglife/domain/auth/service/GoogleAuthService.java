@@ -24,11 +24,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GoogleAuthService {
 
-    private final UserService userService; // findOrCreate 같은거
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
-
-    @Value("${oauth.google.client-id}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
     public TokenResponse login(String idToken) {
@@ -42,8 +41,8 @@ public class GoogleAuthService {
                 Provider.GOOGLE, providerId, email, name
         );
 
-        String access = jwtUtil.createAccessToken(user.getId(), "GOOGLE", user.getRole().name(), user.getName());
-        String refresh = jwtUtil.createRefreshToken(user.getId(), "GOOGLE", user.getRole().name());
+        String access = jwtUtil.createAccessToken(user.getId(), Provider.GOOGLE.getValue(), user.getRole().name(), user.getName());
+        String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.GOOGLE.getValue(), user.getRole().name());
 
         return TokenResponse.builder()
                 .accessToken(access)

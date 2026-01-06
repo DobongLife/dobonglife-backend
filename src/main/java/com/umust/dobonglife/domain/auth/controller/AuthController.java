@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.auth.controller.dto.request.KakaoLoginRequest
 import com.umust.dobonglife.domain.auth.controller.dto.request.RefreshTokenRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.service.JwtService;
+import com.umust.dobonglife.domain.auth.service.KakaoAuthService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,7 +43,7 @@ public class AuthController {
     )
     @GetMapping("/login/kakao")
     public BaseResponse<TokenResponse> loginKakao(@RequestBody @Valid KakaoLoginRequest request) {
-        return BaseResponse.ok(kakaoAuthService.login(request.accessToken()));
+        return BaseResponse.ok(kakaoAuthService.login(request.getAccessToken()));
     }
 
     @Operation(summary = "구글 로그인", description = "구글 로그인을 합니다.")
