@@ -27,6 +27,9 @@ public class Place extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "subName", nullable = false)
+    private String subName;
+
     @Column(name = "content", nullable = false)
     private String content;
 
@@ -40,8 +43,8 @@ public class Place extends BaseEntity {
 
     @ElementCollection
     @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
-    @Column(columnDefinition = "TEXT")
-    private List<String> placeImages;
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private List<String> imageUrls = new ArrayList<>();
 
     @Column(name = "operating_hour", nullable = false)
     private String operatingHour;

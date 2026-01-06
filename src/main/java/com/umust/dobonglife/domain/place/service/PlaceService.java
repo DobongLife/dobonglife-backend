@@ -55,7 +55,7 @@ public class PlaceService {
                 .address(request.getAddress())
                 .contact(request.getContact())
                 .operatingHour(request.getOperatingHour())
-                .placeImages(imagesUrl)
+                .imageUrls(imagesUrl)
                 .build();
 
         placeRepository.save(place);
