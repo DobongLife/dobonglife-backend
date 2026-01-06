@@ -125,9 +125,6 @@ public class PlaceService {
 
         List<Course> courses = courseRepository.findDistinctPlacesByThemeLimit3(CourseTheme.toEnum(request.getTheme()));
 
-        List<CourseResponse> placeResponses = courses.stream()
-                .map(CourseResponse::from)
-                .toList();
-
+        List<CourseResponse> courseResponses = courseRepository.findCourseResponsesByTheme(CourseTheme.toEnum(request.getTheme()));
     }
 }
