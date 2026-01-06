@@ -23,7 +23,7 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
         return queryFactory
                 .selectDistinct(place)
                 .from(place)
-                .where(place.themes.contains(theme))
+                .where(place.themes.any().eq(theme))
                 .orderBy(place.id.desc())
                 .fetch();
     }
