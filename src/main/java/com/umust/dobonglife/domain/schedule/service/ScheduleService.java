@@ -1,7 +1,5 @@
 package com.umust.dobonglife.domain.schedule.service;
 
-import com.umust.dobonglife.domain.place.domain.entity.Place;
-import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.DailyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleResponse;
@@ -12,8 +10,8 @@ import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
 import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
-import com.umust.dobonglife.global.common.exception.BusinessException;
-import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -5,16 +5,13 @@ import com.umust.dobonglife.domain.notification.domain.entity.Notification;
 import com.umust.dobonglife.domain.notification.domain.repository.NotificationRepository;
 import com.umust.dobonglife.domain.notification.exception.NotificationException;
 import com.umust.dobonglife.domain.notification.presentation.dto.response.NotificationResponse;
-import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service

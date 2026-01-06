@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.user.domain.constant;
 
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,15 +10,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 public enum Role {
 
     MEMBER("MEMBER"),
-    ADMIN("ADMIN"),
-    MANAGER("MANAGER");
+    MANAGER("MANAGER"),
+    ADMIN("ADMIN");
 
     Role(String value) {
         this.value = value;
         this.role = PREFIX + value;
     }
 
-    private static final String PREFIX = "ROLE_";
+    public static final String PREFIX = "ROLE_";
     private final String value;
     private final String role;
 
@@ -30,13 +32,26 @@ public enum Role {
                 }
             }
         }
-
-        // todo 예외 처리 로직 추가
         throw new IllegalArgumentException("Unknown role: " + roleString);
     }
 
     // Role을 권한으로 변환하는 메서드 (MEMBER -> ROLE_MEMBER)
     public GrantedAuthority toAuthority() {
         return new SimpleGrantedAuthority(PREFIX + this.value);
+    }
+
+    // MEMBER String을 enum으로
+    public static Role fromValue(String value) {
+        if (value == null || value.isBlank()) {
+            throw new BusinessException(ErrorCode.USER_ROLE_BAD_REQUEST);
+        }
+
+        for (Role role : Role.values()) {
+            if (role.value.equalsIgnoreCase(value)) {
+                return role;
+            }
+        }
+
+        throw new BusinessException(ErrorCode.USER_ROLE_BAD_REQUEST);
     }
 }

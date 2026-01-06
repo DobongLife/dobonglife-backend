@@ -4,7 +4,7 @@ import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegis
 import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
 import com.umust.dobonglife.domain.schedule.service.ScheduleService;
-import com.umust.dobonglife.global.common.resolver.CurrentUserId;
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

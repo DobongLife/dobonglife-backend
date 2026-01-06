@@ -1,12 +1,10 @@
 package com.umust.dobonglife.domain.reviewLike.controller;
 
-import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.reviewLike.controller.dto.response.ReviewLikeResponse;
 import com.umust.dobonglife.domain.reviewLike.service.ReviewLikeService;
-import com.umust.dobonglife.global.common.resolver.CurrentUserId;
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

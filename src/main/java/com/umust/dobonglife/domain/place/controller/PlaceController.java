@@ -6,14 +6,13 @@ import com.umust.dobonglife.domain.place.controller.dto.response.PlaceAndCourseL
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryListResponse;
 import com.umust.dobonglife.domain.place.service.PlaceService;
-import com.umust.dobonglife.global.common.resolver.CurrentUserId;
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
