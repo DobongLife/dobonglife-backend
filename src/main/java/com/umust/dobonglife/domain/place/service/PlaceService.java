@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.web.multipart.MultipartFile;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceAndCourseListResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -126,5 +127,7 @@ public class PlaceService {
         List<Course> courses = courseRepository.findDistinctPlacesByThemeLimit3(CourseTheme.toEnum(request.getTheme()));
 
         List<CourseResponse> courseResponses = courseRepository.findCourseResponsesByTheme(CourseTheme.toEnum(request.getTheme()));
+
+        return PlaceAndCourseListResponse.from(placeResponses, courseResponses);
     }
 }
