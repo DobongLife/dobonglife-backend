@@ -62,11 +62,11 @@ public class GoogleAuthService {
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
             if (idToken == null) {
-                throw new BusinessException(ErrorCode.INVALID_OAUTH_TOKEN);
+                throw new BusinessException(ErrorCode.INVALID_GOOGLE_ID_TOKEN);
             }
             return idToken.getPayload();
         } catch (Exception e) {
-            throw new BusinessException(ErrorCode.INVALID_OAUTH_TOKEN);
+            throw new BusinessException(ErrorCode.INVALID_GOOGLE_ID_TOKEN);
         }
     }
 }

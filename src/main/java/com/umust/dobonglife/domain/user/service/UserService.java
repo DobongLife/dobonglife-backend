@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -63,16 +64,28 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(String email, String name, Provider provider, String providerId) {
+    public User findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {
+        return userRepository.findByProviderAndProviderId(provider, providerUserId)
+                .orElseGet(() -> createOAuthUserSafely(provider, providerUserId, email, name));
+    }
 
-        User user = User.builder()
-                .email(email)
-                .name(name)
-                .role(Role.MEMBER)
-                .provider(provider)
-                .providerId(providerId)
-                .build();
-        return userRepository.save(user);
+    private User createOAuthUserSafely(Provider provider, String providerUserId, String email, String name) {
+        try {
+            User user = User.builder()
+                    .provider(provider)
+                    .providerId(providerUserId)
+                    .email(email)
+                    .name(name != null ? name : "이름 없는 사용자")
+                    .role(Role.MEMBER)
+                    .build();
+
+            return userRepository.save(user);
+
+        } catch (DataIntegrityViolationException e) {
+            // 동시 로그인 등으로 이미 생성된 경우(유니크 충돌) 재조회해서 반환
+            return userRepository.findByProviderAndProviderId(provider, providerUserId)
+                    .orElseThrow(() -> e);
+        }
     }
 
     public boolean isCourseRemoved(Long id1, Long id2) {
