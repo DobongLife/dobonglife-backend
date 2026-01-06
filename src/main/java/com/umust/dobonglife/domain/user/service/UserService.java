@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.user.service;
 
+import com.umust.dobonglife.domain.auth.controller.dto.response.OAuth2Response;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
@@ -59,6 +60,19 @@ public class UserService {
             }
         });
         SecurityContextHolder.clearContext();
+    }
+
+    @Transactional
+    public User createUser(String email, String name, Provider provider, String providerId) {
+
+        User user = User.builder()
+                .email(email)
+                .name(name)
+                .role(Role.MEMBER)
+                .provider(provider)
+                .providerId(providerId)
+                .build();
+        return userRepository.save(user);
     }
 
     public boolean isCourseRemoved(Long id1, Long id2) {

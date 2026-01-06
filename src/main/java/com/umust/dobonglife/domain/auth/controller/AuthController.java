@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.umust.dobonglife.domain.auth.service.GoogleAuthService;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +52,7 @@ public class AuthController {
     )
     @GetMapping("/login/google")
     public BaseResponse<TokenResponse> loginGoogle(@RequestBody @Valid GoogleLoginRequest request) {
-        return BaseResponse.ok(googleAuthService.login(request.idToken()));
+        return BaseResponse.ok(googleAuthService.login(request.getIdToken()));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
