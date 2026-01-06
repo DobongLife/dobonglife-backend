@@ -1,7 +1,10 @@
 package com.umust.dobonglife.domain.place.service;
 
 
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
+import com.umust.dobonglife.domain.course.domain.entity.Course;
+import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
@@ -35,6 +38,7 @@ public class PlaceService {
     private final UserRepository userRepository;
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
+    private final CourseRepository courseRepository;
 
     @Transactional
     public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
@@ -115,8 +119,14 @@ public class PlaceService {
     public PlaceAndCourseListResponse getPlaceAndCourseByTheme(ThemeRequest request){
         List<Place> places = placeRepository.findDistinctPlacesByThemeLimit3(CourseTheme.toEnum(request.getTheme()));
 
-        List<PlaceResponse> responses = places.stream()
+        List<PlaceResponse> placeResponses = places.stream()
                 .map(PlaceResponse::from)
+                .toList();
+
+        List<Course> courses = courseRepository.findDistinctPlacesByThemeLimit3(CourseTheme.toEnum(request.getTheme()));
+
+        List<CourseResponse> placeResponses = courses.stream()
+                .map(CourseResponse::from)
                 .toList();
 
     }
