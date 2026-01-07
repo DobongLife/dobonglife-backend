@@ -20,7 +20,7 @@ public interface PointRepository extends JpaRepository<Point, Long>, PointReposi
     @Query("SELECT p FROM Point p WHERE p.user.id = :userId ORDER BY p.createdAt DESC")
     List<Point> findTopNByUserId(@Param("userId") Long userId, Pageable pageable);
 
-    // UPDATE 실행 전에 변경사항 flush하고, 실행 후에는 DB와 상태를 강제로 동기화해라.”
+    // UPDATE 실행 전에 변경사항 flush하고, 실행 후에는 DB와 상태를 강제로 동기화
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
     UPDATE Point p

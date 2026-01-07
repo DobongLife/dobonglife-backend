@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.user.controller.dto;
 
-import com.umust.dobonglife.domain.point.domain.Point;
+import com.umust.dobonglife.domain.point.domain.entity.Point;
 
 import java.time.LocalDateTime;
 

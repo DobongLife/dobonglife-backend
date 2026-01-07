@@ -33,7 +33,7 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
                         point.title,
                         point.amount,
                         point.createdAt,
-                        user.balance
+                        point.afterBalance
                 ))
                 .from(point)
                 .where(
