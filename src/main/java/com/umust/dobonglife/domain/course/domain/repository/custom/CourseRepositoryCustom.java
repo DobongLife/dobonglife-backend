@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.course.domain.repository.custom;
 
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
@@ -12,5 +11,4 @@ import java.util.List;
 public interface CourseRepositoryCustom {
     List<Course> findByTheme(CourseTheme theme);
     List<Course> findDistinctPlacesByThemeLimit3(CourseTheme theme);
-    List<CourseResponse> findCourseResponsesByTheme(CourseTheme theme);
 }

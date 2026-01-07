@@ -2,7 +2,7 @@ package com.umust.dobonglife.domain.point.controller;
 
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
 import com.umust.dobonglife.domain.point.service.PointService;
-import com.umust.dobonglife.global.common.resolver.CurrentUserId;
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 import lombok.RequiredArgsConstructor;

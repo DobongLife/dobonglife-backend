@@ -29,7 +29,7 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
         List<PointResponse> results = queryFactory
                 .select(new QPointResponse(
                         point.id,
-                        point.reason,
+                        point.title,
                         point.amount
                 ))
                 .from(point)

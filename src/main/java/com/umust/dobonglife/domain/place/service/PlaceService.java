@@ -1,7 +1,5 @@
 package com.umust.dobonglife.domain.place.service;
 
-
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
@@ -17,10 +15,11 @@ import com.umust.dobonglife.domain.place.domain.repository.PlaceLikeRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
-import com.umust.dobonglife.global.common.exception.BusinessException;
+
 import com.umust.dobonglife.global.common.response.CursorResponse;
-import com.umust.dobonglife.global.common.response.ErrorCode;
-import com.umust.dobonglife.global.common.s3.S3Utils;
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.external.s3.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

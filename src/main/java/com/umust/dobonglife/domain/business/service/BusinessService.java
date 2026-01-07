@@ -7,10 +7,11 @@ import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
-import com.umust.dobonglife.global.common.exception.BusinessException;
-import com.umust.dobonglife.global.common.response.ErrorCode;
+
 import com.umust.dobonglife.global.common.webclient.business.parser.BusinessStatusParser;
 import com.umust.dobonglife.global.common.webclient.service.WebClientService;
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

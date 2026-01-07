@@ -1,9 +1,9 @@
 package com.umust.dobonglife.domain.point.domain.entity;
 
 import com.umust.dobonglife.domain.user.domain.entity.User;
-import com.umust.dobonglife.global.common.exception.BusinessException;
 import com.umust.dobonglife.global.common.model.BaseEntity;
-import com.umust.dobonglife.global.common.response.ErrorCode;
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,10 +22,10 @@ public class Point extends BaseEntity {
     private Long id;
 
     @Column(name = "amount", nullable = false)
-    private int amount;
+    private Long amount;
 
-    @Column(name = "reason", nullable = false)
-    private String reason;
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

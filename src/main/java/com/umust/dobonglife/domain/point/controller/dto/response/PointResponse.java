@@ -13,25 +13,25 @@ public class PointResponse {
 
     private Long pointId;
 
-    private String reason;
+    private String title;
 
-    private int amount;
+    private Long amount;
 
     @QueryProjection
     public PointResponse(
             Long pointId,
             String reason,
-            int amount
+            Long amount
     ) {
         this.pointId = pointId;
-        this.reason = reason;
+        this.title = reason;
         this.amount = amount;
     }
 
     public static PointResponse from(Point point) {
         return PointResponse.builder()
                 .pointId(point.getId())
-                .reason(point.getReason())
+                .title(point.getTitle())
                 .amount(point.getAmount())
                 .build();
     }

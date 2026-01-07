@@ -5,12 +5,12 @@ import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
-import com.umust.dobonglife.global.common.exception.BusinessException;
-import com.umust.dobonglife.global.common.response.ErrorCode;
 import com.umust.dobonglife.global.common.response.slice.Cursor;
 import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 import com.umust.dobonglife.global.common.response.slice.SortOrder;
 import com.umust.dobonglife.domain.user.controller.dto.PointHistoryDomainDto;
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -82,7 +82,7 @@ public class PointService {
         if (point.isUsed()) {
             throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
         }
-        int amount = point.getAmount();
+        Long amount = point.getAmount();
 
         long balanceUpdated = userRepository.decreaseBalance(userId, amount);
         if (balanceUpdated == 0) {

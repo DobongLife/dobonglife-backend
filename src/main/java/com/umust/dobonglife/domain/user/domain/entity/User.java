@@ -2,9 +2,8 @@ package com.umust.dobonglife.domain.user.domain.entity;
 
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
-import com.umust.dobonglife.global.common.exception.BusinessException;
+
 import com.umust.dobonglife.global.common.model.BaseEntity;
-import com.umust.dobonglife.global.common.response.ErrorCode;
 import jakarta.persistence.*;
 import lombok.*;
 

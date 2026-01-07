@@ -16,7 +16,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     // return 업데이트된 행의 수
     @Override
-    public long decreaseBalance(Long userId, int amount){
+    public long decreaseBalance(Long userId, Long amount){
         return queryFactory.update(user)
                 .set(user.balance, user.balance.subtract(amount))
                 .where(user.id.eq(userId), user.balance.goe(amount))
