@@ -27,7 +27,7 @@ public class Place extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "subName", nullable = false)
+    @Column(name = "sub_name", nullable = false)
     private String subName;
 
     @Column(name = "content", nullable = false)
@@ -76,8 +76,7 @@ public class Place extends BaseEntity {
 
     public void applyNewReview(Double newRating) { // TODO: Course 처럼 분리할지 고민
         double totalScore = (this.averageRating * this.reviewCount) + newRating;
-        Long reviewCount = this.reviewCount + 1;
-        reviewCount = reviewCount + 1;
+        this.reviewCount = this.reviewCount + 1;
         this.averageRating = totalScore / reviewCount;
     }
 }
