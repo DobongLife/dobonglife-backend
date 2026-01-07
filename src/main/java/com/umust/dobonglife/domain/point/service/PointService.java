@@ -79,17 +79,21 @@ public class PointService {
     public void usePoint(Long userId, Long pointId) {
         Point point = pointRepository.findById(pointId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POINT_NOT_FOUND));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
         if (point.isUsed()) {
             throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
         }
-        Long amount = point.getAmount();
 
-        long balanceUpdated = userRepository.decreaseBalance(userId, amount);
+        long balanceUpdated = userRepository.decreaseBalance(userId, point.getAmount());
         if (balanceUpdated == 0) {
             throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
         }
-        long pointUpdated = pointRepository.markUsed(userId, pointId);
-        if (pointUpdated == 0) {
+
+        long afterBalance = userRepository.findBalanceById(userId);
+        int pointBalanceUpdated = pointRepository.markUsedWithAfterBalance(userId, pointId, afterBalance);
+        if (pointBalanceUpdated == 0) {
             throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
         }
     }

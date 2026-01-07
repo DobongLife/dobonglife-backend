@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.umust.dobonglife.domain.point.domain.entity.QPoint.point;
+import static com.umust.dobonglife.domain.user.domain.entity.QUser.user;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,7 +31,9 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
                 .select(new QPointResponse(
                         point.id,
                         point.title,
-                        point.amount
+                        point.amount,
+                        point.createdAt,
+                        user.balance
                 ))
                 .from(point)
                 .where(
@@ -61,15 +64,6 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
                 .hasNext(hasNext)
                 .nextCursor(nextCursor)
                 .build();
-    }
-
-    @Override
-    public long markUsed(Long userId, Long pointId) {
-        return queryFactory
-                .update(point)
-                .set(point.isUsed, true)
-                .where(point.id.eq(pointId), point.user.id.eq(userId), point.isUsed.isFalse())
-                .execute();
     }
 
     private BooleanExpression cursorCondition(Cursor cursor, SortOrder order) {

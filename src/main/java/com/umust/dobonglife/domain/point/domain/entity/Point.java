@@ -22,10 +22,13 @@ public class Point extends BaseEntity {
     private Long id;
 
     @Column(name = "amount", nullable = false)
-    private Long amount;
+    private long amount;
 
     @Column(name = "title", nullable = false)
     private String title;
+
+    @Column(name = "after_balance", nullable = false)
+    private long afterBalance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
