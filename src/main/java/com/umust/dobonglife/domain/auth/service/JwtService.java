@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.external.redis.RedisService;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -43,13 +44,14 @@ public class JwtService {
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
 
-    public void logout(HttpServletRequest request, RefreshTokenRequest tokenRequest) {
+    public void logout(HttpServletRequest request) {
         String accessToken = jwtUtil.extractAccessToken(request)
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
 
         log.info("LogOut Access Token: {}", accessToken);
 
-        String refreshToken = tokenRequest.getRefreshToken();
+        String refreshToken = jwtUtil.extractRefreshToken(request)
+                .orElseThrow(() -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
         jwtUtil.validateToken(refreshToken);
         if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
             throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
@@ -60,14 +62,14 @@ public class JwtService {
         invalidAccessToken(accessToken);
     }
 
-    public void reissueTokens(HttpServletRequest request, Long userId, HttpServletResponse response) {
+    public TokenResponse reissueTokens(HttpServletRequest request, Long userId) {
         String refreshToken = jwtUtil.extractRefreshToken(request)
                 .orElseThrow(() -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
         jwtUtil.validateToken(refreshToken);
         if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
             throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
         }
-        reissueAndSendTokens(refreshToken, userId, response);
+        return reissueAndSendTokens(refreshToken, userId);
     }
 
     public void checkLogout(String accessToken) {
@@ -93,11 +95,11 @@ public class JwtService {
                 Duration.ofMillis(ACCESS_TOKEN_EXPIRED_IN));
     }
 
-    private void reissueAndSendTokens(String refreshToken, Long userId, HttpServletResponse response) {
+    private TokenResponse reissueAndSendTokens(String refreshToken, Long userId) {
 
         // 새로운 Refresh Token 발급
         String reissuedAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
-        String reissuedRefreshToken = jwtUtil.createRefreshToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getName(refreshToken));
+        String reissuedRefreshToken = jwtUtil.createRefreshToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
 
         // 새로운 Refresh Token을 DB나 Redis에 저장
         storeRefreshToken(reissuedRefreshToken, userId);
@@ -105,7 +107,9 @@ public class JwtService {
         // 기존 Refresh Token 폐기 (DB나 Redis에서 삭제)
         deleteRefreshToken(refreshToken);
 
-        response.setHeader(ACCESS_HEADER, reissuedAccessToken);
-        response.setHeader(REFRESH_HEADER, reissuedRefreshToken);
+        return TokenResponse.builder()
+                .accessToken(reissuedAccessToken)
+                .refreshToken(reissuedRefreshToken)
+                .build();
     }
 }

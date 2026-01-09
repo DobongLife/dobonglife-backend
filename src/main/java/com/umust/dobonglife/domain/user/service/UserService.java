@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.user.service;
 
+import com.umust.dobonglife.domain.auth.controller.dto.response.OAuth2Response;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
@@ -13,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -66,6 +68,30 @@ public class UserService {
             return false;
         }
         return true;
+    }
+    @Transactional
+    public User findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {
+        return userRepository.findByProviderAndProviderId(provider, providerUserId)
+                .orElseGet(() -> createOAuthUserSafely(provider, providerUserId, email, name));
+    }
+
+    private User createOAuthUserSafely(Provider provider, String providerId, String email, String name) {
+        try {
+            User user = User.builder()
+                    .provider(provider)
+                    .providerId(providerId)
+                    .email(email)
+                    .name(name != null ? name : "이름 없는 사용자")
+                    .role(Role.MEMBER)
+                    .build();
+
+            return userRepository.save(user);
+
+        } catch (DataIntegrityViolationException e) {
+            // 동시 로그인 등으로 이미 생성된 경우(유니크 충돌) 재조회해서 반환
+            return userRepository.findByProviderAndProviderId(provider, providerId)
+                    .orElseThrow(() -> e);
+        }
     }
 
     public User findById(Long userId) {
