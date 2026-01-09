@@ -41,8 +41,8 @@ public class PlaceController {
             description = "주간 테마별 장소 조회에 성공하였습니다."
     )
     @GetMapping
-    public BaseResponse<PlaceListResponse> getPlaceByTheme(@RequestBody ThemeRequest request){
-        return BaseResponse.ok(placeService.getPlaceByTheme(request));
+    public BaseResponse<PlaceListResponse> getPlaceByTheme(@RequestParam("theme") String theme){
+        return BaseResponse.ok(placeService.getPlaceByTheme(theme));
     }
 
     @Operation(summary = "장소 좋아요", description = "장소를 좋아요합니다.")

@@ -63,8 +63,8 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceListResponse getPlaceByTheme(ThemeRequest request){
-        List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(CourseTheme.toEnum(request.getTheme()));
+    public PlaceListResponse getPlaceByTheme(String theme){
+        List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(CourseTheme.toEnum(theme));
 
         List<Place> places = coursePlaces.stream()
                 .map(CoursePlace::getPlace)
