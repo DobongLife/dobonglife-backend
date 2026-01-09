@@ -83,7 +83,7 @@ public class CourseService {
         }
 
         try {
-            Course savedCourse = saveCourse(userId, request, imageUrls);
+            Course savedCourse = createCourseEntity(userId, request, imageUrls);
             return CourseRegisterResponse.from(savedCourse);
         } catch (Exception e) {
             if (!imageUrls.isEmpty()) {
@@ -99,7 +99,7 @@ public class CourseService {
     }
 
     @Transactional
-    protected Course saveCourse(Long userId, CreateCourseRequest request, List<String> imageUrls) {
+    protected Course createCourseEntity(Long userId, CreateCourseRequest request, List<String> imageUrls) {
         CourseBasicInfo basicInfo = CourseBasicInfo.builder()
                 .title(request.getTitle())
                 .subTitle(request.getSubTitle())
@@ -123,11 +123,9 @@ public class CourseService {
                 .plans(plans)
                 .build();
 
-        Course savedCourse = courseRepository.save(course);
-        return savedCourse;
+        return courseRepository.save(course);
     }
 
-    @Transactional
     public CourseRegisterResponse updateCourse(Long userId, Long courseId, UpdateCourseRequest request, List<MultipartFile> imageFiles) {
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
@@ -143,7 +141,7 @@ public class CourseService {
         urlsToDelete.forEach(url -> course.getImageUrls().remove(url));
 
         try {
-            saveCourse(request, course);
+            updateCourseEntity(request, course);
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
@@ -160,7 +158,7 @@ public class CourseService {
     }
 
     @Transactional
-    protected void saveCourse(UpdateCourseRequest request, Course course) {
+    protected void updateCourseEntity(UpdateCourseRequest request, Course course) {
         course.updateBasicInfo(CourseBasicInfo.builder()
                 .title(request.title())
                 .subTitle(request.subTitle())
@@ -223,6 +221,5 @@ public class CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         course.applyNewReview(rating);
-        courseRepository.save(course);
     }
 }
