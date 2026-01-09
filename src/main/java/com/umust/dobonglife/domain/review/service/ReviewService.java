@@ -1,9 +1,14 @@
 package com.umust.dobonglife.domain.review.service;
 
+import com.umust.dobonglife.domain.coupon.service.CouponService;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
+import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.place.service.PlaceService;
+import com.umust.dobonglife.domain.point.domain.vo.PointPolicy;
+import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
 import com.umust.dobonglife.domain.review.controller.dto.request.CreateReviewRequest;
@@ -25,15 +30,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.REVIEW_CREATE;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final CourseRepository courseRepository;
-    private final PlaceRepository placeRepository;
-    private final S3Utils s3Utils;
+    private final CourseService courseService;
+    private final PlaceService placeService;
     private final UserService userService;
+    private final PointService pointService;
+    private final S3Utils s3Utils;
 
     public CursorResponse<ReviewSummaryResponse> getReviews(Long userId, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
@@ -61,18 +69,14 @@ public class ReviewService {
         return convertToReviewResponse(userId, reviews);
     }
 
-    // TODO: 생성과 수정 중복로직 공통인터페이스로 빼기
     @Transactional
     public ReviewResponse createReview(Long userId, CreateReviewRequest request, List<MultipartFile> imageFiles) {
-        List<String> imageUrls = new ArrayList<>();
-        if(imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
-            imageUrls = s3Utils.uploadImages(imageFiles);
-        }
+        List<String> imageUrls = getStrings(imageFiles);
 
         if(request.courseId() != null){
-            updateCourseRatingAndCount(request.courseId(), request.rating());
+            courseService.updateCourseRatingAndCount(request.courseId(), request.rating());
         }else {
-            updatePlaceRatingAndCount(request.placeId(), request.rating());
+            placeService.updatePlaceRatingAndCount(request.placeId(), request.rating());
         }
 
         Review review = Review.builder()
@@ -84,51 +88,38 @@ public class ReviewService {
                 .imageUrls(imageUrls)
                 .build();
         reviewRepository.save(review);
+        pointService.earnPoint(userService.findById(userId), REVIEW_CREATE.getTitle(), REVIEW_CREATE.getPoint());
 
         return ReviewResponse.from(review);
+    }
+
+    private List<String> getStrings(List<MultipartFile> imageFiles) {
+        List<String> imageUrls = new ArrayList<>();
+        if(imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
+            imageUrls = s3Utils.uploadImages(imageFiles);
+        }
+        return imageUrls;
     }
 
     public ReviewResponse updateReview(Long reviewId, Long userId, CreateReviewRequest request, List<MultipartFile> imageFiles) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Review 엔티티가 존재하지 않습니다: " + reviewId));
-        
-        if(review.getId() != userId) throw new BusinessException(ErrorCode.NOT_REVIEW_OWNER);
 
-        List<String> imageUrls = new ArrayList<>();
-        if(imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
-            imageUrls = s3Utils.uploadImages(imageFiles);
-        }
+        if(!review.getUser().getId().equals(userId)) throw new BusinessException(ErrorCode.NOT_REVIEW_OWNER);
+        List<String> imageUrls = getStrings(imageFiles);
 
         if(request.courseId() != null){
-            updateCourseRatingAndCount(request.courseId(), request.rating());
+            courseService.updateCourseRatingAndCount(request.courseId(), request.rating());
         }else {
-            updatePlaceRatingAndCount(request.placeId(), request.rating());
+            placeService.updatePlaceRatingAndCount(request.placeId(), request.rating());
         }
 
-        review.update(request, imageUrls); // TODO: 여기서 넣을까, 안에서 넣을까
+        review.update(request.courseId(), request.placeId(), request.rating(), request.content(), imageUrls);
         reviewRepository.save(review);
 
         return ReviewResponse.from(review);
     }
-
-    @Transactional
-    public void updateCourseRatingAndCount(Long courseId, Double rating) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
-        course.applyNewReview(rating);
-        courseRepository.save(course);
-    }
-
-
-    @Transactional
-    public void updatePlaceRatingAndCount(Long placeId, Double rating) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
-        place.applyNewReview(rating);
-        placeRepository.save(place);
-    }
-
 
     public int getWrittenReviewCount(Long userId) {
         return reviewRepository.countByUserId(userId);

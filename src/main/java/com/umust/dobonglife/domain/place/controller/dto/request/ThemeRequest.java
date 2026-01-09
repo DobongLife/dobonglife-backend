@@ -13,6 +13,6 @@ import java.util.List;
 public class ThemeRequest {
 
     @NotNull(message = "주간 테마는 필수입니다")
-    @Schema(description = "주간 테마", example = "NATURE, CULTURE, RESTAURANT, HISTORY, FAMILY, ACTIVITY")
+    @Schema(description = "주간 테마", example = "NATURE, CULTURE, NATURE, RESTAURANT, FAMILY, ACTIVITY")
     private String theme;
 }

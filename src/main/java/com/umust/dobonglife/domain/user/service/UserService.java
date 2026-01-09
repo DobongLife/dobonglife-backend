@@ -63,6 +63,12 @@ public class UserService {
         SecurityContextHolder.clearContext();
     }
 
+    public boolean validateOwner(Long userId, Long ownerId) {
+        if (!userId.equals(ownerId)) {
+            return false;
+        }
+        return true;
+    }
     @Transactional
     public User findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {
         return userRepository.findByProviderAndProviderId(provider, providerUserId)
@@ -86,10 +92,6 @@ public class UserService {
             return userRepository.findByProviderAndProviderId(provider, providerId)
                     .orElseThrow(() -> e);
         }
-    }
-
-    public boolean isCourseRemoved(Long id1, Long id2) {
-        return id1 == id2;
     }
 
     public User findById(Long userId) {

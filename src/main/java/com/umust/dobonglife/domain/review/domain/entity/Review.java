@@ -70,11 +70,11 @@ public class Review {
         }
     }
 
-    public void update(CreateReviewRequest request, List<String> imageUrls) {
-        this.courseId = request.courseId();
-        this.placeId = request.placeId();
-        this.rating = request.rating();
-        this.content = request.content();
+    public void update(Long courseId, Long placeId, Double rating, String content, List<String> imageUrls) {
+        this.courseId = courseId;
+        this.placeId = placeId;
+        this.rating = rating;
+        this.content = content;
         this.imageUrls = imageUrls;
         this.updatedAt = LocalDateTime.now();
     }

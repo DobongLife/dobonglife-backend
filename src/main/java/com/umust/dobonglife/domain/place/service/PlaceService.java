@@ -18,6 +18,7 @@ import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.external.s3.S3Utils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -119,6 +120,14 @@ public class PlaceService {
                 .toList();
 
         return PlaceListResponse.from(responses);
+    }
+
+    @Transactional
+    public void updatePlaceRatingAndCount(Long placeId, Double rating) {
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
+        place.applyNewReview(rating);
+        placeRepository.save(place);
     }
 
 }

@@ -13,7 +13,7 @@ public record CourseRegisterResponse(
         return new CourseRegisterResponse(
                 course.getId(),
                 course.getBasicInfo().getTitle(),
-                LocalDateTime.now() // 혹은 엔티티의 @CreatedDate 필드 활용
+                LocalDateTime.now()
         );
     }
 }

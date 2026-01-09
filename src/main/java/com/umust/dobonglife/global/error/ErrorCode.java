@@ -52,7 +52,8 @@ public enum ErrorCode{
 
     // Course
     INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),
-    NOT_COURSE_OWNER(403, HttpStatus.FORBIDDEN.value(), "해당 코스를 삭제할 권한이 없습니다."),
+    NOT_OWNER(403, HttpStatus.FORBIDDEN.value(), "해당 기능에 대한 접근 권한이 없습니다"),
+    COURSE_SERVER_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "코스 비즈니스 로직 처리가 실패했습니다"),
 
     // Img
     FAIL_IMG(500, HttpStatus.INTERNAL_SERVER_ERROR.value(),"S3에 이미지를 업로드하는데 실패했습니다"),
