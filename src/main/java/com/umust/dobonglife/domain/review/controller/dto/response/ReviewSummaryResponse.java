@@ -13,7 +13,7 @@ public record ReviewSummaryResponse(String name,
                                     boolean owner
                                     ) {
     public static ReviewSummaryResponse from(Long userId, Review review) {
-        boolean owner = userId == review.getId(); // TODO: 위치 다시 고민
+        boolean owner = userId == review.getUser().getId(); // TODO: 위치 다시 고민
         return new ReviewSummaryResponse(
                 review.getUser().getName(),
                 review.getRating(),

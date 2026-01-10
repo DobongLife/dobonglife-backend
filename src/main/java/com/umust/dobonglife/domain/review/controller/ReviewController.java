@@ -56,16 +56,44 @@ public class ReviewController {
     }
 
     // 리뷰 전체보기
-    @Operation(summary = "리뷰 조회", description = "리뷰를 전체조회 합니다.")
+//    @Operation(summary = "리뷰 조회", description = "리뷰를 전체조회 합니다.")
+//    @ApiResponse(
+//            responseCode = "200",
+//            description = "요청에 성공하였습니다."
+//    )
+//    @GetMapping
+//    public BaseResponse<CursorResponse<ReviewSummaryResponse>> getReviews(@CurrentUserId Long userId,
+//                                                                          @RequestParam(required = false) Long lastReviewId,
+//                                                                          @RequestParam(defaultValue = "2") int size) {
+//        CursorResponse<ReviewSummaryResponse> responses = reviewService.getReviews(userId, lastReviewId, size);
+//        return BaseResponse.ok(responses);
+//    }
+
+    @Operation(summary = "코스 리뷰 조회", description = "코스의 리뷰를 전체조회 합니다.")
     @ApiResponse(
             responseCode = "200",
             description = "요청에 성공하였습니다."
     )
-    @GetMapping
-    public BaseResponse<CursorResponse<ReviewSummaryResponse>> getReviews(@CurrentUserId Long userId,
+    @GetMapping("/course/{courseId}")
+    public BaseResponse<CursorResponse<ReviewSummaryResponse>> getCourseReviews(@CurrentUserId Long userId,
+                                                                          @PathVariable Long courseId,
                                                                           @RequestParam(required = false) Long lastReviewId,
-                                                                          @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<ReviewSummaryResponse> responses = reviewService.getReviews(userId, lastReviewId, size);
+                                                                          @RequestParam(defaultValue = "3") int size) {
+        CursorResponse<ReviewSummaryResponse> responses = reviewService.getCourseReviews(courseId, userId, lastReviewId, size);
+        return BaseResponse.ok(responses);
+    }
+
+    @Operation(summary = "장소 리뷰 조회", description = "장소의 리뷰를 전체조회 합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @GetMapping("/place/{placeId}")
+    public BaseResponse<CursorResponse<ReviewSummaryResponse>> getPlaceReviews(@CurrentUserId Long userId,
+                                                                          @PathVariable Long placeId,
+                                                                          @RequestParam(required = false) Long lastReviewId,
+                                                                          @RequestParam(defaultValue = "3") int size) {
+        CursorResponse<ReviewSummaryResponse> responses = reviewService.getPlaceReviews(placeId, userId, lastReviewId, size);
         return BaseResponse.ok(responses);
     }
 
@@ -93,5 +121,18 @@ public class ReviewController {
                                                                           @RequestParam(defaultValue = "2") int size) {
         CursorResponse<ReviewSummaryResponse> responses = reviewService.getMyReviews(userId, lastReviewId, size);
         return BaseResponse.ok(responses);
+    }
+
+    // 리뷰 삭제하기
+    @Operation(summary = "리뷰 삭제", description = "리뷰를 삭제합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @DeleteMapping("/{reviewId}")
+    public BaseResponse<ReviewResponse> deleteReview(@CurrentUserId Long userId,
+                                                     @PathVariable("reviewId") Long reviewId){
+        ReviewResponse response = reviewService.deleteReview(reviewId, userId);
+        return BaseResponse.ok(response);
     }
 }
