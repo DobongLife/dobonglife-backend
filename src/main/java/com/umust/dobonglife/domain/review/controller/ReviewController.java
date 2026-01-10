@@ -70,16 +70,16 @@ public class ReviewController {
     }
 
     // 리뷰 상세보기 조회 (특정 리뷰)
-    @Operation(summary = "리뷰 상세 조회", description = "리뷰를 상세 조회합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "요청에 성공하였습니다."
-    )
-    @GetMapping("/{reviewId}")
-    public BaseResponse<ReviewDetailResponse> getReview(@PathVariable("reviewId") Long reviewId){
-        ReviewDetailResponse response = reviewService.getReview(reviewId);
-        return BaseResponse.ok(response);
-    }
+//    @Operation(summary = "리뷰 상세 조회", description = "리뷰를 상세 조회합니다.")
+//    @ApiResponse(
+//            responseCode = "200",
+//            description = "요청에 성공하였습니다."
+//    )
+//    @GetMapping("/{reviewId}")
+//    public BaseResponse<ReviewDetailResponse> getReview(@PathVariable("reviewId") Long reviewId){
+//        ReviewDetailResponse response = reviewService.getReview(reviewId);
+//        return BaseResponse.ok(response);
+//    }
 
     // 내후기 - 리뷰 조회하기
     @Operation(summary = "내후기 조회", description = "내 리뷰를 조회합니다.")
