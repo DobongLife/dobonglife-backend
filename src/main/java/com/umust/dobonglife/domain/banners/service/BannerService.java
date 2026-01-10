@@ -22,17 +22,16 @@ public class BannerService {
     private final BannerRepository bannerRepository;
 
     @Transactional(readOnly = true)
-    public CursorResponse<BannerSummaryResponse> getBanners(Long lastId, int size) {
-        Pageable pageable = PageRequest.of(0, size);
-        Slice<Banner> banners = bannerRepository.findBannersNoOffset(lastId, pageable);
+    public CursorResponse<BannerSummaryResponse> getBanners() {
+        List<Banner> banners = bannerRepository.findTop3ByOrderByPriorityAsc();
+
         return convertToBannerResponse(banners);
     }
 
-    private CursorResponse<BannerSummaryResponse> convertToBannerResponse(Slice<Banner> banners) {
-        List<BannerSummaryResponse> content = banners.getContent().stream()
+    private CursorResponse<BannerSummaryResponse> convertToBannerResponse(List<Banner> banners) {
+        List<BannerSummaryResponse> content = banners.stream()
                 .map(BannerSummaryResponse::from)
                 .toList();
-        return new CursorResponse<>(content, banners.hasNext());
+        return new CursorResponse<>(content, false);
     }
-
 }
