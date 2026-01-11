@@ -56,6 +56,7 @@ public class PointService {
     public void earnPoint(User user, String title, Long amount) {
         Point point = Point.builder()
                 .user(user)
+                .type(PointType.EARN)
                 .title(title)
                 .amount(amount)
                 .build();

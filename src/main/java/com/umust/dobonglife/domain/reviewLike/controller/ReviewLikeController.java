@@ -7,18 +7,18 @@ import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/review/like")
-public class ReviewLikeController {
-
-    private final ReviewLikeService reviewLikeService;
-
-    @PostMapping("/{reviewId}")
-    public BaseResponse<ReviewLikeResponse> updateReviewLike(
-            @PathVariable("reviewId") Long reviewId,
-            @CurrentUserId Long userId) {
-        ReviewLikeResponse responses = reviewLikeService.updateReviewLike(reviewId, userId);
-        return BaseResponse.ok(responses);
-    }
-}
+//@RestController
+//@RequiredArgsConstructor
+//@RequestMapping("/review/like")
+//public class ReviewLikeController {
+//
+//    private final ReviewLikeService reviewLikeService;
+//
+//    @PostMapping("/{reviewId}")
+//    public BaseResponse<ReviewLikeResponse> updateReviewLike(
+//            @PathVariable("reviewId") Long reviewId,
+//            @CurrentUserId Long userId) {
+//        ReviewLikeResponse responses = reviewLikeService.updateReviewLike(reviewId, userId);
+//        return BaseResponse.ok(responses);
+//    }
+//}
