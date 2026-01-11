@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "points")
 @Getter
-@Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Point {
@@ -35,4 +33,13 @@ public class Point {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Builder
+    public Point(PointType type, User user, Long amount, String title) {
+        this.type = type;
+        this.user = user;
+        this.amount = amount;
+        this.title = title;
+        this.createdAt = LocalDateTime.now();
+    }
 }

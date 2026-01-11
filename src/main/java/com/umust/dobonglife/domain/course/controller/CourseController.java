@@ -6,7 +6,10 @@ import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseReq
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.service.CourseReviewService;
 import com.umust.dobonglife.domain.course.service.CourseService;
+import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
+import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -32,6 +35,7 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
+    private final CourseReviewService courseReviewService;
 
     // 홈 메인에서의 스토리 코스 목록 조회
     @Operation(summary = "코스 목록 조회", description = "코스를 조회합니다.")
@@ -54,7 +58,7 @@ public class CourseController {
     )
     @GetMapping("/{courseId}")
     public BaseResponse<CourseDetailResponse> getCourse(@CurrentUserId Long userId, @PathVariable("courseId") Long courseId){
-        CourseDetailResponse response = courseService.getCourse(userId, courseId);
+        CourseDetailResponse response = courseReviewService.getCourse(userId, courseId);
         return BaseResponse.ok(response);
     }
 

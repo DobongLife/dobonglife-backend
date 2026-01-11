@@ -26,7 +26,7 @@ public class HomeService {
     public HomeSummaryResponse getHomeSummary(Long lastId, int size) {
         CursorResponse<CourseSummaryResponse> courses = courseService.getCourses(lastId, size);
         CursorResponse<PromotionItem> promotions = promotionService.getPromotion(lastId, size);
-        CursorResponse<BannerSummaryResponse> banners = bannerService.getBanners(lastId, size);
+        CursorResponse<BannerSummaryResponse> banners = bannerService.getBanners();
         return new HomeSummaryResponse(banners, courses, promotions);
     }
 }

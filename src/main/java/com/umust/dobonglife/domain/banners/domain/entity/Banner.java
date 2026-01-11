@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "banner", indexes = @Index(name = "idx_priority", columnList = "priority"))
 public class Banner {
 
     @Id

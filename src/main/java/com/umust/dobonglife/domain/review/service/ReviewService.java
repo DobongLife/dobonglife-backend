@@ -124,4 +124,27 @@ public class ReviewService {
     public int getWrittenReviewCount(Long userId) {
         return reviewRepository.countByUserId(userId);
     }
+
+    public CursorResponse<ReviewSummaryResponse> getCourseReviews(Long courseId, Long userId, Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Review> reviews = reviewRepository.findCourseReviewsNoOffset(courseId, lastId, pageable);
+        return convertToReviewResponse(userId, reviews);
+    }
+
+    public CursorResponse<ReviewSummaryResponse> getPlaceReviews(Long placeId, Long userId, Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Review> reviews = reviewRepository.findPlaceReviewsNoOffset(placeId, lastId, pageable);
+        return convertToReviewResponse(userId, reviews);
+    }
+
+    public ReviewResponse deleteReview(Long reviewId, Long userId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Review 엔티티가 존재하지 않습니다: " + reviewId));
+
+        if(!review.getUser().getId().equals(userId))
+            throw new BusinessException(ErrorCode.SECURITY_ACCESS_DENIED);
+
+        reviewRepository.deleteById(reviewId);
+        return ReviewResponse.from(review);
+    }
 }

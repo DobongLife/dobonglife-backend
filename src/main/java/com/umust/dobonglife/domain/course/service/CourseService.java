@@ -16,6 +16,8 @@ import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryR
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
+import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
+import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -42,10 +44,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
-    private final CoursePlansRepository coursePlansRepository;
     private final S3Utils s3Utils;
     private final UserService userService;
-    private final CourseLikeService courseLikeService;
+
 
     @Transactional(readOnly = true)
     public CursorResponse<CourseSummaryResponse> getCourses(Long lastId, int size) {
@@ -60,20 +61,6 @@ public class CourseService {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findByThemeNoOffset(theme, lastId, pageable);
         return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
-    }
-
-    @Transactional(readOnly = true)
-    public CourseDetailResponse getCourse(Long userId, Long courseId) {
-        Course course = courseRepository.findByIdWithDescription(courseId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
-
-        boolean isRemoved = userService.validateOwner(userId, course.getUserId());
-        boolean isFavorite = courseLikeService.isCourseFavorite(userId, courseId);
-
-        List<CoursePlans> plans = coursePlansRepository
-                .findByCourseIdOrderByDateTime(courseId);
-
-        return CourseDetailResponse.from(course, plans, isRemoved, isFavorite);
     }
 
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {

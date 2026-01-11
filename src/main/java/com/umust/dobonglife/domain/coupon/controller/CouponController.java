@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/coupon")
+@RequestMapping("/api/coupon")
 public class CouponController {
 
     private final CouponService couponService;
@@ -25,7 +25,7 @@ public class CouponController {
 
     @PostMapping("/my")
     public BaseResponse<UsedCouponResponse> useMyCoupon(@CurrentUserId Long userId,
-                                                        CouponCodeRequest request){
+                                                        @RequestBody CouponCodeRequest request){
         UsedCouponResponse response = couponService.useMyCoupon(userId, request);
         return BaseResponse.ok(response);
     }

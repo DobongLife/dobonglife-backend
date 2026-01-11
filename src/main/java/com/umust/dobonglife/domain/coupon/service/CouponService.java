@@ -15,11 +15,14 @@ import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -81,5 +84,19 @@ public class CouponService {
 
     public int getOwnedCouponCount(Long userId) {
         return couponRepository.countByUserIdAndStatus(userId, CouponStatus.AVAILABLE);
+    }
+
+    @Transactional
+    public Long createCoupon(Promotion promotion, Long userId, LocalDate start, LocalDate end) {
+        Coupon newCoupon = Coupon.builder()
+                .promotion(promotion)
+                .couponStatus(CouponStatus.AVAILABLE)
+                .userId(userId)
+                .issueStartDate(start)
+                .issueEndDate(end).build();
+
+        couponRepository.save(newCoupon);
+
+        return newCoupon.getId();
     }
 }

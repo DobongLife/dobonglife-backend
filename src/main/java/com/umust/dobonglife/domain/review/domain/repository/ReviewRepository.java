@@ -33,4 +33,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
     @Query("SELECT COUNT(r) FROM Review r WHERE r.user.id = :userId")
     int countByUserId(Long userId);
+
+    @Query("SELECT r FROM Review r " +
+            "WHERE r.courseId = :courseId " +
+            "AND (:lastId IS NULL OR r.id < :lastId) " +
+            "ORDER BY r.id DESC")
+    Slice<Review> findCourseReviewsNoOffset(Long courseId, Long lastId, Pageable pageable);
+
+    @Query("SELECT r FROM Review r " +
+            "WHERE r.placeId = :placeId " +
+            "AND (:lastId IS NULL OR r.id < :lastId) " +
+            "ORDER BY r.id DESC")
+    Slice<Review> findPlaceReviewsNoOffset(Long placeId, Long lastId, Pageable pageable);
 }
