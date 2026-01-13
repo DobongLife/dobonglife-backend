@@ -145,10 +145,7 @@ public class PlaceService {
 
     @Transactional
     public PlaceSummaryListResponse getAllPlace(){
-        List<Place> places = placeRepository.findAll();
-        List<PlaceSummaryResponse> responses = places.stream()
-                .map(PlaceSummaryResponse::from)
-                .toList();
+        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummaries();
         return PlaceSummaryListResponse.from(responses);
     }
 }

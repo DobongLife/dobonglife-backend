@@ -27,7 +27,7 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
                 .select(
                         place.id,
                         place.name,
-                        place.imageUrls.any(),
+                        place.thumbnailUrl,
                         place.averageRating,
                         place.reviewCount
                 )
@@ -36,6 +36,23 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
                 .orderBy(place.id.desc());
 
         if (size != null) query.limit(size);
+
+        List<Tuple> rows = query.fetch();
+        return rows.stream().map(this::toSummary).toList();
+    }
+
+    @Override
+    public List<PlaceSummaryResponse> findPlaceSummaries(){
+        JPAQuery<Tuple> query = queryFactory
+                .select(
+                        place.id,
+                        place.name,
+                        place.thumbnailUrl,
+                        place.averageRating,
+                        place.reviewCount
+                )
+                .from(place)
+                .orderBy(place.id.desc());
 
         List<Tuple> rows = query.fetch();
         return rows.stream().map(this::toSummary).toList();

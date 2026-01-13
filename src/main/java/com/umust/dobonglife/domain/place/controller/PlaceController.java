@@ -92,4 +92,14 @@ public class PlaceController {
                                                             @RequestParam(defaultValue = "2") int size) {
         return BaseResponse.ok(placeService.getPlaceDetail(placeId, userId, lastReviewId, size));
     }
+
+    @Operation(summary = "장소 전체 조회", description = "장소를 전체 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "장소 전체 조회에 성공하였습니다."
+    )
+    @GetMapping()
+    public BaseResponse<PlaceSummaryListResponse> getAllPlace() {
+        return BaseResponse.ok(placeService.getAllPlace());
+    }
 }
