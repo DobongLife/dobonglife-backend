@@ -50,6 +50,7 @@ public class User extends BaseEntity {
     @Column(name = "provider_id")
     private String providerId;
 
-    @Column
-    private long balance;
+    @Column(nullable = false)
+    @Builder.Default
+    private long balance = 0L;
 }
