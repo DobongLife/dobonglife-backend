@@ -2,6 +2,8 @@ package com.umust.dobonglife.global.auth;
 
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
+import com.umust.dobonglife.domain.point.domain.entity.Point;
+import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -14,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,8 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
+    private final PointRepository pointRepository;
+    private final PasswordEncoder passwordEncoder;
     private static final List<GrantedAuthority> MASTER_AUTHORITIES = List.of(
             new SimpleGrantedAuthority("ROLE_ADMIN")
     );
@@ -37,9 +42,10 @@ public class DataInitializer implements CommandLineRunner {
             User masterUser = User.builder()
                     .name("master")
                     .email("master@gmail.com")
-                    .password("1234")
+                    .password(passwordEncoder.encode("1234"))
                     .role(Role.ADMIN)
                     .provider(Provider.LOCAL)
+                    .balance(500L)
                     .build();
             userRepository.save(masterUser);
 
@@ -59,8 +65,25 @@ public class DataInitializer implements CommandLineRunner {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            Point signupPoint = Point.builder()
+                    .user(masterUser)
+                    .amount(1_000L)
+                    .title("회원가입 보너스")
+                    .afterBalance(1_000L)
+                    .isUsed(false)
+                    .build();
+
+            Point eventPoint = Point.builder()
+                    .user(masterUser)
+                    .amount(500L)
+                    .title("이벤트 참여 보상")
+                    .afterBalance(1_500L)
+                    .isUsed(false)
+                    .build();
+
+            pointRepository.saveAll(List.of(signupPoint, eventPoint));
+
             log.info("master 사용자 계정 생성 및 임시 인증 정보 설정 완료.");
         }
-
     }
 }

@@ -1,10 +1,17 @@
 package com.umust.dobonglife.domain.place.domain.constant;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum Amenity {
-    PARKING,
-    TOILET,
-    FOUNTAIN,
-    BENCH;
+    PARKING("주차장"),
+    TOILET("화장싱"),
+    FOUNTAIN("분수대"),
+    BENCH("벤치");
+
+    private final String label;
 
     public static Amenity toEnum(String value) {
         for (Amenity amenity : Amenity.values()) {

@@ -1,13 +1,17 @@
 package com.umust.dobonglife.domain.place.service;
 
-
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.course.domain.repository.CoursePlaceRepository;
+import com.umust.dobonglife.domain.course.domain.entity.Course;
+import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
+import com.umust.dobonglife.domain.course.service.CourseService;
+import com.umust.dobonglife.domain.courseLike.domain.repository.CourseLikeRepository;
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.*;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.CoursePlace;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
@@ -16,8 +20,10 @@ import com.umust.dobonglife.domain.place.domain.repository.PlaceLikeRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
-import com.umust.dobonglife.global.error.exception.BusinessException;
+
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.external.s3.S3Utils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +42,11 @@ import java.util.Optional;
 public class PlaceService {
 
     private final PlaceRepository placeRepository;
-    private final CoursePlaceRepository coursePlaceRepository;
     private final UserRepository userRepository;
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
+    private final CourseRepository courseRepository;
+    private final CourseService courseService;
 
     @Transactional
     public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
@@ -59,22 +66,6 @@ public class PlaceService {
                 .build();
 
         placeRepository.save(place);
-    }
-
-    @Transactional(readOnly = true)
-    public PlaceListResponse getPlaceByTheme(String theme){
-        List<CoursePlace> coursePlaces = coursePlaceRepository.findByTheme(CourseTheme.toEnum(theme));
-
-        List<Place> places = coursePlaces.stream()
-                .map(CoursePlace::getPlace)
-                .distinct()
-                .toList();
-
-        List<PlaceResponse> responses = places.stream()
-                .map(PlaceResponse::from)
-                .toList();
-
-        return PlaceListResponse.from(responses);
     }
 
     @Transactional
@@ -121,6 +112,19 @@ public class PlaceService {
         return PlaceListResponse.from(responses);
     }
 
+    @Transactional(readOnly = true)
+    public PlaceAndCourseListResponse getPlaceAndCourseByTheme(ThemeRequest request){
+        List<PlaceSummaryResponse> placeResponses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), 3);
+        CursorResponse<CourseSummaryResponse> courseResponses = courseService.getCourses(CourseTheme.toEnum(request.getTheme()), 1L, 3);
+
+        return PlaceAndCourseListResponse.from(placeResponses, courseResponses);
+    }
+
+    @Transactional(readOnly = true)
+    public PlaceSummaryListResponse getPlaceByTheme(ThemeRequest request){
+        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), null);
+        return PlaceSummaryListResponse.from(responses);
+    }
     @Transactional
     public void updatePlaceRatingAndCount(Long placeId, Double rating) {
         Place place = placeRepository.findById(placeId)

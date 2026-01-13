@@ -29,6 +29,10 @@ public class PromotionService {
     private final UserService userService;
     private final CouponService couponService;
 
+    public void registerPromotion(Promotion promotion) {
+        promotionRepository.save(promotion);
+    }
+
     public CursorResponse<PromotionItem> getPromotion(Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(lastId, pageable);

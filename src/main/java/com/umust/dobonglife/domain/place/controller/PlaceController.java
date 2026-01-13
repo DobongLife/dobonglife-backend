@@ -3,7 +3,9 @@ package com.umust.dobonglife.domain.place.controller;
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceAndCourseListResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryListResponse;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -36,14 +38,24 @@ public class PlaceController {
         return BaseResponse.ok(null);
     }
 
+    @Operation(summary = "주간 테마별 홈 화면 조회", description = "주간 테마별 홈 화면을 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "주간 테마별 홈 화면 조회에 성공하였습니다."
+    )
+    @GetMapping("/home")
+    public BaseResponse<PlaceAndCourseListResponse> getHomeByTheme(@RequestBody ThemeRequest request){
+        return BaseResponse.ok(placeService.getPlaceAndCourseByTheme(request));
+    }
+
     @Operation(summary = "주간 테마별 장소 조회", description = "주간 테마별 장소를 조회합니다.")
     @ApiResponse(
             responseCode = "200",
             description = "주간 테마별 장소 조회에 성공하였습니다."
     )
-    @GetMapping
-    public BaseResponse<PlaceListResponse> getPlaceByTheme(@RequestParam("theme") String theme){
-        return BaseResponse.ok(placeService.getPlaceByTheme(theme));
+    @GetMapping("/theme")
+    public BaseResponse<PlaceSummaryListResponse> getPlaceByTheme(@RequestBody ThemeRequest request){
+        return BaseResponse.ok(placeService.getPlaceByTheme(request));
     }
 
     @Operation(summary = "장소 좋아요", description = "장소를 좋아요합니다.")
