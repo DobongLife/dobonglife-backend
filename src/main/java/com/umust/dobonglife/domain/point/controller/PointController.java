@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.point.controller;
 
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
-import com.umust.dobonglife.domain.coupon.controller.dto.response.MyCouponResponse;
 import com.umust.dobonglife.domain.point.controller.dto.response.PointPageResponse;
 import com.umust.dobonglife.domain.point.service.PointPromotionService;
 import com.umust.dobonglife.domain.point.service.PointService;
@@ -24,18 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/points")
 @RequiredArgsConstructor
 public class PointController {
-    private final PointPromotionService pointService;
-
-    @Operation(summary = "나의 포인트 내역 조회", description = "포인트 내역을 조회합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "요청에 성공하였습니다."
-    )
-    @GetMapping
-    public BaseResponse<PointPageResponse> getMyPoint(@CurrentUserId Long userId) {
-        PointPageResponse response = pointService.getMyPoint(userId);
-        return BaseResponse.ok(response);
-    }
+    private final PointPromotionService pointPromotionService;
+    private final PointService pointService;
 
     @Operation(summary = "쿠폰 첫화면 조회", description = "포인트와 프로모션(광고)를 조회합니다.")
     @ApiResponse(
@@ -43,12 +32,23 @@ public class PointController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping
-    public BaseResponse<SliceResponse<PointResponse>> getMyPoints(
+    public BaseResponse<PointPageResponse> getMyPoint(@CurrentUserId Long userId) {
+        PointPageResponse response = pointPromotionService.getMyPoint(userId);
+        return BaseResponse.ok(response);
+    }
+
+    @Operation(summary = "나의 포인트 내역 조회", description = "포인트 내역을 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @GetMapping("/my")
+    public BaseResponse<SliceResponse<PointResponse>> getMyPointList(
             @CurrentUserId Long userId,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "DESC") String order
     ) {
-        return BaseResponse.ok(pointService.getPoints(userId, size, cursor, order));
+        return BaseResponse.ok(pointService.getPointList(userId, size, cursor, order));
     }
 }

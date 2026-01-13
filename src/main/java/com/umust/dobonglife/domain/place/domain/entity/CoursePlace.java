@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.place.domain.entity;
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.domain.constant.Theme;
 import jakarta.persistence.*;
 import lombok.*;
 
