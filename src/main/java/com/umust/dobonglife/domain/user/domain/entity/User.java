@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.user.domain.entity;
 
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
+
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,4 +49,7 @@ public class User extends BaseEntity {
 
     @Column(name = "provider_id")
     private String providerId;
+
+    @Column
+    private long balance;
 }

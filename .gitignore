@@ -39,6 +39,10 @@ out/
 ### env File ###
 *.env
 
+
+### csv File ###
+*.csv
+
 .DS_Store
 src/main/resources/application-local.yml
 src/test/resources/application-test.yml

@@ -82,7 +82,12 @@ public enum ErrorCode{
     SERVER_ERROR_FIREBASE(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase 초기화에 실패했습니다."),
     SERVER_ERROR_MESSAGE(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 메시지 전송을 실패했습니다."),
     SERVER_ERROR_TOPIC(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 토픽 구독을 실패했습니다."),
-    SERVER_ERROR_TOPIC_CANCEL(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 토픽 구독 취소를 실패했습니다.");
+    SERVER_ERROR_TOPIC_CANCEL(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 토픽 구독 취소를 실패했습니다."),
+    // Point
+    POINT_NOT_FOUND(700, HttpStatus.NOT_FOUND.value(), "포인트를 찾을 수 없습니다."),
+    POINT_ALREADY_USED(701, HttpStatus.CONFLICT.value(), "이미 사용된 포인트입니다."),
+    POINT_PRINCIPAL_ONLY(702, HttpStatus.CONFLICT.value(), "본인 포인트만 사용할 수 있습니다."),
+    POINT_CANNOT_NEGATIVE(703, HttpStatus.CONFLICT.value(), "포인트 내역은 음수가 될 수 없습니다.");
 
     private final int code;
     private final int httpStatus;

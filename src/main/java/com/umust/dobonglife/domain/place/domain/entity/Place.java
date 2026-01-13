@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.place.domain.entity;
 
+import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 
 import com.umust.dobonglife.global.common.model.BaseEntity;
@@ -26,6 +27,9 @@ public class Place extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "sub_name", nullable = false)
+    private String subName;
+
     @Column(name = "content", nullable = false)
     private String content;
 
@@ -39,8 +43,8 @@ public class Place extends BaseEntity {
 
     @ElementCollection
     @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
-    @Column(columnDefinition = "TEXT")
-    private List<String> placeImages;
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private List<String> imageUrls = new ArrayList<>();
 
     @Column(name = "operating_hour", nullable = false)
     private String operatingHour;
@@ -56,6 +60,15 @@ public class Place extends BaseEntity {
     @Column(name = "review_count", nullable = false)
     private Long reviewCount = 0L;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "course_themes",
+            joinColumns = @JoinColumn(name = "place_id")
+    )
+    @Column(name = "theme")
+    @Enumerated(EnumType.STRING)
+    private List<CourseTheme> themes = new ArrayList<>();
+
     public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
         this.averageRating = newAverageRating;
         this.reviewCount = newReviewCount;
@@ -63,8 +76,7 @@ public class Place extends BaseEntity {
 
     public void applyNewReview(Double newRating) { // TODO: Course 처럼 분리할지 고민
         double totalScore = (this.averageRating * this.reviewCount) + newRating;
-        Long reviewCount = this.reviewCount + 1;
-        reviewCount = reviewCount + 1;
+        this.reviewCount = this.reviewCount + 1;
         this.averageRating = totalScore / reviewCount;
     }
 }

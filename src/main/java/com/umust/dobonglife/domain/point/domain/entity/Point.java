@@ -1,6 +1,9 @@
 package com.umust.dobonglife.domain.point.domain.entity;
 
 import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.global.common.model.BaseEntity;
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,37 +12,37 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "points")
 @Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Point {
+public class Point extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "points_id", nullable = false)
+    @Column(name = "point_id", nullable = false)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "point_type", nullable = false)
-    private PointType type;
+    @Column(name = "amount", nullable = false)
+    private long amount;
+
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "after_balance", nullable = false)
+    private long afterBalance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "amount", nullable = false)
-    private Long amount;
+    @Column(name = "is_used")
+    private boolean isUsed;
 
-    @Column(name = "title", nullable = false)
-    private String title;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Builder
-    public Point(PointType type, User user, Long amount, String title) {
-        this.type = type;
-        this.user = user;
-        this.amount = amount;
-        this.title = title;
-        this.createdAt = LocalDateTime.now();
+    public void markUsed() {
+        if (this.isUsed) {
+            throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
+        }
+        this.isUsed = true;
     }
 }

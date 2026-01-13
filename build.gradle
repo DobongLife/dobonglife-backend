@@ -73,6 +73,13 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
+	// WebClient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
 	// QueryDSL
 	implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
@@ -90,6 +97,13 @@ dependencies {
 
 	// FireBase
 	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+
+	implementation 'org.apache.poi:poi:5.2.5'
+	implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+    // OpenCSV
+	implementation 'com.opencsv:opencsv:5.9'
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
