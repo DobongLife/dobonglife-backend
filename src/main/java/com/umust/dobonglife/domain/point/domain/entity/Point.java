@@ -7,6 +7,8 @@ import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "points")
 @Getter

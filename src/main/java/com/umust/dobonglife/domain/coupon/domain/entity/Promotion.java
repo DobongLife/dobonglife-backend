@@ -58,6 +58,12 @@ public class Promotion {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
+//    @Column(name = "coupon_start_date", nullable = false) // TODO: 추가됨
+//    private LocalDate couponStartDate;
+//
+//    @Column(name = "coupon_end_date", nullable = false)
+    private LocalDate couponEndDate;
+
     @Column(name = "businesses_id", nullable = false)
     private Long businessesId;
 

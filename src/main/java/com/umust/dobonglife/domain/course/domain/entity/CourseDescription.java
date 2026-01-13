@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.course.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,6 +35,7 @@ public class CourseDescription {
     @Column(name = "highlight")
     private List<String> highlights = new ArrayList<>();
 
+    @Builder
     public CourseDescription(Course course, String content,
                              List<String> highlights) {
         this.course = course;

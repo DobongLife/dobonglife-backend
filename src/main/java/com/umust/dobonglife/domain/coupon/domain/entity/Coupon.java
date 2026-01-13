@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,6 +38,7 @@ public class Coupon {
     @Column(name = "coupon_status", nullable = false)
     private CouponStatus couponStatus = CouponStatus.AVAILABLE;
 
+    @Builder
     public Coupon(Long userId, Promotion promotion, LocalDate issueStartDate, LocalDate issueEndDate, CouponStatus couponStatus) {
         this.userId = userId;
         this.promotion = promotion;

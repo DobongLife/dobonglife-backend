@@ -2,15 +2,17 @@ package com.umust.dobonglife.domain.point.service;
 
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
-import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
-import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.point.domain.entity.PointType;
+import com.umust.dobonglife.domain.point.infrastructure.repository.PointRepository;
+import com.umust.dobonglife.domain.user.controller.dto.PointHistoryDomainDto;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.common.response.slice.Cursor;
 import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 import com.umust.dobonglife.global.common.response.slice.SortOrder;
-import com.umust.dobonglife.domain.user.controller.dto.PointHistoryDomainDto;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -34,9 +36,9 @@ public class PointService {
     private final UserRepository userRepository;
     private final PointRepository pointRepository;
 
-    public boolean processUserPoint(Long userId) {
+    public boolean processUserPoint(Long userId, Point point) {
         Long currentPoint = getUserPoint(userId);
-        return isValid(currentPoint);
+        return isValid(currentPoint - point.getAmount());
     }
 
     public Long getUserPoint(Long userId) {
@@ -96,5 +98,28 @@ public class PointService {
         if (pointBalanceUpdated == 0) {
             throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
         }
+    }
+
+    @Transactional
+    public void earnPoint(User user, String title, Long amount) {
+        Point point = Point.builder()
+                .user(user)
+                .type(PointType.EARN)
+                .title(title)
+                .amount(amount)
+                .build();
+
+        pointRepository.save(point);
+    }
+
+    @Transactional
+    public void usePoint(String title, Long point, User user) {
+        Point newPoint = Point.builder()
+                .user(user)
+                .type(PointType.USE)
+                .amount(-point)
+                .title(title).build();
+
+        pointRepository.save(newPoint);
     }
 }

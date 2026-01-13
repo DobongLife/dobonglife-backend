@@ -22,13 +22,13 @@ public class Review {
     @Column(name = "review_id", nullable = false)
     private Long id;
 
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_id", nullable = true)
     private Long courseId;
 
-    @JoinColumn(name = "place_id", nullable = false)
+    @JoinColumn(name = "place_id", nullable = true)
     private Long placeId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -70,11 +70,11 @@ public class Review {
         }
     }
 
-    public void update(CreateReviewRequest request, List<String> imageUrls) {
-        this.courseId = request.courseId();
-        this.placeId = request.placeId();
-        this.rating = request.rating();
-        this.content = request.content();
+    public void update(Long courseId, Long placeId, Double rating, String content, List<String> imageUrls) {
+        this.courseId = courseId;
+        this.placeId = placeId;
+        this.rating = rating;
+        this.content = content;
         this.imageUrls = imageUrls;
         this.updatedAt = LocalDateTime.now();
     }

@@ -6,7 +6,10 @@ import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseReq
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.service.CourseReviewService;
 import com.umust.dobonglife.domain.course.service.CourseService;
+import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
+import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -32,9 +35,10 @@ import java.util.List;
 public class CourseController {
 
     private final CourseService courseService;
+    private final CourseReviewService courseReviewService;
 
     // 홈 메인에서의 스토리 코스 목록 조회
-    @Operation(summary = "코스 목록 조회 (홈메인)", description = "코스를 조회합니다.")
+    @Operation(summary = "코스 목록 조회", description = "코스를 조회합니다.")
     @ApiResponse(
             responseCode = "200",
             description = "요청에 성공하였습니다."
@@ -54,7 +58,7 @@ public class CourseController {
     )
     @GetMapping("/{courseId}")
     public BaseResponse<CourseDetailResponse> getCourse(@CurrentUserId Long userId, @PathVariable("courseId") Long courseId){
-        CourseDetailResponse response = courseService.getCourse(userId, courseId);
+        CourseDetailResponse response = courseReviewService.getCourse(userId, courseId);
         return BaseResponse.ok(response);
     }
 
@@ -81,9 +85,10 @@ public class CourseController {
     )
     @PutMapping("/{courseId}")
     public BaseResponse<CourseRegisterResponse> updateCourse(
+            @CurrentUserId Long userId,
             @PathVariable("courseId") Long courseId,
             @RequestPart("request") @Valid UpdateCourseRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
-        CourseRegisterResponse response = courseService.updateCourse(courseId, request,imageFiles);
+        CourseRegisterResponse response = courseService.updateCourse(userId, courseId, request,imageFiles);
         return BaseResponse.ok(response);
     }
 

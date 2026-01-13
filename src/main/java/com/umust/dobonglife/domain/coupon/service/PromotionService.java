@@ -1,14 +1,18 @@
 package com.umust.dobonglife.domain.coupon.service;
 
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
+import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.*;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.point.service.PointService;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +25,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PromotionService {
     private final PromotionRepository promotionRepository;
-
     private final PointService pointService;
+    private final UserService userService;
+    private final CouponService couponService;
 
     public void registerPromotion(Promotion promotion) {
         promotionRepository.save(promotion);
@@ -43,10 +48,15 @@ public class PromotionService {
     }
 
     public UsedCouponResponse changePointToCoupon(Long userId, Long promotionId) {
-        if(!pointService.processUserPoint(userId))
+        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new EntityNotFoundException("[ERROR] 프로모션이 존재하지 않습니다."));
+        User user = userService.findById(userId);
+
+        if(!pointService.processUserPoint(userId, promotion.getPoint()))
             throw new BusinessException(ErrorCode.INVALID_POINT);
         // TODO: 쿠폰 발급 시스템
-        Long couponId = 0L;
+        pointService.usePoint(promotion.getTitle(), promotion.getPoint(), user);
+
+        Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getEndDate());
         return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
     }
 }

@@ -6,6 +6,8 @@ import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.entity.CourseDescription;
 import com.umust.dobonglife.domain.course.domain.entity.CoursePlans;
+import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,9 +24,10 @@ public record CourseDetailResponse(
         DescriptionInfo descriptionInfo,
         ReviewSummary reviewSummary,
         List<String> imageUrls,
-        List<CoursePlanDto> plans
+        List<CoursePlanDto> plans,
+        CursorResponse<ReviewSummaryResponse> reviews
 ) {
-    public static CourseDetailResponse from(Course course, List<CoursePlans> plans, boolean isRemoved, boolean isFavorite) {
+    public static CourseDetailResponse from(Course course, List<CoursePlans> plans, CursorResponse<ReviewSummaryResponse> reviews, boolean isRemoved, boolean isFavorite) {
         return new CourseDetailResponse(
                 course.getId(),
                 UserInfo.from(isRemoved, isFavorite),
@@ -32,7 +35,8 @@ public record CourseDetailResponse(
                 DescriptionInfo.from(course.getDescription()),
                 ReviewSummary.from(course),
                 course.getImageUrls(),
-                plans.stream().map(CoursePlanDto::from).toList()
+                plans.stream().map(CoursePlanDto::from).toList(),
+                reviews
         );
     }
 
