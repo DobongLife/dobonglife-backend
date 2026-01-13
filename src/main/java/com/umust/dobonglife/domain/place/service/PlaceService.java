@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.repository.CoursePlaceRepository;
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
@@ -130,4 +131,10 @@ public class PlaceService {
         placeRepository.save(place);
     }
 
+    @Transactional(readOnly = true)
+    public PlaceDetailResponse getPlaceDetail(Long placeId) {
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
+        return PlaceDetailResponse.from(place);
+    }
 }

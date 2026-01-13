@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.place.controller;
 
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
@@ -65,5 +66,15 @@ public class PlaceController {
     @GetMapping("/like/my")
     public BaseResponse<PlaceListResponse> getMyLikedPlace(@CurrentUserId Long userId){
         return BaseResponse.ok(placeService.getLikedPlace(userId));
+    }
+
+    @Operation(summary = "장소 상세 조회", description = "장소를 상세 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "장소 상세 조회에 성공하였습니다."
+    )
+    @GetMapping("/{placeId}")
+    public BaseResponse<PlaceDetailResponse> getPlaceDetail(@PathVariable Long placeId){
+        return BaseResponse.ok(placeService.getPlaceDetail(placeId));
     }
 }
