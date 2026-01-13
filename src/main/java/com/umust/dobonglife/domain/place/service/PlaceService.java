@@ -18,6 +18,8 @@ import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.entity.PlaceLike;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceLikeRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
+import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
+import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
@@ -45,8 +47,8 @@ public class PlaceService {
     private final UserRepository userRepository;
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
-    private final CourseRepository courseRepository;
     private final CourseService courseService;
+    private final ReviewService reviewService;
 
     @Transactional
     public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
@@ -134,18 +136,19 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceDetailResponse getPlaceDetail(Long placeId) {
+    public PlaceDetailResponse getPlaceDetail(Long placeId, Long userId, Long lastId, int size) {
         Place place = placeRepository.findById(placeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
-        return PlaceDetailResponse.from(place);
+        CursorResponse<ReviewSummaryResponse> reviews = reviewService.getPlaceReviews(placeId, userId, lastId, size);
+        return PlaceDetailResponse.from(place, reviews);
     }
 
     @Transactional
-    public PlaceListResponse getAllPlace(){
+    public PlaceSummaryListResponse getAllPlace(){
         List<Place> places = placeRepository.findAll();
-        List<PlaceResponse> responses = places.stream()
-                .map(PlaceResponse::from)
+        List<PlaceSummaryResponse> responses = places.stream()
+                .map(PlaceSummaryResponse::from)
                 .toList();
-        return PlaceListResponse.from(responses);
+        return PlaceSummaryListResponse.from(responses);
     }
 }

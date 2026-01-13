@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -84,6 +85,16 @@ public class Place extends BaseEntity {
         double totalScore = (this.averageRating * this.reviewCount) + newRating;
         this.reviewCount = this.reviewCount + 1;
         this.averageRating = totalScore / reviewCount;
+    }
+
+    public static List<String> amenityToStrings(Place place) {
+        if (place == null || place.getAmenities() == null) {
+            return Collections.emptyList();
+        }
+
+        return place.getAmenities().stream()
+                .map(Amenity::getLabel)
+                .toList();
     }
 }
 
