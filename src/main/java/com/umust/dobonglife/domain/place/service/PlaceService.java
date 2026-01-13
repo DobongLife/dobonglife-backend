@@ -30,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
-// hello
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -50,14 +49,13 @@ public class PlaceService {
         Place place = Place.builder()
                 .name(request.getPlaceName())
                 .content(request.getContent())
-                .amenities(request.getAmenities()
-                        .stream()
+                .amenities(request.getAmenities().stream()
                         .map(Amenity::toEnum)
                         .toList())
                 .address(request.getAddress())
                 .contact(request.getContact())
                 .operatingHour(request.getOperatingHour())
-                .placeImages(imagesUrl)
+                .imageUrls(imagesUrl)
                 .build();
 
         placeRepository.save(place);
@@ -136,5 +134,14 @@ public class PlaceService {
         Place place = placeRepository.findById(placeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
         return PlaceDetailResponse.from(place);
+    }
+
+    @Transactional
+    public PlaceListResponse getAllPlace(){
+        List<Place> places = placeRepository.findAll();
+        List<PlaceResponse> responses = places.stream()
+                .map(PlaceResponse::from)
+                .toList();
+        return PlaceListResponse.from(responses);
     }
 }
