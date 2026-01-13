@@ -51,5 +51,5 @@ public class User extends BaseEntity {
     private String providerId;
 
     @Column
-    private int balance;
+    private long balance;
 }
