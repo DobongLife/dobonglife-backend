@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.auth;
+package com.umust.dobonglife.global.importer;
 
 import com.opencsv.CSVReader;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
@@ -8,10 +8,12 @@ import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class PlaceCsvImporter implements CommandLineRunner {
 
     private final PlaceRepository placeRepository;
+    private final ResourceLoader resourceLoader;
 
     // 한글 → enum 매핑
     private static final Map<String, Amenity> AMENITY_KR_MAP = Map.of(
@@ -33,14 +36,21 @@ public class PlaceCsvImporter implements CommandLineRunner {
             "벤치", Amenity.BENCH
     );
 
+    @Value("${place.import.path}")
+    private String importPath;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        importPlaces("import/places.csv");
+        if (placeRepository.count() > 0) {
+            log.info("[PlaceCsvImporter] place table already has data. import skipped.");
+            return;
+        }
+        importPlaces(importPath);
     }
 
     private void importPlaces(String classpath) throws Exception {
-        ClassPathResource resource = new ClassPathResource(classpath);
+        Resource resource = resourceLoader.getResource(classpath);
         log.info("[PlaceCsvImporter] start import: {}", classpath);
 
         try (CSVReader reader = new CSVReader(

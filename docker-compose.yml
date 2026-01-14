@@ -14,6 +14,8 @@ services:
         -XX:MaxRAMPercentage=75.0
         -XX:+UseG1GC
         -Dspring.profiles.active=prod
+    volumes:
+      - /home/ubuntu/import/places.csv:/data/import/places.csv:ro
     ports:
       - '8080:8080'
     depends_on:
