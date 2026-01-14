@@ -102,7 +102,7 @@ public class PlaceController {
             description = "장소 전체 조회에 성공하였습니다."
     )
     @GetMapping()
-    public BaseResponse<PlaceSummaryListResponse> getAllPlace() {
-        return BaseResponse.ok(placeService.getAllPlace());
+    public BaseResponse<PlaceSummaryListResponse> getAllPlace(@CurrentUserId Long userId) {
+        return BaseResponse.ok(placeService.getAllPlace(userId));
     }
 }

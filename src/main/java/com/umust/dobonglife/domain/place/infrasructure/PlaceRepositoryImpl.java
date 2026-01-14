@@ -8,12 +8,15 @@ import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryResponse;
 import com.umust.dobonglife.domain.place.domain.repository.custom.PlaceRepositoryCustom;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.querydsl.jpa.JPAExpressions.selectOne;
 import static com.umust.dobonglife.domain.place.domain.entity.QPlace.place;
+import static com.umust.dobonglife.domain.place.domain.entity.QPlaceLike.placeLike;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,7 +46,16 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
     }
 
     @Override
-    public List<PlaceSummaryResponse> findPlaceSummaries(){
+    public List<PlaceSummaryResponse> findPlaceSummaries(Long userId){
+
+        var likedExpr = selectOne()
+                .from(placeLike)
+                .where(
+                        placeLike.place.eq(place),
+                        placeLike.user.id.eq(userId),
+                        placeLike.status.eq(BaseStatus.ACTIVE)
+                )
+                .exists();
         return queryFactory
                 .select(Projections.constructor(
                         PlaceSummaryResponse.class,
@@ -51,7 +63,8 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
                         place.name,
                         place.thumbnailUrl,
                         place.averageRating,
-                        place.reviewCount
+                        place.reviewCount,
+                        likedExpr
                 ))
                 .from(place)
                 .orderBy(place.id.desc())

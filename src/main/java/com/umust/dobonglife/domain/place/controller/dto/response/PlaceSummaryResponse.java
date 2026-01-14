@@ -13,4 +13,5 @@ public class PlaceSummaryResponse {
     private String thumbnailUrl;
     private Double averageRating;
     private Long reviewCount;
+    private boolean isLiked;
 }

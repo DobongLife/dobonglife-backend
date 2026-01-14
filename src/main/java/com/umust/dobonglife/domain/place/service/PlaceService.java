@@ -23,6 +23,7 @@ import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -135,8 +136,8 @@ public class PlaceService {
     }
 
     @Transactional
-    public PlaceSummaryListResponse getAllPlace(){
-        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummaries();
+    public PlaceSummaryListResponse getAllPlace(Long userId) {
+        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummaries(userId);
         return PlaceSummaryListResponse.from(responses);
     }
 }
