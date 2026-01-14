@@ -101,17 +101,25 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceListResponse getLikedPlace(Long userId) {
+    public PlaceSummaryListResponse getLikedPlace(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        List<PlaceSummaryResponse> responses = placeRepository.findLikedPlaceSummaries(userId);
+        return PlaceSummaryListResponse.from(responses);
+    }
 
-        List<Place> likedPlaces = placeLikeRepository.findLikedPlacesByUserId(userId);
+    @Transactional
+    public void updatePlaceRatingAndCount(Long placeId, Double rating) {
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
+        place.applyNewReview(rating);
+        placeRepository.save(place);
+    }
 
-        List<PlaceResponse> responses = likedPlaces.stream()
-                .map(PlaceResponse::from)
-                .toList();
-
-        return PlaceListResponse.from(responses);
+    @Transactional
+    public PlaceSummaryListResponse getAllPlace(Long userId) {
+        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummaries(userId);
+        return PlaceSummaryListResponse.from(responses);
     }
 
     @Transactional(readOnly = true)
@@ -125,19 +133,6 @@ public class PlaceService {
     @Transactional(readOnly = true)
     public PlaceSummaryListResponse getPlaceByTheme(ThemeRequest request){
         List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), null);
-        return PlaceSummaryListResponse.from(responses);
-    }
-    @Transactional
-    public void updatePlaceRatingAndCount(Long placeId, Double rating) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
-        place.applyNewReview(rating);
-        placeRepository.save(place);
-    }
-
-    @Transactional
-    public PlaceSummaryListResponse getAllPlace(Long userId) {
-        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummaries(userId);
         return PlaceSummaryListResponse.from(responses);
     }
 }

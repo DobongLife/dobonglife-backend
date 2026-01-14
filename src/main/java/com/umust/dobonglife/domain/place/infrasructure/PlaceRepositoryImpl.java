@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.place.infrasructure;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
@@ -48,14 +49,6 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
     @Override
     public List<PlaceSummaryResponse> findPlaceSummaries(Long userId){
 
-        var likedExpr = selectOne()
-                .from(placeLike)
-                .where(
-                        placeLike.place.eq(place),
-                        placeLike.user.id.eq(userId),
-                        placeLike.status.eq(BaseStatus.ACTIVE)
-                )
-                .exists();
         return queryFactory
                 .select(Projections.constructor(
                         PlaceSummaryResponse.class,
@@ -64,11 +57,43 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
                         place.thumbnailUrl,
                         place.averageRating,
                         place.reviewCount,
-                        likedExpr
+                        likedExpr(userId)
                 ))
                 .from(place)
                 .orderBy(place.id.desc())
                 .fetch();
+    }
+
+    @Override
+    public List<PlaceSummaryResponse> findLikedPlaceSummaries(Long userId) {
+
+        BooleanExpression liked = likedExpr(userId);
+
+        return queryFactory
+                .select(Projections.constructor(
+                        PlaceSummaryResponse.class,
+                        place.id,
+                        place.name,
+                        place.thumbnailUrl,
+                        place.averageRating,
+                        place.reviewCount,
+                        liked
+                ))
+                .from(place)
+                .where(liked)
+                .orderBy(place.id.desc())
+                .fetch();
+    }
+
+    private BooleanExpression likedExpr(Long userId) {
+        return selectOne()
+                .from(placeLike)
+                .where(
+                        placeLike.place.eq(place),
+                        placeLike.user.id.eq(userId),
+                        placeLike.status.eq(BaseStatus.ACTIVE)
+                )
+                .exists();
     }
 
     private PlaceSummaryResponse toSummary(Tuple t) {
