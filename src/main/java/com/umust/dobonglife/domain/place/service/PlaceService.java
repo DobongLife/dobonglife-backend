@@ -48,7 +48,6 @@ public class PlaceService {
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
     private final CourseService courseService;
-    private final ReviewService reviewService;
 
     @Transactional
     public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
@@ -133,14 +132,6 @@ public class PlaceService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
         place.applyNewReview(rating);
         placeRepository.save(place);
-    }
-
-    @Transactional(readOnly = true)
-    public PlaceDetailResponse getPlaceDetail(Long placeId, Long userId, Long lastId, int size) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
-        CursorResponse<ReviewSummaryResponse> reviews = reviewService.getPlaceReviews(placeId, userId, lastId, size);
-        return PlaceDetailResponse.from(place, reviews);
     }
 
     @Transactional

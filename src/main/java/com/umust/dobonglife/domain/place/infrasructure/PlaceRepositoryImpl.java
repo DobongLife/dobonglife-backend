@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.place.infrasructure;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
@@ -43,19 +44,18 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
 
     @Override
     public List<PlaceSummaryResponse> findPlaceSummaries(){
-        JPAQuery<Tuple> query = queryFactory
-                .select(
+        return queryFactory
+                .select(Projections.constructor(
+                        PlaceSummaryResponse.class,
                         place.id,
                         place.name,
                         place.thumbnailUrl,
                         place.averageRating,
                         place.reviewCount
-                )
+                ))
                 .from(place)
-                .orderBy(place.id.desc());
-
-        List<Tuple> rows = query.fetch();
-        return rows.stream().map(this::toSummary).toList();
+                .orderBy(place.id.desc())
+                .fetch();
     }
 
     private PlaceSummaryResponse toSummary(Tuple t) {

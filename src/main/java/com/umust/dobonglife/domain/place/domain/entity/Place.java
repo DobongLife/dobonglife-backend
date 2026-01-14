@@ -70,10 +70,10 @@ public class Place extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private List<CourseTheme> themes = new ArrayList<>();
 
-    @Column(name = "latitude", nullable = false)
+    @Column(name = "latitude", nullable = true)
     private Double latitude;
 
-    @Column(name = "longitude", nullable = false)
+    @Column(name = "longitude", nullable = true)
     private Double longitude;
 
     @Column(name = "thumbnail_url", columnDefinition = "TEXT")

@@ -6,6 +6,8 @@ import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResp
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceAndCourseListResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryListResponse;
+import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
+import com.umust.dobonglife.domain.place.service.PlaceReviewService;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -25,6 +27,7 @@ import java.util.List;
 @RequestMapping("/api/place")
 public class PlaceController {
     private final PlaceService placeService;
+    private final PlaceReviewService placeReviewService;
 
     @Operation(summary = "장소 등록", description = "장소 정보를 입력하여 등록합니다.")
     @ApiResponse(
@@ -90,7 +93,7 @@ public class PlaceController {
                                                             @CurrentUserId Long userId,
                                                             @RequestParam(required = false) Long lastReviewId,
                                                             @RequestParam(defaultValue = "2") int size) {
-        return BaseResponse.ok(placeService.getPlaceDetail(placeId, userId, lastReviewId, size));
+        return BaseResponse.ok(placeReviewService.getPlaceDetail(placeId, userId, lastReviewId, size));
     }
 
     @Operation(summary = "장소 전체 조회", description = "장소를 전체 조회합니다.")
