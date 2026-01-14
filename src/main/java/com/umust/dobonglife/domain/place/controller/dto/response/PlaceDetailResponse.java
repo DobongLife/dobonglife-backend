@@ -27,9 +27,10 @@ public class PlaceDetailResponse {
     private Long reviewCount;
     private double latitude;
     private double longitude;
+    private boolean isLiked;
     private CursorResponse<ReviewSummaryResponse> reviews;
 
-    public static PlaceDetailResponse from(Place place, CursorResponse<ReviewSummaryResponse> reviews) {
+    public static PlaceDetailResponse from(Place place, CursorResponse<ReviewSummaryResponse> reviews, boolean isLiked) {
         return PlaceDetailResponse.builder()
                 .placeId(place.getId())
                 .name(place.getName())
@@ -45,6 +46,7 @@ public class PlaceDetailResponse {
                 .longitude(place.getLongitude())
                 .operatingHour(place.getOperatingHour())
                 .reviews(reviews)
+                .isLiked(isLiked)
                 .build();
     }
 }
