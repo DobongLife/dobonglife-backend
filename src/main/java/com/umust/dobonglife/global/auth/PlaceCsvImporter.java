@@ -41,7 +41,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
 
     private void importPlaces(String classpath) throws Exception {
         ClassPathResource resource = new ClassPathResource(classpath);
-        log.info("들어왔당께");
+        log.info("[PlaceCsvImporter] start import: {}", classpath);
 
         try (CSVReader reader = new CSVReader(
                 new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)
@@ -69,7 +69,11 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 String operatingHour = defaultIfBlank(get(row, idx, "operatingHour"), "정보없음");
 
                 List<Amenity> amenities = parseAmenities(get(row, idx, "amenities"));
-                List<String> imageUrls = parseList(get(row, idx, "imageUrls"));
+                List<String> imageUrls = parseUrlList(get(row, idx, "imageUrls"));
+                String thumbnailUrl = defaultIfBlank(get(row, idx, "thumbnailUrl"), "");
+
+                Double latitude = parseDoubleOrNull(get(row, idx, "latitude"));
+                Double longitude = parseDoubleOrNull(get(row, idx, "longitude"));
 
                 Place place = placeRepository.findByName(name)
                         .map(existing -> {
@@ -79,9 +83,15 @@ public class PlaceCsvImporter implements CommandLineRunner {
                             existing.setContact(contact);
                             existing.setOperatingHour(operatingHour);
 
-                            // ElementCollection은 "통째로 교체"가 제일 안전
+                            // ElementCollection은 통째 교체가 안전
                             existing.setAmenities(amenities);
                             existing.setImageUrls(imageUrls);
+
+                            // ✅ CSV 필드 추가 반영
+                            existing.setThumbnailUrl(thumbnailUrl);
+                            existing.setLatitude(latitude);
+                            existing.setLongitude(longitude);
+
                             return existing;
                         })
                         .orElseGet(() -> Place.builder()
@@ -93,6 +103,9 @@ public class PlaceCsvImporter implements CommandLineRunner {
                                 .operatingHour(operatingHour)
                                 .amenities(amenities)
                                 .imageUrls(imageUrls)
+                                .thumbnailUrl(thumbnailUrl)
+                                .latitude(latitude)
+                                .longitude(longitude)
                                 .build()
                         );
 
@@ -103,7 +116,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 else updated++;
             }
 
-            System.out.print("[PlaceCsvImporter] inserted=" + inserted + ", updated=" + updated);
+            log.info("[PlaceCsvImporter] done. inserted={}, updated={}", inserted, updated);
         }
     }
 
@@ -125,43 +138,62 @@ public class PlaceCsvImporter implements CommandLineRunner {
 
     private String defaultIfBlank(String v, String def) {
         if (v == null || v.isBlank()) return def;
-        return v;
+        return v.trim();
     }
 
-    private List<String> parseList(String v) {
+    /**
+     * imageUrls: 단일 URL도 OK.
+     * 여러 개인 경우: "url1|url2" 또는 "url1;url2" 지원.
+     */
+    private List<String> parseUrlList(String v) {
         if (v == null || v.isBlank()) return new ArrayList<>();
-        return Arrays.stream(v.split("\\|"))
+
+        // 여러 URL 지원( | 또는 ; ). 단일이면 그대로 1개 리스트.
+        String normalized = v.trim();
+        String[] tokens = normalized.split("[|;]");
+
+        return Arrays.stream(tokens)
                 .map(String::trim)
                 .filter(s -> !s.isBlank())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    private Double parseDoubleOrNull(String v) {
+        if (v == null || v.isBlank()) return null;
+        try {
+            return Double.parseDouble(v.trim());
+        } catch (NumberFormatException e) {
+            log.warn("[PlaceCsvImporter] 위경도 파싱 실패: '{}'", v);
+            return null;
+        }
+    }
+
     private List<Amenity> parseAmenities(String v) {
         if (v == null || v.isBlank()) return new ArrayList<>();
 
-        // 1) enum 이름으로 들어온 경우: "PARKING|TOILET"
-        // 2) 한글로 들어온 경우: "주차장 / 화장실" 또는 "주차장|화장실"
-        String normalized = v.replace("/", "|").replace(" ", "");
+        // "주차장 / 화장실" 또는 "주차장|화장실" 또는 "PARKING|TOILET"
+        String normalized = v.replace(" / ", "|")
+                .replace("/", "|")
+                .replace(",", "|")   // 혹시 콤마로 들어온 경우 대비(CSV는 따옴표로 감싸야 안전)
+                .replace(" ", "");
+
         String[] tokens = normalized.split("\\|");
 
         List<Amenity> result = new ArrayList<>();
         for (String t : tokens) {
-            if (t.isBlank()) continue;
+            if (t == null || t.isBlank()) continue;
 
-            // 1️enum 이름 그대로 시도
+            // 1) enum 이름 그대로 시도
             try {
                 result.add(Amenity.valueOf(t));
                 continue;
-            } catch (IllegalArgumentException ignore) {
-                // 다음 단계
-            }
+            } catch (IllegalArgumentException ignore) { }
 
-            // 2️한글 → enum 매핑 시도
+            // 2) 한글 → enum 매핑
             Amenity mapped = AMENITY_KR_MAP.get(t);
             if (mapped != null) {
                 result.add(mapped);
             } else {
-                // 알 수 없는 값은 skip + 로그만 남김
                 log.warn("[PlaceCsvImporter] 알 수 없는 편의시설 값 skip: '{}'", t);
             }
         }

@@ -36,6 +36,7 @@ public class PlaceDetailResponse {
                 .subName(place.getSubName())
                 .content(place.getContent())
                 .amenities(Place.amenityToStrings(place))
+                .placeImages(place.getImageUrls())
                 .address(place.getAddress())
                 .contact(place.getContact())
                 .averageRating(place.getAverageRating())
