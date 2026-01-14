@@ -36,7 +36,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
             "벤치", Amenity.BENCH
     );
 
-    @Value("${place.import.path}")
+    @Value("${place.import.path:classpath:import/place.csv}")
     private String importPath;
 
     @Override
