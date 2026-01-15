@@ -3,11 +3,13 @@ package com.umust.dobonglife.domain.place.infrasructure;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryResponse;
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.custom.PlaceRepositoryCustom;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.RequiredArgsConstructor;
@@ -47,21 +49,24 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
     }
 
     @Override
-    public List<PlaceSummaryResponse> findPlaceSummaries(Long userId){
+    public List<PlaceSummaryResponse> findPlaceSummaries(Long userId) {
 
-        return queryFactory
-                .select(Projections.constructor(
-                        PlaceSummaryResponse.class,
-                        place.id,
-                        place.name,
-                        place.thumbnailUrl,
-                        place.averageRating,
-                        place.reviewCount,
-                        likedExpr(userId)
-                ))
+        BooleanExpression liked = likedExpr(userId);
+
+        List<Tuple> rows = queryFactory
+                .select(place, liked)
                 .from(place)
+                .leftJoin(place.themes).fetchJoin()
+                .distinct()
                 .orderBy(place.id.desc())
                 .fetch();
+
+        return rows.stream()
+                .map(t -> PlaceSummaryResponse.from(
+                        t.get(place),
+                        t.get(liked)
+                ))
+                .toList();
     }
 
     @Override
@@ -69,24 +74,26 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
 
         BooleanExpression liked = likedExpr(userId);
 
-        return queryFactory
-                .select(Projections.constructor(
-                        PlaceSummaryResponse.class,
-                        place.id,
-                        place.name,
-                        place.thumbnailUrl,
-                        place.averageRating,
-                        place.reviewCount,
-                        liked
-                ))
+        List<Tuple> rows = queryFactory
+                .select(place, liked)
                 .from(place)
+                .leftJoin(place.themes).fetchJoin()
                 .where(liked)
+                .distinct()
                 .orderBy(place.id.desc())
                 .fetch();
+
+        return rows.stream()
+                .map(t -> PlaceSummaryResponse.from(
+                        t.get(place),
+                        t.get(liked)
+                ))
+                .toList();
     }
 
     private BooleanExpression likedExpr(Long userId) {
-        return selectOne()
+        return JPAExpressions
+                .selectOne()
                 .from(placeLike)
                 .where(
                         placeLike.place.eq(place),

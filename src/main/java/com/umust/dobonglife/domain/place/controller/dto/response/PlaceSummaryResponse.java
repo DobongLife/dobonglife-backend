@@ -4,6 +4,9 @@ import com.umust.dobonglife.domain.place.domain.entity.Place;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Builder;
+import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -15,14 +18,24 @@ public class PlaceSummaryResponse {
     private Double averageRating;
     private Long reviewCount;
     private boolean isLiked;
+    private double latitude;
+    private double longitude;
+    private List<String> themes;
 
-    public static PlaceSummaryResponse from(Place place) {
+    public static PlaceSummaryResponse from(Place place, boolean isLiked) {
         return PlaceSummaryResponse.builder()
                 .placeId(place.getId())
                 .placeName(place.getName())
                 .thumbnailUrl(place.getThumbnailUrl())
                 .averageRating(place.getAverageRating())
                 .reviewCount(place.getReviewCount())
+                .isLiked(isLiked)
+                .latitude(place.getLatitude())
+                .longitude(place.getLongitude())
+                .themes(
+                        place.getThemes().stream()
+                                .map(CourseTheme::name)
+                                .toList())
                 .build();
     }
 }
