@@ -44,10 +44,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        if (placeRepository.count() > 0) {
-            log.info("[PlaceCsvImporter] place table already has data. import skipped.");
-            return;
-        }
         importPlaces(importPath);
     }
 
