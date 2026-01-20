@@ -58,16 +58,15 @@ public class Promotion {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-//    @Column(name = "coupon_start_date", nullable = false) // TODO: 추가됨
-//    private LocalDate couponStartDate;
-//
-//    @Column(name = "coupon_end_date", nullable = false)
-    private LocalDate couponEndDate;
+    @Column(name = "coupon_period", nullable = false)
+    private Long validPeriod;
 
     @Column(name = "businesses_id", nullable = false)
     private Long businessesId;
 
-    public Promotion(String category, String title, String description, String img, DiscountType discountType, BigDecimal discountValue, Long minPrice, Long maxPrice, String code, Long point, LocalDate startDate, LocalDate endDate, Long businessesId) {
+    public Promotion(String category, String title, String description, String img, DiscountType discountType,
+                     BigDecimal discountValue, Long minPrice, Long maxPrice, String code, Long point, LocalDate startDate,
+                     LocalDate endDate, Long validPeriod, Long businessesId) {
         this.category = category;
         this.title = title;
         this.description = description;
@@ -80,6 +79,7 @@ public class Promotion {
         this.point = point;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.validPeriod = validPeriod;
         this.businessesId = businessesId;
     }
 }

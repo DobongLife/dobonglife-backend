@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -87,7 +88,8 @@ public class CouponService {
     }
 
     @Transactional
-    public Long createCoupon(Promotion promotion, Long userId, LocalDate start, LocalDate end) {
+    public Long createCoupon(Promotion promotion, Long userId, LocalDate start, Long period) {
+        LocalDate end = start.plus(period, ChronoUnit.DAYS);
         Coupon newCoupon = Coupon.builder()
                 .promotion(promotion)
                 .couponStatus(CouponStatus.AVAILABLE)

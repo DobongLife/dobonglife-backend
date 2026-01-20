@@ -96,11 +96,22 @@ public class Course {
 
     public void applyNewReview(Double newRating) {
         double totalScore = (this.getAverageRating() * this.getReviewCount()) + newRating;
-        Long reviewCount = this.getReviewCount();
-        reviewCount = reviewCount + 1;
+        Long reviewCount = this.getReviewCount() + 1;
         Double averageRating = totalScore / reviewCount;
 
         reviewStats.update(averageRating, reviewCount);
+    }
+
+    public void deleteReview(Double rating) {
+        double totalScore = this.getAverageRating() * this.getReviewCount();
+
+        long newReviewCount = Math.max(0, this.getReviewCount() - 1);
+
+        Double newAverageRating = 0.0;
+        if (newReviewCount > 0) {
+            newAverageRating = (totalScore - rating) / newReviewCount; // TODO: 소수점 어디서 관리할지 정의
+        }
+        reviewStats.update(newAverageRating, newReviewCount);
     }
 
     public void addPlan(CoursePlans plan) {
