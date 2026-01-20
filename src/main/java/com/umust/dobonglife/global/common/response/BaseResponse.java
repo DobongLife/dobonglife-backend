@@ -25,7 +25,18 @@ public class BaseResponse<T> {
         this.data = data;
     }
 
+    private BaseResponse(T data, String message) {
+        this.success = true;
+        this.status = HttpStatus.OK.value();
+        this.message = message;
+        this.data = data;
+    }
+
     public static <T> BaseResponse<T> ok(T data) {
         return new BaseResponse<>(data);
+    }
+
+    public static <T> BaseResponse<T> ok(T data, String message) {
+        return new BaseResponse<>(data, message);
     }
 }

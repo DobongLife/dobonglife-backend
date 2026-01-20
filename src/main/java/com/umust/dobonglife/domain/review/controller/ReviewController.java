@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
+import com.umust.dobonglife.global.common.response.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,8 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Tag(name = "리뷰 API", description = "리뷰 관련 API")
-@SecurityRequirement(name = "BearerAuth")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/review")
@@ -38,7 +37,7 @@ public class ReviewController {
     public BaseResponse<ReviewResponse> registerReview(@CurrentUserId Long userId,
                                                        @RequestPart("request") @Valid CreateReviewRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
         ReviewResponse response = reviewService.createReview(userId, request, imageFiles);
-        return BaseResponse.ok(response);
+        return BaseResponse.ok(response, SuccessCode.REVIEW_POINT_SUCCESS);
     }
 
     // 리뷰 수정하기
