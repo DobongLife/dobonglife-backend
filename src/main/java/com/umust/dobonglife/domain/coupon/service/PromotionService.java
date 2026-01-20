@@ -56,7 +56,7 @@ public class PromotionService {
         // TODO: 쿠폰 발급 시스템
         pointService.usePoint(promotion.getTitle(), promotion.getPoint(), user);
 
-        Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getEndDate());
+        Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getValidPeriod());
         return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
     }
 }
