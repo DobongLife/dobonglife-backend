@@ -209,4 +209,11 @@ public class CourseService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         course.applyNewReview(rating);
     }
+
+    @Transactional
+    public void deleteCourseReview(Long courseId, Double rating) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
+        course.deleteReview(rating);
+    }
 }
