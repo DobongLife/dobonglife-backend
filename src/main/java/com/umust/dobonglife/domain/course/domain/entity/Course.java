@@ -96,8 +96,7 @@ public class Course {
 
     public void applyNewReview(Double newRating) {
         double totalScore = (this.getAverageRating() * this.getReviewCount()) + newRating;
-        Long reviewCount = this.getReviewCount();
-        reviewCount = reviewCount + 1;
+        Long reviewCount = this.getReviewCount() + 1;
         Double averageRating = totalScore / reviewCount;
 
         reviewStats.update(averageRating, reviewCount);
