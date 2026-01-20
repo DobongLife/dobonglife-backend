@@ -40,4 +40,10 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseRep
             @Param("lastId") Long lastId,
             Pageable pageable
     );
+
+    @Query("SELECT c FROM Course c " +
+            "WHERE c.userId = :userId " +
+            "AND (:lastId IS NULL OR c.id < :lastId) " +
+            "ORDER BY c.id DESC")
+    Slice<Course> findMyCoursesNoOffset(Long userId, Long lastId, Pageable pageable);
 }

@@ -104,4 +104,18 @@ public class CourseController {
         CourseDeleteResponse response = courseService.deleteCourse(userId, courseId);
         return BaseResponse.ok(response);
     }
+
+    // 내코스 조회하기
+    @Operation(summary = "내 코스 조회", description = "내 코스를 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @GetMapping("/my")
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getMyCourses(@CurrentUserId Long userId,
+                                                                            @RequestParam(required = false, defaultValue = "5") Long lastId,
+                                                                            @RequestParam(defaultValue = "2") int size) {
+        CursorResponse<CourseSummaryResponse> responses = courseService.getMyCourses(lastId, size, userId);
+        return BaseResponse.ok(responses);
+    }
 }

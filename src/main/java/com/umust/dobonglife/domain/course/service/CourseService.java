@@ -63,6 +63,12 @@ public class CourseService {
         return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
     }
 
+    public CursorResponse<CourseSummaryResponse> getMyCourses(Long lastId, int size, Long userId) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Course> courses = courseRepository.findMyCoursesNoOffset(userId, lastId, pageable);
+        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+    }
+
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {
         List<String> imageUrls = new ArrayList<>();
         if (imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
