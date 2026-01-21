@@ -25,9 +25,6 @@ public class ScheduleRequest {
     @Schema(description = "메모", example = "노트북 챙겨가기")
     private String memo;
 
-    @Schema(description = "일정 타입", example = "PERSONAL, EVENT, ACTIVITY")
-    private String scheduleType;
-
     @Schema(description = "장소 이름", example = "도봉구 도서관")
     private String placeName;
 

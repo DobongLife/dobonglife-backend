@@ -36,7 +36,6 @@ public class ScheduleService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())
                 .startTime(request.getStartTime())
@@ -44,6 +43,9 @@ public class ScheduleService {
                 .memo(request.getMemo())
                 .user(user)
                 .placeName(request.getPlaceName())
+                .isAllDay(request.getIsAllDay())
+                .isEvent(false)
+                .color(Color.toEnum(request.getColor()))
                 .build();
 
         scheduleRepository.save(schedule);
