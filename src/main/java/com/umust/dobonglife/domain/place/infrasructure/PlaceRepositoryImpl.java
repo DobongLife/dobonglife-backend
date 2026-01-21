@@ -13,6 +13,9 @@ import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.custom.PlaceRepositoryCustom;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -69,29 +72,8 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
                 .toList();
     }
 
-    @Override
-    public List<PlaceSummaryResponse> findLikedPlaceSummaries(Long userId) {
-
-        BooleanExpression liked = likedExpr(userId);
-
-        List<Tuple> rows = queryFactory
-                .select(place, liked)
-                .from(place)
-                .leftJoin(place.themes).fetchJoin()
-                .where(liked)
-                .distinct()
-                .orderBy(place.id.desc())
-                .fetch();
-
-        return rows.stream()
-                .map(t -> PlaceSummaryResponse.from(
-                        t.get(place),
-                        t.get(liked)
-                ))
-                .toList();
-    }
-
     private BooleanExpression likedExpr(Long userId) {
+
         return JPAExpressions
                 .selectOne()
                 .from(placeLike)
@@ -111,5 +93,36 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
                 .averageRating(t.get(place.averageRating))
                 .reviewCount(t.get(place.reviewCount))
                 .build();
+    }
+
+    @Override
+    public Slice<Place> findLikedPlaceSummaries(Long userId, Long lastId, Pageable pageable) {
+        List<Place> contents = queryFactory
+                .select(place)
+                .from(placeLike)
+                .join(place).on(placeLike.place.id.eq(place.id))
+                .where(
+                        placeLike.user.id.eq(userId),
+                        placeLike.status.eq(BaseStatus.ACTIVE),
+                        ltPlaceId(lastId)
+                )
+                .orderBy(place.id.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return checkLastPage(pageable, contents);
+    }
+
+    private BooleanExpression ltPlaceId(Long lastId) {
+        return lastId == null ? null : place.id.lt(lastId);
+    }
+
+    private Slice<Place> checkLastPage(Pageable pageable, List<Place> results) {
+        boolean hasNext = false;
+        if (results.size() > pageable.getPageSize()) {
+            hasNext = true;
+            results.remove(pageable.getPageSize());
+        }
+        return new SliceImpl<>(results, pageable, hasNext);
     }
 }

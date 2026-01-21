@@ -222,4 +222,10 @@ public class CourseService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         course.deleteReview(rating);
     }
+
+    public CursorResponse<CourseSummaryResponse> getLikedCourse(Long userId, int size, Long lastId) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Course> courses = courseRepository.findLikedCourses(userId, null, pageable);
+        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+    }
 }

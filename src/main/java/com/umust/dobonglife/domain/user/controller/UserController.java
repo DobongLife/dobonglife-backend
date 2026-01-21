@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.user.controller;
 
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
-import com.umust.dobonglife.domain.user.service.MyPageApplicationService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,8 +24,6 @@ import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 public class UserController {
 
     private final UserService userService;
-    private final MyPageApplicationService myPageApplicationService;
-
     @Operation(summary = "회원 가입", description = "회원 가입을 합니다." +
             " role은 MEMBER, MANAGER, ADMIN 3개 입니다.")
     @ApiResponse(
@@ -49,12 +46,6 @@ public class UserController {
                                             @CurrentUserId Long userId) {
         userService.deleteAccount(request, userId);
         return BaseResponse.ok(null);
-    }
-
-    @GetMapping
-    public BaseResponse<MyPageResponse> getMyPage(@CurrentUserId Long userId) {
-        MyPageResponse response = myPageApplicationService.getMyPage(userId);
-        return BaseResponse.ok(response);
     }
 }
 
