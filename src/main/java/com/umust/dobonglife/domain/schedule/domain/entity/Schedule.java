@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "schedules")
@@ -23,12 +25,6 @@ public class Schedule extends BaseEntity {
 
     @Column(name = "title", nullable = false)
     private String title;
-
-    @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime;
-
-    @Column(name = "end_time", nullable = false)
-    private LocalDateTime endTime;
 
     @Column(name = "memo", nullable = true)
     private String memo;
