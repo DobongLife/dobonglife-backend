@@ -29,7 +29,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
     private final PlaceRepository placeRepository;
     private final ResourceLoader resourceLoader;
 
-    // 한글 → enum 매핑 (amenities)
     private static final Map<String, Amenity> AMENITY_KR_MAP = Map.of(
             "주차장", Amenity.PARKING,
             "화장실", Amenity.TOILET,
@@ -37,7 +36,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
             "벤치", Amenity.BENCH
     );
 
-    // ✅ 한글 → enum 매핑 (themes)
     private static final Map<String, CourseTheme> THEME_KR_MAP = Map.of(
             "맛집탐방", CourseTheme.RESTAURANT,
             "문화체험", CourseTheme.CULTURE,
@@ -92,7 +90,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 Double latitude = parseDoubleOrNull(get(row, idx, "latitude"));
                 Double longitude = parseDoubleOrNull(get(row, idx, "longitude"));
 
-                // ✅ themes 컬럼 추가
+                // themes 컬럼 추가
                 List<CourseTheme> themes = parseThemes(get(row, idx, "themes"));
 
                 Place place = placeRepository.findByName(name)
@@ -107,12 +105,12 @@ public class PlaceCsvImporter implements CommandLineRunner {
                             existing.setAmenities(amenities);
                             existing.setImageUrls(imageUrls);
 
-                            // ✅ CSV 필드 추가 반영
+                            // CSV 필드 추가 반영
                             existing.setThumbnailUrl(thumbnailUrl);
                             existing.setLatitude(latitude);
                             existing.setLongitude(longitude);
 
-                            // ✅ themes 반영
+                            // themes 반영
                             existing.setThemes(themes);
 
                             return existing;
@@ -129,7 +127,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
                                 .thumbnailUrl(thumbnailUrl)
                                 .latitude(latitude)
                                 .longitude(longitude)
-                                .themes(themes) // ✅ themes 반영
+                                .themes(themes)
                                 .build()
                         );
 
@@ -219,7 +217,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
         return result;
     }
 
-    // ✅ themes 파서 추가 (amenities랑 동일 스타일)
+    // themes 파서 추가 (amenities랑 동일 스타일)
     private List<CourseTheme> parseThemes(String v) {
         if (v == null || v.isBlank()) return new ArrayList<>();
 

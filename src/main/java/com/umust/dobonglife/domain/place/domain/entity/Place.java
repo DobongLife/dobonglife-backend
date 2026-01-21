@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -62,12 +63,21 @@ public class Place extends BaseEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
-            name = "course_themes",
+            name = "place_themes",
             joinColumns = @JoinColumn(name = "place_id")
     )
     @Column(name = "theme")
     @Enumerated(EnumType.STRING)
     private List<CourseTheme> themes = new ArrayList<>();
+
+    @Column(name = "latitude", nullable = true)
+    private Double latitude;
+
+    @Column(name = "longitude", nullable = true)
+    private Double longitude;
+
+    @Column(name = "thumbnail_url", columnDefinition = "TEXT")
+    private String thumbnailUrl;
 
     public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
         this.averageRating = newAverageRating;
@@ -78,6 +88,16 @@ public class Place extends BaseEntity {
         double totalScore = (this.averageRating * this.reviewCount) + newRating;
         this.reviewCount = this.reviewCount + 1;
         this.averageRating = totalScore / reviewCount;
+    }
+
+    public static List<String> amenityToStrings(Place place) {
+        if (place == null || place.getAmenities() == null) {
+            return Collections.emptyList();
+        }
+
+        return place.getAmenities().stream()
+                .map(Amenity::getLabel)
+                .toList();
     }
 }
 
