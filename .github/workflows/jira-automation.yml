@@ -1,5 +1,4 @@
 name: GitHub 이슈 → Jira 이슈 생성 및 브랜치 자동화
-
 on:
   issues:
     types:
@@ -14,11 +13,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: develop
-          # 핵심: PAT(GIT_TOKEN)를 사용해야 이 액션이 푸시한 커밋/브랜치가 다음 CI/CD를 트리거합니다.
-          token: ${{ secrets.GIT_TOKEN }}
 
-      # Github 이슈 마크다운을 Jira 문법으로 변환
-      - name: Convert Markdown to Jira
+      # ref : https://github.com/peter-evans/jira2md
+      - name: Github 이슈 마크다운을 Jira 마크다운 문법으로 변환
         uses: peter-evans/jira2md@v1
         id: md2jira
         with:
@@ -29,22 +26,23 @@ jobs:
             ${{ github.event.issue.body }}
           mode: md2jira
 
-      - name: 이슈 타입 및 제목 추출
-        id: parse_issue
+      - name: 이슈 타입 추출
+        id: extract_issue_type
         run: |
           title="${{ github.event.issue.title }}"
-          # [Type] 형태에서 type 추출 (소문자 변환)
-          issue_type=$(echo "$title" | sed -n 's/^\[\([^]]*\)\].*/\1/p' | tr '[:upper:]' '[:lower:]' | src/xargs echo -n)
-          # [Type] 제거 후 순수 제목 추출
-          title_without_type=$(echo "$title" | sed 's/^\[[^]]*\] //')
-          
-          # 기본값 설정 (타입이 없을 경우 대비)
-          if [ -z "$issue_type" ]; then issue_type="feat"; fi
-          
+          issue_type=$(echo "$title" | sed -n 's/^\[\([^]]*\)\].*/\1/p' | tr '[:upper:]' '[:lower:]')
           echo "issue_type=$issue_type" >> $GITHUB_OUTPUT
-          echo "converted_title=[BE/$issue_type] $title_without_type" >> $GITHUB_OUTPUT
 
-      - name: Jira description JSON 이스케이프
+      - name: 제목에서 [타입]을 [BE/타입]으로 변환
+        id: convert_title
+        run: |
+          title="${{ github.event.issue.title }}"
+          issue_type="${{ steps.extract_issue_type.outputs.issue_type }}"
+          title_without_type=$(echo "$title" | sed 's/^\[[^]]*\] //')
+          converted_title="[BE/$issue_type] $title_without_type"
+          echo "converted_title=$converted_title" >> $GITHUB_OUTPUT
+
+      - name: Jira description JSON을 문자열로 이스케이프 처리
         id: escape_description
         run: |
           {
@@ -53,6 +51,7 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
+      # ref : https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-post
       - name: Jira Task 생성
         id: create_jira_task
         uses: fjogeleit/http-request-action@v1
@@ -65,9 +64,13 @@ jobs:
           data: |
             {
               "fields": {
-                "project": { "key": "${{ secrets.JIRA_PROJECT_KEY }}" },
-                "issuetype": { "name": "Task" },
-                "summary": "${{ steps.parse_issue.outputs.converted_title }}",
+                "project": {
+                  "key": "${{ secrets.JIRA_PROJECT_KEY }}"
+                },
+                "issuetype": {
+                  "name": "Task"
+                },
+                "summary": "${{ steps.convert_title.outputs.converted_title }}",
                 "description": ${{ steps.escape_description.outputs.escaped_description }}
               }
             }
@@ -77,33 +80,39 @@ jobs:
         run: |
           task_key=$(echo '${{ steps.create_jira_task.outputs.response }}' | jq -r '.key')
           echo "task_key=$task_key" >> $GITHUB_OUTPUT
+          echo "Created Jira issue: $task_key"
 
-      - name: 브랜치 생성 및 푸시
+#      - name: develop 브랜치 코드 체크아웃
+#        uses: actions/checkout@v4
+#        with:
+#          ref: develop
+
+      - name: develop 브랜치에 Jira 티켓 번호를 사용한 브랜치 생성
         run: |
-          # Git 사용자 설정
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # 브랜치명 조합
-          BRANCH_NAME="${{ steps.parse_issue.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}"
-          
-          git checkout -b "$BRANCH_NAME"
-          git push origin "$BRANCH_NAME"
+          git checkout develop
+          git pull
+          git checkout -b ${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}
+          git push origin ${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}
 
-      - name: 담당자 할당 및 안내 댓글 작성
+      # ref : https://github.com/actions-cool/issues-helper
+      - name: 담당자 할당
         uses: actions-cool/issues-helper@v3
         with:
-          actions: 'add-assignees, create-comment'
+          actions: 'add-assignees'
           token: ${{ secrets.GIT_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
           assignees: ${{ github.event.issue.user.login }}
+
+      - name: 브랜치 생성 및 Jira 링크 댓글 추가
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GIT_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
           body: |
-            ## ✅ 작업 준비 완료
-            
-            🪾 **생성된 브랜치**: `${{ steps.parse_issue.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}`
-            🔗 **Jira 티켓**: [${{ steps.extract_jira_task_key.outputs.task_key }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.extract_jira_task_key.outputs.task_key }})
-            
-            ⌨️ **로컬 작업 시작 명령어**:
-            ```bash
-            git fetch origin && git checkout ${{ steps.parse_issue.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}
+            🪾 **생성된 브랜치**: `${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}`
+            🔗 **연결된 Jira Task**: <a href="${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.extract_jira_task_key.outputs.task_key }}" target="_blank">${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.extract_jira_task_key.outputs.task_key }}</a>
+            ⌨️ **이슈 작업 간단 명령어**:
+            ```
+            git checkout develop && git pull && git checkout -b ${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }} origin/${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}
             ```
