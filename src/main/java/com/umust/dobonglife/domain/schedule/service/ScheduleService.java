@@ -1,12 +1,12 @@
 package com.umust.dobonglife.domain.schedule.service;
 
-import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
-import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleUpdateRequest;
+import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRequest;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.DailyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
 
+import com.umust.dobonglife.domain.schedule.domain.constant.Color;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
@@ -32,7 +32,7 @@ public class ScheduleService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void registerSchedule(ScheduleRegisterRequest request, Long userId) {
+    public void registerSchedule(ScheduleRequest request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -70,14 +70,12 @@ public class ScheduleService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // ex) 9월이면: [9/1 00:00:00 ~ 10/1 00:00:00)
+        // 9월 1일 부터 10월 1일
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDateTime start = startDate.atStartOfDay();
         LocalDateTime end = startDate.plusMonths(1).atStartOfDay();
 
         List<Schedule> schedules = scheduleRepository.findMonthlySchedules(user.getId(), start, end);
-
-        // 날짜별로(Key) 그루핑
         Map<LocalDate, List<ScheduleResponse>> groupedByDate = schedules.stream()
                 .map(ScheduleResponse::from)
                 .collect(Collectors.groupingBy(
@@ -93,7 +91,6 @@ public class ScheduleService {
         return MonthlyScheduleResponse.from(dailySchedules);
     }
 
-
     @Transactional
     public void deleteSchedule(Long scheduleId, Long userId) {
 
@@ -107,14 +104,22 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void updateSchedule(Long scheduleId, ScheduleUpdateRequest request, Long userId) {
+    public void updateSchedule(Long scheduleId, ScheduleRequest request, Long userId) {
 
         userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // 내 스케줄인지까지 한 번에 검증
         Schedule schedule = scheduleRepository.findByIdAndUserId(scheduleId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.SCHEDULE_NOT_FOUND)); // 없으면 에러코드 하나 추가 추천
 
+        schedule.update(
+                request.getTitle(),
+                request.getStartTime(),
+                request.getEndTime(),
+                request.getMemo(),
+                request.getIsAllDay(),
+                Color.toEnum(request.getColor()),
+                request.getPlaceName()
+        );
     }
 }

@@ -49,4 +49,15 @@ public class Schedule extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void update(String title, LocalDateTime startTime, LocalDateTime endTime,
+                       String memo, Boolean isAllDay, Color color, String placeName) {
+        this.title = title;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.memo = memo;
+        this.isAllDay = isAllDay;
+        this.color = color;
+        this.placeName = placeName;
+    }
 }

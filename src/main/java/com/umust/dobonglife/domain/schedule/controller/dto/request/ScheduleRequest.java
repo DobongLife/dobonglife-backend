@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ScheduleRegisterRequest {
+public class ScheduleRequest {
 
     @NotNull(message = "일정 제목은 필수입니다")
     @Schema(description = "일정 제목", example = "독서 회의")
@@ -32,7 +32,7 @@ public class ScheduleRegisterRequest {
     private String placeName;
 
     @Schema(description = "하루 종일 여부", example = "false")
-    private boolean isAllDay;
+    private Boolean isAllDay;
 
     @Schema(description = "일정 색깔", example = "RED")
     private String color;
