@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -38,9 +39,6 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "DATE")
     private LocalDate birthday;
 
-    @Column(columnDefinition = "TEXT")
-    private String address;
-
     @Column(length = 30)
     private String phoneNumber;
 
@@ -50,7 +48,18 @@ public class User extends BaseEntity {
     @Column(name = "provider_id")
     private String providerId;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     @Builder.Default
     private long balance = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private int deleteCount = 0;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isBlocked = false;
+
+    @Column(nullable = true)
+    private LocalDateTime blockedAt;
 }
