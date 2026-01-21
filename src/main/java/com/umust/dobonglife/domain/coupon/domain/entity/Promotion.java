@@ -46,7 +46,7 @@ public class Promotion {
     @Column(name = "max_price", nullable = false)
     private Long maxPrice;
 
-    @Column(name = "code")
+    @Column(name = "code") // TODO: code 6자리로 고정 (프로모션 생성 시)
     private String code;
 
     @Column(name = "point", nullable = false)
