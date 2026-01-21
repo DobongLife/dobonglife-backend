@@ -94,4 +94,16 @@ public class ScheduleService {
         return MonthlyScheduleResponse.from(dailySchedules);
     }
 
+    @Transactional
+    public void deleteSchedule(Long scheduleId, Long userId) {
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        Schedule schedule = scheduleRepository.findByIdAndUserId(scheduleId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        scheduleRepository.delete(schedule);
+    }
+
 }
