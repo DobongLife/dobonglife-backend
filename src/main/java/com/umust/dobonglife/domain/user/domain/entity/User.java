@@ -39,9 +39,6 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "DATE")
     private LocalDate birthday;
 
-    @Column(columnDefinition = "TEXT")
-    private String address;
-
     @Column(length = 30)
     private String phoneNumber;
 
