@@ -1,10 +1,12 @@
 package com.umust.dobonglife.domain.point.service;
 
+import com.umust.dobonglife.domain.point.controller.dto.response.MyPointsResponse;
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
 import com.umust.dobonglife.domain.user.controller.dto.PointHistoryDomainDto;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.slice.Cursor;
 import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 import com.umust.dobonglife.global.common.response.slice.SortOrder;
@@ -32,6 +34,7 @@ import java.util.List;
 public class PointService {
 
     private final UserRepository userRepository;
+    private final UserService userService;
     private final PointRepository pointRepository;
 
     public boolean processUserPoint(Long userId, Long point) {
@@ -65,14 +68,18 @@ public class PointService {
     }
 
     @Transactional(readOnly = true)
-    public SliceResponse<PointResponse> getPointList(Long userId, int size, String cursor, String order) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    public MyPointsResponse getPointList(Long userId, int size, String cursor, String order) {
+        Long userTotalPoint = userService.getUserTotalPoint(userId);
+        SliceResponse<PointResponse> pointsByCursor = getPointResponse(userId, size, cursor, order);
 
+        return new MyPointsResponse(userTotalPoint, pointsByCursor);
+    }
+
+    public SliceResponse<PointResponse> getPointResponse(Long userId, int size, String cursor, String order) {
         Cursor parsedCursor = Cursor.from(cursor);
         SortOrder parsedOrder = SortOrder.from(order);
-
-        return pointRepository.findPointsByCursor(userId, size, parsedCursor, parsedOrder);
+        SliceResponse<PointResponse> pointsByCursor = pointRepository.findPointsByCursor(userId, size, parsedCursor, parsedOrder);
+        return pointsByCursor;
     }
 
     @Transactional

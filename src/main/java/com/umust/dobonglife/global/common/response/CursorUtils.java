@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.common.response;
 
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;

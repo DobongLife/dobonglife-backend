@@ -2,15 +2,13 @@ package com.umust.dobonglife.domain.place.controller;
 
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResponse;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceAndCourseListResponse;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryListResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.*;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.service.PlaceReviewService;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,8 +45,12 @@ public class PlaceController {
             description = "좋아요 장소 조회에 성공하였습니다."
     )
     @GetMapping("/like/my")
-    public BaseResponse<PlaceSummaryListResponse> getMyLikedPlace(@CurrentUserId Long userId){
-        return BaseResponse.ok(placeService.getLikedPlace(userId));
+    public BaseResponse<CursorResponse<PlaceSummaryResponse>> getMyLikedPlace(@CurrentUserId Long userId,
+                                                                @RequestParam(required = false, defaultValue = "5") Long lastId,
+                                                                @RequestParam(defaultValue = "2") int size){
+
+        CursorResponse<PlaceSummaryResponse> response = placeService.getLikedPlace(userId, size, lastId);
+        return BaseResponse.ok(response);
     }
 
     @Operation(summary = "장소 상세 조회", description = "장소를 상세 조회합니다.")
