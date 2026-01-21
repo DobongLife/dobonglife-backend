@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleList
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
 import com.umust.dobonglife.domain.schedule.domain.constant.Color;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
+import com.umust.dobonglife.domain.schedule.domain.entity.ScheduleDate;
 import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -51,16 +52,18 @@ public class ScheduleService {
         scheduleRepository.save(schedule);
     }
 
-    @Transactional (readOnly = true)
+    @Transactional(readOnly = true)
     public ScheduleListResponse getTodaySchedule(Long userId) {
 
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        List<Schedule> schedules = scheduleRepository.findTodaySchedules(user.getId(), LocalDate.now());
+        LocalDate today = LocalDate.now();
 
-        List<ScheduleResponse> responses = schedules.stream()
-                .map(ScheduleResponse::from)
+        List<ScheduleDate> scheduleDates = scheduleDateRepository.findTodayScheduleDates(userId, today);
+
+        List<ScheduleResponse> responses = scheduleDates.stream()
+                .map(this::toScheduleResponse) // ScheduleDate -> ScheduleResponse
                 .toList();
 
         return ScheduleListResponse.from(responses);
@@ -69,27 +72,24 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public MonthlyScheduleResponse getMonthlySchedules(Long userId, int year, int month) {
 
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // ex) 9월이면: [9/1 00:00:00 ~ 10/1 00:00:00)
         LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDateTime start = startDate.atStartOfDay();
-        LocalDateTime end = startDate.plusMonths(1).atStartOfDay();
+        LocalDate endDateExclusive = startDate.plusMonths(1);
 
-        List<Schedule> schedules = scheduleRepository.findMonthlySchedules(user.getId(), start, end);
+        List<ScheduleDate> scheduleDates =
+                scheduleDateRepository.findMonthlyScheduleDates(userId, startDate, endDateExclusive);
 
-        // 날짜별로(Key) 그루핑
-        Map<LocalDate, List<ScheduleResponse>> groupedByDate = schedules.stream()
-                .map(ScheduleResponse::from)
+        Map<LocalDate, List<ScheduleResponse>> groupedByDate = scheduleDates.stream()
                 .collect(Collectors.groupingBy(
-                        r -> r.getStartTime().toLocalDate(),
+                        ScheduleDate::getDate,
                         TreeMap::new,
-                        Collectors.toList()
+                        Collectors.mapping(this::toScheduleResponse, Collectors.toList())
                 ));
 
         List<DailyScheduleResponse> dailySchedules = groupedByDate.entrySet().stream()
-                .map(entry -> DailyScheduleResponse.of(entry.getKey(), entry.getValue()))
+                .map(e -> DailyScheduleResponse.of(e.getKey(), e.getValue()))
                 .toList();
 
         return MonthlyScheduleResponse.from(dailySchedules);
