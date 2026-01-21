@@ -5,8 +5,8 @@ import com.umust.dobonglife.domain.schedule.controller.dto.response.DailySchedul
 import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
+import com.umust.dobonglife.domain.schedule.domain.constant.Color;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
-import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
 import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -35,13 +35,14 @@ public class ScheduleService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
                 .memo(request.getMemo())
-                .scheduleType(ScheduleType.toEnum(request.getScheduleType()))
+                .isEvent(false)
+                .isAllDay(request.isAllDay())
+                .color(Color.toEnum(request.getColor()))
                 .user(user)
                 .placeName(request.getPlaceName())
                 .build();

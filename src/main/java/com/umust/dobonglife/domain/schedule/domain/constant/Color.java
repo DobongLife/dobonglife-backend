@@ -10,7 +10,8 @@ public enum Color {
     YELLOW,
     GREEN,
     BLUE,
-    BROWN;
+    BROWN,
+    PINK;
 
     public static Color toEnum(String value) {
         if (value == null) {
