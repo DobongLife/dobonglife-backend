@@ -110,9 +110,17 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
           body: |
-            🪾 **생성된 브랜치**: `${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}`
-            🔗 **연결된 Jira Task**: <a href="${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.extract_jira_task_key.outputs.task_key }}" target="_blank">${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.extract_jira_task_key.outputs.task_key }}</a>
-            ⌨️ **이슈 작업 간단 명령어**:
-            ```
-            git checkout develop && git pull && git checkout -b ${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }} origin/${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}
+            ## ✅ 작업 준비 완료
+
+            🪾 **생성된 브랜치**: `${{ steps.parse_issue.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}`
+            🔗 **연결된 Jira Task**: [${{ steps.extract_jira_task_key.outputs.task_key }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.extract_jira_task_key.outputs.task_key }})
+
+            ⌨️ **로컬 작업 시작 명령어 (Fork 환경)**:
+            ```bash
+            # 1. Upstream 저장소 등록 (최초 1회만 실행)
+            git remote add upstream [https://github.com/DobongLife/dobonglife-backend.git](https://github.com/DobongLife/dobonglife-backend.git) 2>/dev/null || git remote set-url upstream [https://github.com/DobongLife/dobonglife-backend.git](https://github.com/DobongLife/dobonglife-backend.git)
+
+            # 2. Upstream 최신 브랜치 가져오기 및 체크아웃
+            git fetch upstream
+            git checkout -b ${{ steps.parse_issue.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }} upstream/${{ steps.parse_issue.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}
             ```
