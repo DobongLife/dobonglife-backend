@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -96,8 +97,8 @@ public class PlaceService {
 
     public CursorResponse<PlaceSummaryResponse> getLikedPlace(Long userId, int size, Long lastId) {
         Pageable pageable = PageRequest.of(0, size);
-        Slice<Place> places = placeRepository.findLikedPlaceSummaries(userId, lastId, pageable);
-        return CursorUtils.toCursorResponse(places, place -> PlaceSummaryResponse.from(place, true));
+        Slice<Place> slice = placeRepository.findLikedPlaceSummaries(userId, lastId, pageable);
+        return CursorUtils.toCursorResponse(slice, place -> PlaceSummaryResponse.from(place, true, place.getThemes()));
     }
 
     @Transactional
@@ -119,20 +120,6 @@ public class PlaceService {
     @Transactional
     public PlaceSummaryListResponse getAllPlace(Long userId) {
         List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummaries(userId);
-        return PlaceSummaryListResponse.from(responses);
-    }
-
-    @Transactional(readOnly = true)
-    public PlaceAndCourseListResponse getPlaceAndCourseByTheme(ThemeRequest request){
-        List<PlaceSummaryResponse> placeResponses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), 3);
-        CursorResponse<CourseSummaryResponse> courseResponses = courseService.getCourses(CourseTheme.toEnum(request.getTheme()), 1L, 3);
-
-        return PlaceAndCourseListResponse.from(placeResponses, courseResponses);
-    }
-
-    @Transactional(readOnly = true)
-    public PlaceSummaryListResponse getPlaceByTheme(ThemeRequest request){
-        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), null);
         return PlaceSummaryListResponse.from(responses);
     }
 }

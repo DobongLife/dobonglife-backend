@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlaceRepositoryCustom {
-    List<PlaceSummaryResponse> findPlaceSummariesByTheme(CourseTheme theme, Integer size);
     List<PlaceSummaryResponse> findPlaceSummaries(Long userId);
     Slice<Place> findLikedPlaceSummaries(Long userId, Long lastId, Pageable pageable);
 }

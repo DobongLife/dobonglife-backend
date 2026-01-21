@@ -3,6 +3,8 @@ package com.umust.dobonglife.domain.place.infrasructure;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,7 +20,11 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.querydsl.jpa.JPAExpressions.selectOne;
 import static com.umust.dobonglife.domain.place.domain.entity.QPlace.place;
@@ -31,27 +37,6 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<PlaceSummaryResponse> findPlaceSummariesByTheme(CourseTheme theme, Integer size) {
-
-        JPAQuery<Tuple> query = queryFactory
-                .select(
-                        place.id,
-                        place.name,
-                        place.thumbnailUrl,
-                        place.averageRating,
-                        place.reviewCount
-                )
-                .from(place)
-                .where(place.themes.any().eq(theme))
-                .orderBy(place.id.desc());
-
-        if (size != null) query.limit(size);
-
-        List<Tuple> rows = query.fetch();
-        return rows.stream().map(this::toSummary).toList();
-    }
-
-    @Override
     public List<PlaceSummaryResponse> findPlaceSummaries(Long userId) {
 
         BooleanExpression liked = likedExpr(userId);
@@ -59,16 +44,38 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
         List<Tuple> rows = queryFactory
                 .select(place, liked)
                 .from(place)
-                .leftJoin(place.themes).fetchJoin()
-                .distinct()
-                .orderBy(place.id.desc())
+                .orderBy(place.id.asc())
                 .fetch();
 
+        if (rows.isEmpty()) return List.of();
+
+        List<Long> placeIds = rows.stream()
+                .map(t -> t.get(place).getId())
+                .toList();
+
+        EnumPath<CourseTheme> theme = Expressions.enumPath(CourseTheme.class, "theme");
+
+        Map<Long, List<CourseTheme>> themesMap = queryFactory
+                .select(place.id, theme)
+                .from(place)
+                .join(place.themes, theme)
+                .where(place.id.in(placeIds))
+                .fetch()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.get(place.id),
+                        Collectors.mapping(t -> t.get(theme), Collectors.toList())
+                ));
+
         return rows.stream()
-                .map(t -> PlaceSummaryResponse.from(
-                        t.get(place),
-                        t.get(liked)
-                ))
+                .map(t -> {
+                    Place p = t.get(place);
+                    return PlaceSummaryResponse.from(
+                            p,
+                            t.get(liked),
+                            themesMap.getOrDefault(p.getId(), List.of())
+                    );
+                })
                 .toList();
     }
 
@@ -85,32 +92,52 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
                 .exists();
     }
 
-    private PlaceSummaryResponse toSummary(Tuple t) {
-        return PlaceSummaryResponse.builder()
-                .placeId(t.get(place.id))
-                .placeName(t.get(place.name))
-                .thumbnailUrl(t.get(place.imageUrls.any()))
-                .averageRating(t.get(place.averageRating))
-                .reviewCount(t.get(place.reviewCount))
-                .build();
-    }
-
     @Override
     public Slice<Place> findLikedPlaceSummaries(Long userId, Long lastId, Pageable pageable) {
-        List<Place> contents = queryFactory
+
+        // 1) 좋아요한 place를 size+1로 조회 (중복 없음)
+        List<Place> results = queryFactory
                 .select(place)
                 .from(placeLike)
-                .join(place).on(placeLike.place.id.eq(place.id))
+                .join(placeLike.place, place)
                 .where(
                         placeLike.user.id.eq(userId),
                         placeLike.status.eq(BaseStatus.ACTIVE),
                         ltPlaceId(lastId)
                 )
-                .orderBy(place.id.desc())
+                .orderBy(place.id.asc())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        return checkLastPage(pageable, contents);
+        Slice<Place> slice = checkLastPage(pageable, results);
+
+        List<Long> placeIds = slice.getContent().stream()
+                .map(Place::getId)
+                .toList();
+
+        if (!placeIds.isEmpty()) {
+            EnumPath<CourseTheme> theme = Expressions.enumPath(CourseTheme.class, "theme");
+
+            List<Tuple> themeRows = queryFactory
+                    .select(place.id, theme)
+                    .from(place)
+                    .join(place.themes, theme)
+                    .where(place.id.in(placeIds))
+                    .fetch();
+
+            Map<Long, List<CourseTheme>> themesMap = new HashMap<>();
+            for (Tuple tr : themeRows) {
+                Long pid = tr.get(place.id);
+                CourseTheme th = tr.get(theme);
+                themesMap.computeIfAbsent(pid, k -> new ArrayList<>()).add(th);
+            }
+
+            slice.getContent().forEach(p ->
+                    p.setThemes(themesMap.getOrDefault(p.getId(), List.of()))
+            );
+        }
+
+        return slice;
     }
 
     private BooleanExpression ltPlaceId(Long lastId) {

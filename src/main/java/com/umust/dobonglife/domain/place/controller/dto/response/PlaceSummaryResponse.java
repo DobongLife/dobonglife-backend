@@ -22,7 +22,7 @@ public class PlaceSummaryResponse {
     private double longitude;
     private List<String> themes;
 
-    public static PlaceSummaryResponse from(Place place, boolean isLiked) {
+    public static PlaceSummaryResponse from(Place place, boolean isLiked, List<CourseTheme> themes) {
         return PlaceSummaryResponse.builder()
                 .placeId(place.getId())
                 .placeName(place.getName())
@@ -33,7 +33,7 @@ public class PlaceSummaryResponse {
                 .latitude(place.getLatitude())
                 .longitude(place.getLongitude())
                 .themes(
-                        place.getThemes().stream()
+                        themes.stream()
                                 .map(CourseTheme::name)
                                 .toList())
                 .build();
