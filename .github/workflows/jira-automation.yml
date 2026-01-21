@@ -14,7 +14,6 @@ jobs:
         with:
           ref: develop
 
-      # ref : https://github.com/peter-evans/jira2md
       - name: Github 이슈 마크다운을 Jira 마크다운 문법으로 변환
         uses: peter-evans/jira2md@v1
         id: md2jira
@@ -51,7 +50,6 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-      # ref : https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-post
       - name: Jira Task 생성
         id: create_jira_task
         uses: fjogeleit/http-request-action@v1
@@ -82,11 +80,6 @@ jobs:
           echo "task_key=$task_key" >> $GITHUB_OUTPUT
           echo "Created Jira issue: $task_key"
 
-#      - name: develop 브랜치 코드 체크아웃
-#        uses: actions/checkout@v4
-#        with:
-#          ref: develop
-
       - name: develop 브랜치에 Jira 티켓 번호를 사용한 브랜치 생성
         run: |
           git checkout develop
@@ -94,14 +87,25 @@ jobs:
           git checkout -b ${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}
           git push origin ${{ steps.extract_issue_type.outputs.issue_type }}/${{ steps.extract_jira_task_key.outputs.task_key }}
 
-      # ref : https://github.com/actions-cool/issues-helper
-      - name: 담당자 할당
-        uses: actions-cool/issues-helper@v3
+      - name: Pull Request 생성
+        id: create_pr
+        uses: actions/github-script@v7
         with:
-          actions: 'add-assignees'
-          token: ${{ secrets.GIT_TOKEN }}
-          issue-number: ${{ github.event.issue.number }}
-          assignees: ${{ github.event.issue.user.login }}
+          github-token: ${{ secrets.GIT_TOKEN }}
+          script: |
+            const issue_type = "${{ steps.extract_issue_type.outputs.issue_type }}";
+            const task_key = "${{ steps.extract_jira_task_key.outputs.task_key }}";
+            const branch_name = `${issue_type}/${task_key}`;
+            
+            const pr = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `${{ steps.convert_title.outputs.converted_title }}`,
+              head: branch_name,
+              base: 'develop',
+              body: `## 관련 이슈\n- Jira 티켓: [${task_key}](${{ secrets.JIRA_BASE_URL }}/browse/${task_key})\n- GitHub 이슈: #${{ github.event.issue.number }}`
+            });
+            return pr.data.html_url;
 
       - name: 브랜치 생성 및 Jira 링크 댓글 추가
         uses: actions-cool/issues-helper@v3
