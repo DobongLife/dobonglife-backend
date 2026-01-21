@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.schedule.service;
 
 import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRegisterRequest;
+import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleUpdateRequest;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.DailyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
@@ -106,4 +107,26 @@ public class ScheduleService {
         scheduleRepository.delete(schedule);
     }
 
+    @Transactional
+    public void updateSchedule(Long scheduleId, ScheduleUpdateRequest request, Long userId) {
+
+        // 유저 존재 확인(선택) - 권한만 체크하면 생략 가능
+        userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        // 내 스케줄인지까지 한 번에 검증
+        Schedule schedule = scheduleRepository.findByIdAndUserId(scheduleId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.SCHEDULE_NOT_FOUND)); // 없으면 에러코드 하나 추가 추천
+
+        // 값 갱신
+        schedule.update(
+                request.getTitle(),
+                request.getStartTime(),
+                request.getEndTime(),
+                request.getMemo(),
+                request.getIsAllDay(),
+                Color.toEnum(request.getColor()),
+                request.getPlaceName()
+        );
+    }
 }
