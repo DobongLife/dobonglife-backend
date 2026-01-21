@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.point.controller;
 
+import com.umust.dobonglife.domain.point.controller.dto.response.MyPointsResponse;
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
 import com.umust.dobonglife.domain.point.controller.dto.response.PointPageResponse;
 import com.umust.dobonglife.domain.point.service.PointPromotionService;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "포인트 API", description = "포인트 관련 API")
-@SecurityRequirement(name = "BearerAuth")
 @RestController
 @RequestMapping("/api/points")
 @RequiredArgsConstructor
@@ -43,7 +43,7 @@ public class PointController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping("/my")
-    public BaseResponse<SliceResponse<PointResponse>> getMyPointList(
+    public BaseResponse<MyPointsResponse> getMyPointList(
             @CurrentUserId Long userId,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String cursor,

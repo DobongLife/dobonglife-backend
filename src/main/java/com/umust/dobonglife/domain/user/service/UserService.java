@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
+import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -97,6 +98,16 @@ public class UserService {
     public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 User 엔티티가 존재하지 않습니다: " + userId));
+    }
+
+    public MyPageResponse getUserInfo(Long userId){
+        User byId = findById(userId);
+        return new MyPageResponse(byId.getName(), byId.getEmail(), byId.getRole());
+    }
+
+    public Long getUserTotalPoint(Long userId) {
+        User byId = findById(userId);
+        return byId.getBalance();
     }
 }
 
