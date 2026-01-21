@@ -9,7 +9,7 @@ jobs:
   create-jira-and-branch:
     name: Jira Task 및 PR 생성
     runs-on: ubuntu-latest
-
+    # GITHUB_TOKEN에 필요한 권한을 명시적으로 부여합니다.
     permissions:
       issues: write
       pull-requests: write
