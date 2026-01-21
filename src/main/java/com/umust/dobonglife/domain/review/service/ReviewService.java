@@ -144,7 +144,14 @@ public class ReviewService {
         if(!review.getUser().getId().equals(userId))
             throw new BusinessException(ErrorCode.SECURITY_ACCESS_DENIED);
 
-        reviewRepository.deleteById(reviewId);
+        if(review.getCourseId() != null){
+            courseService.deleteCourseReview(review.getCourseId(), review.getRating());
+        }else{
+            // TODO: 종윤님이 해야할 부분
+            // placeService.deletePlaceReview(review.getPlaceId(), review.getRating());
+        }
+
+        reviewRepository.delete(review);
         return ReviewResponse.from(review);
     }
 }

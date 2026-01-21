@@ -63,6 +63,12 @@ public class CourseService {
         return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
     }
 
+    public CursorResponse<CourseSummaryResponse> getMyCourses(Long lastId, int size, Long userId) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Course> courses = courseRepository.findMyCoursesNoOffset(userId, lastId, pageable);
+        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+    }
+
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {
         List<String> imageUrls = new ArrayList<>();
         if (imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
@@ -208,5 +214,12 @@ public class CourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         course.applyNewReview(rating);
+    }
+
+    @Transactional
+    public void deleteCourseReview(Long courseId, Double rating) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
+        course.deleteReview(rating);
     }
 }

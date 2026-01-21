@@ -5,17 +5,25 @@ import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.service.CourseService;
+import com.umust.dobonglife.domain.courseLike.domain.repository.CourseLikeRepository;
 import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
+import com.umust.dobonglife.domain.place.controller.dto.response.PlaceListResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.*;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
+import com.umust.dobonglife.domain.place.domain.entity.CoursePlace;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.entity.PlaceLike;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceLikeRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
+import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
+import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
+import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -40,7 +48,6 @@ public class PlaceService {
     private final UserRepository userRepository;
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
-    private final CourseRepository courseRepository;
     private final CourseService courseService;
 
     @Transactional
@@ -94,17 +101,25 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceListResponse getLikedPlace(Long userId) {
+    public PlaceSummaryListResponse getLikedPlace(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        List<PlaceSummaryResponse> responses = placeRepository.findLikedPlaceSummaries(userId);
+        return PlaceSummaryListResponse.from(responses);
+    }
 
-        List<Place> likedPlaces = placeLikeRepository.findLikedPlacesByUserId(userId);
+    @Transactional
+    public void updatePlaceRatingAndCount(Long placeId, Double rating) {
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
+        place.applyNewReview(rating);
+        placeRepository.save(place);
+    }
 
-        List<PlaceResponse> responses = likedPlaces.stream()
-                .map(PlaceResponse::from)
-                .toList();
-
-        return PlaceListResponse.from(responses);
+    @Transactional
+    public PlaceSummaryListResponse getAllPlace(Long userId) {
+        List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummaries(userId);
+        return PlaceSummaryListResponse.from(responses);
     }
 
     @Transactional(readOnly = true)
@@ -120,12 +135,4 @@ public class PlaceService {
         List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummariesByTheme(CourseTheme.toEnum(request.getTheme()), null);
         return PlaceSummaryListResponse.from(responses);
     }
-    @Transactional
-    public void updatePlaceRatingAndCount(Long placeId, Double rating) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
-        place.applyNewReview(rating);
-        placeRepository.save(place);
-    }
-
 }

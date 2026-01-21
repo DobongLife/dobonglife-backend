@@ -11,8 +11,14 @@ public record ReviewSummary(
         Long count
 ) {
     public static ReviewSummary from(Course course) {
+        Double averageRating = course.getReviewStats().getAverageRating();
+
+        Double roundedRating = (averageRating != null)
+                ? Math.round(averageRating * 100.0) / 100.0
+                : 0.0;
+
         return new ReviewSummary(
-                course.getReviewStats().getAverageRating(),
+                roundedRating,
                 course.getReviewStats().getReviewCount()
         );
     }

@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.banners.service.BannerService;
 import com.umust.dobonglife.domain.banners.service.dto.BannerSummaryResponse;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionItem;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionResponse;
+import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionSummaryItem;
 import com.umust.dobonglife.domain.coupon.service.CouponService;
 import com.umust.dobonglife.domain.coupon.service.PromotionService;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
@@ -24,9 +25,8 @@ public class HomeService {
 
     @Transactional(readOnly = true)
     public HomeSummaryResponse getHomeSummary(Long lastId, int size) {
-        CursorResponse<CourseSummaryResponse> courses = courseService.getCourses(lastId, size);
-        CursorResponse<PromotionItem> promotions = promotionService.getPromotion(lastId, size);
+        CursorResponse<PromotionSummaryItem> promotions = promotionService.getPromotionSummary(lastId, size);
         CursorResponse<BannerSummaryResponse> banners = bannerService.getBanners();
-        return new HomeSummaryResponse(banners, courses, promotions);
+        return new HomeSummaryResponse(banners, promotions);
     }
 }

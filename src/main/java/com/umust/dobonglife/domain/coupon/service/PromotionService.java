@@ -9,6 +9,7 @@ import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryR
 import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.service.UserService;
+import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -37,14 +38,14 @@ public class PromotionService {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(lastId, pageable);
 
-        return convertToCursorResponse(promotions);
+        return CursorUtils.toCursorResponse(promotions, PromotionItem::from);
     }
 
-    private CursorResponse<PromotionItem> convertToCursorResponse(Slice<Promotion> promotions) {
-        List<PromotionItem> content = promotions.getContent().stream()
-                .map(PromotionItem::from)
-                .toList();
-        return new CursorResponse<>(content, promotions.hasNext());
+    public CursorResponse<PromotionSummaryItem> getPromotionSummary(Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(lastId, pageable);
+
+        return CursorUtils.toCursorResponse(promotions, PromotionSummaryItem::from);
     }
 
     public UsedCouponResponse changePointToCoupon(Long userId, Long promotionId) {
@@ -56,7 +57,7 @@ public class PromotionService {
         // TODO: 쿠폰 발급 시스템
         pointService.usePoint(promotion.getTitle(), promotion.getPoint(), user);
 
-        Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getEndDate());
+        Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getValidPeriod());
         return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
     }
 }
