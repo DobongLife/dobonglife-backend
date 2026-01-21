@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.querydsl.jpa.JPAExpressions.selectOne;
 import static com.umust.dobonglife.domain.place.domain.entity.QPlace.place;
@@ -38,46 +39,42 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
     @Override
     public List<PlaceSummaryResponse> findPlaceSummaries(Long userId) {
 
-        // 1) place + liked (컬렉션 조인 X)
-        BooleanExpression likedExpr = likedExpr(userId);
+        BooleanExpression liked = likedExpr(userId);
 
-        List<Tuple> baseRows = queryFactory
-                .select(place, likedExpr)
+        List<Tuple> rows = queryFactory
+                .select(place, liked)
                 .from(place)
-                .orderBy(place.id.desc())
+                .orderBy(place.id.asc())
                 .fetch();
 
-        if (baseRows.isEmpty()) return List.of();
+        if (rows.isEmpty()) return List.of();
 
-        // placeIds 추출
-        List<Long> placeIds = baseRows.stream()
+        List<Long> placeIds = rows.stream()
                 .map(t -> t.get(place).getId())
-                .distinct()
                 .toList();
-
 
         EnumPath<CourseTheme> theme = Expressions.enumPath(CourseTheme.class, "theme");
 
-        List<Tuple> themeRows = queryFactory
+        Map<Long, List<CourseTheme>> themesMap = queryFactory
                 .select(place.id, theme)
                 .from(place)
                 .join(place.themes, theme)
                 .where(place.id.in(placeIds))
-                .fetch();
+                .fetch()
+                .stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.get(place.id),
+                        Collectors.mapping(t -> t.get(theme), Collectors.toList())
+                ));
 
-        Map<Long, List<CourseTheme>> themesMap = new HashMap<>();
-        for (Tuple tr : themeRows) {
-            Long pid = tr.get(place.id);
-            CourseTheme th = tr.get(theme);
-            themesMap.computeIfAbsent(pid, k -> new ArrayList<>()).add(th);
-        }
-
-        return baseRows.stream()
+        return rows.stream()
                 .map(t -> {
                     Place p = t.get(place);
-                    Boolean liked = t.get(likedExpr);
-                    List<CourseTheme> themes = themesMap.getOrDefault(p.getId(), List.of());
-                    return PlaceSummaryResponse.from(p, liked, themes);
+                    return PlaceSummaryResponse.from(
+                            p,
+                            t.get(liked),
+                            themesMap.getOrDefault(p.getId(), List.of())
+                    );
                 })
                 .toList();
     }
@@ -97,20 +94,50 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
 
     @Override
     public Slice<Place> findLikedPlaceSummaries(Long userId, Long lastId, Pageable pageable) {
-        List<Place> contents = queryFactory
+
+        // 1) 좋아요한 place를 size+1로 조회 (중복 없음)
+        List<Place> results = queryFactory
                 .select(place)
                 .from(placeLike)
-                .join(place).on(placeLike.place.id.eq(place.id))
+                .join(placeLike.place, place)
                 .where(
                         placeLike.user.id.eq(userId),
                         placeLike.status.eq(BaseStatus.ACTIVE),
                         ltPlaceId(lastId)
                 )
-                .orderBy(place.id.desc())
+                .orderBy(place.id.asc())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        return checkLastPage(pageable, contents);
+        Slice<Place> slice = checkLastPage(pageable, results);
+
+        List<Long> placeIds = slice.getContent().stream()
+                .map(Place::getId)
+                .toList();
+
+        if (!placeIds.isEmpty()) {
+            EnumPath<CourseTheme> theme = Expressions.enumPath(CourseTheme.class, "theme");
+
+            List<Tuple> themeRows = queryFactory
+                    .select(place.id, theme)
+                    .from(place)
+                    .join(place.themes, theme)
+                    .where(place.id.in(placeIds))
+                    .fetch();
+
+            Map<Long, List<CourseTheme>> themesMap = new HashMap<>();
+            for (Tuple tr : themeRows) {
+                Long pid = tr.get(place.id);
+                CourseTheme th = tr.get(theme);
+                themesMap.computeIfAbsent(pid, k -> new ArrayList<>()).add(th);
+            }
+
+            slice.getContent().forEach(p ->
+                    p.setThemes(themesMap.getOrDefault(p.getId(), List.of()))
+            );
+        }
+
+        return slice;
     }
 
     private BooleanExpression ltPlaceId(Long lastId) {

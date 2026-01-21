@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -96,8 +97,8 @@ public class PlaceService {
 
     public CursorResponse<PlaceSummaryResponse> getLikedPlace(Long userId, int size, Long lastId) {
         Pageable pageable = PageRequest.of(0, size);
-        Slice<Place> places = placeRepository.findLikedPlaceSummaries(userId, lastId, pageable);
-        return CursorUtils.toCursorResponse(places, place -> PlaceSummaryResponse.from(place, true));
+        Slice<Place> slice = placeRepository.findLikedPlaceSummaries(userId, lastId, pageable);
+        return CursorUtils.toCursorResponse(slice, place -> PlaceSummaryResponse.from(place, true, place.getThemes()));
     }
 
     @Transactional

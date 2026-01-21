@@ -46,7 +46,7 @@ public class PlaceController {
     )
     @GetMapping("/like/my")
     public BaseResponse<CursorResponse<PlaceSummaryResponse>> getMyLikedPlace(@CurrentUserId Long userId,
-                                                                @RequestParam(required = false, defaultValue = "5") Long lastId,
+                                                                @RequestParam(required = false) Long lastId,
                                                                 @RequestParam(defaultValue = "2") int size){
 
         CursorResponse<PlaceSummaryResponse> response = placeService.getLikedPlace(userId, size, lastId);
