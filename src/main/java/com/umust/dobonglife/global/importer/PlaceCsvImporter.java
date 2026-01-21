@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@Profile("!test")
+@Profile("!test & !local")
 public class PlaceCsvImporter implements CommandLineRunner {
 
     private final PlaceRepository placeRepository;

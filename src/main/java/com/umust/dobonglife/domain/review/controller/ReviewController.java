@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Tag(name = "리뷰 API", description = "리뷰 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/review")
