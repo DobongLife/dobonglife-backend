@@ -41,8 +41,6 @@ public class ScheduleService {
 
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
                 .memo(request.getMemo())
                 .isEvent(false)
                 .isAllDay(request.isAllDay())
@@ -54,48 +52,48 @@ public class ScheduleService {
         scheduleRepository.save(schedule);
     }
 
-    @Transactional(readOnly = true)
-    public ScheduleListResponse getTodaySchedule(Long userId) {
-
-        userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        LocalDate today = LocalDate.now();
-
-        List<ScheduleDate> scheduleDates = scheduleDateRepository.findTodayScheduleDates(userId, today);
-
-        List<ScheduleResponse> responses = scheduleDates.stream()
-                .map(this::toScheduleResponse) // ScheduleDate -> ScheduleResponse
-                .toList();
-
-        return ScheduleListResponse.from(responses);
-    }
-
-    @Transactional(readOnly = true)
-    public MonthlyScheduleResponse getMonthlySchedules(Long userId, int year, int month) {
-
-        userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDate endDateExclusive = startDate.plusMonths(1);
-
-        List<ScheduleDate> scheduleDates =
-                scheduleDateRepository.findMonthlyScheduleDates(userId, startDate, endDateExclusive);
-
-        Map<LocalDate, List<ScheduleResponse>> groupedByDate = scheduleDates.stream()
-                .collect(Collectors.groupingBy(
-                        ScheduleDate::getDate,
-                        TreeMap::new,
-                        Collectors.mapping(this::toScheduleResponse, Collectors.toList())
-                ));
-
-        List<DailyScheduleResponse> dailySchedules = groupedByDate.entrySet().stream()
-                .map(e -> DailyScheduleResponse.of(e.getKey(), e.getValue()))
-                .toList();
-
-        return MonthlyScheduleResponse.from(dailySchedules);
-    }
+//    @Transactional(readOnly = true)
+//    public ScheduleListResponse getTodaySchedule(Long userId) {
+//
+//        userRepository.findById(userId)
+//                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+//
+//        LocalDate today = LocalDate.now();
+//
+//        List<ScheduleDate> scheduleDates = scheduleDateRepository.findTodayScheduleDates(userId, today);
+//
+//        List<ScheduleResponse> responses = scheduleDates.stream()
+//                .map(this::toScheduleResponse) // ScheduleDate -> ScheduleResponse
+//                .toList();
+//
+//        return ScheduleListResponse.from(responses);
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public MonthlyScheduleResponse getMonthlySchedules(Long userId, int year, int month) {
+//
+//        userRepository.findById(userId)
+//                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+//
+//        LocalDate startDate = LocalDate.of(year, month, 1);
+//        LocalDate endDateExclusive = startDate.plusMonths(1);
+//
+//        List<ScheduleDate> scheduleDates =
+//                scheduleDateRepository.findMonthlyScheduleDates(userId, startDate, endDateExclusive);
+//
+//        Map<LocalDate, List<ScheduleResponse>> groupedByDate = scheduleDates.stream()
+//                .collect(Collectors.groupingBy(
+//                        ScheduleDate::getDate,
+//                        TreeMap::new,
+//                        Collectors.mapping(this::toScheduleResponse, Collectors.toList())
+//                ));
+//
+//        List<DailyScheduleResponse> dailySchedules = groupedByDate.entrySet().stream()
+//                .map(e -> DailyScheduleResponse.of(e.getKey(), e.getValue()))
+//                .toList();
+//
+//        return MonthlyScheduleResponse.from(dailySchedules);
+//    }
 
     @Transactional
     public void deleteSchedule(Long scheduleId, Long userId) {
@@ -120,15 +118,15 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findByIdAndUserId(scheduleId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.SCHEDULE_NOT_FOUND)); // 없으면 에러코드 하나 추가 추천
 
-        // 값 갱신
-        schedule.update(
-                request.getTitle(),
-                request.getStartTime(),
-                request.getEndTime(),
-                request.getMemo(),
-                request.getIsAllDay(),
-                Color.toEnum(request.getColor()),
-                request.getPlaceName()
-        );
+//        // 값 갱신
+//        schedule.update(
+//                request.getTitle(),
+//                request.getStartTime(),
+//                request.getEndTime(),
+//                request.getMemo(),
+//                request.getIsAllDay(),
+//                Color.toEnum(request.getColor()),
+//                request.getPlaceName()
+//        );
     }
 }

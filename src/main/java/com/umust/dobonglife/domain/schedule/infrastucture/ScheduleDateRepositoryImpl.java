@@ -2,7 +2,9 @@ package com.umust.dobonglife.domain.schedule.infrastucture;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umust.dobonglife.domain.schedule.domain.entity.QSchedule;
+import com.umust.dobonglife.domain.schedule.domain.entity.QScheduleDate;
 import com.umust.dobonglife.domain.schedule.domain.entity.ScheduleDate;
+
 import com.umust.dobonglife.domain.schedule.domain.repository.custom.ScheduleDateRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

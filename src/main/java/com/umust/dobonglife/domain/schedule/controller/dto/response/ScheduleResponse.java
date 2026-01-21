@@ -24,8 +24,6 @@ public class ScheduleResponse {
         return ScheduleResponse.builder()
                 .id(schedule.getId())
                 .title(schedule.getTitle())
-                .startTime(schedule.getStartTime())
-                .endTime(schedule.getEndTime())
                 .memo(schedule.getMemo())
                 .placeName(schedule.getPlaceName())
                 .isAllDay(schedule.getIsAllDay())

@@ -33,28 +33,28 @@ public class ScheduleController {
         scheduleService.registerSchedule(request, userId);
         return BaseResponse.ok(null);
     }
-
-    @Operation(summary = "오늘 일정 조회", description = "오늘 일정 조회를 합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "오늘 일정 조회에 성공하였습니다."
-    )
-    @GetMapping("/today")
-    public BaseResponse<ScheduleListResponse> todaySchedule(@CurrentUserId Long userId) {
-        return BaseResponse.ok(scheduleService.getTodaySchedule(userId));
-    }
-
-    @Operation(summary = "월간 일정 조회", description = "월간 일정 조회를 합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "월간 일정 조회에 성공하였습니다."
-    )
-    @GetMapping("/monthly")
-    public BaseResponse<MonthlyScheduleResponse> getMonthlySchedule(
-            @CurrentUserId Long userId,
-            @RequestParam int year,
-            @RequestParam int month
-    ) {
-        return BaseResponse.ok(scheduleService.getMonthlySchedules(userId, year, month));
-    }
+//
+//    @Operation(summary = "오늘 일정 조회", description = "오늘 일정 조회를 합니다.")
+//    @ApiResponse(
+//            responseCode = "200",
+//            description = "오늘 일정 조회에 성공하였습니다."
+//    )
+//    @GetMapping("/today")
+//    public BaseResponse<ScheduleListResponse> todaySchedule(@CurrentUserId Long userId) {
+//        return BaseResponse.ok(scheduleService.getTodaySchedule(userId));
+//    }
+//
+//    @Operation(summary = "월간 일정 조회", description = "월간 일정 조회를 합니다.")
+//    @ApiResponse(
+//            responseCode = "200",
+//            description = "월간 일정 조회에 성공하였습니다."
+//    )
+//    @GetMapping("/monthly")
+//    public BaseResponse<MonthlyScheduleResponse> getMonthlySchedule(
+//            @CurrentUserId Long userId,
+//            @RequestParam int year,
+//            @RequestParam int month
+//    ) {
+//        return BaseResponse.ok(scheduleService.getMonthlySchedules(userId, year, month));
+//    }
 }
