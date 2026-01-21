@@ -90,6 +90,12 @@ public class Place extends BaseEntity {
         this.averageRating = totalScore / reviewCount;
     }
 
+    public void applyDeleteReview(Double newRating) {
+        double totalScore = (this.averageRating * this.reviewCount) - newRating;
+        this.reviewCount = this.reviewCount - 1;
+        this.averageRating = totalScore / reviewCount;
+    }
+
     public static List<String> amenityToStrings(Place place) {
         if (place == null || place.getAmenities() == null) {
             return Collections.emptyList();
