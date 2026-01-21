@@ -9,6 +9,7 @@ import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResp
 import com.umust.dobonglife.domain.schedule.domain.constant.Color;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import com.umust.dobonglife.domain.schedule.domain.entity.ScheduleDate;
+import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleDateRepository;
 import com.umust.dobonglife.domain.schedule.domain.repository.ScheduleRepository;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -31,6 +32,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final ScheduleDateRepository scheduleDateRepository;
 
     @Transactional
     public void registerSchedule(ScheduleRegisterRequest request, Long userId) {
