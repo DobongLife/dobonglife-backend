@@ -2,14 +2,13 @@ package com.umust.dobonglife.global.importer;
 
 import com.opencsv.CSVReader;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
+import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
-
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -30,12 +29,20 @@ public class PlaceCsvImporter implements CommandLineRunner {
     private final PlaceRepository placeRepository;
     private final ResourceLoader resourceLoader;
 
-    // 한글 → enum 매핑
     private static final Map<String, Amenity> AMENITY_KR_MAP = Map.of(
             "주차장", Amenity.PARKING,
             "화장실", Amenity.TOILET,
             "분수대", Amenity.FOUNTAIN,
             "벤치", Amenity.BENCH
+    );
+
+    private static final Map<String, CourseTheme> THEME_KR_MAP = Map.of(
+            "맛집탐방", CourseTheme.RESTAURANT,
+            "문화체험", CourseTheme.CULTURE,
+            "역사여행", CourseTheme.HISTORY,
+            "가족나들이", CourseTheme.FAMILY,
+            "액티비티", CourseTheme.ACTIVITY,
+            "자연힐링", CourseTheme.NATURE
     );
 
     @Value("${place.import.path:classpath:import/places.csv}")
@@ -83,6 +90,9 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 Double latitude = parseDoubleOrNull(get(row, idx, "latitude"));
                 Double longitude = parseDoubleOrNull(get(row, idx, "longitude"));
 
+                // themes 컬럼 추가
+                List<CourseTheme> themes = parseThemes(get(row, idx, "themes"));
+
                 Place place = placeRepository.findByName(name)
                         .map(existing -> {
                             existing.setSubName(subName);
@@ -95,10 +105,13 @@ public class PlaceCsvImporter implements CommandLineRunner {
                             existing.setAmenities(amenities);
                             existing.setImageUrls(imageUrls);
 
-                            // ✅ CSV 필드 추가 반영
+                            // CSV 필드 추가 반영
                             existing.setThumbnailUrl(thumbnailUrl);
                             existing.setLatitude(latitude);
                             existing.setLongitude(longitude);
+
+                            // themes 반영
+                            existing.setThemes(themes);
 
                             return existing;
                         })
@@ -114,6 +127,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
                                 .thumbnailUrl(thumbnailUrl)
                                 .latitude(latitude)
                                 .longitude(longitude)
+                                .themes(themes)
                                 .build()
                         );
 
@@ -156,7 +170,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
     private List<String> parseUrlList(String v) {
         if (v == null || v.isBlank()) return new ArrayList<>();
 
-        // 여러 URL 지원( | 또는 ; ). 단일이면 그대로 1개 리스트.
         String normalized = v.trim();
         String[] tokens = normalized.split("[|;]");
 
@@ -179,10 +192,9 @@ public class PlaceCsvImporter implements CommandLineRunner {
     private List<Amenity> parseAmenities(String v) {
         if (v == null || v.isBlank()) return new ArrayList<>();
 
-        // "주차장 / 화장실" 또는 "주차장|화장실" 또는 "PARKING|TOILET"
         String normalized = v.replace(" / ", "|")
                 .replace("/", "|")
-                .replace(",", "|")   // 혹시 콤마로 들어온 경우 대비(CSV는 따옴표로 감싸야 안전)
+                .replace(",", "|")
                 .replace(" ", "");
 
         String[] tokens = normalized.split("\\|");
@@ -199,10 +211,40 @@ public class PlaceCsvImporter implements CommandLineRunner {
 
             // 2) 한글 → enum 매핑
             Amenity mapped = AMENITY_KR_MAP.get(t);
+            if (mapped != null) result.add(mapped);
+            else log.warn("[PlaceCsvImporter] 알 수 없는 편의시설 값 skip: '{}'", t);
+        }
+        return result;
+    }
+
+    // themes 파서 추가 (amenities랑 동일 스타일)
+    private List<CourseTheme> parseThemes(String v) {
+        if (v == null || v.isBlank()) return new ArrayList<>();
+
+        // "맛집탐방|문화체험" or "FOOD_TRIP|CULTURE"
+        String normalized = v.replace(" / ", "|")
+                .replace("/", "|")
+                .replace(",", "|")
+                .replace(" ", ""); // 공백 제거 (맛집 탐방 같은 입력 대비)
+
+        String[] tokens = normalized.split("\\|");
+
+        List<CourseTheme> result = new ArrayList<>();
+        for (String t : tokens) {
+            if (t == null || t.isBlank()) continue;
+
+            // 1) enum 이름 그대로 시도
+            try {
+                result.add(CourseTheme.valueOf(t));
+                continue;
+            } catch (IllegalArgumentException ignore) { }
+
+            // 2) 한글 → enum 매핑
+            CourseTheme mapped = THEME_KR_MAP.get(t);
             if (mapped != null) {
                 result.add(mapped);
             } else {
-                log.warn("[PlaceCsvImporter] 알 수 없는 편의시설 값 skip: '{}'", t);
+                log.warn("[PlaceCsvImporter] 알 수 없는 테마 값 skip: '{}'", t);
             }
         }
         return result;

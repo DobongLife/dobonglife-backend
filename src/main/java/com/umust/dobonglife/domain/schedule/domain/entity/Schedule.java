@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.schedule.domain.entity;
 
-import com.umust.dobonglife.domain.place.domain.entity.Place;
-import com.umust.dobonglife.domain.schedule.domain.constant.ScheduleType;
+import com.umust.dobonglife.domain.schedule.domain.constant.Color;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
@@ -37,11 +36,28 @@ public class Schedule extends BaseEntity {
     @Column(name = "place_name", nullable = true)
     private String placeName;
 
+    @Column(name = "is_event", nullable = false)
+    private Boolean isEvent;
+
+    @Column(name = "is_all_day", nullable = false)
+    private Boolean isAllDay;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "schedule_type", nullable = true)
-    private ScheduleType scheduleType;
+    @Column(name = "color", nullable = false)
+    private Color color;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void update(String title, LocalDateTime startTime, LocalDateTime endTime,
+                       String memo, Boolean isAllDay, Color color, String placeName) {
+        this.title = title;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.memo = memo;
+        this.isAllDay = isAllDay;
+        this.color = color;
+        this.placeName = placeName;
+    }
 }

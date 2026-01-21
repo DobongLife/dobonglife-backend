@@ -103,8 +103,16 @@ public class PlaceService {
     @Transactional
     public void updatePlaceRatingAndCount(Long placeId, Double rating) {
         Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Place 엔티티를 찾을 수 없습니다: " + placeId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
         place.applyNewReview(rating);
+        placeRepository.save(place);
+    }
+
+    @Transactional
+    public void deletePlaceReview(Long placeId, Double rating) {
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
+        place.applyDeleteReview(rating);
         placeRepository.save(place);
     }
 
