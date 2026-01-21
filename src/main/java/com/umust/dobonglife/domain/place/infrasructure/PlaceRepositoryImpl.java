@@ -3,6 +3,8 @@ package com.umust.dobonglife.domain.place.infrasructure;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,7 +17,10 @@ import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.querydsl.jpa.JPAExpressions.selectOne;
 import static com.umust.dobonglife.domain.place.domain.entity.QPlace.place;
@@ -51,43 +56,93 @@ public class PlaceRepositoryImpl implements PlaceRepositoryCustom {
     @Override
     public List<PlaceSummaryResponse> findPlaceSummaries(Long userId) {
 
-        BooleanExpression liked = likedExpr(userId);
+        // 1) place + liked (컬렉션 조인 X)
+        BooleanExpression likedExpr = likedExpr(userId);
 
-        List<Tuple> rows = queryFactory
-                .select(place, liked)
+        List<Tuple> baseRows = queryFactory
+                .select(place, likedExpr)
                 .from(place)
-                .leftJoin(place.themes).fetchJoin()
-                .distinct()
                 .orderBy(place.id.desc())
                 .fetch();
 
-        return rows.stream()
-                .map(t -> PlaceSummaryResponse.from(
-                        t.get(place),
-                        t.get(liked)
-                ))
+        if (baseRows.isEmpty()) return List.of();
+
+        // placeIds 추출
+        List<Long> placeIds = baseRows.stream()
+                .map(t -> t.get(place).getId())
+                .distinct()
+                .toList();
+
+
+        EnumPath<CourseTheme> theme = Expressions.enumPath(CourseTheme.class, "theme");
+
+        List<Tuple> themeRows = queryFactory
+                .select(place.id, theme)
+                .from(place)
+                .join(place.themes, theme)
+                .where(place.id.in(placeIds))
+                .fetch();
+
+        Map<Long, List<CourseTheme>> themesMap = new HashMap<>();
+        for (Tuple tr : themeRows) {
+            Long pid = tr.get(place.id);
+            CourseTheme th = tr.get(theme);
+            themesMap.computeIfAbsent(pid, k -> new ArrayList<>()).add(th);
+        }
+
+        return baseRows.stream()
+                .map(t -> {
+                    Place p = t.get(place);
+                    Boolean liked = t.get(likedExpr);
+                    List<CourseTheme> themes = themesMap.getOrDefault(p.getId(), List.of());
+                    return PlaceSummaryResponse.from(p, liked, themes);
+                })
                 .toList();
     }
 
     @Override
     public List<PlaceSummaryResponse> findLikedPlaceSummaries(Long userId) {
 
-        BooleanExpression liked = likedExpr(userId);
+        BooleanExpression likedExpr = likedExpr(userId);
 
-        List<Tuple> rows = queryFactory
-                .select(place, liked)
+        List<Tuple> baseRows = queryFactory
+                .select(place, likedExpr)
                 .from(place)
-                .leftJoin(place.themes).fetchJoin()
-                .where(liked)
-                .distinct()
+                .where(likedExpr)
                 .orderBy(place.id.desc())
                 .fetch();
 
-        return rows.stream()
-                .map(t -> PlaceSummaryResponse.from(
-                        t.get(place),
-                        t.get(liked)
-                ))
+        if (baseRows.isEmpty()) return List.of();
+
+        List<Long> placeIds = baseRows.stream()
+                .map(t -> t.get(place).getId())
+                .distinct()
+                .toList();
+
+        EnumPath<CourseTheme> theme = Expressions.enumPath(CourseTheme.class, "theme");
+
+        List<Tuple> themeRows = queryFactory
+                .select(place.id, theme)
+                .from(place)
+                .join(place.themes, theme)
+                .where(place.id.in(placeIds))
+                .fetch();
+
+        Map<Long, List<CourseTheme>> themesMap = new HashMap<>();
+        for (Tuple tr : themeRows) {
+            Long pid = tr.get(place.id);
+            CourseTheme th = tr.get(theme);
+            themesMap.computeIfAbsent(pid, k -> new ArrayList<>()).add(th);
+        }
+
+        // 3) DTO 합치기
+        return baseRows.stream()
+                .map(t -> {
+                    Place p = t.get(place);
+                    Boolean liked = t.get(likedExpr);
+                    List<CourseTheme> themes = themesMap.getOrDefault(p.getId(), List.of());
+                    return PlaceSummaryResponse.from(p, liked, themes);
+                })
                 .toList();
     }
 
