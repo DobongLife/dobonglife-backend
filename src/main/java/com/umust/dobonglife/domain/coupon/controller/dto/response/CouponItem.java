@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public record CouponItem(
         Long couponId,
@@ -13,7 +14,7 @@ public record CouponItem(
         String category,
         String title,
         String description,
-        String img,
+        List<String> img,
         DiscountType discountType,
         BigDecimal discountValue,
         Long minPrice,
@@ -25,10 +26,10 @@ public record CouponItem(
         return new CouponItem(
                 coupon.getId(),
                 coupon.getPromotion().getId(),
-                coupon.getPromotion().getCategory(),
+                coupon.getPromotion().getCategory().getDescription(),
                 coupon.getPromotion().getTitle(),
                 coupon.getPromotion().getDescription(),
-                coupon.getPromotion().getImg(),
+                coupon.getPromotion().getImgUrls(),
                 coupon.getPromotion().getDiscountType(),
                 coupon.getPromotion().getDiscountValue(),
                 coupon.getPromotion().getMinPrice(),

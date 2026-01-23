@@ -172,7 +172,7 @@ public class CourseService {
         if (planDtos == null) return List.of();
         return planDtos.stream()
                 .map(dto -> CoursePlans.builder()
-                        .dateTime(dto.getDateTime())
+                        .placeId(dto.getPlaceId())
                         .title(dto.getTitle())
                         .content(dto.getContent())
                         .build())

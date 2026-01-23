@@ -5,14 +5,15 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
-public record PromotionSummaryItem(Long promotionId, String category, String title, String img) {
+public record PromotionSummaryItem(Long promotionId, String category, String title, List<String> imgUrls) {
     public static PromotionSummaryItem from(Promotion promotion) {
         return new PromotionSummaryItem(
                 promotion.getId(),
-                promotion.getCategory(),
+                promotion.getCategory().getDescription(),
                 promotion.getTitle(),
-                promotion.getImg()
+                promotion.getImgUrls()
         );
     }
 }
