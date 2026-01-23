@@ -27,6 +27,8 @@ public class PlaceController {
     private final PlaceService placeService;
     private final PlaceReviewService placeReviewService;
 
+
+
     @Operation(summary = "장소 좋아요", description = "장소를 좋아요합니다.")
     @ApiResponse(
             responseCode = "200",
