@@ -92,6 +92,7 @@ public enum ErrorCode{
 
     // Schedule
     SCHEDULE_NOT_FOUND(800, HttpStatus.NOT_FOUND.value(), "일정을 찾을 수 없습니다."),
+    END_TIME_BEFORE_START_TIME(801, HttpStatus.BAD_REQUEST.value(), "종료 시간은 시작 시간 이후여야 합니다."),
 
     // Business
     BUSINESS_NOT_FOUND(900, HttpStatus.NOT_FOUND.value(), "사업장을 찾을 수 없습니다.");

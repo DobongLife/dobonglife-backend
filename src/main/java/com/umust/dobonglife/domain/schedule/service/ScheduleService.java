@@ -34,6 +34,8 @@ public class ScheduleService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        validateScheduleTime(request.getStartTime(), request.getEndTime());
+
         Schedule schedule = Schedule.builder()
                 .title(request.getTitle())
                 .startTime(request.getStartTime())
@@ -42,7 +44,7 @@ public class ScheduleService {
                 .user(user)
                 .placeName(request.getPlaceName())
                 .isAllDay(request.getIsAllDay())
-                .isEvent(false)
+                .isEvent(request.getIsEvent())
                 .color(Color.toEnum(request.getColor()))
                 .build();
 
@@ -129,5 +131,11 @@ public class ScheduleService {
             result.add(DailyScheduleResponse.of(e.getKey(), e.getValue()));
         }
         return MonthlyScheduleListResponse.from(result);
+    }
+
+    private void validateScheduleTime(LocalDateTime startTime, LocalDateTime endTime) {
+        if (endTime.isBefore(startTime) || endTime.isEqual(startTime)) {
+            throw new BusinessException(ErrorCode.END_TIME_BEFORE_START_TIME);
+        }
     }
 }
