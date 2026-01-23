@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.business.domain.constant.BusinessCategory;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
@@ -55,6 +56,12 @@ public class BusinessService {
                 .businessCategory(BusinessCategory.toEnum(request.getBusinessCategory()))
                 .businessNumber(request.getBusinessNumber())
                 .build();
+
+
+
+
+
+
         businessRepository.save(business);
     }
 
