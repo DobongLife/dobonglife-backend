@@ -1,8 +1,8 @@
 package com.umust.dobonglife.domain.schedule.controller;
 
 import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRequest;
-import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleResponse;
-import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
+import com.umust.dobonglife.domain.schedule.controller.dto.response.DailyScheduleResponse;
+import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleListResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.UpcomingFestivalResponse;
 import com.umust.dobonglife.domain.schedule.service.FestivalService;
 import com.umust.dobonglife.domain.schedule.service.ScheduleService;
@@ -39,28 +39,18 @@ public class ScheduleController {
         return BaseResponse.ok(null);
     }
 
-    @Operation(summary = "오늘 일정 조회", description = "오늘 일정 조회를 합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "오늘 일정 조회에 성공하였습니다."
-    )
-    @GetMapping("/today")
-    public BaseResponse<ScheduleListResponse> todaySchedule(@CurrentUserId Long userId) {
-        return BaseResponse.ok(scheduleService.getTodaySchedule(userId));
-    }
-
     @Operation(summary = "월간 일정 조회", description = "월간 일정 조회를 합니다.")
     @ApiResponse(
             responseCode = "200",
             description = "월간 일정 조회에 성공하였습니다."
     )
     @GetMapping("/monthly")
-    public BaseResponse<MonthlyScheduleResponse> getMonthlySchedule(
+    public BaseResponse<MonthlyScheduleListResponse> getMonthlySchedule(
             @CurrentUserId Long userId,
             @RequestParam int year,
             @RequestParam int month
     ) {
-        return BaseResponse.ok(scheduleService.getMonthlySchedules(userId, year, month));
+        return BaseResponse.ok(scheduleService.getMonthlyScheduleList(userId, year, month));
     }
 
     @Operation(summary = "일정 삭제", description = "일정 삭제를 합니다.")

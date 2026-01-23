@@ -1,7 +1,5 @@
 package com.umust.dobonglife.domain.point.controller.dto.response;
 
-import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
-import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
 import lombok.Builder;
 import lombok.Getter;
 
