@@ -43,6 +43,7 @@ public class FestivalService {
                         .startTime(f.getStartDateTime())
                         .endTime(f.getEndDateTime())
                         .url(f.getUrl())
+                        .category(f.getCategory())
                         .build())
                 .toList();
     }

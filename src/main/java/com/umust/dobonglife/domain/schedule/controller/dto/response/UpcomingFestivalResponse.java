@@ -14,4 +14,5 @@ public class UpcomingFestivalResponse {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String url;
+    private String category;
 }
