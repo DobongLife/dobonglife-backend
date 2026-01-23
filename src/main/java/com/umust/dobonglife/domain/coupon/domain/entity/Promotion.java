@@ -75,8 +75,7 @@ public class Promotion {
                      Long maxPrice, String code, Long point, LocalDate startDate,
                      LocalDate endDate, Long validPeriod, Long businessesId) {
 
-        // 생성자 호출 시점에 즉시 검증
-        validate(discountType, discountValue, minPrice, maxPrice, code);
+        validate(discountType, discountValue, minPrice, maxPrice, code, startDate, endDate);
 
         this.category = category;
         this.title = title;
@@ -95,8 +94,10 @@ public class Promotion {
     }
 
     private void validate(DiscountType discountType, BigDecimal discountValue,
-                          Long minPrice, Long maxPrice, String code) {
+                          Long minPrice, Long maxPrice, String code,
+                          LocalDate startDate, LocalDate endDate) {
 
+        // 1. 기존 유효성 검증
         if (code == null || code.length() != 6) {
             throw new BusinessException(ErrorCode.INVALID_COUPON_CODE);
         }
@@ -112,6 +113,11 @@ public class Promotion {
         if (discountType == DiscountType.PERCENT) {
             if (discountValue.compareTo(new BigDecimal("100")) > 0) {
                 throw new BusinessException(ErrorCode.INVALID_DISCOUNT_VALUE);
+            }
+        }
+        if (startDate != null && endDate != null) {
+            if (startDate.isAfter(endDate)) {
+                throw new BusinessException(ErrorCode.INVALID_DATE_RANGE);
             }
         }
     }
