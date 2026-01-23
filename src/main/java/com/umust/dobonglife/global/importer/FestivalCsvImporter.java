@@ -28,7 +28,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Profile("!test")
+@Profile("!test & !local")
 public class FestivalCsvImporter implements ApplicationRunner {
 
     private final FestivalRepository festivalRepository;
