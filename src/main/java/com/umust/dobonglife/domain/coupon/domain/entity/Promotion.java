@@ -121,7 +121,7 @@ public class Promotion {
                 .category(dto.categoryId())
                 .title(dto.couponName())
                 .description(dto.couponDescription())
-                .img(dto.imageUrls().isEmpty() ? null : dto.imageUrls().get(0))
+                .img(dto.imageUrls().isEmpty() ? null : dto.imageUrls())
                 .discountType(DiscountType.valueOf(dto.discountType()))
                 .discountValue(BigDecimal.valueOf(dto.discountValue()))
                 .minPrice(dto.minPurchaseAmount() != null ? dto.minPurchaseAmount().longValue() : null)

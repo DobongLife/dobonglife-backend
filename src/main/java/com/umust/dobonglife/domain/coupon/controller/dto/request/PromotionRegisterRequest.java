@@ -7,7 +7,7 @@ public record PromotionRegisterRequest(
         String couponName,
         String couponDescription,
         String categoryId,
-        List<String> imageUrls,
+        String imageUrls, // TODO: 프리셋 이미지
 
         String discountType,
         Integer discountValue,
