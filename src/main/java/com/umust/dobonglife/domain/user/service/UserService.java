@@ -109,5 +109,10 @@ public class UserService {
         User byId = findById(userId);
         return byId.getBalance();
     }
+
+    public Role getUserRole(Long userId) {
+        User byId = findById(userId);
+        return byId.getRole();
+    }
 }
 

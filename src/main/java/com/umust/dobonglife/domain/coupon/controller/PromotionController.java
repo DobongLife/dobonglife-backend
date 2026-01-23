@@ -1,9 +1,12 @@
 package com.umust.dobonglife.domain.coupon.controller;
 
+import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionItem;
+import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionRegisterResponse;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionResponse;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.UsedCouponResponse;
 import com.umust.dobonglife.domain.coupon.service.PromotionService;
+import com.umust.dobonglife.domain.courseLike.controller.dto.request.CourseLikeResponse;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -44,5 +47,18 @@ public class PromotionController {
                                                                 @PathVariable(name = "promotionId") Long promotionId){
         UsedCouponResponse response = promotionService.changePointToCoupon(userId, promotionId);
         return BaseResponse.ok(response);
+    }
+
+    @Operation(summary = "쿠폰 등록하기", description = "쿠폰을 등록합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @PostMapping("/register")
+    public BaseResponse<PromotionRegisterResponse> registerCoupon(
+            @RequestBody PromotionRegisterRequest request,
+            @CurrentUserId Long userId) {
+        PromotionRegisterResponse responses = promotionService.registerCoupon(request, userId);
+        return BaseResponse.ok(responses);
     }
 }

@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.coupon.service;
 
+import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
@@ -7,6 +8,7 @@ import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.*;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.point.service.PointService;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.CursorUtils;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -59,5 +62,21 @@ public class PromotionService {
 
         Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getValidPeriod());
         return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
+    }
+
+    @Transactional
+    public PromotionRegisterResponse registerCoupon(PromotionRegisterRequest request, Long userId) {
+        validateManagerRole(userId);
+
+        Promotion promotion = Promotion.createPromotion(request, userId);
+        Promotion savedPromotion = promotionRepository.save(promotion);
+        return PromotionRegisterResponse.from(savedPromotion);
+    }
+
+    private void validateManagerRole(Long userId) {
+        Role userRole = userService.getUserRole(userId);
+        if (userRole != Role.MANAGER) {
+            throw new BusinessException(ErrorCode.NOT_BUSINESS);
+        }
     }
 }

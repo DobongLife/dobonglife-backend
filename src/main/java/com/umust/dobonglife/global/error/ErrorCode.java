@@ -91,7 +91,14 @@ public enum ErrorCode{
     POINT_CANNOT_NEGATIVE(703, HttpStatus.CONFLICT.value(), "포인트 내역은 음수가 될 수 없습니다."),
 
     // Schedule
-    SCHEDULE_NOT_FOUND(800, HttpStatus.NOT_FOUND.value(), "일정을 찾을 수 없습니다.");
+    SCHEDULE_NOT_FOUND(800, HttpStatus.NOT_FOUND.value(), "일정을 찾을 수 없습니다."),
+
+    // business
+    NOT_BUSINESS(403, HttpStatus.FORBIDDEN.value(), "해당 비즈니스에 대한 권한이 없습니다."),
+
+    INVALID_VALUE(500, HttpStatus.BAD_REQUEST.value(), "할인값은 음수일 수 없습니다."),
+    INVALID_DISCOUNT_VALUE(500, HttpStatus.BAD_REQUEST.value(), "할인 100%를 초과할 수 없습니다."),
+    INVALID_COUPON_CODE(500, HttpStatus.BAD_REQUEST.value(), "쿠폰 코드는 6자리입니다.");
 
     private final int code;
     private final int httpStatus;
