@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -78,7 +79,7 @@ public class Promotion {
     private Long businessesId;
 
     @Builder
-    public Promotion(PromotionType category, Long placeId, String title, String description, String img,
+    public Promotion(PromotionType category, Long placeId, String title, String description, List<String> imgUrls,
                      DiscountType discountType, BigDecimal discountValue, Long minPrice,
                      Long maxPrice, String code, Long point, LocalDate startDate,
                      LocalDate endDate, Long validPeriod, Long businessesId) {
@@ -89,7 +90,7 @@ public class Promotion {
         this.placeId = placeId;
         this.title = title;
         this.description = description;
-        this.img = (img == null || img.isBlank()) ? category.getImageUrl() : img;
+        this.imgUrls = (imgUrls == null || imgUrls.isEmpty()) ? Collections.singletonList(category.getImageUrl()) : imgUrls;
         this.discountType = discountType;
         this.discountValue = discountValue;
         this.minPrice = minPrice;
@@ -138,7 +139,7 @@ public class Promotion {
                 .placeId(placeId)
                 .title(dto.couponName())
                 .description(dto.couponDescription())
-                .img(imgUrl.isEmpty() ? type.getImageUrl() : imgUrl)
+                .imgUrls(imgUrl.isEmpty() ? Collections.singletonList(type.getImageUrl()) : imgUrl)
                 .discountType(DiscountType.valueOf(dto.discountType()))
                 .discountValue(BigDecimal.valueOf(dto.discountValue()))
                 .minPrice(dto.minPurchaseAmount() != null ? dto.minPurchaseAmount().longValue() : null)

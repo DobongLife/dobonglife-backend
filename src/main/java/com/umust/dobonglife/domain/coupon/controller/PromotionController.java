@@ -1,10 +1,8 @@
 package com.umust.dobonglife.domain.coupon.controller;
 
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
-import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionItem;
-import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionRegisterResponse;
-import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionResponse;
-import com.umust.dobonglife.domain.coupon.controller.dto.response.UsedCouponResponse;
+import com.umust.dobonglife.domain.coupon.controller.dto.response.*;
+import com.umust.dobonglife.domain.coupon.service.PreSetService;
 import com.umust.dobonglife.domain.coupon.service.PromotionService;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.domain.courseLike.controller.dto.request.CourseLikeResponse;
@@ -30,6 +28,7 @@ import java.util.List;
 @RequestMapping("/api/promotion")
 public class PromotionController {
     private final PromotionService promotionService;
+    private final PreSetService preSetService;
 
     @Operation(summary = "프로모션 조회", description = "프로모션을 조회합니다.")
     @ApiResponse(
@@ -66,6 +65,17 @@ public class PromotionController {
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             @CurrentUserId Long userId) {
         PromotionRegisterResponse responses = promotionService.registerCoupon(request, userId, imageFiles);
+        return BaseResponse.ok(responses);
+    }
+
+    @Operation(summary = "프리셋 조회하기", description = "프리셋을 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @GetMapping("/preset")
+    public BaseResponse<List<PresetResponse>> getPreset() {
+        List<PresetResponse> responses = preSetService.getAllPresets();
         return BaseResponse.ok(responses);
     }
 }
