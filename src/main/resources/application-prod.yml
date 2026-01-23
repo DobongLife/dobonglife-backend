@@ -21,3 +21,6 @@ spring:
 place:
   import:
     path: classpath:import/places.csv
+festival:
+  import:
+    path: classpath:import/festivals.csv

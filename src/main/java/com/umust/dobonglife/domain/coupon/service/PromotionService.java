@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.coupon.service;
 
+import com.umust.dobonglife.domain.business.service.BusinessService;
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
@@ -36,6 +37,7 @@ public class PromotionService {
     private final PromotionRepository promotionRepository;
     private final PointService pointService;
     private final UserService userService;
+    private final BusinessService businessService;
     private final CouponService couponService;
     private final S3Utils s3Utils;
 
@@ -71,7 +73,7 @@ public class PromotionService {
     }
 
     public PromotionRegisterResponse registerCoupon(PromotionRegisterRequest request, Long userId, List<MultipartFile> imageFiles) {
-        Long placeId = validateManagerRole(userId);
+        Long placeId = businessService.returnBusinessPlaceId(userId);
 
         List<String> imageUrls = new ArrayList<>();
         if (imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {

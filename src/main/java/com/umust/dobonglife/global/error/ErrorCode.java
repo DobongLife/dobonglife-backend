@@ -93,13 +93,14 @@ public enum ErrorCode{
     // Schedule
     SCHEDULE_NOT_FOUND(800, HttpStatus.NOT_FOUND.value(), "일정을 찾을 수 없습니다."),
 
-    // business
+    // Business
     NOT_BUSINESS(403, HttpStatus.FORBIDDEN.value(), "해당 비즈니스에 대한 권한이 없습니다."),
 
     INVALID_VALUE(500, HttpStatus.BAD_REQUEST.value(), "할인값은 음수일 수 없습니다."),
     INVALID_DISCOUNT_VALUE(500, HttpStatus.BAD_REQUEST.value(), "할인 100%를 초과할 수 없습니다."),
     INVALID_COUPON_CODE(500, HttpStatus.BAD_REQUEST.value(), "쿠폰 코드는 6자리입니다."),
-    INVALID_DATE_RANGE(500, HttpStatus.BAD_REQUEST.value(), "종료일보다 시작일이 빠릅니다.");
+    INVALID_DATE_RANGE(500, HttpStatus.BAD_REQUEST.value(), "종료일보다 시작일이 빠릅니다."),
+    BUSINESS_NOT_FOUND(900, HttpStatus.NOT_FOUND.value(), "사업장을 찾을 수 없습니다.");
 
     private final int code;
     private final int httpStatus;

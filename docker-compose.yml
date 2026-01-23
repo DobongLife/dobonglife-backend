@@ -16,6 +16,7 @@ services:
         -Dspring.profiles.active=prod
     volumes:
       - /home/ubuntu/import/places.csv:/data/import/places.csv:ro
+      - /home/ubuntu/import/festivals.csv:/data/import/festivals.csv:ro
     ports:
       - '8080:8080'
     depends_on:

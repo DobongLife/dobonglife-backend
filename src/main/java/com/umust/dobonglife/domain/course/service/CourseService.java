@@ -55,7 +55,6 @@ public class CourseService {
         return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
     }
 
-    // TODO: 주간테마 코스 조회 시 사용할 함수
     @Transactional(readOnly = true)
     public CursorResponse<CourseSummaryResponse> getCourses(CourseTheme theme, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);

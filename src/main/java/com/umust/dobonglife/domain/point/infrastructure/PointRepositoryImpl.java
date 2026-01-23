@@ -24,7 +24,7 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public SliceResponse<PointResponse> findPointsByCursor(Long userId, int size, Cursor cursor, SortOrder order) {
+    public SliceResponse<PointResponse> findPointsByCursor(Long userId, int size, Long lastId, SortOrder order) {
 
         // 1) size + 1개 가져오기
         List<PointResponse> results = queryFactory
@@ -33,12 +33,13 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
                         point.title,
                         point.amount,
                         point.createdAt,
-                        point.afterBalance
+                        point.afterBalance,
+                        point.isUsed
                 ))
                 .from(point)
                 .where(
                         point.user.id.eq(userId),
-                        cursorCondition(cursor, order)
+                        cursorCondition(lastId, order)
                 )
                 .orderBy(orderBy(order))
                 .limit(size + 1)
@@ -50,7 +51,7 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
         // 3) content는 size개만
         List<PointResponse> content = hasNext ? results.subList(0, size) : results;
 
-        // 4) nextCursor 생성
+        // 4) nextCursor 생성 (= 다음 lastId)
         String nextCursor = null;
         if (hasNext && !content.isEmpty()) {
             nextCursor = String.valueOf(
@@ -66,12 +67,12 @@ public class PointRepositoryImpl implements PointRepositoryCustom {
                 .build();
     }
 
-    private BooleanExpression cursorCondition(Cursor cursor, SortOrder order) {
-        if (cursor == null) return null;
+    private BooleanExpression cursorCondition(Long lastId, SortOrder order) {
+        if (lastId == null) return null;
 
         return order == SortOrder.DESC
-                ? point.id.lt(cursor.getLastId())
-                : point.id.gt(cursor.getLastId());
+                ? point.id.lt(lastId)
+                : point.id.gt(lastId);
     }
 
     private OrderSpecifier<?> orderBy(SortOrder order) {

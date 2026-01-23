@@ -79,6 +79,9 @@ public class Place extends BaseEntity {
     @Column(name = "thumbnail_url", columnDefinition = "TEXT")
     private String thumbnailUrl;
 
+    @Column(name = "category", length = 50, nullable = false)
+    private String category;
+
     public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
         this.averageRating = newAverageRating;
         this.reviewCount = newReviewCount;

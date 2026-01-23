@@ -9,5 +9,5 @@ import com.umust.dobonglife.global.common.response.slice.SortOrder;
 import java.util.List;
 
 public interface PointRepositoryCustom {
-    SliceResponse<PointResponse> findPointsByCursor(Long userId, int size, Cursor cursor, SortOrder order);
+    SliceResponse<PointResponse> findPointsByCursor(Long userId, int size, Long lastId, SortOrder order);
 }
