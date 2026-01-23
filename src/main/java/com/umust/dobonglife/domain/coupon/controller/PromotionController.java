@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionRegis
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionResponse;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.UsedCouponResponse;
 import com.umust.dobonglife.domain.coupon.service.PromotionService;
+import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.domain.courseLike.controller.dto.request.CourseLikeResponse;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -14,8 +15,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Tag(name = "프로모션 API", description = "프로모션 관련 API")
 @SecurityRequirement(name = "BearerAuth")
@@ -54,11 +60,12 @@ public class PromotionController {
             responseCode = "200",
             description = "요청에 성공하였습니다."
     )
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<PromotionRegisterResponse> registerCoupon(
-            @RequestBody PromotionRegisterRequest request,
+            @RequestPart @Valid PromotionRegisterRequest request,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             @CurrentUserId Long userId) {
-        PromotionRegisterResponse responses = promotionService.registerCoupon(request, userId);
+        PromotionRegisterResponse responses = promotionService.registerCoupon(request, userId, imageFiles);
         return BaseResponse.ok(responses);
     }
 }

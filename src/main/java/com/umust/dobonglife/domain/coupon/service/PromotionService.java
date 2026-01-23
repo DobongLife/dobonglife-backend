@@ -15,16 +15,21 @@ import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.external.s3.S3Utils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PromotionService {
@@ -32,6 +37,7 @@ public class PromotionService {
     private final PointService pointService;
     private final UserService userService;
     private final CouponService couponService;
+    private final S3Utils s3Utils;
 
     public void registerPromotion(Promotion promotion) {
         promotionRepository.save(promotion);
@@ -64,11 +70,28 @@ public class PromotionService {
         return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
     }
 
-    @Transactional
-    public PromotionRegisterResponse registerCoupon(PromotionRegisterRequest request, Long userId) {
-        validateManagerRole(userId);
+    public PromotionRegisterResponse registerCoupon(PromotionRegisterRequest request, Long userId, List<MultipartFile> imageFiles) {
+        Long placeId = validateManagerRole(userId);
 
-        Promotion promotion = Promotion.createPromotion(request, userId);
+        List<String> imageUrls = new ArrayList<>();
+        if (imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
+            imageUrls = s3Utils.uploadImages(imageFiles);
+        }
+
+        try {
+            return savePromotionWithTransaction(request, imageUrls, userId, placeId);
+
+        } catch (Exception e) {
+            if (!imageUrls.isEmpty()) {
+                s3Utils.deleteImages(imageUrls);
+            }
+            throw e;
+        }
+    }
+
+    @Transactional
+    public PromotionRegisterResponse savePromotionWithTransaction(PromotionRegisterRequest request, List<String> imageUrls, Long userId, Long placeId) {
+        Promotion promotion = Promotion.createPromotion(request, imageUrls, userId, placeId);
         Promotion savedPromotion = promotionRepository.save(promotion);
         return PromotionRegisterResponse.from(savedPromotion);
     }

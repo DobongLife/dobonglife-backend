@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public record PromotionRegisterResponse(
         Long promotionId,
@@ -13,7 +14,7 @@ public record PromotionRegisterResponse(
         BigDecimal discountValue,
         LocalDate startDate,
         LocalDate endDate,
-        String imageUrl
+        List<String> imageUrls
 ) {
     public static PromotionRegisterResponse from(Promotion promotion) {
         return new PromotionRegisterResponse(
@@ -24,7 +25,7 @@ public record PromotionRegisterResponse(
                 promotion.getDiscountValue(),
                 promotion.getStartDate(),
                 promotion.getEndDate(),
-                promotion.getImg()
+                promotion.getImgUrls()
         );
     }
 }

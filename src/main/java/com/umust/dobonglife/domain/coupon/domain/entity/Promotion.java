@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,14 +32,19 @@ public class Promotion {
     @Column(name = "category", nullable = false)
     private PromotionType category;
 
+    @Column(name = "place_id", nullable = false)
+    private Long placeId;
+
     @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "img", nullable = false)
-    private String img;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "promotion_images", joinColumns = @JoinColumn(name = "promotion_id"))
+    @Column(name = "img_urls", nullable = false)
+    private List<String> imgUrls;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "discount_type", nullable = false)
@@ -72,7 +78,7 @@ public class Promotion {
     private Long businessesId;
 
     @Builder
-    public Promotion(PromotionType category, String title, String description, String img,
+    public Promotion(PromotionType category, Long placeId, String title, String description, String img,
                      DiscountType discountType, BigDecimal discountValue, Long minPrice,
                      Long maxPrice, String code, Long point, LocalDate startDate,
                      LocalDate endDate, Long validPeriod, Long businessesId) {
@@ -80,6 +86,7 @@ public class Promotion {
         validate(discountType, discountValue, minPrice, maxPrice, code, startDate, endDate);
 
         this.category = category;
+        this.placeId = placeId;
         this.title = title;
         this.description = description;
         this.img = (img == null || img.isBlank()) ? category.getImageUrl() : img;
@@ -99,7 +106,6 @@ public class Promotion {
                           Long minPrice, Long maxPrice, String code,
                           LocalDate startDate, LocalDate endDate) {
 
-        // 1. 기존 유효성 검증
         if (code == null || code.length() != 6) {
             throw new BusinessException(ErrorCode.INVALID_COUPON_CODE);
         }
@@ -124,14 +130,15 @@ public class Promotion {
         }
     }
 
-    public static Promotion createPromotion(PromotionRegisterRequest dto, Long managerId) {
+    public static Promotion createPromotion(PromotionRegisterRequest dto, List<String> imgUrl, Long managerId, Long placeId) {
         PromotionType type = PromotionType.valueOf(dto.categoryId());
 
         return Promotion.builder()
                 .category(type)
+                .placeId(placeId)
                 .title(dto.couponName())
                 .description(dto.couponDescription())
-                .img(dto.imageUrls().isEmpty() ? null : dto.imageUrls())
+                .img(imgUrl.isEmpty() ? type.getImageUrl() : imgUrl)
                 .discountType(DiscountType.valueOf(dto.discountType()))
                 .discountValue(BigDecimal.valueOf(dto.discountValue()))
                 .minPrice(dto.minPurchaseAmount() != null ? dto.minPurchaseAmount().longValue() : null)
