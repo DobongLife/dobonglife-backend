@@ -28,6 +28,9 @@ public class ScheduleRequest {
     @Schema(description = "장소 이름", example = "도봉구 도서관")
     private String placeName;
 
+    @Schema(description = "이벤트 여부", example = "false")
+    private Boolean isEvent;
+
     @Schema(description = "하루 종일 여부", example = "false")
     private Boolean isAllDay;
 
