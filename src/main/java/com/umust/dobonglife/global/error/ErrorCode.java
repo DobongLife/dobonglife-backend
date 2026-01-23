@@ -91,7 +91,10 @@ public enum ErrorCode{
     POINT_CANNOT_NEGATIVE(703, HttpStatus.CONFLICT.value(), "포인트 내역은 음수가 될 수 없습니다."),
 
     // Schedule
-    SCHEDULE_NOT_FOUND(800, HttpStatus.NOT_FOUND.value(), "일정을 찾을 수 없습니다.");
+    SCHEDULE_NOT_FOUND(800, HttpStatus.NOT_FOUND.value(), "일정을 찾을 수 없습니다."),
+
+    // Business
+    BUSINESS_NOT_FOUND(900, HttpStatus.NOT_FOUND.value(), "사업장을 찾을 수 없습니다.");
 
     private final int code;
     private final int httpStatus;

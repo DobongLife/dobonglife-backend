@@ -70,4 +70,16 @@ public class BusinessService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Long returnBusinessPlaceId(Long userId) {
+
+        Business business = businessRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
+
+        if (business.getPlace() == null) {
+            throw new BusinessException(ErrorCode.PLACE_NOT_FOUND);
+        }
+
+        return business.getPlace().getId();
+    }
 }
