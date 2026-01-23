@@ -18,6 +18,7 @@ public class PointResponse {
     private Long amount;
     private LocalDateTime createAt;
     private long afterBalance;
+    private boolean isUsed;
 
     @QueryProjection
     public PointResponse(
@@ -25,20 +26,14 @@ public class PointResponse {
             String reason,
             Long amount,
             LocalDateTime createAt,
-            long afterBalance
+            long afterBalance,
+            boolean isUsed
     ) {
         this.pointId = pointId;
         this.title = reason;
         this.amount = amount;
         this.createAt = createAt;
         this.afterBalance = afterBalance;
-    }
-
-    public static PointResponse from(Point point) {
-        return PointResponse.builder()
-                .pointId(point.getId())
-                .title(point.getTitle())
-                .amount(point.getAmount())
-                .build();
+        this.isUsed = isUsed;
     }
 }

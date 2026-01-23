@@ -46,9 +46,9 @@ public class PointController {
     public BaseResponse<MyPointsResponse> getMyPointList(
             @CurrentUserId Long userId,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(required = false) String cursor,
+            @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "DESC") String order
     ) {
-        return BaseResponse.ok(pointService.getPointList(userId, size, cursor, order));
+        return BaseResponse.ok(pointService.getPointList(userId, size, lastId, order));
     }
 }

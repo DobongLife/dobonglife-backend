@@ -18,6 +18,7 @@ public class PlaceDetailResponse {
     private Long placeId;
     private String name;
     private String subName;
+    private String category;
     private String content;
     private List<String> amenities;
     private String address;
@@ -37,6 +38,7 @@ public class PlaceDetailResponse {
                 .placeId(place.getId())
                 .name(place.getName())
                 .subName(place.getSubName())
+                .category(place.getCategory())
                 .content(place.getContent())
                 .amenities(Place.amenityToStrings(place))
                 .placeImages(place.getImageUrls())

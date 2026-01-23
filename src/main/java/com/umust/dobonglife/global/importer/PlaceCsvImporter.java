@@ -82,15 +82,12 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 String address = defaultIfBlank(get(row, idx, "address"), "");
                 String contact = defaultIfBlank(get(row, idx, "contact"), "정보없음");
                 String operatingHour = defaultIfBlank(get(row, idx, "operatingHour"), "정보없음");
-
+                String category = defaultIfBlank(get(row, idx, "category"), "명소");
                 List<Amenity> amenities = parseAmenities(get(row, idx, "amenities"));
                 List<String> imageUrls = parseUrlList(get(row, idx, "imageUrls"));
                 String thumbnailUrl = defaultIfBlank(get(row, idx, "thumbnailUrl"), "");
-
                 Double latitude = parseDoubleOrNull(get(row, idx, "latitude"));
                 Double longitude = parseDoubleOrNull(get(row, idx, "longitude"));
-
-                // themes 컬럼 추가
                 List<CourseTheme> themes = parseThemes(get(row, idx, "themes"));
 
                 Place place = placeRepository.findByName(name)
@@ -100,18 +97,13 @@ public class PlaceCsvImporter implements CommandLineRunner {
                             existing.setAddress(address);
                             existing.setContact(contact);
                             existing.setOperatingHour(operatingHour);
-
-                            // ElementCollection은 통째 교체가 안전
                             existing.setAmenities(amenities);
                             existing.setImageUrls(imageUrls);
-
-                            // CSV 필드 추가 반영
                             existing.setThumbnailUrl(thumbnailUrl);
                             existing.setLatitude(latitude);
                             existing.setLongitude(longitude);
-
-                            // themes 반영
                             existing.setThemes(themes);
+                            existing.setCategory(category);
 
                             return existing;
                         })
@@ -128,6 +120,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
                                 .latitude(latitude)
                                 .longitude(longitude)
                                 .themes(themes)
+                                .category(category)
                                 .build()
                         );
 

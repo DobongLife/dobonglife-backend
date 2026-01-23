@@ -68,17 +68,16 @@ public class PointService {
     }
 
     @Transactional(readOnly = true)
-    public MyPointsResponse getPointList(Long userId, int size, String cursor, String order) {
+    public MyPointsResponse getPointList(Long userId, int size, Long lastId, String order) {
         Long userTotalPoint = userService.getUserTotalPoint(userId);
-        SliceResponse<PointResponse> pointsByCursor = getPointResponse(userId, size, cursor, order);
+        SliceResponse<PointResponse> pointsByCursor = getPointResponse(userId, size, lastId, order);
 
         return new MyPointsResponse(userTotalPoint, pointsByCursor);
     }
 
-    public SliceResponse<PointResponse> getPointResponse(Long userId, int size, String cursor, String order) {
-        Cursor parsedCursor = Cursor.from(cursor);
+    public SliceResponse<PointResponse> getPointResponse(Long userId, int size, Long lastId, String order) {
         SortOrder parsedOrder = SortOrder.from(order);
-        SliceResponse<PointResponse> pointsByCursor = pointRepository.findPointsByCursor(userId, size, parsedCursor, parsedOrder);
+        SliceResponse<PointResponse> pointsByCursor = pointRepository.findPointsByCursor(userId, size, lastId, parsedOrder);
         return pointsByCursor;
     }
 

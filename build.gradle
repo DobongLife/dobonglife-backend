@@ -104,6 +104,8 @@ dependencies {
 
     // OpenCSV
 	implementation 'com.opencsv:opencsv:5.9'
+	implementation 'org.apache.commons:commons-csv:1.10.0'
+	implementation 'commons-io:commons-io:2.16.1'
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -2,8 +2,7 @@ package com.umust.dobonglife.domain.schedule.service;
 
 import com.umust.dobonglife.domain.schedule.controller.dto.request.ScheduleRequest;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.DailyScheduleResponse;
-import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleResponse;
-import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleListResponse;
+import com.umust.dobonglife.domain.schedule.controller.dto.response.MonthlyScheduleListResponse;
 import com.umust.dobonglife.domain.schedule.controller.dto.response.ScheduleResponse;
 
 import com.umust.dobonglife.domain.schedule.domain.constant.Color;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -49,48 +47,6 @@ public class ScheduleService {
                 .build();
 
         scheduleRepository.save(schedule);
-    }
-
-    @Transactional (readOnly = true)
-    public ScheduleListResponse getTodaySchedule(Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        List<Schedule> schedules = scheduleRepository.findTodaySchedules(user.getId(), LocalDate.now());
-
-        List<ScheduleResponse> responses = schedules.stream()
-                .map(ScheduleResponse::from)
-                .toList();
-
-        return ScheduleListResponse.from(responses);
-    }
-
-    @Transactional(readOnly = true)
-    public MonthlyScheduleResponse getMonthlySchedules(Long userId, int year, int month) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        // 9월 1일 부터 10월 1일
-        LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDateTime start = startDate.atStartOfDay();
-        LocalDateTime end = startDate.plusMonths(1).atStartOfDay();
-
-        List<Schedule> schedules = scheduleRepository.findMonthlySchedules(user.getId(), start, end);
-        Map<LocalDate, List<ScheduleResponse>> groupedByDate = schedules.stream()
-                .map(ScheduleResponse::from)
-                .collect(Collectors.groupingBy(
-                        r -> r.getStartTime().toLocalDate(),
-                        TreeMap::new,
-                        Collectors.toList()
-                ));
-
-        List<DailyScheduleResponse> dailySchedules = groupedByDate.entrySet().stream()
-                .map(entry -> DailyScheduleResponse.of(entry.getKey(), entry.getValue()))
-                .toList();
-
-        return MonthlyScheduleResponse.from(dailySchedules);
     }
 
     @Transactional
@@ -123,5 +79,55 @@ public class ScheduleService {
                 Color.toEnum(request.getColor()),
                 request.getPlaceName()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public MonthlyScheduleListResponse getMonthlyScheduleList(Long userId, int year, int month) {
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        LocalDate monthStart = LocalDate.of(year, month, 1);
+        LocalDate monthEnd = monthStart.plusMonths(1).minusDays(1);
+
+        LocalDateTime startInclusive = monthStart.atStartOfDay();
+        LocalDateTime endExclusive = monthStart.plusMonths(1).atStartOfDay();
+
+        // 월과 "겹치는" 일정만 조회 (멀티데이 포함)
+        List<Schedule> schedules = scheduleRepository.findMonthlyOverlaps(userId, startInclusive, endExclusive);
+
+        // 일정이 있는 날짜만 담는 Map (날짜 오름차순)
+        Map<LocalDate, List<ScheduleResponse>> bucket = new TreeMap<>();
+
+        for (Schedule s : schedules) {
+            LocalDate sStart = s.getStartTime().toLocalDate();
+            LocalDate sEnd = s.getEndTime().toLocalDate();
+
+            // 월 범위로 클램프
+            LocalDate from = sStart.isBefore(monthStart) ? monthStart : sStart;
+            LocalDate to = sEnd.isAfter(monthEnd) ? monthEnd : sEnd;
+
+            ScheduleResponse dto = ScheduleResponse.from(s);
+
+            // 멀티데이 일정이면 걸친 날짜마다 넣기
+            for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
+                bucket.computeIfAbsent(d, k -> new ArrayList<>()).add(dto);
+            }
+        }
+
+        // (선택) 같은 날짜 안에서 시간순 정렬
+        for (List<ScheduleResponse> daySchedules : bucket.values()) {
+            daySchedules.sort(
+                    Comparator.comparing(ScheduleResponse::getStartTime)
+                            .thenComparing(ScheduleResponse::getId)
+            );
+        }
+
+        // Map -> List<DailyScheduleResponse>
+        List<DailyScheduleResponse> result = new ArrayList<>(bucket.size());
+        for (Map.Entry<LocalDate, List<ScheduleResponse>> e : bucket.entrySet()) {
+            result.add(DailyScheduleResponse.of(e.getKey(), e.getValue()));
+        }
+        return MonthlyScheduleListResponse.from(result);
     }
 }

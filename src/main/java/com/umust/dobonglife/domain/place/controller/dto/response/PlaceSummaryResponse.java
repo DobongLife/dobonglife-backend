@@ -14,6 +14,7 @@ import java.util.List;
 public class PlaceSummaryResponse {
     private Long placeId;
     private String placeName;
+    private String category;
     private String thumbnailUrl;
     private Double averageRating;
     private Long reviewCount;
@@ -26,6 +27,7 @@ public class PlaceSummaryResponse {
         return PlaceSummaryResponse.builder()
                 .placeId(place.getId())
                 .placeName(place.getName())
+                .category(place.getCategory())
                 .thumbnailUrl(place.getThumbnailUrl())
                 .averageRating(place.getAverageRating())
                 .reviewCount(place.getReviewCount())

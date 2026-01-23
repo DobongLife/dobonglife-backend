@@ -7,6 +7,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ScheduleRepositoryCustom {
-    List<Schedule> findTodaySchedules(Long userId, LocalDate date);
-    List<Schedule> findMonthlySchedules(Long userId, LocalDateTime start, LocalDateTime end);
+    List<Schedule> findMonthlyOverlaps(Long userId, LocalDateTime startInclusive, LocalDateTime endExclusive);
 }

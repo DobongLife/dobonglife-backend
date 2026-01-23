@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseReq
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.service.CourseReviewService;
 import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
@@ -116,6 +117,19 @@ public class CourseController {
                                                                             @RequestParam(required = false, defaultValue = "5") Long lastId,
                                                                             @RequestParam(defaultValue = "2") int size) {
         CursorResponse<CourseSummaryResponse> responses = courseService.getMyCourses(lastId, size, userId);
+        return BaseResponse.ok(responses);
+    }
+
+    @Operation(summary = "주간테마별 코스 조회", description = "주간테마별 코스를 조회합니다. theme은 영어로 보내주시면 됩니다. (예시: HISTORY)")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @GetMapping("/theme")
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCoursesByTheme(@RequestParam String theme,
+                                                                                 @RequestParam(required = false) Long lastId,
+                                                                                 @RequestParam(defaultValue = "2") int size) {
+        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(CourseTheme.toEnum(theme), lastId, size);
         return BaseResponse.ok(responses);
     }
 }
