@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.*;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
@@ -36,6 +37,7 @@ import java.util.List;
 public class PromotionService {
     private final PromotionRepository promotionRepository;
     private final PointService pointService;
+    private final PlaceService placeService;
     private final UserService userService;
     private final BusinessService businessService;
     private final CouponService couponService;
@@ -48,7 +50,6 @@ public class PromotionService {
     public CursorResponse<PromotionItem> getPromotion(Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(lastId, pageable);
-
         return CursorUtils.toCursorResponse(promotions, PromotionItem::from);
     }
 

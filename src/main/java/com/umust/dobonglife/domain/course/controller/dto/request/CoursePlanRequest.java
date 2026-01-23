@@ -14,15 +14,7 @@ import java.time.LocalDateTime;
 @Schema(description = "코스 일정 정보")
 public class CoursePlanRequest {
 
-        @Schema(
-                description = "일정 날짜 및 시간",
-                example = "2026-01-02T14:30:00",
-                required = true,
-                type = "string",
-                format = "date-time"
-        )
-        @NotNull(message = "날짜는 필수입니다")
-        private LocalDateTime dateTime;
+        private Long placeId;
 
         @Schema(
                 description = "일정 제목",
