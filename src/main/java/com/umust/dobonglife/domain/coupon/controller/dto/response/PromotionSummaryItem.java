@@ -10,7 +10,7 @@ public record PromotionSummaryItem(Long promotionId, String category, String tit
     public static PromotionSummaryItem from(Promotion promotion) {
         return new PromotionSummaryItem(
                 promotion.getId(),
-                promotion.getCategory(),
+                promotion.getCategory().getDescription(),
                 promotion.getTitle(),
                 promotion.getImg()
         );

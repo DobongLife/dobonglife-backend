@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.coupon.domain.entity;
 
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
+import com.umust.dobonglife.domain.coupon.domain.constant.PromotionType;
 import com.umust.dobonglife.global.auth.CouponCodeGenerator;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -26,8 +27,9 @@ public class Promotion {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
-    private String category;
+    private PromotionType category;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -70,7 +72,7 @@ public class Promotion {
     private Long businessesId;
 
     @Builder
-    public Promotion(String category, String title, String description, String img,
+    public Promotion(PromotionType category, String title, String description, String img,
                      DiscountType discountType, BigDecimal discountValue, Long minPrice,
                      Long maxPrice, String code, Long point, LocalDate startDate,
                      LocalDate endDate, Long validPeriod, Long businessesId) {
@@ -80,7 +82,7 @@ public class Promotion {
         this.category = category;
         this.title = title;
         this.description = description;
-        this.img = img;
+        this.img = (img == null || img.isBlank()) ? category.getImageUrl() : img;
         this.discountType = discountType;
         this.discountValue = discountValue;
         this.minPrice = minPrice;
@@ -123,8 +125,10 @@ public class Promotion {
     }
 
     public static Promotion createPromotion(PromotionRegisterRequest dto, Long managerId) {
+        PromotionType type = PromotionType.valueOf(dto.categoryId());
+
         return Promotion.builder()
-                .category(dto.categoryId())
+                .category(type)
                 .title(dto.couponName())
                 .description(dto.couponDescription())
                 .img(dto.imageUrls().isEmpty() ? null : dto.imageUrls())

@@ -25,7 +25,7 @@ public record CouponItem(
         return new CouponItem(
                 coupon.getId(),
                 coupon.getPromotion().getId(),
-                coupon.getPromotion().getCategory(),
+                coupon.getPromotion().getCategory().getDescription(),
                 coupon.getPromotion().getTitle(),
                 coupon.getPromotion().getDescription(),
                 coupon.getPromotion().getImg(),

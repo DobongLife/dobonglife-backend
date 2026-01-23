@@ -12,7 +12,7 @@ public record PromotionItem(Long promotionId, String category, String title,
     public static PromotionItem from(Promotion promotion) {
         return new PromotionItem(
                 promotion.getId(),
-                promotion.getCategory(),
+                promotion.getCategory().getDescription(),
                 promotion.getTitle(),
                 promotion.getDescription(),
                 promotion.getImg(),
