@@ -34,4 +34,7 @@ public class Festival extends BaseEntity {
 
     @Column(name = "place_name", nullable = false)
     private String placeName;
+
+    @Column(name = "category", nullable = false)
+    private String category;
 }
