@@ -62,4 +62,18 @@ public class User extends BaseEntity {
 
     @Column(nullable = true)
     private LocalDateTime blockedAt;
+
+    public void updatePoint(Long point) {
+        balance += point;
+    }
+
+    public void handleDeletion() {
+        this.deleteCount += 1;
+
+        if (this.deleteCount >= 3) {
+            this.isBlocked = true;
+            this.blockedAt = LocalDateTime.now();
+            this.deleteCount = 0;
+        }
+    }
 }
