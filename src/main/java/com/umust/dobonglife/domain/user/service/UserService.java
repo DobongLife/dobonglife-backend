@@ -128,5 +128,18 @@ public class UserService {
         byId.handleDeletion();
         userRepository.save(byId);
     }
+
+    @Transactional
+    public void canExchangeCoupon(Long userId) {
+        User byId = findById(userId);
+        if(!byId.canExchangeCoupon())
+            throw new BusinessException(ErrorCode.COUPON_EXCHANGE_RESTRICTED);
+
+    }
+
+    public boolean isBlockedUser(Long userId) {
+        User byId = findById(userId);
+        return byId.isBlocked();
+    }
 }
 

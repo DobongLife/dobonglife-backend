@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +48,17 @@ public class PromotionService {
         promotionRepository.save(promotion);
     }
 
+    public PromotionGetResponse getPromotionWithBlocked(Long userId, Long lastId, int size) {
+        CursorResponse<PromotionItem> cursorResponse = getPromotion(lastId, size);
+        boolean blockedUser = userService.isBlockedUser(userId);
+
+        return new PromotionGetResponse(blockedUser, cursorResponse);
+    }
+
     public CursorResponse<PromotionItem> getPromotion(Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(lastId, pageable);
+
         return CursorUtils.toCursorResponse(promotions, PromotionItem::from);
     }
 
@@ -61,6 +70,7 @@ public class PromotionService {
     }
 
     public UsedCouponResponse changePointToCoupon(Long userId, Long promotionId) {
+        userService.canExchangeCoupon(userId);
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new EntityNotFoundException("[ERROR] 프로모션이 존재하지 않습니다."));
         User user = userService.findById(userId);
 
@@ -97,12 +107,5 @@ public class PromotionService {
         Promotion promotion = Promotion.createPromotion(request, imageUrls, userId, placeId);
         Promotion savedPromotion = promotionRepository.save(promotion);
         return PromotionRegisterResponse.from(savedPromotion);
-    }
-
-    private void validateManagerRole(Long userId) {
-        Role userRole = userService.getUserRole(userId);
-        if (userRole != Role.MANAGER) {
-            throw new BusinessException(ErrorCode.NOT_BUSINESS);
-        }
     }
 }

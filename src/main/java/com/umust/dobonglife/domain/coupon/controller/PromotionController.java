@@ -36,9 +36,10 @@ public class PromotionController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping
-    public BaseResponse<CursorResponse<PromotionItem>> getPromotion(@RequestParam(required = false) Long lastId,
-                                                        @RequestParam(defaultValue = "2") int size){
-        CursorResponse<PromotionItem> response = promotionService.getPromotion(lastId, size);
+    public BaseResponse<PromotionGetResponse> getPromotion(@CurrentUserId Long userId,
+                                       @RequestParam(required = false) Long lastId,
+                                       @RequestParam(defaultValue = "2") int size){
+        PromotionGetResponse response = promotionService.getPromotionWithBlocked(userId, lastId, size);
         return BaseResponse.ok(response);
     }
 
