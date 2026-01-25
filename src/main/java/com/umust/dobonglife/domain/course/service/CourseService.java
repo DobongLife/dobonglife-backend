@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.course.service;
 
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.request.CoursePlanRequest;
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDeleteResponse;
@@ -10,14 +9,11 @@ import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.entity.CourseDescription;
 import com.umust.dobonglife.domain.course.domain.entity.CoursePlans;
-import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
-import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
-import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
-import com.umust.dobonglife.domain.review.service.ReviewService;
+import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -39,6 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.COURSE_CREATE;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -46,6 +44,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final S3Utils s3Utils;
     private final UserService userService;
+    private final PointService pointService;
 
 
     @Transactional(readOnly = true)
@@ -114,6 +113,9 @@ public class CourseService {
                 .description(description)
                 .plans(plans)
                 .build();
+
+        pointService.earnPoint(userService.findById(userId), COURSE_CREATE.getTitle(), COURSE_CREATE.getPoint());
+        userService.updatePoint(userId, COURSE_CREATE.getPoint());
 
         return courseRepository.save(course);
     }
@@ -198,6 +200,7 @@ public class CourseService {
                 }
             }
         });
+        userService.handleDeletion(userId);
         return CourseDeleteResponse.from(courseId);
     }
 
@@ -216,7 +219,7 @@ public class CourseService {
     }
 
     @Transactional
-    public void deleteCourseReview(Long courseId, Double rating) {
+    public void deleteCourseReview(Long userId, Long courseId, Double rating) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         course.deleteReview(rating);

@@ -38,7 +38,7 @@ public class ReviewController {
     public BaseResponse<ReviewResponse> registerReview(@CurrentUserId Long userId,
                                                        @RequestPart("request") @Valid CreateReviewRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
         ReviewResponse response = reviewService.createReview(userId, request, imageFiles);
-        return BaseResponse.ok(response, SuccessCode.REVIEW_POINT_SUCCESS);
+        return BaseResponse.ok(response);
     }
 
     // 리뷰 수정하기

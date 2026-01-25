@@ -19,6 +19,9 @@ import java.time.LocalDateTime;
 @Setter
 public class User extends BaseEntity {
 
+    private static final int PENALTY_THRESHOLD = 3;
+    private static final long PENALTY_DAYS = 7;
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Long id;
@@ -62,4 +65,44 @@ public class User extends BaseEntity {
 
     @Column(nullable = true)
     private LocalDateTime blockedAt;
+
+    public void updatePoint(Long point) {
+        balance += point;
+    }
+
+    public void handleDeletion() {
+        this.deleteCount++;
+        if (this.deleteCount >= PENALTY_THRESHOLD) {
+            applyPenalty();
+        }
+    }
+
+    private void applyPenalty() {
+        this.isBlocked = true;
+        this.blockedAt = LocalDateTime.now();
+        this.deleteCount = 0;
+    }
+
+    public boolean canExchangeCoupon() {
+        if (!this.isBlocked) {
+            return true;
+        }
+
+        if (isPenaltyExpired()) {
+            liftPenalty();
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isPenaltyExpired() {
+        return LocalDateTime.now().isAfter(this.blockedAt.plusDays(PENALTY_DAYS));
+    }
+
+    private void liftPenalty() {
+        this.isBlocked = false;
+        this.blockedAt = null;
+    }
+
 }

@@ -8,13 +8,19 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public record PromotionItem(Long promotionId, Long placeId, String category, String title,
-                            String description, List<String> imgUrls, DiscountType discountType, BigDecimal discountValue,
-                            Long point, Long minPrice, Long maxPrice, LocalDate endDate) {
+public record PromotionItem(
+        Long promotionId, Long placeId, String placeName, String operatingHour, // 추가
+        String category, String title, String description, List<String> imgUrls,
+        DiscountType discountType, BigDecimal discountValue,
+        Long point, Long minPrice, Long maxPrice, LocalDate endDate
+) {
     public static PromotionItem from(Promotion promotion) {
+        Place place = promotion.getPlace();
         return new PromotionItem(
                 promotion.getId(),
-                promotion.getPlaceId(),
+                place.getId(),
+                place.getName(),
+                place.getOperatingHour(),
                 promotion.getCategory().getDescription(),
                 promotion.getTitle(),
                 promotion.getDescription(),
