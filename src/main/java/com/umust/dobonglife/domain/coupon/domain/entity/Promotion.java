@@ -34,8 +34,8 @@ public class Promotion {
     @Column(name = "category", nullable = false)
     private PromotionType category;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 지연 로딩 필수
-    @JoinColumn(name = "place_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "place_id")
     private Place place;
 
     @Column(name = "title", nullable = false)
@@ -134,7 +134,7 @@ public class Promotion {
     }
 
     public static Promotion createPromotion(PromotionRegisterRequest dto, List<String> imgUrl, Long managerId, Place place) {
-        PromotionType type = PromotionType.valueOf(dto.categoryId());
+        PromotionType type = PromotionType.valueOf(dto.category());
 
         return Promotion.builder()
                 .category(type)

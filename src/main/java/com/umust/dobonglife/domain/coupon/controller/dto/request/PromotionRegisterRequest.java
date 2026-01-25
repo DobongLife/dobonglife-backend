@@ -6,9 +6,7 @@ import java.util.List;
 public record PromotionRegisterRequest(
         String couponName,
         String couponDescription,
-        String categoryId,
-        String imageUrls, // TODO: 프리셋 이미지
-
+        String category,
         String discountType,
         Integer discountValue,
         Integer minPurchaseAmount,
