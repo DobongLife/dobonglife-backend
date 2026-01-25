@@ -70,8 +70,7 @@ public class PlaceService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
+        Place place = findById(placeId);
 
         Optional<PlaceLike> articleLikesOptional = placeLikeRepository.findByUserIdAndPlaceId(user.getId(), place.getId());
 
@@ -103,16 +102,14 @@ public class PlaceService {
 
     @Transactional
     public void updatePlaceRatingAndCount(Long placeId, Double rating) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
+        Place place = findById(placeId);
         place.applyNewReview(rating);
         placeRepository.save(place);
     }
 
     @Transactional
     public void deletePlaceReview(Long placeId, Double rating) {
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
+        Place place = findById(placeId);
         place.applyDeleteReview(rating);
         placeRepository.save(place);
     }
@@ -121,5 +118,9 @@ public class PlaceService {
     public PlaceSummaryListResponse getAllPlace(Long userId) {
         List<PlaceSummaryResponse> responses = placeRepository.findPlaceSummaries(userId);
         return PlaceSummaryListResponse.from(responses);
+    }
+
+    public Place findById(Long placeId) {
+        return placeRepository.findById(placeId).orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
     }
 }

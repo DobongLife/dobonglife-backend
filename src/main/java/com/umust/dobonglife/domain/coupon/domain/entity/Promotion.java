@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.coupon.domain.entity;
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import com.umust.dobonglife.domain.coupon.domain.constant.PromotionType;
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.global.auth.CouponCodeGenerator;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -33,8 +34,9 @@ public class Promotion {
     @Column(name = "category", nullable = false)
     private PromotionType category;
 
-    @Column(name = "place_id", nullable = false)
-    private Long placeId;
+    @ManyToOne(fetch = FetchType.LAZY) // 지연 로딩 필수
+    @JoinColumn(name = "place_id", insertable = false, updatable = false)
+    private Place place;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -79,7 +81,7 @@ public class Promotion {
     private Long businessesId;
 
     @Builder
-    public Promotion(PromotionType category, Long placeId, String title, String description, List<String> imgUrls,
+    public Promotion(PromotionType category, Place place, String title, String description, List<String> imgUrls,
                      DiscountType discountType, BigDecimal discountValue, Long minPrice,
                      Long maxPrice, String code, Long point, LocalDate startDate,
                      LocalDate endDate, Long validPeriod, Long businessesId) {
@@ -87,7 +89,7 @@ public class Promotion {
         validate(discountType, discountValue, minPrice, maxPrice, code, startDate, endDate);
 
         this.category = category;
-        this.placeId = placeId;
+        this.place = place;
         this.title = title;
         this.description = description;
         this.imgUrls = (imgUrls == null || imgUrls.isEmpty()) ? Collections.singletonList(category.getImageUrl()) : imgUrls;
@@ -131,12 +133,12 @@ public class Promotion {
         }
     }
 
-    public static Promotion createPromotion(PromotionRegisterRequest dto, List<String> imgUrl, Long managerId, Long placeId) {
+    public static Promotion createPromotion(PromotionRegisterRequest dto, List<String> imgUrl, Long managerId, Place place) {
         PromotionType type = PromotionType.valueOf(dto.categoryId());
 
         return Promotion.builder()
                 .category(type)
-                .placeId(placeId)
+                .place(place)
                 .title(dto.couponName())
                 .description(dto.couponDescription())
                 .imgUrls(imgUrl.isEmpty() ? Collections.singletonList(type.getImageUrl()) : imgUrl)

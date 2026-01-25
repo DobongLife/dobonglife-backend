@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.*;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
@@ -57,14 +58,14 @@ public class PromotionService {
 
     public CursorResponse<PromotionItem> getPromotion(Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
-        Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(lastId, pageable);
+        Slice<Promotion> promotions = promotionRepository.findPromotionWithPlaceNoOffset(lastId, pageable);
 
         return CursorUtils.toCursorResponse(promotions, PromotionItem::from);
     }
 
     public CursorResponse<PromotionSummaryItem> getPromotionSummary(Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
-        Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(lastId, pageable);
+        Slice<Promotion> promotions = promotionRepository.findPromotionWithPlaceNoOffset(lastId, pageable);
 
         return CursorUtils.toCursorResponse(promotions, PromotionSummaryItem::from);
     }
@@ -104,7 +105,8 @@ public class PromotionService {
 
     @Transactional
     public PromotionRegisterResponse savePromotionWithTransaction(PromotionRegisterRequest request, List<String> imageUrls, Long userId, Long placeId) {
-        Promotion promotion = Promotion.createPromotion(request, imageUrls, userId, placeId);
+        Place place = placeService.findById(placeId);
+        Promotion promotion = Promotion.createPromotion(request, imageUrls, userId, place);
         Promotion savedPromotion = promotionRepository.save(promotion);
         return PromotionRegisterResponse.from(savedPromotion);
     }
