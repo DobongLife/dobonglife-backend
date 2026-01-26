@@ -37,7 +37,7 @@ public class CourseReviewService {
         boolean isFavorite = courseLikeService.isCourseFavorite(userId, courseId);
 
         List<CoursePlans> plans = coursePlansRepository
-                .findByCourseIdOrderByDateTime(courseId);
+                .findByCourseIdOrderByIsOrder(courseId);
 
         CursorResponse<ReviewSummaryResponse> reviews = reviewService.getCourseReviews(courseId, userId, 10L, 3);
         return CourseDetailResponse.from(course, plans, reviews, isRemoved, isFavorite);

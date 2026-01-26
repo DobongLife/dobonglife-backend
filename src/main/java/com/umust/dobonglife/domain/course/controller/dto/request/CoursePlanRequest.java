@@ -16,6 +16,8 @@ public class CoursePlanRequest {
 
         private Long placeId;
 
+        private Long order;
+
         @Schema(
                 description = "일정 제목",
                 example = "도봉서원 방문",

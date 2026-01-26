@@ -176,6 +176,7 @@ public class CourseService {
                 .map(dto -> CoursePlans.builder()
                         .placeId(dto.getPlaceId())
                         .title(dto.getTitle())
+                        .isOrder(dto.getOrder())
                         .content(dto.getContent())
                         .build())
                 .toList();
