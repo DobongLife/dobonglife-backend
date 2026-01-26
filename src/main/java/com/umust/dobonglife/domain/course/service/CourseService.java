@@ -91,6 +91,8 @@ public class CourseService {
 
     @Transactional
     protected Course createCourseEntity(Long userId, CreateCourseRequest request, List<String> imageUrls) {
+        log.info("Request DTO: {}", request);
+
         CourseBasicInfo basicInfo = CourseBasicInfo.builder()
                 .title(request.getTitle())
                 .subTitle(request.getSubTitle())
@@ -173,12 +175,21 @@ public class CourseService {
     private List<CoursePlans> convertToPlans(List<CoursePlanRequest> planDtos) {
         if (planDtos == null) return List.of();
         return planDtos.stream()
-                .map(dto -> CoursePlans.builder()
-                        .placeId(dto.getPlaceId())
-                        .title(dto.getTitle())
-                        .isOrder(dto.getOrder())
-                        .content(dto.getContent())
-                        .build())
+                .map(dto -> {
+                    log.info("[convertToPlans] DTO placeId: {}, Order: {}, Title: {}",
+                            dto.getPlaceId(), dto.getOrder(), dto.getTitle());
+
+                    CoursePlans plan = CoursePlans.builder()
+                            .placeId(dto.getPlaceId())
+                            .title(dto.getTitle())
+                            .isOrder(dto.getOrder())
+                            .content(dto.getContent())
+                            .build();
+
+                    log.info("[convertToPlans] Entity placeId after mapping: {}", plan.getPlaceId());
+
+                    return plan;
+                })
                 .toList();
     }
 
