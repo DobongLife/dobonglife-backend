@@ -11,6 +11,7 @@ import com.umust.dobonglife.domain.course.domain.entity.CourseDescription;
 import com.umust.dobonglife.domain.course.domain.entity.CoursePlans;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.point.service.PointService;
@@ -42,6 +43,7 @@ import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.COURSE_CRE
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final CoursePlansRepository coursePlansRepository;
     private final S3Utils s3Utils;
     private final UserService userService;
     private final PointService pointService;
@@ -85,6 +87,7 @@ public class CourseService {
                 }
                 log.error("코스 등록 실패: {}", request.getTitle());
             }
+            log.error(e.getMessage());
             throw new BusinessException(ErrorCode.COURSE_SERVER_ERROR);
         }
     }
@@ -104,8 +107,6 @@ public class CourseService {
                 .content(request.getContent())
                 .highlights(request.getHighlights())
                 .build();
-
-        List<CoursePlans> plans = convertToPlans(request.getPlans());
         Course course = Course.builder()
                 .userId(userId)
                 .basicInfo(basicInfo)
@@ -113,13 +114,16 @@ public class CourseService {
                 .tags(request.getTags())
                 .imageUrls(imageUrls)
                 .description(description)
-                .plans(plans)
                 .build();
 
         pointService.earnPoint(userService.findById(userId), COURSE_CREATE.getTitle(), COURSE_CREATE.getPoint());
         userService.updatePoint(userId, COURSE_CREATE.getPoint());
 
-        return courseRepository.save(course);
+        Course save = courseRepository.save(course);
+        List<CoursePlans> plans = convertToPlans(course, request.getPlans());
+        coursePlansRepository.saveAll(plans);
+
+        return save;
     }
 
     public CourseRegisterResponse updateCourse(Long userId, Long courseId, UpdateCourseRequest request, List<MultipartFile> imageFiles) {
@@ -167,12 +171,12 @@ public class CourseService {
         course.getDescription().update(request.content(), request.highlights());
 
         if (request.plans() != null) {
-            List<CoursePlans> newPlans = convertToPlans(request.plans());
-            course.updatePlans(newPlans);
+            List<CoursePlans> coursePlans = convertToPlans(course, request.plans());
+            coursePlansRepository.saveAll(coursePlans);
         }
     }
 
-    private List<CoursePlans> convertToPlans(List<CoursePlanRequest> planDtos) {
+    private List<CoursePlans> convertToPlans(Course course, List<CoursePlanRequest> planDtos) {
         if (planDtos == null) return List.of();
         return planDtos.stream()
                 .map(dto -> {
@@ -180,6 +184,7 @@ public class CourseService {
                             dto.getPlaceId(), dto.getOrder(), dto.getTitle());
 
                     CoursePlans plan = CoursePlans.builder()
+                            .course(course)
                             .placeId(dto.getPlaceId())
                             .title(dto.getTitle())
                             .isOrder(dto.getOrder())

@@ -21,7 +21,7 @@ public class CoursePlans {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @Column(nullable = true)
+    @Column(name = "place_id", nullable = true)
     private Long placeId;
 
     @Column(nullable = true)

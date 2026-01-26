@@ -61,11 +61,8 @@ public class Course {
     @OneToOne(mappedBy = "course", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private CourseDescription description;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CoursePlans> plans = new ArrayList<>();
-
     @Builder
-    public Course(Long userId, CourseBasicInfo basicInfo, CourseReviewStats reviewStats, List<CourseTheme> themes, List<String> tags, List<String> imageUrls, CourseDescription description, List<CoursePlans> plans) {
+    public Course(Long userId, CourseBasicInfo basicInfo, CourseReviewStats reviewStats, List<CourseTheme> themes, List<String> tags, List<String> imageUrls, CourseDescription description) {
         validateCourse(basicInfo);
         this.userId = userId;
         this.basicInfo = basicInfo;
@@ -78,11 +75,6 @@ public class Course {
 
         if (description != null) {
             description.assignCourse(this);
-        }
-
-        this.plans = new ArrayList<>();
-        if (plans != null) {
-            plans.forEach(this::addPlan);
         }
     }
 
@@ -114,11 +106,6 @@ public class Course {
         reviewStats.update(newAverageRating, newReviewCount);
     }
 
-    public void addPlan(CoursePlans plan) {
-        this.plans.add(plan);
-        plan.assignCourse(this);
-    }
-
     // TODO: Getter 편의 메서드, 불필요시 삭제
     public String getTitle() {
         return basicInfo.getTitle();
@@ -138,12 +125,5 @@ public class Course {
 
     public void updateBasicInfo(CourseBasicInfo basicInfo) {
         this.basicInfo = basicInfo;
-    }
-
-    public void updatePlans(List<CoursePlans> newPlans) {
-        this.plans.clear();
-        if (newPlans != null) {
-            newPlans.forEach(this::addPlan);
-        }
     }
 }
