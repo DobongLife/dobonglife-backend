@@ -101,6 +101,7 @@ public record CourseDetailResponse(
      */
     public record CoursePlanDto(
             Long id,
+            Long order,
             Long placeId,
             String title,
             String content
@@ -108,6 +109,7 @@ public record CourseDetailResponse(
         public static CoursePlanDto from(CoursePlans plan) {
             return new CoursePlanDto(
                     plan.getId(),
+                    plan.getIsOrder(),
                     plan.getPlaceId(),
                     plan.getTitle(),
                     plan.getContent()

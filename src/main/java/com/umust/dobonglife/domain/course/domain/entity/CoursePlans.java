@@ -25,15 +25,19 @@ public class CoursePlans {
     private Long placeId;
 
     @Column(nullable = false)
+    private Long isOrder;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = true)
     private String content;
 
     @Builder
-    public CoursePlans(Course course, Long placeId, String title, String content) {
+    public CoursePlans(Course course, Long placeId, Long isOrder, String title, String content) {
         this.course = course;
         this.placeId = placeId;
+        this.isOrder = isOrder;
         this.title = title;
         this.content = content;
     }
