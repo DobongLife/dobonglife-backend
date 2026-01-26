@@ -24,7 +24,7 @@ public class CoursePlans {
     @Column(nullable = true)
     private Long placeId;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long isOrder;
 
     @Column(nullable = false)
