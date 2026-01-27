@@ -10,7 +10,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +36,9 @@ public class CourseLikeService {
                     courseLikeRepository.save(newCourseLike);
                     return CourseLikeResponse.from(userId, courseId, true);
                 });
+    }
+
+    public Set<Long> getFavoriteCourseIds(Long userId, List<Long> courseIds) {
+        return courseLikeRepository.findLikedCourseIdsByUserIdAndCourseIds(userId, courseIds);
     }
 }

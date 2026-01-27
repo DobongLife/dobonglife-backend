@@ -53,29 +53,4 @@ public class PromotionController {
         UsedCouponResponse response = promotionService.changePointToCoupon(userId, promotionId);
         return BaseResponse.ok(response);
     }
-
-    @Operation(summary = "쿠폰 등록하기", description = "쿠폰을 등록합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "요청에 성공하였습니다."
-    )
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BaseResponse<PromotionRegisterResponse> registerCoupon(
-            @RequestPart @Valid PromotionRegisterRequest request,
-            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
-            @CurrentUserId Long userId) {
-        PromotionRegisterResponse responses = promotionService.registerCoupon(request, userId, imageFiles);
-        return BaseResponse.ok(responses);
-    }
-
-    @Operation(summary = "프리셋 조회하기", description = "프리셋을 조회합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "요청에 성공하였습니다."
-    )
-    @GetMapping("/preset")
-    public BaseResponse<List<PresetResponse>> getPreset() {
-        List<PresetResponse> responses = preSetService.getAllPresets();
-        return BaseResponse.ok(responses);
-    }
 }

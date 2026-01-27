@@ -46,4 +46,6 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseRep
             "AND (:lastId IS NULL OR c.id < :lastId) " +
             "ORDER BY c.id DESC")
     Slice<Course> findMyCoursesNoOffset(Long userId, Long lastId, Pageable pageable);
+
+    Long countByUserId(Long userId);
 }

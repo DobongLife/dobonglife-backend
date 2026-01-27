@@ -26,9 +26,7 @@ public record PromotionRegisterRequest(
         Integer discountValue,
         Integer minPurchaseAmount,
         Integer maxDiscountAmount,
-        Integer totalQuantity,
-
-        LocalDate usableStartDate,
+        Long totalQuantity,
         Integer validityDays,
         LocalDate issueStartDate,
         LocalDate issueEndDate) {
