@@ -74,7 +74,7 @@ cloud:
     s3:
       bucket: ${S3_BUCKET_NAME}
 
-#firebase:
-#  adminsdk:
-#    account:
-#      path: firebase/firebase-adminsdk-account.json
+firebase:
+  adminsdk:
+    account:
+      path: firebase/firebase-adminsdk-account.json

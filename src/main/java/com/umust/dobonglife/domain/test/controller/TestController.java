@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,6 +65,12 @@ public class TestController {
         List<String> imageUrls = s3Utils.uploadImages(uploadImageRequest.images());
         UploadImageResponse response = new UploadImageResponse(imageUrls);
         return BaseResponse.ok(response);
+    }
+
+    @PostMapping("/device")
+    public ResponseEntity<String> testDevice(@RequestBody NotificationRequest request) {
+        notificationUtil.sendToDevice("fcmToken", request.title(), request.body(), "relatedUrl");
+        return ResponseEntity.ok("개별 디바이스 전송 시도 성공");
     }
 }
 

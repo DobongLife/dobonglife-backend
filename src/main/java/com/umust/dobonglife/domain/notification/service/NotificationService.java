@@ -5,11 +5,16 @@ import com.umust.dobonglife.domain.notification.domain.entity.Notification;
 import com.umust.dobonglife.domain.notification.domain.repository.NotificationRepository;
 import com.umust.dobonglife.domain.notification.exception.NotificationException;
 import com.umust.dobonglife.domain.notification.presentation.dto.response.NotificationResponse;
+import com.umust.dobonglife.global.common.response.CursorResponse;
+import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.external.firebase.NotificationUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,11 +24,14 @@ import java.util.Optional;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final NotificationUtil notificationUtil;
 
-    // 알림 목록을 필터링하여 페이징 조회
-    public Page<NotificationResponse> getNotifications(Long userId, String filter, Pageable pageable) {
-        Page<Notification> notifications = notificationRepository.searchByFilter(userId, filter, pageable);
-        return notifications.map(NotificationResponse::from);
+    public CursorResponse<NotificationResponse> getNotifications(Long userId, String filter, Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        NotificationType type = "ALL".equals(filter) ? null : NotificationType.valueOf(filter);
+        Slice<Notification> notifications = notificationRepository.findNotificationsNoOffset(userId, lastId, type, pageable);
+
+        return CursorUtils.toCursorResponse(notifications, NotificationResponse::from);
     }
 
     @Transactional
@@ -47,8 +55,12 @@ public class NotificationService {
 
     // 새로운 알림 생성
     @Transactional
-    public void createNotification(Long userId, NotificationType type, String title, String content, String relatedUrl) {
+    public void createNotification(Long userId, NotificationType type, String title, String content, String relatedUrl, String fcmToken) {
         Notification notification = Notification.create(userId, type, title, content, relatedUrl);
         notificationRepository.save(notification);
+
+        if (fcmToken != null) {
+            notificationUtil.sendToDevice(fcmToken, title, content, relatedUrl);
+        }
     }
 }
