@@ -45,9 +45,10 @@ public class CourseController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping
-    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@RequestParam(required = false, defaultValue = "5") Long lastId,
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@CurrentUserId Long userId,
+                                                                          @RequestParam(required = false, defaultValue = "5") Long lastId,
                                                                           @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(lastId, size);
+        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(userId, lastId, size);
         return BaseResponse.ok(responses);
     }
 
@@ -126,10 +127,11 @@ public class CourseController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping("/theme")
-    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCoursesByTheme(@RequestParam String theme,
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCoursesByTheme(@CurrentUserId Long userId,
+                                                                                 @RequestParam String theme,
                                                                                  @RequestParam(required = false) Long lastId,
                                                                                  @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(CourseTheme.toEnum(theme), lastId, size);
+        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(userId, CourseTheme.toEnum(theme), lastId, size);
         return BaseResponse.ok(responses);
     }
 }

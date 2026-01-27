@@ -15,6 +15,7 @@ import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepositor
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.point.service.PointService;
+import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -34,7 +35,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.COURSE_CREATE;
 
@@ -47,26 +50,43 @@ public class CourseService {
     private final S3Utils s3Utils;
     private final UserService userService;
     private final PointService pointService;
-
+    private final CourseLikeService courseLikeService;
 
     @Transactional(readOnly = true)
-    public CursorResponse<CourseSummaryResponse> getCourses(Long lastId, int size) {
+    public CursorResponse<CourseSummaryResponse> getCourses(Long userId, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findCoursesNoOffset(lastId, pageable);
-        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+
+        return getCourseSummaryResponseCursorResponse(userId, courses);
     }
 
     @Transactional(readOnly = true)
-    public CursorResponse<CourseSummaryResponse> getCourses(CourseTheme theme, Long lastId, int size) {
+    public CursorResponse<CourseSummaryResponse> getCourses(Long userId, CourseTheme theme, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findByThemeNoOffset(theme, lastId, pageable);
-        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+
+        return getCourseSummaryResponseCursorResponse(userId, courses);
+    }
+
+    private CursorResponse<CourseSummaryResponse> getCourseSummaryResponseCursorResponse(Long userId, Slice<Course> courses) {
+        List<Long> courseIds = courses.getContent().stream()
+                .map(Course::getId)
+                .toList();
+
+        Set<Long> favoriteCourseIds = (userId != null)
+                ? courseLikeService.getFavoriteCourseIds(userId, courseIds)
+                : Collections.emptySet();
+
+        return CursorUtils.toCursorResponse(courses, course ->
+                CourseSummaryResponse.of(course, favoriteCourseIds.contains(course.getId()))
+        );
     }
 
     public CursorResponse<CourseSummaryResponse> getMyCourses(Long lastId, int size, Long userId) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findMyCoursesNoOffset(userId, lastId, pageable);
-        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+
+        return getCourseSummaryResponseCursorResponse(userId, courses);
     }
 
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {
@@ -126,6 +146,7 @@ public class CourseService {
         return save;
     }
 
+    @Transactional
     public CourseRegisterResponse updateCourse(Long userId, Long courseId, UpdateCourseRequest request, List<MultipartFile> imageFiles) {
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
@@ -133,12 +154,13 @@ public class CourseService {
         boolean isOwner = userService.validateOwner(userId, course.getUserId());
         if(!isOwner) throw new BusinessException(ErrorCode.NOT_OWNER);
 
+        List<String> urlsToDelete = (request.urlsToDelete() != null) ? new ArrayList<>(request.urlsToDelete()) : new ArrayList<>();
+        urlsToDelete.forEach(url -> course.getImageUrls().remove(url));
+
         if (imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
             List<String> images = s3Utils.uploadImages(imageFiles);
             course.getImageUrls().addAll(images);
         }
-        List<String> urlsToDelete = (request.urlsToDelete() != null) ? new ArrayList<>(request.urlsToDelete()) : new ArrayList<>();
-        urlsToDelete.forEach(url -> course.getImageUrls().remove(url));
 
         try {
             updateCourseEntity(request, course);
@@ -152,12 +174,11 @@ public class CourseService {
             });
             return CourseRegisterResponse.from(course);
         } catch (Exception e) {
-            log.error("코스 업데이트 실패: {}", request.title());
+            log.error("코스 업데이트 실패: {}", e.getMessage());
             throw new BusinessException(ErrorCode.COURSE_SERVER_ERROR);
         }
     }
 
-    @Transactional
     protected void updateCourseEntity(UpdateCourseRequest request, Course course) {
         course.updateBasicInfo(CourseBasicInfo.builder()
                 .title(request.title())
@@ -171,6 +192,7 @@ public class CourseService {
         course.getDescription().update(request.content(), request.highlights());
 
         if (request.plans() != null) {
+            coursePlansRepository.deleteByCourseCustom(course);
             List<CoursePlans> coursePlans = convertToPlans(course, request.plans());
             coursePlansRepository.saveAll(coursePlans);
         }
@@ -245,6 +267,7 @@ public class CourseService {
     public CursorResponse<CourseSummaryResponse> getLikedCourse(Long userId, int size, Long lastId) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findLikedCourses(userId, null, pageable);
-        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+
+        return getCourseSummaryResponseCursorResponse(userId, courses);
     }
 }

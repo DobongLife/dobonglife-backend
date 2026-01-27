@@ -68,6 +68,9 @@ public class Promotion {
     @Column(name = "point", nullable = false)
     private Long point;
 
+    @Column(name = "total_quantity", nullable = false)
+    private Long totalQuantity;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
@@ -83,7 +86,7 @@ public class Promotion {
     @Builder
     public Promotion(PromotionType category, Place place, String title, String description, List<String> imgUrls,
                      DiscountType discountType, BigDecimal discountValue, Long minPrice,
-                     Long maxPrice, String code, Long point, LocalDate startDate,
+                     Long maxPrice, String code, Long point, Long totalQuantity, LocalDate startDate,
                      LocalDate endDate, Long validPeriod, Long businessesId) {
 
         validate(discountType, discountValue, minPrice, maxPrice, code, startDate, endDate);
@@ -99,6 +102,7 @@ public class Promotion {
         this.maxPrice = maxPrice;
         this.code = code;
         this.point = point;
+        this.totalQuantity = totalQuantity;
         this.startDate = startDate;
         this.endDate = endDate;
         this.validPeriod = validPeriod;
@@ -148,6 +152,7 @@ public class Promotion {
                 .maxPrice(dto.maxDiscountAmount() != null ? dto.maxDiscountAmount().longValue() : null)
                 .code(CouponCodeGenerator.generate())
                 .point(0L)
+                .totalQuantity(dto.totalQuantity())
                 .startDate(dto.issueStartDate())
                 .endDate(dto.issueEndDate())
                 .validPeriod(dto.validityDays() != null ? dto.validityDays().longValue() : null)

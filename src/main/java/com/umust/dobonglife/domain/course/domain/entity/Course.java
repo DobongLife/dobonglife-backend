@@ -111,6 +111,10 @@ public class Course {
         return basicInfo.getTitle();
     }
 
+    public String getSubTitle() {
+        return basicInfo.getSubTitle();
+    }
+
     public CourseLevel getLevel() {
         return basicInfo.getLevel();
     }
