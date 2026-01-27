@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.course.service;
 import com.umust.dobonglife.domain.course.controller.dto.request.CoursePlanRequest;
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDeleteResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseMyResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
@@ -82,11 +83,13 @@ public class CourseService {
         );
     }
 
-    public CursorResponse<CourseSummaryResponse> getMyCourses(Long lastId, int size, Long userId) {
+    public CourseMyResponse getMyCourses(Long lastId, int size, Long userId) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findMyCoursesNoOffset(userId, lastId, pageable);
 
-        return getCourseSummaryResponseCursorResponse(userId, courses);
+        Long totalCount = courseRepository.countByUserId(userId);
+        CursorResponse<CourseSummaryResponse> course = getCourseSummaryResponseCursorResponse(userId, courses);
+        return CourseMyResponse.from(totalCount, course);
     }
 
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {
