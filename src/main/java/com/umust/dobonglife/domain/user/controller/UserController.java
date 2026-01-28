@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.user.controller;
 
+import com.umust.dobonglife.domain.user.controller.dto.request.MailCodeCheckRequest;
+import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.service.MailService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
@@ -56,8 +58,8 @@ public class UserController {
             description = "메일로 인증번호를 전송합니다. 액세스 토큰이 필요합니다."
     )
     @PostMapping("/mail/send")
-    public BaseResponse<Void> sendAuthCodeMail(@RequestBody MailRequest mailRequestDTO) {
-        mailService.sendMail(mailRequestDTO);
+    public BaseResponse<Void> sendAuthCodeMail(@RequestBody MailRequest request) {
+        mailService.sendMail(request);
         return BaseResponse.ok(null);
     }
 
@@ -66,8 +68,8 @@ public class UserController {
             description = "메일로 받은 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
     )
     @PostMapping("/mail/check")
-    public BaseResponse<Void> checkAuthCode(@RequestBody MailCodeCheckRequest checkCodeRequestDTO) {
-        mailService.checkAuthCode(checkCodeRequestDTO);
+    public BaseResponse<Void> checkAuthCode(@RequestBody MailCodeCheckRequest request) {
+        mailService.checkAuthCode(request);
         return BaseResponse.ok(null);
     }
 }

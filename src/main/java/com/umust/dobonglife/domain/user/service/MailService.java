@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.user.service;
 
+import com.umust.dobonglife.domain.user.controller.dto.request.MailCodeCheckRequest;
+import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -16,6 +18,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Random;
 
@@ -39,7 +42,7 @@ public class MailService {
 
     private final RedisService redisService;
 
-    public void sendMail(MailRequestDTO request) {
+    public void sendMail(MailRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
@@ -57,20 +60,15 @@ public class MailService {
         }
     }
 
-    // 인증 번호 구현하는 메서드
+    // 숫자 6자리로 인증 번호 구현하는 메서드
     public String createCode() {
-        Random random = new Random();
-        StringBuffer key = new StringBuffer();
+        SecureRandom random = new SecureRandom();
+        StringBuilder key = new StringBuilder();
 
-        for (int i = 0; i < 8; i++) {
-            int index = random.nextInt(4);
-
-            switch (index) {
-                case 0: key.append((char) ((int) random.nextInt(26) + 97)); break;
-                case 1: key.append((char) ((int) random.nextInt(26) + 65)); break;
-                default: key.append(random.nextInt(9));
-            }
+        for (int i = 0; i < 6; i++) {
+            key.append(random.nextInt(10));
         }
+
         return key.toString();
     }
 
@@ -89,7 +87,7 @@ public class MailService {
         }
     }
 
-    public void checkAuthCode(CodeCheckRequestDTO request) {
+    public void checkAuthCode(MailCodeCheckRequest request) {
         String storedCode = getStoredCode(request.getEmail());
         if (storedCode == null) {
             throw new BusinessException(ErrorCode.EXPIRED_EMAIL_CODE);

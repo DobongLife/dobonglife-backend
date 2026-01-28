@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MailRequest {
-    @Schema(description = "이메일", example = "dobonlife@gmail.com")
+    @Schema(description = "이메일", example = "dobonglife@gmail.com")
     @NotNull
     private String email;
 }
