@@ -21,4 +21,10 @@ public class BusinessController {
         businessService.registerBusiness(request, userId);
         return BaseResponse.ok(null);
     }
+
+    @GetMapping("{number}")
+    public BaseResponse<Void> checkBusiness(@PathVariable String number) {
+        businessService.checkBusinessStatus(number);
+        return BaseResponse.ok(null);
+    }
 }
