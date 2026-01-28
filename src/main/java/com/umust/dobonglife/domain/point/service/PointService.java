@@ -43,28 +43,13 @@ public class PointService {
     }
 
     public Long getUserPoint(Long userId) {
-        Long amount = pointRepository.sumAmountByUserId(userId);
-        return (amount != null) ? amount : 0L;
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        return user.getBalance();
     }
 
     private boolean isValid(Long point) {
         return point != null && point >= 0;
-    }
-
-    public Long getTotalEarnedPoints(Long userId) {
-        return pointRepository.sumPositiveAmountByUserId(userId);
-    }
-
-    public List<PointHistoryDomainDto> getRecentHistories(Long userId, int limit) {
-        List<Point> points = pointRepository.findTopNByUserId(userId, PageRequest.of(0, limit));
-
-        return points.stream()
-                .map(point -> new PointHistoryDomainDto(
-                        point.getTitle(),
-                        point.getAmount(),
-                        point.getCreatedAt()
-                ))
-                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -83,28 +68,37 @@ public class PointService {
     }
 
     @Transactional
-    public void earnPoint(User user, String title, Long amount) {
+    public void earnPoint(Long userId, String title, Long amount) {
+        // 비관적 락 걸고, balance 가산
+        User user = userRepository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        user.earnPoint(amount);
+
         Point point = Point.builder()
                 .user(user)
                 .title(title)
                 .amount(amount)
                 .isUsed(false)
+                .afterBalance(user.getBalance())
                 .build();
-        user.earnPoint(amount);
-        point.setAfterBalance(userService.getUserTotalPoint(user.getId()));
 
         pointRepository.save(point);
     }
 
     @Transactional
-    public void usePoint(String title, Long point, User user) {
+    public void usePoint(Long userId, String title, Long pointAmount) {
+        // 비관적 걸고, balance 차감
+        User user = userRepository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        user.usePoint(pointAmount);
+
         Point newPoint = Point.builder()
                 .user(user)
-                .amount(-point)
+                .amount(-pointAmount)
                 .isUsed(true)
-                .title(title).build();
-        user.usePoint(point);
-        newPoint.setAfterBalance(userService.getUserTotalPoint(user.getId()));
+                .title(title)
+                .afterBalance(user.getBalance())
+                .build();
 
         pointRepository.save(newPoint);
     }

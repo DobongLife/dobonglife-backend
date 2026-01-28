@@ -124,7 +124,7 @@ public class MailService {
     public String setContext(String authCode) {
         Context context = new Context();
         context.setVariable("code", authCode);
-        return templateEngine.process("email.html", context);
+        return templateEngine.process("AuthCode-email.html", context);
     }
 
     // thymeleaf를 통한 html 적용

@@ -88,7 +88,7 @@ public class ReviewService {
                 .imageUrls(imageUrls)
                 .build();
         reviewRepository.save(review);
-        pointService.earnPoint(userService.findById(userId), REVIEW_CREATE.getTitle(), REVIEW_CREATE.getPoint());
+        pointService.earnPoint(userId, REVIEW_CREATE.getTitle(), REVIEW_CREATE.getPoint());
 
         return ReviewResponse.from(review);
     }
