@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.user.controller;
 
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
+import com.umust.dobonglife.domain.user.service.MailService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +25,8 @@ import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 public class UserController {
 
     private final UserService userService;
+    private final MailService mailService;
+
     @Operation(summary = "회원 가입", description = "회원 가입을 합니다." +
             " role은 MEMBER, MANAGER, ADMIN 3개 입니다.")
     @ApiResponse(
@@ -45,6 +48,26 @@ public class UserController {
     public BaseResponse<Void> deleteAccount(HttpServletRequest request,
                                             @CurrentUserId Long userId) {
         userService.deleteAccount(request, userId);
+        return BaseResponse.ok(null);
+    }
+
+    @Operation(
+            summary = "인증번호 전송",
+            description = "메일로 인증번호를 전송합니다. 액세스 토큰이 필요합니다."
+    )
+    @PostMapping("/mail/send")
+    public BaseResponse<Void> sendAuthCodeMail(@RequestBody MailRequest mailRequestDTO) {
+        mailService.sendMail(mailRequestDTO);
+        return BaseResponse.ok(null);
+    }
+
+    @Operation(
+            summary = "인증번호 검증",
+            description = "메일로 받은 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
+    )
+    @PostMapping("/mail/check")
+    public BaseResponse<Void> checkAuthCode(@RequestBody MailCodeCheckRequest checkCodeRequestDTO) {
+        mailService.checkAuthCode(checkCodeRequestDTO);
         return BaseResponse.ok(null);
     }
 }

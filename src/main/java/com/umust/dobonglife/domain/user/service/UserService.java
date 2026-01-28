@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.service.MailService;
 
 @Slf4j
 @Service
@@ -32,7 +33,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
-    private final MailServie mailServie;
+    private final MailService mailService;
 
     @Transactional
     public void signUp(SignupRequest request) {

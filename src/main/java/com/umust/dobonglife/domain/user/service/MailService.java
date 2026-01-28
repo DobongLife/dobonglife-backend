@@ -2,9 +2,11 @@ package com.umust.dobonglife.domain.user.service;
 
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.external.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -39,7 +41,7 @@ public class MailService {
 
     public void sendMail(MailRequestDTO request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new CustomException(ErrorCode.USER_DUPLICATE_EMAIL);
+            throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
 
         String authCode = createCode();
@@ -51,7 +53,7 @@ public class MailService {
             String key = EMAIL_KEY_PREFIX + request.getEmail();
             redisService.setValues(key, authCode, Duration.ofMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
         } catch (MailException e) {  //JavaMailSender의 전송과정에서 오류 발생 시
-            throw new AuthException(ErrorCode.MAIL_SEND_FAILED);
+            throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
         }
     }
 
@@ -83,14 +85,14 @@ public class MailService {
 
             return mimeMessage;
         } catch (MessagingException e) {  // SMTP 전송 오류, 포맷 오류 발생 시
-            throw new AuthException(ErrorCode.MAIL_SEND_FAILED);
+            throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
         }
     }
 
     public void checkAuthCode(CodeCheckRequestDTO request) {
         String storedCode = getStoredCode(request.getEmail());
         if (storedCode == null) {
-            throw new AuthException(ErrorCode.EXPIRED_EMAIL_CODE);
+            throw new BusinessException(ErrorCode.EXPIRED_EMAIL_CODE);
         }
 
         // 인증 번호가 이미 인증된 상태인 경우 그냥 리턴
@@ -98,7 +100,7 @@ public class MailService {
 
         // 입력 코드와 Redis 코드가 다르면 에러
         if (!String.valueOf(request.getAuthCode()).equals(storedCode)) {
-            throw new AuthException(ErrorCode.INVALID_EMAIL_CODE);
+            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
         // 인증 성공: 값 변경 + TTL 재설정
         redisService.setValues(EMAIL_KEY_PREFIX + request.getEmail(), "VERIFIED", Duration.ofSeconds(VERIFIED_TTL_SECONDS));

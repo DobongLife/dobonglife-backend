@@ -112,6 +112,7 @@ public class PointService {
                 .amount(amount)
                 .isUsed(false)
                 .build();
+        user.
 
         pointRepository.save(point);
     }
