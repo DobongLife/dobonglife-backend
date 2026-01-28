@@ -83,29 +83,6 @@ public class PointService {
     }
 
     @Transactional
-    public void usePoint(Long userId, Long pointId) {
-        Point point = pointRepository.findById(pointId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.POINT_NOT_FOUND));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        if (point.isUsed()) {
-            throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
-        }
-
-        long balanceUpdated = userRepository.decreaseBalance(userId, point.getAmount());
-        if (balanceUpdated == 0) {
-            throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
-        }
-
-        long afterBalance = userRepository.findBalanceById(userId);
-        int pointBalanceUpdated = pointRepository.markUsedWithAfterBalance(userId, pointId, afterBalance);
-        if (pointBalanceUpdated == 0) {
-            throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
-        }
-    }
-
-    @Transactional
     public void earnPoint(User user, String title, Long amount) {
         Point point = Point.builder()
                 .user(user)
@@ -114,6 +91,7 @@ public class PointService {
                 .isUsed(false)
                 .build();
         user.earnPoint(amount);
+        point.setAfterBalance(userService.getUserTotalPoint(user.getId()));
 
         pointRepository.save(point);
     }
@@ -126,6 +104,7 @@ public class PointService {
                 .isUsed(true)
                 .title(title).build();
         user.usePoint(point);
+        newPoint.setAfterBalance(userService.getUserTotalPoint(user.getId()));
 
         pointRepository.save(newPoint);
     }

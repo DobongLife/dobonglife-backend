@@ -63,10 +63,6 @@ public class User extends BaseEntity {
     @Column(nullable = true)
     private LocalDateTime blockedAt;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean isEmailAuthenticated = false;
-
     public void earnPoint(long amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("적립 금액은 0보다 커야 합니다.");

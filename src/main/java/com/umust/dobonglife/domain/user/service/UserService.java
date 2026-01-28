@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
@@ -49,7 +50,6 @@ public class UserService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .provider(Provider.LOCAL)
                 .role(Role.fromValue(request.getRole()))
-                .isEmailAuthenticated(true)
                 .build();
         userRepository.save(user);
     }
@@ -70,12 +70,33 @@ public class UserService {
         SecurityContextHolder.clearContext();
     }
 
+    @Transactional
+    public void sendNewPassword(MailRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
+        String newPassword = mailService.sendPasswordMail(request);
+        user.setPassword(passwordEncoder.encode(newPassword));
+    }
+
+    @Transactional
+    public void updateMyPassword(Long userId, PasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.getPrePassword(), user.getPassword())) {
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+
+
     public boolean validateOwner(Long userId, Long ownerId) {
         if (!userId.equals(ownerId)) {
             return false;
         }
         return true;
     }
+
     @Transactional
     public User findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {
         return userRepository.findByProviderAndProviderId(provider, providerUserId)

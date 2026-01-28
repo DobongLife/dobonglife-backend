@@ -58,8 +58,8 @@ public class CourseController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping("/{courseId}")
-    public BaseResponse<CourseDetailResponse> getCourse(@CurrentUserId Long userId, @PathVariable("courseId") Long courseId){
-        CourseDetailResponse response = courseReviewService.getCourse(userId, courseId);
+    public BaseResponse<CourseDetailResponse> getCourse(@CurrentUserId Long userId, @PathVariable("courseId") Long courseId, @RequestParam(required = false) Long lastId){
+        CourseDetailResponse response = courseReviewService.getCourse(userId, courseId, lastId);
         return BaseResponse.ok(response);
     }
 

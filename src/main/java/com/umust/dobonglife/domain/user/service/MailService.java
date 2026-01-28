@@ -60,6 +60,17 @@ public class MailService {
         }
     }
 
+    public String sendPasswordMail(MailRequest request) {
+        String password = createNewPassword();
+        MimeMessage mimeMessage = createPasswordEmailMessage(request.getEmail(), password);
+        try {
+            javaMailSender.send(mimeMessage);
+        } catch (MailException e) {  //JavaMailSender의 전송과정에서 오류 발생 시
+            throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
+        }
+        return password;
+    }
+
     // 숫자 6자리로 인증 번호 구현하는 메서드
     public String createCode() {
         SecureRandom random = new SecureRandom();
@@ -78,7 +89,7 @@ public class MailService {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
 
             mimeMessageHelper.setTo(recipient);
-            mimeMessageHelper.setSubject("[BARO] 이메일 인증을 위한 인증 코드 발송");
+            mimeMessageHelper.setSubject("[도봉라이프] 이메일 인증을 위한 인증 코드 발송");
             mimeMessageHelper.setText(setContext(authCode), true);
 
             return mimeMessage;
@@ -114,6 +125,45 @@ public class MailService {
         Context context = new Context();
         context.setVariable("code", authCode);
         return templateEngine.process("email.html", context);
+    }
+
+    // thymeleaf를 통한 html 적용
+    public String setPasswordContext(String password) {
+        Context context = new Context();
+        context.setVariable("password", password);
+        return templateEngine.process("Password-email.html", context);
+    }
+
+    // 임시 비밀번호를 구현하는 메서드
+    public String createNewPassword() {
+        Random random = new Random();
+        StringBuffer key = new StringBuffer();
+
+        for (int i = 0; i < 8; i++) {
+            int index = random.nextInt(4);
+
+            switch (index) {
+                case 0: key.append((char) ((int) random.nextInt(26) + 97)); break;
+                case 1: key.append((char) ((int) random.nextInt(26) + 65)); break;
+                default: key.append(random.nextInt(9));
+            }
+        }
+        return key.toString();
+    }
+
+    private MimeMessage createPasswordEmailMessage(String recipient, String password) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+
+            mimeMessageHelper.setTo(recipient);
+            mimeMessageHelper.setSubject("[도봉라이프] 임시 비밀번호 발송");
+            mimeMessageHelper.setText(setPasswordContext(password), true);
+
+            return mimeMessage;
+        } catch (MessagingException e) {  // SMTP 전송 오류, 포맷 오류 발생 시
+            throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
+        }
     }
 }
 

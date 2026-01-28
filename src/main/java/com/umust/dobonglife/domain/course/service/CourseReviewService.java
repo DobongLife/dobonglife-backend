@@ -29,7 +29,7 @@ public class CourseReviewService {
     private final CoursePlansRepository coursePlansRepository;
 
     @Transactional(readOnly = true)
-    public CourseDetailResponse getCourse(Long userId, Long courseId) {
+    public CourseDetailResponse getCourse(Long userId, Long courseId, Long lastId) {
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
 
@@ -39,7 +39,7 @@ public class CourseReviewService {
         List<CoursePlans> plans = coursePlansRepository
                 .findByCourseIdOrderByDateTime(courseId);
 
-        CursorResponse<ReviewSummaryResponse> reviews = reviewService.getCourseReviews(courseId, userId, 10L, 3);
+        CursorResponse<ReviewSummaryResponse> reviews = reviewService.getCourseReviews(courseId, userId, lastId, 3);
         return CourseDetailResponse.from(course, plans, reviews, isRemoved, isFavorite);
     }
 }
