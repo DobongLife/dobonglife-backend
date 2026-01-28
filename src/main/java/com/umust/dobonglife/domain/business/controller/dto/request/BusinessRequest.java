@@ -12,12 +12,12 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BusinessRequest {
 
-    @NotNull(message = "종료 시간은 필수입니다")
-    @Schema(description = "종료 시간", example = "2025-01-10T16:00:00")
+    @NotNull(message = "상호명은 필수입니다")
+    @Schema(description = "상호명", example = "(주)유머스트알엔디")
     private String businessName;
 
-    @NotNull(message = "종료 시간은 필수입니다")
-    @Schema(description = "종료 시간", example = "2025-01-10T16:00:00")
+    @NotNull(message = "주소은 필수입니다")
+    @Schema(description = "주소", example = "서울특별시 도봉구 마들로")
     private String businessAddress;
 
     private String introduction;
@@ -30,8 +30,12 @@ public class BusinessRequest {
 
     private String operatingHour;
 
+    @NotNull(message = "대표자 이름은 필수입니다")
+    @Schema(description = "대표자 이름", example = "이강파")
     private String managerName;
 
+    @NotNull(message = "주소은 필수입니다")
+    @Schema(description = "주소", example = "서울특별시 도봉구 마들로")
     private String businessNumber;
 
     private String businessCategory;

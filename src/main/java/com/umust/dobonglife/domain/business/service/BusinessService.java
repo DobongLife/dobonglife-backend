@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
@@ -38,7 +39,7 @@ public class BusinessService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        checkBusinessStatus(request.getBusinessNumber());
+        // checkBusinessStatus(request.getBusinessNumber());
 
         Business business = Business.builder()
                 .name(request.getBusinessName())
@@ -57,20 +58,19 @@ public class BusinessService {
                 .businessNumber(request.getBusinessNumber())
                 .build();
 
-
-
-
-
-
         businessRepository.save(business);
     }
 
-    @Transactional(readOnly = true)
-    public void checkBusinessStatus(String businessNumber) {
+    @Transactional
+    public void checkBusinessStatus(String businessNumber, Long userId) {
 
         Map<String, Object> response = webClientService.getCompanyStatus(businessNumber);
 
         String statusCode = parser.extractStatusCode(response);
+
+        User me = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        me.setRole(Role.MANAGER);
 
         if (!VALID_CODE.equals(statusCode)) {
             throw new IllegalStateException("유효하지 않은 사업자 번호입니다.");

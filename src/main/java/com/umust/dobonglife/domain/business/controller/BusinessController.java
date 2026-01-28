@@ -22,9 +22,10 @@ public class BusinessController {
         return BaseResponse.ok(null);
     }
 
-    @GetMapping("{number}")
-    public BaseResponse<Void> checkBusiness(@PathVariable String number) {
-        businessService.checkBusinessStatus(number);
+    @PostMapping("/{number}")
+    public BaseResponse<Void> checkBusiness(@CurrentUserId Long userId,
+            @PathVariable String number) {
+        businessService.checkBusinessStatus(number, userId);
         return BaseResponse.ok(null);
     }
 }

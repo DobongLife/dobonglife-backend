@@ -32,11 +32,15 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
+    private final MailServie mailServie;
 
     @Transactional
     public void signUp(SignupRequest request) {
         if (!userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isEmpty()) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
+        }
+        if (!"VERIFIED".equals(mailService.getStoredCode(request.getEmail()))){
+            throw new BusinessException(ErrorCode.AUTHCODE_UNAUTHORIZED);
         }
         User user = User.builder()
                 .email(request.getEmail())
@@ -44,6 +48,7 @@ public class UserService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .provider(Provider.LOCAL)
                 .role(Role.fromValue(request.getRole()))
+                .isEmailAuthenticated(true)
                 .build();
         userRepository.save(user);
     }

@@ -62,4 +62,8 @@ public class User extends BaseEntity {
 
     @Column(nullable = true)
     private LocalDateTime blockedAt;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isEmailAuthenticated = false;
 }
