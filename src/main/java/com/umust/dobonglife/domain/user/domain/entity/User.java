@@ -66,4 +66,21 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private boolean isEmailAuthenticated = false;
+
+    public void earnPoint(long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("적립 금액은 0보다 커야 합니다.");
+        }
+        this.balance += amount;
+    }
+
+    public void usePoint(long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("사용 금액은 0보다 커야 합니다.");
+        }
+        if (this.balance < amount) {
+            throw new IllegalStateException("잔액이 부족합니다.");
+        }
+        this.balance -= amount;
+    }
 }

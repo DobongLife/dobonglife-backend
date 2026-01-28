@@ -75,6 +75,7 @@ public class PointService {
         return new MyPointsResponse(userTotalPoint, pointsByCursor);
     }
 
+    @Transactional(readOnly = true)
     public SliceResponse<PointResponse> getPointResponse(Long userId, int size, Long lastId, String order) {
         SortOrder parsedOrder = SortOrder.from(order);
         SliceResponse<PointResponse> pointsByCursor = pointRepository.findPointsByCursor(userId, size, lastId, parsedOrder);
@@ -112,7 +113,7 @@ public class PointService {
                 .amount(amount)
                 .isUsed(false)
                 .build();
-        user.
+        user.earnPoint(amount);
 
         pointRepository.save(point);
     }
@@ -124,6 +125,7 @@ public class PointService {
                 .amount(-point)
                 .isUsed(true)
                 .title(title).build();
+        user.usePoint(point);
 
         pointRepository.save(newPoint);
     }
