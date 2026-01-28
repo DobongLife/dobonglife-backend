@@ -78,35 +78,17 @@ public class PlaceController {
         return BaseResponse.ok(placeService.getAllPlace(userId));
     }
 
-    //    @Operation(summary = "장소 등록", description = "장소 정보를 입력하여 등록합니다.")
-//    @ApiResponse(
-//            responseCode = "200",
-//            description = "장소 등록에 성공하였습니다."
-//    )
-//    @PostMapping
-//    public BaseResponse<Void> registerPlace(@RequestPart("request") @Valid PlaceRegisterRequest request,
-//                                            @RequestPart("images") List<MultipartFile> images){
-//        placeService.registerPlace(request, images);
-//        return BaseResponse.ok(null);
-//    }
-
-//    @Operation(summary = "주간 테마별 홈 화면 조회", description = "주간 테마별 홈 화면을 조회합니다.")
-//    @ApiResponse(
-//            responseCode = "200",
-//            description = "주간 테마별 홈 화면 조회에 성공하였습니다."
-//    )
-//    @GetMapping("/home")
-//    public BaseResponse<PlaceAndCourseListResponse> getHomeByTheme(@RequestBody ThemeRequest request){
-//        return BaseResponse.ok(placeService.getPlaceAndCourseByTheme(request));
-//    }
-
-//    @Operation(summary = "주간 테마별 장소 조회", description = "주간 테마별 장소를 조회합니다.")
-//    @ApiResponse(
-//            responseCode = "200",
-//            description = "주간 테마별 장소 조회에 성공하였습니다."
-//    )
-//    @GetMapping("/theme")
-//    public BaseResponse<PlaceSummaryListResponse> getPlaceByTheme(@RequestBody ThemeRequest request){
-//        return BaseResponse.ok(placeService.getPlaceByTheme(request));
-//    }
+    @Operation(summary = "장소 등록", description = "장소 정보를 입력하여 등록합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "장소 등록에 성공하였습니다."
+    )
+    @PostMapping("/{address}")
+    public BaseResponse<Void> registerPlace(@PathVariable String address
+                                            //@RequestPart("request") @Valid PlaceRegisterRequest request
+                                            //@RequestPart("images") List<MultipartFile> images
+                                            ) throws Exception {
+        placeService.registerPlace(address);
+        return BaseResponse.ok(null);
+    }
 }

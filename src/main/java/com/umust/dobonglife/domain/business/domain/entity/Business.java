@@ -26,12 +26,6 @@ public class Business extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, length = 100)
-    private String name;
-
-    @Column(nullable = false)
-    private String address;
-
-    @Column(nullable = false, length = 100)
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -48,9 +42,6 @@ public class Business extends BaseEntity {
 
     @Column(nullable = false)
     private String managerName;
-
-    @Column(nullable = false)
-    private String introduction;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "business_catergory", nullable = false)

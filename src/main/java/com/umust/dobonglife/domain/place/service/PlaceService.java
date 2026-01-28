@@ -16,6 +16,8 @@ import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
+import com.umust.dobonglife.global.common.webclient.business.dto.response.GeoPointResponse;
+import com.umust.dobonglife.global.common.webclient.service.WebClientService;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.external.s3.S3Utils;
@@ -31,6 +33,7 @@ import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -44,22 +47,38 @@ public class PlaceService {
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
     private final CourseService courseService;
+    private final WebClientService webClientService;
+
+//    @Transactional
+//    public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
+//
+//        List<String> imagesUrl = s3Utils.uploadImages(images);
+//
+//        Place place = Place.builder()
+//                .name(request.getPlaceName())
+//                .content(request.getContent())
+//                .amenities(request.getAmenities().stream()
+//                        .map(Amenity::toEnum)
+//                        .toList())
+//                .address(request.getAddress())
+//                .contact(request.getContact())
+//                .operatingHour(request.getOperatingHour())
+//                .imageUrls(imagesUrl)
+//                .build();
+//
+//        placeRepository.save(place);
+//    }
 
     @Transactional
-    public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
+    public void registerPlace(String address){
 
-        List<String> imagesUrl = s3Utils.uploadImages(images);
+        GeoPointResponse point = webClientService.geocodePoint(address)
+                .orElseThrow(() -> new IllegalArgumentException("좌표 변환 실패"));
 
         Place place = Place.builder()
-                .name(request.getPlaceName())
-                .content(request.getContent())
-                .amenities(request.getAmenities().stream()
-                        .map(Amenity::toEnum)
-                        .toList())
-                .address(request.getAddress())
-                .contact(request.getContact())
-                .operatingHour(request.getOperatingHour())
-                .imageUrls(imagesUrl)
+                .address(address)
+                .longitude(point.longitude()) // 경도
+                .latitude(point.latitude())  // 위도
                 .build();
 
         placeRepository.save(place);

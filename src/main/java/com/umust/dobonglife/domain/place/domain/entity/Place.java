@@ -45,7 +45,7 @@ public class Place extends BaseEntity {
     @ElementCollection
     @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
     @Column(name = "image_url", columnDefinition = "TEXT")
-    private List<String> imageUrls = new ArrayList<>();
+    private List<String> imageUrls;
 
     @Column(name = "operating_hour", nullable = false)
     private String operatingHour;
@@ -68,8 +68,7 @@ public class Place extends BaseEntity {
     )
     @Column(name = "theme")
     @Enumerated(EnumType.STRING)
-    private List<CourseTheme> themes = new ArrayList<>();
-
+    private List<CourseTheme> themes;
     @Column(name = "latitude", nullable = true)
     private Double latitude;
 

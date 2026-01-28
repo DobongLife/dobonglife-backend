@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
@@ -31,6 +32,7 @@ public class BusinessService {
     private final WebClientService webClientService;
     private final BusinessStatusParser parser;
     private final BusinessRepository businessRepository;
+    private final PlaceRepository placeRepository;
 
     private static final String VALID_CODE = "01";
 
@@ -39,16 +41,12 @@ public class BusinessService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // checkBusinessStatus(request.getBusinessNumber());
+        checkBusinessStatus(request.getBusinessNumber(), userId);
 
         Business business = Business.builder()
-                .name(request.getBusinessName())
-                .address(request.getBusinessAddress())
-                .introduction(request.getIntroduction())
                 .phoneNumber(request.getPhoneNumber())
                 .managerName(request.getManagerName())
                 .email(request.getEmail())
-                .link(request.getLink())
                 .operatingHour(request.getOperatingHour())
                 .user(user)
                 .businessAmenity(request.getBusinessService().stream()
@@ -59,6 +57,7 @@ public class BusinessService {
                 .build();
 
         businessRepository.save(business);
+        //placeRepository.save(place);
     }
 
     @Transactional

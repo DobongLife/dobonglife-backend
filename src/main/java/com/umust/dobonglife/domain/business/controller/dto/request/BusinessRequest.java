@@ -12,6 +12,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BusinessRequest {
 
+    @Schema(description = "장소 아이디", example = "Optional입니다.")
+    private Long placeId;
+
     @NotNull(message = "사업장명은 필수입니다")
     @Schema(description = "사업장명", example = "(주)유머스트알엔디")
     private String businessName;
