@@ -4,8 +4,12 @@ import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
 
 import com.umust.dobonglife.global.common.model.BaseEntity;
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,8 +19,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
+@Getter @Setter
+@SQLDelete(sql = "UPDATE users SET status = 'INACTIVE' WHERE user_id = ?")
+@SQLRestriction("status IN ('ACTIVE')")
 public class User extends BaseEntity {
 
     private static final int PENALTY_THRESHOLD = 3;
@@ -66,10 +71,6 @@ public class User extends BaseEntity {
     @Column(nullable = true)
     private LocalDateTime blockedAt;
 
-    public void updatePoint(Long point) {
-        balance += point;
-    }
-
     public void handleDeletion() {
         this.deleteCount++;
         if (this.deleteCount >= PENALTY_THRESHOLD) {
@@ -105,4 +106,20 @@ public class User extends BaseEntity {
         this.blockedAt = null;
     }
 
+    public void earnPoint(long amount) {
+        if (amount <= 0) {
+            throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
+        }
+        this.balance += amount;
+    }
+
+    public void usePoint(long amount) {
+        if (amount <= 0) {
+            throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
+        }
+        if (this.balance < amount) {
+            throw new BusinessException(ErrorCode.INVALID_POINT);
+        }
+        this.balance -= amount;
+    }
 }

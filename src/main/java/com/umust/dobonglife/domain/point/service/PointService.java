@@ -43,28 +43,13 @@ public class PointService {
     }
 
     public Long getUserPoint(Long userId) {
-        Long amount = pointRepository.sumAmountByUserId(userId);
-        return (amount != null) ? amount : 0L;
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        return user.getBalance();
     }
 
     private boolean isValid(Long point) {
         return point != null && point >= 0;
-    }
-
-    public Long getTotalEarnedPoints(Long userId) {
-        return pointRepository.sumPositiveAmountByUserId(userId);
-    }
-
-    public List<PointHistoryDomainDto> getRecentHistories(Long userId, int limit) {
-        List<Point> points = pointRepository.findTopNByUserId(userId, PageRequest.of(0, limit));
-
-        return points.stream()
-                .map(point -> new PointHistoryDomainDto(
-                        point.getTitle(),
-                        point.getAmount(),
-                        point.getCreatedAt()
-                ))
-                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -75,6 +60,7 @@ public class PointService {
         return new MyPointsResponse(userTotalPoint, pointsByCursor);
     }
 
+    @Transactional(readOnly = true)
     public SliceResponse<PointResponse> getPointResponse(Long userId, int size, Long lastId, String order) {
         SortOrder parsedOrder = SortOrder.from(order);
         SliceResponse<PointResponse> pointsByCursor = pointRepository.findPointsByCursor(userId, size, lastId, parsedOrder);
@@ -82,47 +68,37 @@ public class PointService {
     }
 
     @Transactional
-    public void usePoint(Long userId, Long pointId) {
-        Point point = pointRepository.findById(pointId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.POINT_NOT_FOUND));
-        User user = userRepository.findById(userId)
+    public void earnPoint(Long userId, String title, Long amount) {
+        // 비관적 락 걸고, balance 가산
+        User user = userRepository.findByIdForUpdate(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        user.earnPoint(amount);
 
-        if (point.isUsed()) {
-            throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
-        }
-
-        long balanceUpdated = userRepository.decreaseBalance(userId, point.getAmount());
-        if (balanceUpdated == 0) {
-            throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
-        }
-
-        long afterBalance = userRepository.findBalanceById(userId);
-        int pointBalanceUpdated = pointRepository.markUsedWithAfterBalance(userId, pointId, afterBalance);
-        if (pointBalanceUpdated == 0) {
-            throw new BusinessException(ErrorCode.POINT_ALREADY_USED);
-        }
-    }
-
-    @Transactional
-    public void earnPoint(User user, String title, Long amount) {
         Point point = Point.builder()
                 .user(user)
                 .title(title)
                 .amount(amount)
                 .isUsed(false)
+                .afterBalance(user.getBalance())
                 .build();
 
         pointRepository.save(point);
     }
 
     @Transactional
-    public void usePoint(String title, Long point, User user) {
+    public void usePoint(Long userId, String title, Long pointAmount) {
+        // 비관적 걸고, balance 차감
+        User user = userRepository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        user.usePoint(pointAmount);
+
         Point newPoint = Point.builder()
                 .user(user)
-                .amount(-point)
+                .amount(-pointAmount)
                 .isUsed(true)
-                .title(title).build();
+                .title(title)
+                .afterBalance(user.getBalance())
+                .build();
 
         pointRepository.save(newPoint);
     }

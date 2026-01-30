@@ -1,11 +1,15 @@
 package com.umust.dobonglife.domain.business.service;
 
 
-import com.umust.dobonglife.domain.business.domain.constant.BusinessCategory;
+import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
+import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
+import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
+import com.umust.dobonglife.domain.place.service.PlaceService;
+import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
@@ -17,9 +21,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
-import com.umust.dobonglife.domain.business.domain.constant.BusinessAmenity;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -30,42 +35,38 @@ public class BusinessService {
     private final WebClientService webClientService;
     private final BusinessStatusParser parser;
     private final BusinessRepository businessRepository;
+    private final PlaceRepository placeRepository;
 
     private static final String VALID_CODE = "01";
+    private final PlaceService placeService;
 
     @Transactional
-    public void registerBusiness(BusinessRequest request, Long userId) {
+    public void registerBusiness(BusinessRequest request, Long userId, List<MultipartFile> imageFiles) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         checkBusinessStatus(request.getBusinessNumber());
 
+        Long placeId = request.getPlaceId();
+        if(placeId == null) {
+            placeId = placeService.createPlaceForBusiness(request, imageFiles);
+        }
+
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PLACE_NOT_FOUND));
+
         Business business = Business.builder()
-                .name(request.getBusinessName())
-                .address(request.getBusinessAddress())
-                .introduction(request.getIntroduction())
-                .phoneNumber(request.getPhoneNumber())
-                .managerName(request.getManagerName())
-                .email(request.getEmail())
-                .link(request.getLink())
-                .operatingHour(request.getOperatingHour())
-                .user(user)
-                .businessAmenity(request.getBusinessService().stream()
-                        .map(BusinessAmenity::toEnum)
-                        .toList())
-                .businessCategory(BusinessCategory.toEnum(request.getBusinessCategory()))
                 .businessNumber(request.getBusinessNumber())
+                .email(request.getEmail())
+                .managerName(request.getManagerName())
+                .place(place)
+                .user(user)
                 .build();
-
-
-
-
-
-
+        user.setRole(Role.MANAGER);
         businessRepository.save(business);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void checkBusinessStatus(String businessNumber) {
 
         Map<String, Object> response = webClientService.getCompanyStatus(businessNumber);
@@ -88,5 +89,40 @@ public class BusinessService {
         }
 
         return business.getPlace().getId();
+    }
+
+    @Transactional(readOnly = true)
+    public BusinessResponse getBusinessResponse(Long businessId) {
+        Business business = businessRepository.findById(businessId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
+        return BusinessResponse.from(business);
+    }
+
+    @Transactional
+    public BusinessResponse updateBusiness(Long userId, Long businessId, BusinessRequest request) {
+        Business business = businessRepository.findById(businessId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
+
+        // 소유자 검증
+        if (business.getUser() == null || !business.getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.NOT_BUSINESS_OWNER);
+        }
+
+        // Business 필드 업데이트
+        business.setBusinessNumber(request.getBusinessNumber());
+        business.setEmail(request.getEmail());
+        business.setManagerName(request.getManagerName());
+
+        // Place 업데이트/교체
+        Place updatedPlace = placeService.resolvePlaceForUpdate(business, request);
+        business.setPlace(updatedPlace);
+
+        return BusinessResponse.from(business);
+    }
+
+    @Transactional(readOnly = true)
+    public Business getBusinessByUser(Long userId) {
+        return businessRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
     }
 }

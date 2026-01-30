@@ -1,6 +1,10 @@
 package com.umust.dobonglife.domain.user.controller;
 
+import com.umust.dobonglife.domain.user.controller.dto.request.MailCodeCheckRequest;
+import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
+import com.umust.dobonglife.domain.user.controller.dto.request.PasswordRequest;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
+import com.umust.dobonglife.domain.user.service.MailService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +28,8 @@ import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 public class UserController {
 
     private final UserService userService;
+    private final MailService mailService;
+
     @Operation(summary = "회원 가입", description = "회원 가입을 합니다." +
             " role은 MEMBER, MANAGER, ADMIN 3개 입니다.")
     @ApiResponse(
@@ -45,6 +51,47 @@ public class UserController {
     public BaseResponse<Void> deleteAccount(HttpServletRequest request,
                                             @CurrentUserId Long userId) {
         userService.deleteAccount(request, userId);
+        return BaseResponse.ok(null);
+    }
+
+    @Operation(
+            summary = "인증번호 전송",
+            description = "메일로 인증번호를 전송합니다. 액세스 토큰이 필요합니다."
+    )
+    @PostMapping("/mail/send")
+    public BaseResponse<Void> sendAuthCodeMail(@RequestBody MailRequest request) {
+        mailService.sendMail(request);
+        return BaseResponse.ok(null);
+    }
+
+    @Operation(
+            summary = "인증번호 검증",
+            description = "메일로 받은 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
+    )
+    @PostMapping("/mail/check")
+    public BaseResponse<Void> checkAuthCode(@RequestBody MailCodeCheckRequest request) {
+        mailService.checkAuthCode(request);
+        return BaseResponse.ok(null);
+    }
+
+    @Operation(
+            summary = "임시 비밀번호 발급",
+            description = "임시 비밀번호를 발급합니다. 액세스 토큰이 필요합니다."
+    )
+    @PostMapping("/email/find-password")
+    public BaseResponse<Void> findPassword(@RequestBody MailRequest request) {
+        userService.sendNewPassword(request);
+        return BaseResponse.ok(null);
+    }
+
+    @Operation(
+            summary = "비밀번호 변경",
+            description = "비밀번호를 변경합니다. 액세스 토큰이 필요합니다."
+    )
+    @PatchMapping("/password")
+    public BaseResponse<Void> updatePassword(@CurrentUserId Long userId,
+                                             @RequestBody PasswordRequest request) {
+        userService.updateMyPassword(userId, request);
         return BaseResponse.ok(null);
     }
 }

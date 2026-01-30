@@ -5,6 +5,8 @@ import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
+import com.umust.dobonglife.domain.user.controller.dto.request.PasswordRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.service.MailService;
 
 import java.time.LocalDateTime;
 
@@ -34,11 +37,15 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
+    private final MailService mailService;
 
     @Transactional
     public void signUp(SignupRequest request) {
         if (!userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isEmpty()) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
+        }
+        if (!"VERIFIED".equals(mailService.getStoredCode(request.getEmail()))){
+            throw new BusinessException(ErrorCode.AUTHCODE_UNAUTHORIZED);
         }
         User user = User.builder()
                 .email(request.getEmail())
@@ -66,12 +73,32 @@ public class UserService {
         SecurityContextHolder.clearContext();
     }
 
+    @Transactional
+    public void sendNewPassword(MailRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
+        String newPassword = mailService.sendPasswordMail(request);
+        user.setPassword(passwordEncoder.encode(newPassword));
+    }
+
+    @Transactional
+    public void updateMyPassword(Long userId, PasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.getPrePassword(), user.getPassword())) {
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+
     public boolean validateOwner(Long userId, Long ownerId) {
         if (!userId.equals(ownerId)) {
             return false;
         }
         return true;
     }
+
     @Transactional
     public User findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {
         return userRepository.findByProviderAndProviderId(provider, providerUserId)
@@ -115,11 +142,6 @@ public class UserService {
     public Role getUserRole(Long userId) {
         User byId = findById(userId);
         return byId.getRole();
-    }
-
-    public void updatePoint(Long userId, Long point) {
-        User byId = findById(userId);
-        byId.updatePoint(point);
     }
 
     @Transactional

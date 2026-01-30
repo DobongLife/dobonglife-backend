@@ -73,12 +73,11 @@ public class PromotionService {
     public UsedCouponResponse changePointToCoupon(Long userId, Long promotionId) {
         userService.canExchangeCoupon(userId);
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new EntityNotFoundException("[ERROR] 프로모션이 존재하지 않습니다."));
-        User user = userService.findById(userId);
 
         if(!pointService.processUserPoint(userId, promotion.getPoint()))
             throw new BusinessException(ErrorCode.INVALID_POINT);
         // TODO: 쿠폰 발급 시스템
-        pointService.usePoint(promotion.getTitle(), promotion.getPoint(), user);
+        pointService.usePoint(userId, promotion.getTitle(), promotion.getPoint());
 
         Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getValidPeriod());
         return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
