@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.business.service;
 
 
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
+import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
@@ -102,9 +103,9 @@ public class BusinessService {
         Business business = businessRepository.findById(businessId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
 
-        // 소유자 검증 (네 프로젝트 스타일에 맞게 바꿔도 됨)
+        // 소유자 검증
         if (business.getUser() == null || !business.getUser().getId().equals(userId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN);
+            throw new BusinessException(ErrorCode.NOT_BUSINESS_OWNER);
         }
 
         // Business 필드 업데이트
@@ -113,10 +114,9 @@ public class BusinessService {
         business.setManagerName(request.getManagerName());
 
         // Place 업데이트/교체
-        Place updatedPlace = resolvePlaceForUpdate(business, request);
+        Place updatedPlace = placeService.resolvePlaceForUpdate(business, request);
         business.setPlace(updatedPlace);
 
-        // dirty checking으로 저장됨
         return BusinessResponse.from(business);
     }
 }

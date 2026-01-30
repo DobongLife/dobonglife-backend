@@ -35,7 +35,7 @@ public class BusinessController {
         return BaseResponse.ok(null);
     }
 
-    @Operation(summary = "사업장 정보", description = "사업장 정보를 조회합니다.")
+    @Operation(summary = "사업장 정보 조회", description = "사업장 정보를 조회합니다.")
     @ApiResponse(
             responseCode = "200",
             description = "사업장 정보 조회에 성공하였습니다."
@@ -43,5 +43,17 @@ public class BusinessController {
     @GetMapping("/{businessId}")
     public BaseResponse<BusinessResponse> getBusiness(@PathVariable Long businessId) {
         return BaseResponse.ok(businessService.getBusinessResponse(businessId));
+    }
+
+    @Operation(summary = "사업장 정보 수정", description = "사업장 정보를 수정합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "사업장 정보 수정에 성공하였습니다."
+    )
+    @PostMapping("/{businessId}")
+    public BaseResponse<BusinessResponse> updateBusiness(@PathVariable Long businessId,
+                                             @RequestBody BusinessRequest request,
+                                             @CurrentUserId Long userId) {
+        return BaseResponse.ok(businessService.updateBusiness(userId, businessId, request));
     }
 }
