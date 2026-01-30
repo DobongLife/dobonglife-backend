@@ -1,6 +1,8 @@
 package com.umust.dobonglife.domain.business.controller.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -54,9 +56,11 @@ public class BusinessRequest {
     @Schema(description = "위도", example = "21.98701322")
     private Double longitude;
 
-    @Schema(description = "카테고리", example = "ETC")
-    private String businessCategory;
+    @NotNull(message = "카테고리는 필수입니다")
+    @Schema(description = "카테고리", example = "CAFE")
+    private String category;
 
+    @NotEmpty(message = "주간테마는 필수입니다")
     @Schema(description = "주간테마", example = "NATURE")
-    private List<String> themes;
+    private List<@NotBlank String> themes;
 }

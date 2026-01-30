@@ -105,7 +105,7 @@
 //                .email("biz@example.com")
 //                .link("https://example.com")
 //                .operatingHour("09:00~18:00")
-//                .businessCategory("CAFE")
+//                .placeCategory("CAFE")
 //                .businessNumber("219-87-01322")
 //                .businessService(List.of("PARKING", "WIFI"))
 //                .build();
@@ -154,7 +154,7 @@
 //                                        fieldWithPath("email").description("이메일"),
 //                                        fieldWithPath("link").description("웹사이트 링크"),
 //                                        fieldWithPath("operatingHour").description("운영 시간"),
-//                                        fieldWithPath("businessCategory").description("사업자 카테고리"),
+//                                        fieldWithPath("placeCategory").description("사업자 카테고리"),
 //                                        fieldWithPath("businessNumber").description("사업자 등록번호"),
 //                                        fieldWithPath("businessService").description("제공 서비스/편의시설 목록")
 //                                )
@@ -178,7 +178,7 @@
 //                                fieldWithPath("email").description("이메일"),
 //                                fieldWithPath("link").description("웹사이트 링크"),
 //                                fieldWithPath("operatingHour").description("운영 시간"),
-//                                fieldWithPath("businessCategory").description("사업자 카테고리"),
+//                                fieldWithPath("placeCategory").description("사업자 카테고리"),
 //                                fieldWithPath("businessNumber").description("사업자 등록번호"),
 //                                fieldWithPath("businessService").description("제공 서비스/편의시설 목록")
 //                        ),

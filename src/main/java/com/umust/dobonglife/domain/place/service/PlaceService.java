@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterReq
 import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.controller.dto.response.*;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
+import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.entity.PlaceLike;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceLikeRepository;
@@ -60,7 +61,7 @@ public class PlaceService {
 
         Place place = Place.builder()
                 .name(request.getBusinessName())
-                .category(request.getBusinessCategory())
+                .category(PlaceCategory.toEnum(request.getBusinessCategory()))
                 .content(request.getIntroduction())
                 .contact(request.getContact())
                 .latitude(request.getLatitude())

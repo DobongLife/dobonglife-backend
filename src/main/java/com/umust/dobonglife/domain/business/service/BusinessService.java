@@ -1,11 +1,9 @@
 package com.umust.dobonglife.domain.business.service;
 
 
-import com.umust.dobonglife.domain.business.domain.constant.BusinessCategory;
+import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
-import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.service.PlaceService;
@@ -17,16 +15,13 @@ import com.umust.dobonglife.global.common.webclient.business.parser.BusinessStat
 import com.umust.dobonglife.global.common.webclient.service.WebClientService;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
-import com.umust.dobonglife.global.external.s3.S3Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
-import com.umust.dobonglife.domain.business.domain.constant.BusinessAmenity;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +59,6 @@ public class BusinessService {
                 .managerName(request.getManagerName())
                 .place(place)
                 .user(user)
-                .businessCategory(BusinessCategory.toEnum(request.getBusinessCategory()))
                 .build();
         businessRepository.save(business);
     }

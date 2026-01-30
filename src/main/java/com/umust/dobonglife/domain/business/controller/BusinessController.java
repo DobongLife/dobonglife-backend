@@ -22,7 +22,7 @@ public class BusinessController {
 
     private final BusinessService businessService;
 
-    @Operation(summary = "사업장 등록", description = "카테고리는 다음과 같습니다. RESTAURANT, CAFE, SHOPPING, CULTURE, EDUCATION, MEDICAL, BEAUTY, FITNESS, EXPERIENCE, ETC")
+    @Operation(summary = "사업장 등록", description = "카테고리는 다음과 같습니다. RESTAURANT, CAFE, SHOPPING, CULTURE, EDUCATION, MEDICAL, BEAUTY, FITNESS, LANDMARK, ETC")
     @ApiResponse(
             responseCode = "200",
             description = "사업장 등록에 성공하였습니다."

@@ -1,14 +1,11 @@
 package com.umust.dobonglife.domain.business.domain.entity;
 
-import com.umust.dobonglife.domain.business.domain.constant.BusinessCategory;
-import com.umust.dobonglife.domain.business.domain.constant.BusinessAmenity;
+import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 
 @Entity
@@ -33,10 +30,6 @@ public class Business extends BaseEntity {
 
     @Column(nullable = false)
     private String managerName;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "business_catergory", nullable = false)
-    private BusinessCategory businessCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_id")
