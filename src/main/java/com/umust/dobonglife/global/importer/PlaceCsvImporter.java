@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
@@ -57,7 +58,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
             Map.entry("기타", PlaceCategory.ETC)
     );
 
-
     @Value("${place.import.path:classpath:import/places.csv}")
     private String importPath;
 
@@ -77,7 +77,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
             List<String[]> rows = reader.readAll();
             if (rows.isEmpty()) return;
 
-            // 헤더 인덱스 매핑
             String[] header = rows.get(0);
             Map<String, Integer> idx = indexMap(header);
 
@@ -90,52 +89,77 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 String name = get(row, idx, "name");
                 if (name == null || name.isBlank()) continue;
 
-                String subName = defaultIfBlank(get(row, idx, "subName"), "");
-                String content = defaultIfBlank(get(row, idx, "content"), "");
-                String address = defaultIfBlank(get(row, idx, "address"), "");
-                String contact = defaultIfBlank(get(row, idx, "contact"), "정보없음");
-                String operatingHour = defaultIfBlank(get(row, idx, "operatingHour"), "정보없음");
+                // 여기서는 "raw"로 받아두고
+                String subNameRaw = get(row, idx, "subName");
+                String contentRaw = get(row, idx, "content");
+                String addressRaw = get(row, idx, "address");
+                String contactRaw = get(row, idx, "contact");
+                String operatingHourRaw = get(row, idx, "operatingHour");
 
-                String categoryRaw = defaultIfBlank(get(row, idx, "category"), "명소");
-                PlaceCategory placeCategory = parsePlaceCategory(categoryRaw);
+                String categoryRaw = get(row, idx, "category");         // 빈 값이면 업데이트 안 함(기존 유지)
+                String amenitiesRaw = get(row, idx, "amenities");       // 빈 값이면 업데이트 안 함(기존 유지)
+                String imageUrlsRaw = get(row, idx, "imageUrls");       // 빈 값이면 업데이트 안 함(기존 유지)
+                String thumbnailUrlRaw = get(row, idx, "thumbnailUrl"); // 빈 값이면 업데이트 안 함(기존 유지)
+                String latitudeRaw = get(row, idx, "latitude");         // 빈 값이면 업데이트 안 함(기존 유지)
+                String longitudeRaw = get(row, idx, "longitude");       // 빈 값이면 업데이트 안 함(기존 유지)
+                String themesRaw = get(row, idx, "themes");             // 빈 값이면 업데이트 안 함(기존 유지)
 
-                List<Amenity> amenities = parseAmenities(get(row, idx, "amenities"));
-                List<String> imageUrls = parseUrlList(get(row, idx, "imageUrls"));
-                String thumbnailUrl = defaultIfBlank(get(row, idx, "thumbnailUrl"), "");
-                Double latitude = parseDoubleOrNull(get(row, idx, "latitude"));
-                Double longitude = parseDoubleOrNull(get(row, idx, "longitude"));
-                List<CourseTheme> themes = parseThemes(get(row, idx, "themes"));
+                // 새 엔티티 생성 시에는 기본값을 채워주는 게 일반적으로 안전
+                String subNameNew = defaultIfBlank(subNameRaw, "");
+                String contentNew = defaultIfBlank(contentRaw, "");
+                String addressNew = defaultIfBlank(addressRaw, "");
+                String contactNew = defaultIfBlank(contactRaw, "정보없음");
+                String operatingHourNew = defaultIfBlank(operatingHourRaw, "정보없음");
+
+                PlaceCategory categoryNew = parsePlaceCategory(defaultIfBlank(categoryRaw, "명소"));
+                List<Amenity> amenitiesNew = parseAmenities(defaultIfBlank(amenitiesRaw, ""));
+                List<String> imageUrlsNew = parseUrlList(defaultIfBlank(imageUrlsRaw, ""));
+                String thumbnailUrlNew = defaultIfBlank(thumbnailUrlRaw, "");
+                Double latitudeNew = parseDoubleOrNull(defaultIfBlank(latitudeRaw, ""));
+                Double longitudeNew = parseDoubleOrNull(defaultIfBlank(longitudeRaw, ""));
+                List<CourseTheme> themesNew = parseThemes(defaultIfBlank(themesRaw, ""));
 
                 Place place = placeRepository.findByName(name)
                         .map(existing -> {
-                            existing.setSubName(subName);
-                            existing.setContent(content);
-                            existing.setAddress(address);
-                            existing.setContact(contact);
-                            existing.setOperatingHour(operatingHour);
-                            existing.setAmenities(amenities);
-                            existing.setImageUrls(imageUrls);
-                            existing.setThumbnailUrl(thumbnailUrl);
-                            existing.setLatitude(latitude);
-                            existing.setLongitude(longitude);
-                            existing.setThemes(themes);
-                            existing.setCategory(placeCategory);
+                            // ✅ 기존 엔티티 업데이트는 "CSV 값이 있을 때만" set 한다.
+
+                            applyIfPresent(subNameRaw, existing::setSubName);
+                            applyIfPresent(contentRaw, existing::setContent);
+                            applyIfPresent(addressRaw, existing::setAddress);
+
+                            // contact/operatingHour도 빈 값이면 유지. (원하면 빈 값이면 '정보없음'으로 강제도 가능)
+                            applyIfPresent(contactRaw, existing::setContact);
+                            applyIfPresent(operatingHourRaw, existing::setOperatingHour);
+
+                            // 리스트 계열: 빈 값이면 업데이트 안 함, 값 있으면 파싱해서 업데이트
+                            applyIfNotEmpty(amenitiesRaw, v -> existing.setAmenities(parseAmenities(v)));
+                            applyIfNotEmpty(imageUrlsRaw, v -> existing.setImageUrls(parseUrlList(v)));
+                            applyIfPresent(thumbnailUrlRaw, existing::setThumbnailUrl);
+
+                            // 위경도: 값이 있을 때만 파싱해서 set
+                            applyIfNotEmpty(latitudeRaw, v -> existing.setLatitude(parseDoubleOrNull(v)));
+                            applyIfNotEmpty(longitudeRaw, v -> existing.setLongitude(parseDoubleOrNull(v)));
+
+                            // 테마/카테고리
+                            applyIfNotEmpty(themesRaw, v -> existing.setThemes(parseThemes(v)));
+                            applyIfPresent(categoryRaw, v -> existing.setCategory(parsePlaceCategory(v)));
+
                             return existing;
                         })
                         .orElseGet(() -> Place.builder()
                                 .name(name)
-                                .subName(subName)
-                                .content(content)
-                                .address(address)
-                                .contact(contact)
-                                .operatingHour(operatingHour)
-                                .amenities(amenities)
-                                .imageUrls(imageUrls)
-                                .thumbnailUrl(thumbnailUrl)
-                                .latitude(latitude)
-                                .longitude(longitude)
-                                .themes(themes)
-                                .category(placeCategory)
+                                .subName(subNameNew)
+                                .content(contentNew)
+                                .address(addressNew)
+                                .contact(contactNew)
+                                .operatingHour(operatingHourNew)
+                                .amenities(amenitiesNew)
+                                .imageUrls(imageUrlsNew)
+                                .thumbnailUrl(thumbnailUrlNew)
+                                .latitude(latitudeNew)
+                                .longitude(longitudeNew)
+                                .themes(themesNew)
+                                .category(categoryNew)
                                 .build()
                         );
 
@@ -150,21 +174,38 @@ public class PlaceCsvImporter implements CommandLineRunner {
         }
     }
 
+    // =========================
+    // ✅ "빈 값이면 기존 값 유지" 유틸
+    // =========================
+
+    private void applyIfPresent(String raw, Consumer<String> setter) {
+        if (raw == null) return;
+        String v = raw.trim();
+        if (v.isBlank()) return;
+        setter.accept(v);
+    }
+
+    private void applyIfNotEmpty(String raw, Consumer<String> setter) {
+        // 리스트/숫자도 결국 문자열 기반이라 동일하게 처리
+        applyIfPresent(raw, setter);
+    }
+
+    // =========================
+    // 기존 유틸/파서
+    // =========================
+
     private PlaceCategory parsePlaceCategory(String raw) {
         if (raw == null || raw.isBlank()) return PlaceCategory.LANDMARK;
 
         String v = raw.trim();
 
-        // 1) enum name 그대로 (CAFE, RESTAURANT ...)
         try {
             return PlaceCategory.valueOf(v.toUpperCase());
         } catch (IllegalArgumentException ignore) { }
 
-        // 2) enum value(한글) 또는 별칭 맵으로 처리
         PlaceCategory mapped = PLACE_CATEGORY_KR_MAP.get(v);
         if (mapped != null) return mapped;
 
-        // 3) PlaceCategory.value(한글) 직접 비교 (맵에 누락된 경우 대비)
         for (PlaceCategory c : PlaceCategory.values()) {
             if (c.getValue().equals(v)) return c;
         }
@@ -176,7 +217,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
     private Map<String, Integer> indexMap(String[] header) {
         Map<String, Integer> map = new HashMap<>();
         for (int i = 0; i < header.length; i++) {
-            String key = header[i].trim().replace("\uFEFF", ""); // BOM 제거
+            String key = header[i].trim().replace("\uFEFF", "");
             map.put(key, i);
         }
         return map;
@@ -194,10 +235,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
         return v.trim();
     }
 
-    /**
-     * imageUrls: 단일 URL도 OK.
-     * 여러 개인 경우: "url1|url2" 또는 "url1;url2" 지원.
-     */
     private List<String> parseUrlList(String v) {
         if (v == null || v.isBlank()) return new ArrayList<>();
 
@@ -234,13 +271,11 @@ public class PlaceCsvImporter implements CommandLineRunner {
         for (String t : tokens) {
             if (t == null || t.isBlank()) continue;
 
-            // 1) enum 이름 그대로 시도
             try {
                 result.add(Amenity.valueOf(t));
                 continue;
             } catch (IllegalArgumentException ignore) { }
 
-            // 2) 한글 → enum 매핑
             Amenity mapped = AMENITY_KR_MAP.get(t);
             if (mapped != null) result.add(mapped);
             else log.warn("[PlaceCsvImporter] 알 수 없는 편의시설 값 skip: '{}'", t);
@@ -248,15 +283,13 @@ public class PlaceCsvImporter implements CommandLineRunner {
         return result;
     }
 
-    // themes 파서 추가 (amenities랑 동일 스타일)
     private List<CourseTheme> parseThemes(String v) {
         if (v == null || v.isBlank()) return new ArrayList<>();
 
-        // "맛집탐방|문화체험" or "FOOD_TRIP|CULTURE"
         String normalized = v.replace(" / ", "|")
                 .replace("/", "|")
                 .replace(",", "|")
-                .replace(" ", ""); // 공백 제거 (맛집 탐방 같은 입력 대비)
+                .replace(" ", "");
 
         String[] tokens = normalized.split("\\|");
 
@@ -264,19 +297,14 @@ public class PlaceCsvImporter implements CommandLineRunner {
         for (String t : tokens) {
             if (t == null || t.isBlank()) continue;
 
-            // 1) enum 이름 그대로 시도
             try {
                 result.add(CourseTheme.valueOf(t));
                 continue;
             } catch (IllegalArgumentException ignore) { }
 
-            // 2) 한글 → enum 매핑
             CourseTheme mapped = THEME_KR_MAP.get(t);
-            if (mapped != null) {
-                result.add(mapped);
-            } else {
-                log.warn("[PlaceCsvImporter] 알 수 없는 테마 값 skip: '{}'", t);
-            }
+            if (mapped != null) result.add(mapped);
+            else log.warn("[PlaceCsvImporter] 알 수 없는 테마 값 skip: '{}'", t);
         }
         return result;
     }
