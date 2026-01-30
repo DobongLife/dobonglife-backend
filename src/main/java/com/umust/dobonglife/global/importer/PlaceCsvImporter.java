@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@Profile("!test & !local")
+@Profile("!test & !local & !prod")
 public class PlaceCsvImporter implements CommandLineRunner {
 
     private final PlaceRepository placeRepository;

@@ -76,9 +76,9 @@ public class UserController {
 
     @Operation(
             summary = "임시 비밀번호 발급",
-            description = "임시 비밀번호를 발급합니다. 액세스 토큰이 필요합니다."
+            description = "임시 비밀번호를 발급합니다."
     )
-    @PostMapping("/email/find-password")
+    @PostMapping("/mail/find-password")
     public BaseResponse<Void> findPassword(@RequestBody MailRequest request) {
         userService.sendNewPassword(request);
         return BaseResponse.ok(null);
