@@ -1,11 +1,8 @@
 package com.umust.dobonglife.domain.course.controller;
 
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseDeleteResponse;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.*;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.service.CourseReviewService;
 import com.umust.dobonglife.domain.course.service.CourseService;
@@ -45,9 +42,10 @@ public class CourseController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping
-    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@RequestParam(required = false, defaultValue = "5") Long lastId,
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@CurrentUserId Long userId,
+                                                                          @RequestParam(required = false, defaultValue = "5") Long lastId,
                                                                           @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(lastId, size);
+        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(userId, lastId, size);
         return BaseResponse.ok(responses);
     }
 
@@ -113,10 +111,10 @@ public class CourseController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping("/my")
-    public BaseResponse<CursorResponse<CourseSummaryResponse>> getMyCourses(@CurrentUserId Long userId,
-                                                                            @RequestParam(required = false, defaultValue = "5") Long lastId,
-                                                                            @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<CourseSummaryResponse> responses = courseService.getMyCourses(lastId, size, userId);
+    public BaseResponse<CourseMyResponse> getMyCourses(@CurrentUserId Long userId,
+                                                       @RequestParam(required = false, defaultValue = "5") Long lastId,
+                                                       @RequestParam(defaultValue = "2") int size) {
+        CourseMyResponse responses = courseService.getMyCourses(lastId, size, userId);
         return BaseResponse.ok(responses);
     }
 
@@ -126,10 +124,11 @@ public class CourseController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping("/theme")
-    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCoursesByTheme(@RequestParam String theme,
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getCoursesByTheme(@CurrentUserId Long userId,
+                                                                                 @RequestParam String theme,
                                                                                  @RequestParam(required = false) Long lastId,
                                                                                  @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(CourseTheme.toEnum(theme), lastId, size);
+        CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(userId, CourseTheme.toEnum(theme), lastId, size);
         return BaseResponse.ok(responses);
     }
 }

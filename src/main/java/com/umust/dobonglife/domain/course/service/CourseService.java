@@ -1,23 +1,22 @@
 package com.umust.dobonglife.domain.course.service;
 
-import com.umust.dobonglife.domain.course.controller.dto.response.CourseDetailResponse;
 import com.umust.dobonglife.domain.course.controller.dto.request.CoursePlanRequest;
 import com.umust.dobonglife.domain.course.controller.dto.request.UpdateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseDeleteResponse;
+import com.umust.dobonglife.domain.course.controller.dto.response.CourseMyResponse;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.entity.CourseDescription;
 import com.umust.dobonglife.domain.course.domain.entity.CoursePlans;
-import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
 import com.umust.dobonglife.domain.course.controller.dto.request.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
+import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
-import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
-import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -37,35 +36,60 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
+import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.COURSE_CREATE;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final CoursePlansRepository coursePlansRepository;
     private final S3Utils s3Utils;
     private final UserService userService;
-
+    private final PointService pointService;
+    private final CourseLikeService courseLikeService;
 
     @Transactional(readOnly = true)
-    public CursorResponse<CourseSummaryResponse> getCourses(Long lastId, int size) {
+    public CursorResponse<CourseSummaryResponse> getCourses(Long userId, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findCoursesNoOffset(lastId, pageable);
-        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+
+        return getCourseSummaryResponseCursorResponse(userId, courses);
     }
 
     @Transactional(readOnly = true)
-    public CursorResponse<CourseSummaryResponse> getCourses(CourseTheme theme, Long lastId, int size) {
+    public CursorResponse<CourseSummaryResponse> getCourses(Long userId, CourseTheme theme, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findByThemeNoOffset(theme, lastId, pageable);
-        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+
+        return getCourseSummaryResponseCursorResponse(userId, courses);
     }
 
-    public CursorResponse<CourseSummaryResponse> getMyCourses(Long lastId, int size, Long userId) {
+    private CursorResponse<CourseSummaryResponse> getCourseSummaryResponseCursorResponse(Long userId, Slice<Course> courses) {
+        List<Long> courseIds = courses.getContent().stream()
+                .map(Course::getId)
+                .toList();
+
+        Set<Long> favoriteCourseIds = (userId != null)
+                ? courseLikeService.getFavoriteCourseIds(userId, courseIds)
+                : Collections.emptySet();
+
+        return CursorUtils.toCursorResponse(courses, course ->
+                CourseSummaryResponse.of(course, favoriteCourseIds.contains(course.getId()))
+        );
+    }
+
+    public CourseMyResponse getMyCourses(Long lastId, int size, Long userId) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findMyCoursesNoOffset(userId, lastId, pageable);
-        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+
+        Long totalCount = courseRepository.countByUserId(userId);
+        CursorResponse<CourseSummaryResponse> course = getCourseSummaryResponseCursorResponse(userId, courses);
+        return CourseMyResponse.from(totalCount, course);
     }
 
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request, List<MultipartFile> imageFiles) {
@@ -86,12 +110,15 @@ public class CourseService {
                 }
                 log.error("코스 등록 실패: {}", request.getTitle());
             }
+            log.error(e.getMessage());
             throw new BusinessException(ErrorCode.COURSE_SERVER_ERROR);
         }
     }
 
     @Transactional
     protected Course createCourseEntity(Long userId, CreateCourseRequest request, List<String> imageUrls) {
+        log.info("Request DTO: {}", request);
+
         CourseBasicInfo basicInfo = CourseBasicInfo.builder()
                 .title(request.getTitle())
                 .subTitle(request.getSubTitle())
@@ -103,8 +130,6 @@ public class CourseService {
                 .content(request.getContent())
                 .highlights(request.getHighlights())
                 .build();
-
-        List<CoursePlans> plans = convertToPlans(request.getPlans());
         Course course = Course.builder()
                 .userId(userId)
                 .basicInfo(basicInfo)
@@ -112,12 +137,19 @@ public class CourseService {
                 .tags(request.getTags())
                 .imageUrls(imageUrls)
                 .description(description)
-                .plans(plans)
                 .build();
 
-        return courseRepository.save(course);
+        pointService.earnPoint(userService.findById(userId), COURSE_CREATE.getTitle(), COURSE_CREATE.getPoint());
+        userService.updatePoint(userId, COURSE_CREATE.getPoint());
+
+        Course save = courseRepository.save(course);
+        List<CoursePlans> plans = convertToPlans(course, request.getPlans());
+        coursePlansRepository.saveAll(plans);
+
+        return save;
     }
 
+    @Transactional
     public CourseRegisterResponse updateCourse(Long userId, Long courseId, UpdateCourseRequest request, List<MultipartFile> imageFiles) {
         Course course = courseRepository.findByIdWithDescription(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
@@ -125,12 +157,13 @@ public class CourseService {
         boolean isOwner = userService.validateOwner(userId, course.getUserId());
         if(!isOwner) throw new BusinessException(ErrorCode.NOT_OWNER);
 
+        List<String> urlsToDelete = (request.urlsToDelete() != null) ? new ArrayList<>(request.urlsToDelete()) : new ArrayList<>();
+        urlsToDelete.forEach(url -> course.getImageUrls().remove(url));
+
         if (imageFiles != null && !imageFiles.isEmpty() && !imageFiles.get(0).isEmpty()) {
             List<String> images = s3Utils.uploadImages(imageFiles);
             course.getImageUrls().addAll(images);
         }
-        List<String> urlsToDelete = (request.urlsToDelete() != null) ? new ArrayList<>(request.urlsToDelete()) : new ArrayList<>();
-        urlsToDelete.forEach(url -> course.getImageUrls().remove(url));
 
         try {
             updateCourseEntity(request, course);
@@ -144,12 +177,11 @@ public class CourseService {
             });
             return CourseRegisterResponse.from(course);
         } catch (Exception e) {
-            log.error("코스 업데이트 실패: {}", request.title());
+            log.error("코스 업데이트 실패: {}", e.getMessage());
             throw new BusinessException(ErrorCode.COURSE_SERVER_ERROR);
         }
     }
 
-    @Transactional
     protected void updateCourseEntity(UpdateCourseRequest request, Course course) {
         course.updateBasicInfo(CourseBasicInfo.builder()
                 .title(request.title())
@@ -163,19 +195,31 @@ public class CourseService {
         course.getDescription().update(request.content(), request.highlights());
 
         if (request.plans() != null) {
-            List<CoursePlans> newPlans = convertToPlans(request.plans());
-            course.updatePlans(newPlans);
+            coursePlansRepository.deleteByCourseCustom(course);
+            List<CoursePlans> coursePlans = convertToPlans(course, request.plans());
+            coursePlansRepository.saveAll(coursePlans);
         }
     }
 
-    private List<CoursePlans> convertToPlans(List<CoursePlanRequest> planDtos) {
+    private List<CoursePlans> convertToPlans(Course course, List<CoursePlanRequest> planDtos) {
         if (planDtos == null) return List.of();
         return planDtos.stream()
-                .map(dto -> CoursePlans.builder()
-                        .dateTime(dto.getDateTime())
-                        .title(dto.getTitle())
-                        .content(dto.getContent())
-                        .build())
+                .map(dto -> {
+                    log.info("[convertToPlans] DTO placeId: {}, Order: {}, Title: {}",
+                            dto.getPlaceId(), dto.getOrder(), dto.getTitle());
+
+                    CoursePlans plan = CoursePlans.builder()
+                            .course(course)
+                            .placeId(dto.getPlaceId())
+                            .title(dto.getTitle())
+                            .isOrder(dto.getOrder())
+                            .content(dto.getContent())
+                            .build();
+
+                    log.info("[convertToPlans] Entity placeId after mapping: {}", plan.getPlaceId());
+
+                    return plan;
+                })
                 .toList();
     }
 
@@ -198,6 +242,7 @@ public class CourseService {
                 }
             }
         });
+        userService.handleDeletion(userId);
         return CourseDeleteResponse.from(courseId);
     }
 
@@ -216,7 +261,7 @@ public class CourseService {
     }
 
     @Transactional
-    public void deleteCourseReview(Long courseId, Double rating) {
+    public void deleteCourseReview(Long userId, Long courseId, Double rating) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         course.deleteReview(rating);
@@ -225,6 +270,7 @@ public class CourseService {
     public CursorResponse<CourseSummaryResponse> getLikedCourse(Long userId, int size, Long lastId) {
         Pageable pageable = PageRequest.of(0, size);
         Slice<Course> courses = courseRepository.findLikedCourses(userId, null, pageable);
-        return CursorUtils.toCursorResponse(courses, CourseSummaryResponse::from);
+
+        return getCourseSummaryResponseCursorResponse(userId, courses);
     }
 }

@@ -81,6 +81,9 @@ public class FestivalCsvImporter implements ApplicationRunner {
                     String endRaw = r.get("endDateTime");
                     String url = r.get("url");
                     String placeName = r.get("placeName");
+                    String category = r.get("category");
+
+                    if (isBlank(category)) category = "기타";
 
                     // 필수값 방어 (CSV가 더럽게 들어오는 경우 대비)
                     if (isBlank(title) || isBlank(startRaw) || isBlank(endRaw) || isBlank(url) || isBlank(placeName)) {
@@ -104,6 +107,7 @@ public class FestivalCsvImporter implements ApplicationRunner {
                             .endDateTime(end)
                             .url(url)
                             .placeName(placeName)
+                            .category(category)
                             .build());
 
                     if (buffer.size() >= BATCH_SIZE) {

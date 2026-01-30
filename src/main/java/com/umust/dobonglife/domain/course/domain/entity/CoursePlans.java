@@ -21,8 +21,11 @@ public class CoursePlans {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @Column(nullable = false)
-    private LocalDateTime dateTime;
+    @Column(name = "place_id", nullable = true)
+    private Long placeId;
+
+    @Column(nullable = true)
+    private Long isOrder;
 
     @Column(nullable = false)
     private String title;
@@ -31,9 +34,10 @@ public class CoursePlans {
     private String content;
 
     @Builder
-    public CoursePlans(Course course, LocalDateTime dateTime, String title, String content) {
+    public CoursePlans(Course course, Long placeId, Long isOrder, String title, String content) {
         this.course = course;
-        this.dateTime = dateTime;
+        this.placeId = placeId;
+        this.isOrder = isOrder;
         this.title = title;
         this.content = content;
     }

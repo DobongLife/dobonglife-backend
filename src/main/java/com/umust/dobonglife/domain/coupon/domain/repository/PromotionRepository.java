@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
-    @Query("SELECT c FROM Promotion c " +
-            "WHERE (:lastId IS NULL OR c.id < :lastId) " +
-            "ORDER BY c.id DESC")
-    Slice<Promotion> findPromotionNoOffset(Long lastId, Pageable pageable);
+    @Query("SELECT p FROM Promotion p " +
+            "JOIN FETCH p.place " +
+            "WHERE (:lastId IS NULL OR p.id < :lastId) " +
+            "ORDER BY p.id DESC")
+    Slice<Promotion> findPromotionWithPlaceNoOffset(Long lastId, Pageable pageable);
 }

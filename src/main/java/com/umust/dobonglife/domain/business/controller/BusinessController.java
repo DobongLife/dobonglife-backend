@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.business.controller;
 import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
 import com.umust.dobonglife.domain.business.service.BusinessService;
+import com.umust.dobonglife.domain.courseLike.controller.dto.request.CourseLikeResponse;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;

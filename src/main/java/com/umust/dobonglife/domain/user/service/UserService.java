@@ -27,6 +27,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.service.MailService;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -135,6 +137,36 @@ public class UserService {
     public Long getUserTotalPoint(Long userId) {
         User byId = findById(userId);
         return byId.getBalance();
+    }
+
+    public Role getUserRole(Long userId) {
+        User byId = findById(userId);
+        return byId.getRole();
+    }
+
+    public void updatePoint(Long userId, Long point) {
+        User byId = findById(userId);
+        byId.updatePoint(point);
+    }
+
+    @Transactional
+    public void handleDeletion(Long userId) {
+        User byId = findById(userId);
+        byId.handleDeletion();
+        userRepository.save(byId);
+    }
+
+    @Transactional
+    public void canExchangeCoupon(Long userId) {
+        User byId = findById(userId);
+        if(!byId.canExchangeCoupon())
+            throw new BusinessException(ErrorCode.COUPON_EXCHANGE_RESTRICTED);
+
+    }
+
+    public boolean isBlockedUser(Long userId) {
+        User byId = findById(userId);
+        return byId.isBlocked();
     }
 }
 

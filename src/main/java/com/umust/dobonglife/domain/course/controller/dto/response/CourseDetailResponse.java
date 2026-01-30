@@ -101,14 +101,16 @@ public record CourseDetailResponse(
      */
     public record CoursePlanDto(
             Long id,
-            LocalDateTime dateTime,
+            Long order,
+            Long placeId,
             String title,
             String content
     ) {
         public static CoursePlanDto from(CoursePlans plan) {
             return new CoursePlanDto(
                     plan.getId(),
-                    plan.getDateTime(),
+                    plan.getIsOrder(),
+                    plan.getPlaceId(),
                     plan.getTitle(),
                     plan.getContent()
             );

@@ -10,16 +10,18 @@ public record CourseSummaryResponse(
         String title,
         String subTitle,
         List<String> tags,
-        CourseLevel level
+        CourseLevel level,
+        boolean liked
 ) {
-    public static CourseSummaryResponse from(Course course) {
+    public static CourseSummaryResponse of(Course course, boolean liked) {
         return new CourseSummaryResponse(
                 course.getId(),
                 course.getImageUrls(),
                 course.getTitle(),
-                course.getTitle(),
+                course.getSubTitle(),
                 course.getTags(),
-                course.getLevel()
+                course.getLevel(),
+                liked
         );
     }
 }

@@ -88,6 +88,8 @@ public class ReviewService {
                 .imageUrls(imageUrls)
                 .build();
         reviewRepository.save(review);
+        pointService.earnPoint(userService.findById(userId), REVIEW_CREATE.getTitle(), REVIEW_CREATE.getPoint());
+        userService.updatePoint(userId, REVIEW_CREATE.getPoint());
         pointService.earnPoint(userId, REVIEW_CREATE.getTitle(), REVIEW_CREATE.getPoint());
 
         return ReviewResponse.from(review);
@@ -145,12 +147,13 @@ public class ReviewService {
             throw new BusinessException(ErrorCode.SECURITY_ACCESS_DENIED);
 
         if(review.getCourseId() != null){
-            courseService.deleteCourseReview(review.getCourseId(), review.getRating());
+            courseService.deleteCourseReview(userId ,review.getCourseId(), review.getRating());
         }else{
             placeService.deletePlaceReview(review.getPlaceId(), review.getRating());
         }
 
         reviewRepository.delete(review);
+        userService.handleDeletion(userId);
         return ReviewResponse.from(review);
     }
 }

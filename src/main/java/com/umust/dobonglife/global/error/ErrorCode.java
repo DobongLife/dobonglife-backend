@@ -93,7 +93,15 @@ public enum ErrorCode{
     END_TIME_BEFORE_START_TIME(801, HttpStatus.BAD_REQUEST.value(), "종료 시간은 시작 시간 이후여야 합니다."),
 
     // Business
+    NOT_BUSINESS(403, HttpStatus.FORBIDDEN.value(), "해당 비즈니스에 대한 권한이 없습니다."),
+
+    INVALID_VALUE(500, HttpStatus.BAD_REQUEST.value(), "할인값은 음수일 수 없습니다."),
+    INVALID_DISCOUNT_VALUE(500, HttpStatus.BAD_REQUEST.value(), "할인 100%를 초과할 수 없습니다."),
+    INVALID_COUPON_CODE(500, HttpStatus.BAD_REQUEST.value(), "쿠폰 코드는 6자리입니다."),
+    INVALID_DATE_RANGE(500, HttpStatus.BAD_REQUEST.value(), "종료일보다 시작일이 빠릅니다."),
     BUSINESS_NOT_FOUND(900, HttpStatus.NOT_FOUND.value(), "사업장을 찾을 수 없습니다."),
+
+    COUPON_EXCHANGE_RESTRICTED(403,HttpStatus.FORBIDDEN.value(), "리뷰 정책 위반(3회 삭제)으로 인해 쿠폰 교환이 제한되었습니다."),
     NOT_BUSINESS_OWNER(901, HttpStatus.CONFLICT.value(), "사업장의 소유자가 아닙니다.");
 
     private final int code;
