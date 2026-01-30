@@ -61,8 +61,11 @@ public class PlaceService {
 
         Place place = Place.builder()
                 .name(request.getBusinessName())
+                .subName(request.getBusinessName())
                 .category(PlaceCategory.toEnum(request.getCategory()))
                 .content(request.getIntroduction())
+                .address(request.getBusinessAddress())
+                .operatingHour(request.getOperatingHour())
                 .contact(request.getContact())
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())

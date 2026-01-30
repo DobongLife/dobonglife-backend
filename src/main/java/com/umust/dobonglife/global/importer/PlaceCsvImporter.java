@@ -3,6 +3,7 @@ package com.umust.dobonglife.global.importer;
 import com.opencsv.CSVReader;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
+import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,18 @@ public class PlaceCsvImporter implements CommandLineRunner {
             "자연힐링", CourseTheme.NATURE
     );
 
+    private static final Map<String, PlaceCategory> PLACE_CATEGORY_KR_MAP = Map.ofEntries(
+            Map.entry("음식점", PlaceCategory.RESTAURANT),
+            Map.entry("카페", PlaceCategory.CAFE),
+            Map.entry("쇼핑", PlaceCategory.SHOPPING),
+            Map.entry("의료/IT", PlaceCategory.MEDICAL),
+            Map.entry("뷰티", PlaceCategory.BEAUTY),
+            Map.entry("피트니스", PlaceCategory.FITNESS),
+            Map.entry("명소", PlaceCategory.LANDMARK),
+            Map.entry("기타", PlaceCategory.ETC)
+    );
+
+
     @Value("${place.import.path:classpath:import/places.csv}")
     private String importPath;
 
@@ -82,7 +95,10 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 String address = defaultIfBlank(get(row, idx, "address"), "");
                 String contact = defaultIfBlank(get(row, idx, "contact"), "정보없음");
                 String operatingHour = defaultIfBlank(get(row, idx, "operatingHour"), "정보없음");
-                String category = defaultIfBlank(get(row, idx, "category"), "명소");
+
+                String categoryRaw = defaultIfBlank(get(row, idx, "category"), "명소");
+                PlaceCategory placeCategory = parsePlaceCategory(categoryRaw);
+
                 List<Amenity> amenities = parseAmenities(get(row, idx, "amenities"));
                 List<String> imageUrls = parseUrlList(get(row, idx, "imageUrls"));
                 String thumbnailUrl = defaultIfBlank(get(row, idx, "thumbnailUrl"), "");
@@ -103,8 +119,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
                             existing.setLatitude(latitude);
                             existing.setLongitude(longitude);
                             existing.setThemes(themes);
-                            existing.setCategory(category);
-
+                            existing.setCategory(placeCategory);
                             return existing;
                         })
                         .orElseGet(() -> Place.builder()
@@ -120,7 +135,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
                                 .latitude(latitude)
                                 .longitude(longitude)
                                 .themes(themes)
-                                .category(category)
+                                .category(placeCategory)
                                 .build()
                         );
 
@@ -133,6 +148,29 @@ public class PlaceCsvImporter implements CommandLineRunner {
 
             log.info("[PlaceCsvImporter] done. inserted={}, updated={}", inserted, updated);
         }
+    }
+
+    private PlaceCategory parsePlaceCategory(String raw) {
+        if (raw == null || raw.isBlank()) return PlaceCategory.LANDMARK;
+
+        String v = raw.trim();
+
+        // 1) enum name 그대로 (CAFE, RESTAURANT ...)
+        try {
+            return PlaceCategory.valueOf(v.toUpperCase());
+        } catch (IllegalArgumentException ignore) { }
+
+        // 2) enum value(한글) 또는 별칭 맵으로 처리
+        PlaceCategory mapped = PLACE_CATEGORY_KR_MAP.get(v);
+        if (mapped != null) return mapped;
+
+        // 3) PlaceCategory.value(한글) 직접 비교 (맵에 누락된 경우 대비)
+        for (PlaceCategory c : PlaceCategory.values()) {
+            if (c.getValue().equals(v)) return c;
+        }
+
+        log.warn("[PlaceCsvImporter] 알 수 없는 category 값 '{}', ETC로 저장", v);
+        return PlaceCategory.ETC;
     }
 
     private Map<String, Integer> indexMap(String[] header) {

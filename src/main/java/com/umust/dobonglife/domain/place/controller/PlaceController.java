@@ -77,18 +77,4 @@ public class PlaceController {
     public BaseResponse<PlaceSummaryListResponse> getAllPlace(@CurrentUserId Long userId) {
         return BaseResponse.ok(placeService.getAllPlace(userId));
     }
-
-    @Operation(summary = "장소 등록", description = "장소 정보를 입력하여 등록합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "장소 등록에 성공하였습니다."
-    )
-    @PostMapping("/{address}")
-    public BaseResponse<Void> registerPlace(@PathVariable String address
-                                            //@RequestPart("request") @Valid PlaceRegisterRequest request
-                                            //@RequestPart("images") List<MultipartFile> images
-                                            ) throws Exception {
-        placeService.registerPlace(address);
-        return BaseResponse.ok(null);
-    }
 }

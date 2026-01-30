@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.place.controller.dto.response;
 
+import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,7 +28,7 @@ public class PlaceSummaryResponse {
         return PlaceSummaryResponse.builder()
                 .placeId(place.getId())
                 .placeName(place.getName())
-                .category(place.getCategory())
+                .category(place.getCategory().getValue())
                 .thumbnailUrl(place.getThumbnailUrl())
                 .averageRating(place.getAverageRating())
                 .reviewCount(place.getReviewCount())
