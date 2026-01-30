@@ -144,11 +144,6 @@ public class UserService {
         return byId.getRole();
     }
 
-    public void updatePoint(Long userId, Long point) {
-        User byId = findById(userId);
-        byId.updatePoint(point);
-    }
-
     @Transactional
     public void handleDeletion(Long userId) {
         User byId = findById(userId);

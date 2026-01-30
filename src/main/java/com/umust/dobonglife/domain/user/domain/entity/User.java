@@ -71,10 +71,6 @@ public class User extends BaseEntity {
     @Column(nullable = true)
     private LocalDateTime blockedAt;
 
-    public void updatePoint(Long point) {
-        balance += point;
-    }
-
     public void handleDeletion() {
         this.deleteCount++;
         if (this.deleteCount >= PENALTY_THRESHOLD) {
@@ -109,7 +105,6 @@ public class User extends BaseEntity {
         this.isBlocked = false;
         this.blockedAt = null;
     }
-
 
     public void earnPoint(long amount) {
         if (amount <= 0) {

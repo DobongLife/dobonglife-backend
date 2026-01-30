@@ -139,8 +139,7 @@ public class CourseService {
                 .description(description)
                 .build();
 
-        pointService.earnPoint(userService.findById(userId), COURSE_CREATE.getTitle(), COURSE_CREATE.getPoint());
-        userService.updatePoint(userId, COURSE_CREATE.getPoint());
+        pointService.earnPoint(userId, COURSE_CREATE.getTitle(), COURSE_CREATE.getPoint());
 
         Course save = courseRepository.save(course);
         List<CoursePlans> plans = convertToPlans(course, request.getPlans());
