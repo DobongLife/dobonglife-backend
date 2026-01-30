@@ -119,4 +119,10 @@ public class BusinessService {
 
         return BusinessResponse.from(business);
     }
+
+    @Transactional(readOnly = true)
+    public Business getBusinessByUser(Long userId) {
+        return businessRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
+    }
 }

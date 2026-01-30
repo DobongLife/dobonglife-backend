@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.mypage.controller;
 
 import com.umust.dobonglife.domain.mypage.controller.dto.response.MyLikeResponse;
+import com.umust.dobonglife.domain.mypage.controller.dto.response.MyPageSummaryManagerResponse;
 import com.umust.dobonglife.domain.mypage.controller.dto.response.MyPageSummaryResponse;
 import com.umust.dobonglife.domain.mypage.service.MyPageService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,5 +47,17 @@ public class MyPageController {
                                                    @RequestParam(defaultValue = "3") int size){
         MyLikeResponse response = myPageService.getMyLike(userId, size, lastId);
         return BaseResponse.ok(response);
+    }
+
+    @Operation(summary = "사업자 마이 페이지 조회", description = "사업자 마이 페이지 view")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping("/manager")
+    public BaseResponse<MyPageSummaryManagerResponse> viewMyPageManager(@CurrentUserId Long userId,
+                                                                        @RequestParam(defaultValue = "3") int size){
+        return BaseResponse.ok(myPageService.getMyPageSummaryManager(userId, size));
     }
 }
