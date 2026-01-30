@@ -23,6 +23,7 @@ public enum ErrorCode{
 
     // Place
     PLACE_NOT_FOUND(300, HttpStatus.NOT_FOUND.value(), "장소를 찾을 수 없습니다."),
+    PLACE_IMAGE_REQUIRED(301, HttpStatus.BAD_REQUEST.value(), "장소 등록이는 최소 한 장의 사진이 필요합니다."),
 
     // Course
     COURSE_NOT_FOUND(400, HttpStatus.NOT_FOUND.value(), "코스를 찾을 수 없습니다."),

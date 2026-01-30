@@ -25,20 +25,11 @@ public class Business extends BaseEntity {
     @Column(name = "business_id", nullable = false)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String phoneNumber;
-
     @Column(nullable = false)
     private String businessNumber;
 
     @Column(nullable = true)
     private String email;
-
-    @Column(nullable = true)
-    private String link;
-
-    @Column(nullable = false)
-    private String operatingHour;
 
     @Column(nullable = false)
     private String managerName;
@@ -46,11 +37,6 @@ public class Business extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "business_catergory", nullable = false)
     private BusinessCategory businessCategory;
-
-    @ElementCollection(targetClass = BusinessAmenity.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "business_amenity", joinColumns = @JoinColumn(name = "business_id"))
-    @Enumerated(EnumType.STRING)
-    private List<BusinessAmenity> businessAmenity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_id")

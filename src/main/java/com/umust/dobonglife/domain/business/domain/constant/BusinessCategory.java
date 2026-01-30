@@ -3,11 +3,15 @@ package com.umust.dobonglife.domain.business.domain.constant;
 public enum BusinessCategory {
     RESTAURANT,
     CAFE,
-    SERVICE,
+    SHOPPING,
     CULTURE,
     EDUCATION,
     MEDICAL,
-    BEAUTY;
+    BEAUTY,
+    FITNESS,
+    EXPERIENCE,
+    ETC;
+
 
     public static BusinessCategory toEnum(String value) {
         for (BusinessCategory category : BusinessCategory.values()) {

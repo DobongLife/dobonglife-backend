@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.place.service;
 
+import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.service.CourseService;
@@ -46,43 +47,35 @@ public class PlaceService {
     private final UserRepository userRepository;
     private final PlaceLikeRepository placeLikeRepository;
     private final S3Utils s3Utils;
-    private final CourseService courseService;
-    private final WebClientService webClientService;
-
-//    @Transactional
-//    public void registerPlace(PlaceRegisterRequest request, List<MultipartFile> images){
-//
-//        List<String> imagesUrl = s3Utils.uploadImages(images);
-//
-//        Place place = Place.builder()
-//                .name(request.getPlaceName())
-//                .content(request.getContent())
-//                .amenities(request.getAmenities().stream()
-//                        .map(Amenity::toEnum)
-//                        .toList())
-//                .address(request.getAddress())
-//                .contact(request.getContact())
-//                .operatingHour(request.getOperatingHour())
-//                .imageUrls(imagesUrl)
-//                .build();
-//
-//        placeRepository.save(place);
-//    }
 
     @Transactional
-    public void registerPlace(String address){
+    public Long createPlaceForBusiness(BusinessRequest request, List<MultipartFile> imageFiles) {
 
-        GeoPointResponse point = webClientService.geocodePoint(address)
-                .orElseThrow(() -> new IllegalArgumentException("좌표 변환 실패"));
+        if (imageFiles == null || imageFiles.isEmpty()) {
+            throw new BusinessException(ErrorCode.PLACE_IMAGE_REQUIRED);
+        }
+
+        List<String> uploadedUrls = s3Utils.uploadImages(imageFiles);
+        String thumbnailUrl = uploadedUrls.getFirst();
 
         Place place = Place.builder()
-                .address(address)
-                .longitude(point.longitude()) // 경도
-                .latitude(point.latitude())  // 위도
+                .name(request.getBusinessName())
+                .category(request.getBusinessCategory())
+                .content(request.getIntroduction())
+                .contact(request.getContact())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .imageUrls(uploadedUrls)
+                .thumbnailUrl(thumbnailUrl)
+                .themes(request.getThemes().stream()
+                        .map(CourseTheme::toEnum)
+                        .toList())
                 .build();
-
         placeRepository.save(place);
+
+        return place.getId();
     }
+
 
     @Transactional
     public void toggleLikes(Long userId, Long placeId) {

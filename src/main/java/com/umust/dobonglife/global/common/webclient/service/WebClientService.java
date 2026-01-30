@@ -4,10 +4,12 @@ import com.umust.dobonglife.global.common.webclient.business.dto.response.GeoPoi
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.*;
@@ -23,6 +25,7 @@ public class WebClientService {
 
     private static final WebClient NAVER_MAP_WEBCLIENT = WebClient.builder()
             .baseUrl("https://naveropenapi.apigw.ntruss.com")
+            .filter(logRequest())
             .build();
 
     @Value("${naver.map.client-id:}")
@@ -60,8 +63,8 @@ public class WebClientService {
             return NAVER_MAP_WEBCLIENT.get()
                     .uri(uriBuilder -> generateNaverGeocodeURI(uriBuilder, address))
                     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                    .header("X-NCP-APIGW-API-KEY-ID", naverMapClientId)
-                    .header("X-NCP-APIGW-API-KEY", naverMapClientSecret)
+                    .header("x-ncp-apigw-api-key-id", naverMapClientId)
+                    .header("x-ncp-apigw-api-key", naverMapClientSecret)
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, resp ->
                             resp.bodyToMono(String.class).flatMap(body -> {
@@ -123,6 +126,14 @@ public class WebClientService {
                 .build();
         log.info("📡 네이버 Geocode 최종 요청 URI: {}", uri);
         return uri;
+    }
+
+    private static ExchangeFilterFunction logRequest() {
+        return ExchangeFilterFunction.ofRequestProcessor(request -> {
+            log.info("➡️ REQUEST: {} {}", request.method(), request.url());
+            log.info("➡️ HEADERS: {}", request.headers().keySet());
+            return Mono.just(request);
+        });
     }
 }
 
