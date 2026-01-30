@@ -1,7 +1,7 @@
 package com.umust.dobonglife.domain.business.controller;
 
-import com.umust.dobonglife.domain.business.controller.dto.request.BusinessNumberRequest;
 import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
+import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
 import com.umust.dobonglife.domain.business.service.BusinessService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -33,5 +33,15 @@ public class BusinessController {
                                                @RequestPart(value = "imageFiles", required = true) List<MultipartFile> imageFiles) {
         businessService.registerBusiness(request, userId, imageFiles);
         return BaseResponse.ok(null);
+    }
+
+    @Operation(summary = "사업장 정보", description = "사업장 정보를 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "사업장 정보 조회에 성공하였습니다."
+    )
+    @GetMapping("/{businessId}")
+    public BaseResponse<BusinessResponse> getBusiness(@PathVariable Long businessId) {
+        return BaseResponse.ok(businessService.getBusinessResponse(businessId));
     }
 }

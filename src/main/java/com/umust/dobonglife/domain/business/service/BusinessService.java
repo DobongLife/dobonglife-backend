@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.business.service;
 
 
+import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
 import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
@@ -43,7 +44,7 @@ public class BusinessService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        checkBusinessStatus(request.getBusinessNumber(), userId);
+        checkBusinessStatus(request.getBusinessNumber());
 
         Long placeId = request.getPlaceId();
         if(placeId == null) {
@@ -60,19 +61,16 @@ public class BusinessService {
                 .place(place)
                 .user(user)
                 .build();
+        user.setRole(Role.MANAGER);
         businessRepository.save(business);
     }
 
     @Transactional
-    public void checkBusinessStatus(String businessNumber, Long userId) {
+    public void checkBusinessStatus(String businessNumber) {
 
         Map<String, Object> response = webClientService.getCompanyStatus(businessNumber);
 
         String statusCode = parser.extractStatusCode(response);
-
-        User me = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-        me.setRole(Role.MANAGER);
 
         if (!VALID_CODE.equals(statusCode)) {
             throw new IllegalStateException("유효하지 않은 사업자 번호입니다.");
@@ -90,5 +88,35 @@ public class BusinessService {
         }
 
         return business.getPlace().getId();
+    }
+
+    @Transactional(readOnly = true)
+    public BusinessResponse getBusinessResponse(Long businessId) {
+        Business business = businessRepository.findById(businessId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
+        return BusinessResponse.from(business);
+    }
+
+    @Transactional
+    public BusinessResponse updateBusiness(Long userId, Long businessId, BusinessRequest request) {
+        Business business = businessRepository.findById(businessId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
+
+        // 소유자 검증 (네 프로젝트 스타일에 맞게 바꿔도 됨)
+        if (business.getUser() == null || !business.getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN);
+        }
+
+        // Business 필드 업데이트
+        business.setBusinessNumber(request.getBusinessNumber());
+        business.setEmail(request.getEmail());
+        business.setManagerName(request.getManagerName());
+
+        // Place 업데이트/교체
+        Place updatedPlace = resolvePlaceForUpdate(business, request);
+        business.setPlace(updatedPlace);
+
+        // dirty checking으로 저장됨
+        return BusinessResponse.from(business);
     }
 }

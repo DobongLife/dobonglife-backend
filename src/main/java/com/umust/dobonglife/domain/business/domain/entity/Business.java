@@ -7,7 +7,6 @@ import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Entity
 @Table(name = "businesses")
 @Getter
@@ -30,6 +29,10 @@ public class Business extends BaseEntity {
 
     @Column(nullable = false)
     private String managerName;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isAuthenticated = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_id")
