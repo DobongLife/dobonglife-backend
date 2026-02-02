@@ -56,7 +56,7 @@ public class UserController {
 
     @Operation(
             summary = "인증번호 전송",
-            description = "메일로 인증번호를 전송합니다. 액세스 토큰이 필요합니다."
+            description = "메일로 인증번호를 전송합니다."
     )
     @PostMapping("/mail/send")
     public BaseResponse<Void> sendAuthCodeMail(@RequestBody MailRequest request) {
@@ -66,7 +66,7 @@ public class UserController {
 
     @Operation(
             summary = "인증번호 검증",
-            description = "메일로 받은 인증번호를 검증합니다. 액세스 토큰이 필요합니다."
+            description = "메일로 받은 인증번호를 검증합니다."
     )
     @PostMapping("/mail/check")
     public BaseResponse<Void> checkAuthCode(@RequestBody MailCodeCheckRequest request) {
