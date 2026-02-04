@@ -37,7 +37,7 @@ public class UserService {
 
     @Transactional
     public void signUp(SignupRequest request) {
-        if (!userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isEmpty()) {
+        if (userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isPresent()) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
         if (!"VERIFIED".equals(mailService.getStoredSignUpCode(request.getEmail()))){

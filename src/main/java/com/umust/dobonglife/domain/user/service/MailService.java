@@ -1,7 +1,9 @@
 package com.umust.dobonglife.domain.user.service;
 
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -9,6 +11,7 @@ import com.umust.dobonglife.global.external.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -40,8 +43,15 @@ public class MailService {
     private final SpringTemplateEngine templateEngine;
 
     private final RedisService redisService;
+    private final UserRepository userRepository;
 
     public void sendMail(MailRequest request) {
+        // 비밀번호 변경 시, 존재하지 않는 email이면 에러 처리
+        if (!request.isForSignUp()){
+            User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
+        }
+
         String authCode = createCode();
         MimeMessage mimeMessage = createEmailMessage(request.getEmail(), authCode);
 
