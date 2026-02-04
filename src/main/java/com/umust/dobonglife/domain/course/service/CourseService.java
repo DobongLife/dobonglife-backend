@@ -75,7 +75,7 @@ public class CourseService {
                 .map(Course::getId)
                 .toList();
 
-        Set<Long> favoriteCourseIds = (userId != null)
+        Set<Long> favoriteCourseIds = (userId != null && !courseIds.isEmpty())
                 ? courseLikeService.getFavoriteCourseIds(userId, courseIds)
                 : Collections.emptySet();
 

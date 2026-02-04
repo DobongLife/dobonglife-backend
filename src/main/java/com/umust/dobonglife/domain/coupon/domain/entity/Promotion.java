@@ -153,7 +153,6 @@ public class Promotion {
                 .minPrice(dto.minPurchaseAmount() != null ? dto.minPurchaseAmount().longValue() : null)
                 .maxPrice(dto.maxDiscountAmount() != null ? dto.maxDiscountAmount().longValue() : null)
                 .code(CouponCodeGenerator.generate())
-                .point(0L)
                 .totalQuantity(dto.totalQuantity())
                 .startDate(dto.issueStartDate())
                 .endDate(dto.issueEndDate())

@@ -22,7 +22,7 @@ import java.util.List;
 
 @Tag(name = "비즈니스 쿠폰 API", description = "비즈니스 쿠폰 API")
 @RestController
-@RequestMapping("/api/business")
+@RequestMapping("/api/business/promotion")
 @RequiredArgsConstructor
 public class BusinessPromotionController {
 
@@ -50,7 +50,7 @@ public class BusinessPromotionController {
     )
     @PatchMapping("/update/{promotionId}")
     public BaseResponse<PromotionUpdateResponse> updateCoupon(
-            @PathVariable Long promotionId,
+            @PathVariable("promotionId") Long promotionId,
             @RequestBody @Valid PromotionUpdateRequest request,
             @CurrentUserId Long userId) {
         PromotionUpdateResponse responses = promotionService.updateCoupon(request, promotionId, userId);
