@@ -30,9 +30,9 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
             whereCondition = whereCondition.and(notification.isRead.isFalse());
         } else if ("POINT".equals(filter)) {
             whereCondition = whereCondition.and(notification.type.eq(NotificationType.POINT));
-        } else if ("EVENT".equals(filter)) {
-            whereCondition = whereCondition.and(notification.type.eq(NotificationType.EVENT));
-        }
+        } else if ("COUPON".equals(filter)) {
+            whereCondition = whereCondition.and(notification.type.eq(NotificationType.COUPON));
+        } // TODO: 수정
 
 
         List<Notification> content = queryFactory

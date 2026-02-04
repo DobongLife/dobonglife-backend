@@ -36,7 +36,7 @@ public class Notification {
     private String content;
 
     @Column(nullable = true)
-    private String relatedUrl;
+    private Long relatedUrlId;
 
     @Column(nullable = false)
     private boolean isRead = false;
@@ -45,18 +45,18 @@ public class Notification {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    private Notification(Long userId, NotificationType type, String title, String content, String relatedUrl) {
+    private Notification(Long userId, NotificationType type, String title, String content, Long relatedUrlId) {
         this.userId = userId;
         this.title = title;
         this.type = type;
         this.content = content;
-        this.relatedUrl = relatedUrl;
+        this.relatedUrlId = relatedUrlId;
     }
 
-    public static Notification create(Long userId, NotificationType type, String title, String content, String relatedUrl) {
+    public static Notification create(Long userId, NotificationType type, String title, String content, Long relatedUrlId) {
         validateRequiredFields(userId, content);
 
-        return new Notification(userId, type, title, content, relatedUrl);
+        return new Notification(userId, type, title, content, relatedUrlId);
     }
 
     private static void validateRequiredFields(Long userId, String content) {

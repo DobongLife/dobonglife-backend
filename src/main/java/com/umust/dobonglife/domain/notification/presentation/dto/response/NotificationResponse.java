@@ -11,11 +11,10 @@ public record NotificationResponse(
         NotificationType type,
         String title,
         String content,
-        String relatedUrl,
         boolean isRead,
         LocalDateTime createdAt,
-        String timeAgo // 화면에 표시될 "몇 시간 전", "2일 전" 정보
-) {
+        String timeAgo, // 화면에 표시될 "몇 시간 전", "2일 전" 정보
+        Long relatedUrlId) {
     public static NotificationResponse from(Notification notification) {
         String timeAgo = calculateTimeAgo(notification.getCreatedAt());
 
@@ -24,10 +23,10 @@ public record NotificationResponse(
                 notification.getType(),
                 notification.getTitle(),
                 notification.getContent(),
-                notification.getRelatedUrl(),
                 notification.isRead(),
                 notification.getCreatedAt(),
-                timeAgo
+                timeAgo,
+                notification.getRelatedUrlId()
         );
     }
 

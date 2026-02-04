@@ -55,12 +55,12 @@ public class NotificationService {
 
     // 새로운 알림 생성
     @Transactional
-    public void createNotification(Long userId, NotificationType type, String title, String content, String relatedUrl, String fcmToken) {
-        Notification notification = Notification.create(userId, type, title, content, relatedUrl);
+    public void createNotification(Long userId, NotificationType type, String title, String content, Long relatedUrlId, String fcmToken) {
+        Notification notification = Notification.create(userId, type, title, content, relatedUrlId);
         notificationRepository.save(notification);
 
         if (fcmToken != null) {
-            notificationUtil.sendToDevice(fcmToken, title, content, relatedUrl);
+            notificationUtil.sendToDevice(fcmToken, title, content, type, relatedUrlId);
         }
     }
 }

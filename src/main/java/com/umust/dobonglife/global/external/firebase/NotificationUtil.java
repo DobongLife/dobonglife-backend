@@ -1,6 +1,7 @@
 package com.umust.dobonglife.global.external.firebase;
 
 import com.google.firebase.messaging.*;
+import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.error.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class NotificationUtil {
         }
     }
 
-    public void sendToDevice(String fcmToken, String title, String body, String relatedUrl) {
+    public void sendToDevice(String fcmToken, String title, String body, NotificationType type, Long id) {
         AndroidConfig androidConfig = AndroidConfig.builder()
                 .setTtl(3600 * 1000)
                 .setPriority(AndroidConfig.Priority.HIGH)
@@ -65,7 +66,8 @@ public class NotificationUtil {
                         .setTitle(title)
                         .setBody(body)
                         .build())
-                .putData("relatedUrl", relatedUrl != null ? relatedUrl : "")
+                .putData("id", String.valueOf(id != null ? id : 0L))
+                .putData("type", type != null ? type.name() : "NONE")
                 .setAndroidConfig(androidConfig)
                 .setApnsConfig(apnsConfig)
                 .build();

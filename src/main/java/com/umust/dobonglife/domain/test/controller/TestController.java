@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.test.controller;
 
+import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
 import com.umust.dobonglife.domain.test.model.Test;
 import com.umust.dobonglife.domain.test.model.UploadImageRequest;
 import com.umust.dobonglife.domain.test.model.UploadImageResponse;
@@ -67,10 +68,10 @@ public class TestController {
         return BaseResponse.ok(response);
     }
 
-//    @PostMapping("/device")
-//    public ResponseEntity<String> testDevice(@RequestBody NotificationRequest request) {
-//        notificationUtil.sendToDevice("", request.title(), request.body(), "relatedUrl");
-//        return ResponseEntity.ok("개별 디바이스 전송 시도 성공");
-//    }
+    @PostMapping("/device")
+    public ResponseEntity<String> testDevice(@RequestBody NotificationRequest request) {
+        notificationUtil.sendToDevice("d50PfyhcQmuRyKtLBOsshO:APA91bHU-RXK8sHXVHKDLEps_5Hs_G-_glJ8oA-yIyQ_1aA09UYxD3fmYNa5dSiwbWK5a6Q4Mn87r1TZo2buZyMJUYjNlV0TfJdu2BLr0D5TqXyvOMT5wAU", request.title(), request.body(), NotificationType.COUPON, 1L);
+        return ResponseEntity.ok("개별 디바이스 전송 시도 성공");
+    }
 }
 
