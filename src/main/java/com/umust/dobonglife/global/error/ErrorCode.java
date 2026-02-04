@@ -19,10 +19,12 @@ public enum ErrorCode{
     USER_DUPLICATE_EMAIL(201, HttpStatus.BAD_REQUEST.value(), "중복된 이메일의 사용자가 있습니다."),
     USER_DUPLICATE_NICKNAME(202, HttpStatus.BAD_REQUEST.value(), "중복된 닉네임의 사용자가 있습니다."),
     USER_MAIL_NOT_FOUND(203, HttpStatus.NOT_FOUND.value(), "해당 이메일의 사용자를 찾을 수 없습니다."),
-    USER_ROLE_BAD_REQUEST(203, HttpStatus.BAD_REQUEST.value(), "잘못된 Role의 요청값 입니다."),
+    USER_ROLE_BAD_REQUEST(204, HttpStatus.BAD_REQUEST.value(), "잘못된 Role의 요청값 입니다."),
+    USER_IS_SOCIAL_LOGGED(205, HttpStatus.BAD_REQUEST.value(), "소셜 로그인 사용자는 비밀번호 변경이 불가능합니다."),
 
     // Place
     PLACE_NOT_FOUND(300, HttpStatus.NOT_FOUND.value(), "장소를 찾을 수 없습니다."),
+    PLACE_IMAGE_REQUIRED(301, HttpStatus.BAD_REQUEST.value(), "장소 등록에는 최소 한 장의 사진이 필요합니다."),
 
     // Course
     COURSE_NOT_FOUND(400, HttpStatus.NOT_FOUND.value(), "코스를 찾을 수 없습니다."),
@@ -77,18 +79,15 @@ public enum ErrorCode{
 
     // Point
     INVALID_POINT(400, HttpStatus.BAD_REQUEST.value(), "포인트가 부족합니다."),
+    POINT_NOT_FOUND(401, HttpStatus.NOT_FOUND.value(), "포인트를 찾을 수 없습니다."),
+    POINT_ALREADY_USED(402, HttpStatus.CONFLICT.value(), "이미 사용된 포인트입니다."),
+    POINT_CANNOT_NEGATIVE(403, HttpStatus.CONFLICT.value(), "포인트 내역은 음수가 될 수 없습니다."),
 
     // FireBase
     SERVER_ERROR_FIREBASE(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase 초기화에 실패했습니다."),
     SERVER_ERROR_MESSAGE(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 메시지 전송을 실패했습니다."),
     SERVER_ERROR_TOPIC(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 토픽 구독을 실패했습니다."),
     SERVER_ERROR_TOPIC_CANCEL(500, HttpStatus.INTERNAL_SERVER_ERROR.value(), "FCM 토픽 구독 취소를 실패했습니다."),
-
-    // Point
-    POINT_NOT_FOUND(700, HttpStatus.NOT_FOUND.value(), "포인트를 찾을 수 없습니다."),
-    POINT_ALREADY_USED(701, HttpStatus.CONFLICT.value(), "이미 사용된 포인트입니다."),
-    POINT_PRINCIPAL_ONLY(702, HttpStatus.CONFLICT.value(), "본인 포인트만 사용할 수 있습니다."),
-    POINT_CANNOT_NEGATIVE(703, HttpStatus.CONFLICT.value(), "포인트 내역은 음수가 될 수 없습니다."),
 
     // Schedule
     SCHEDULE_NOT_FOUND(800, HttpStatus.NOT_FOUND.value(), "일정을 찾을 수 없습니다."),
@@ -103,7 +102,8 @@ public enum ErrorCode{
     INVALID_DATE_RANGE(500, HttpStatus.BAD_REQUEST.value(), "종료일보다 시작일이 빠릅니다."),
     BUSINESS_NOT_FOUND(900, HttpStatus.NOT_FOUND.value(), "사업장을 찾을 수 없습니다."),
 
-    COUPON_EXCHANGE_RESTRICTED(403,HttpStatus.FORBIDDEN.value(), "리뷰 정책 위반(3회 삭제)으로 인해 쿠폰 교환이 제한되었습니다.");
+    COUPON_EXCHANGE_RESTRICTED(403,HttpStatus.FORBIDDEN.value(), "리뷰 정책 위반(3회 삭제)으로 인해 쿠폰 교환이 제한되었습니다."),
+    NOT_BUSINESS_OWNER(901, HttpStatus.CONFLICT.value(), "사업장의 소유자가 아닙니다.");
 
     private final int code;
     private final int httpStatus;

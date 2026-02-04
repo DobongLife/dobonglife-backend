@@ -9,7 +9,6 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.controller.dto.response.PlaceResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryResponse;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.custom.PlaceRepositoryCustom;

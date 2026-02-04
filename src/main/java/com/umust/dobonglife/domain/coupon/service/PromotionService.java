@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.coupon.service;
 
 import com.umust.dobonglife.domain.business.service.BusinessService;
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
+import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionUpdateRequest;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -73,12 +75,11 @@ public class PromotionService {
     public UsedCouponResponse changePointToCoupon(Long userId, Long promotionId) {
         userService.canExchangeCoupon(userId);
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new EntityNotFoundException("[ERROR] 프로모션이 존재하지 않습니다."));
-        User user = userService.findById(userId);
 
         if(!pointService.processUserPoint(userId, promotion.getPoint()))
             throw new BusinessException(ErrorCode.INVALID_POINT);
         // TODO: 쿠폰 발급 시스템
-        pointService.usePoint(promotion.getTitle(), promotion.getPoint(), user);
+        pointService.usePoint(userId, promotion.getTitle(), promotion.getPoint());
 
         Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getValidPeriod());
         return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
@@ -109,5 +110,18 @@ public class PromotionService {
         Promotion promotion = Promotion.createPromotion(request, imageUrls, userId, place);
         Promotion savedPromotion = promotionRepository.save(promotion);
         return PromotionRegisterResponse.from(savedPromotion);
+    }
+
+    @Transactional
+    public PromotionUpdateResponse updateCoupon(PromotionUpdateRequest request, Long promotionId, Long userId) {
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_PROMOTION_ID));
+
+        if (!promotion.getBusinessesId().equals(userId)) {
+            throw new BusinessException(ErrorCode.BUSINESS_NOT_FOUND);
+        }
+
+        promotion.update(request);
+        return PromotionUpdateResponse.from(promotion);
     }
 }

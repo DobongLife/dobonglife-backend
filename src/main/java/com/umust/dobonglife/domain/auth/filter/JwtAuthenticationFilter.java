@@ -48,7 +48,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/docs/**",
             "/api/test/**",
             "/api/users/signup",
-            "/api/home/**"
+            "/api/home/**",
+            "/api/users/mail/send",
+            "/api/users/mail/check",
+            "/api/mail/find-password"
     );
 
     private static final AntPathMatcher ANT = new AntPathMatcher();

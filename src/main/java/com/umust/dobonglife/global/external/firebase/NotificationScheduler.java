@@ -46,6 +46,7 @@ public class NotificationScheduler {
                         schedule.getUser().getFcmToken(),
                         "오늘의 일정 알림",
                         "오늘은 [" + schedule.getTitle() + "] 일정이 있습니다.",
+                        NotificationType.SCHEDULE,
                         schedule.getId()
                 );
             }
@@ -56,7 +57,7 @@ public class NotificationScheduler {
         LocalDateTime startOfExpiryDay = expiryDate.atStartOfDay();
         LocalDateTime endOfExpiryDay = expiryDate.atTime(LocalTime.MAX);
 
-        List<Coupon> expiringCoupons = couponRepository.findAllByExpirationDateBetween(startOfExpiryDay, endOfExpiryDay);
+        List<Coupon> expiringCoupons = couponRepository.findAllByIssueEndDateBetween(startOfExpiryDay, endOfExpiryDay);
 
         for (Coupon userCoupon : expiringCoupons) {
             Optional<User> byId = userRepository.findById(userCoupon.getUserId());

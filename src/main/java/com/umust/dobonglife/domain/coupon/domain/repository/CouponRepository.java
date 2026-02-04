@@ -31,5 +31,5 @@ public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRep
             "WHERE c.userId = :userId AND c.id = :couponId")
     Optional<Coupon> findByUserIdAndCouponId(@Param("userId") Long userId, @Param("couponId") Long couponId);
 
-    List<Coupon> findAllByExpirationDateBetween(LocalDateTime startOfExpiryDay, LocalDateTime endOfExpiryDay);
+    List<Coupon> findAllByIssueEndDateBetween(LocalDateTime start, LocalDateTime end);
 }
