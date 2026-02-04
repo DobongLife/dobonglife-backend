@@ -4,5 +4,5 @@ import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryR
 import com.umust.dobonglife.global.common.response.CursorResponse;
 
 public record MyCourseLikeResponse(Long totalCount,
-                                   CursorResponse<CourseSummaryResponse> courses) {
+                                   CursorResponse<CourseSummaryResponse> course) {
 }
