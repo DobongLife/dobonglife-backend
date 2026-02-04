@@ -46,7 +46,7 @@ public class NotificationUtil {
         }
     }
 
-    @Async
+    @Async("notificationExecutor")
     public void sendToDevice(String fcmToken, String title, String body, NotificationType type, Long id) {
         AndroidConfig androidConfig = AndroidConfig.builder()
                 .setTtl(3600 * 1000)
