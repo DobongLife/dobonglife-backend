@@ -56,6 +56,7 @@ public class UserService {
     public void deleteAccount (HttpServletRequest request, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        inValidFcmToken(userId);
         userRepository.delete(user);
         String accessToken = jwtUtil.extractAccessToken(request)
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));

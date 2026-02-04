@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.external.redis.RedisService;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -43,6 +44,7 @@ public class JwtService {
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
+    private final UserService userService;
 
     public void logout(HttpServletRequest request) {
         String accessToken = jwtUtil.extractAccessToken(request)
@@ -56,6 +58,8 @@ public class JwtService {
         if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
             throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
         }
+        Long userId = jwtUtil.getUserId(accessToken);
+        userService.inValidFcmToken(userId);
 
         deleteRefreshToken(refreshToken);
         //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationFilter에서 인증처리 거부
