@@ -44,7 +44,6 @@ public class MailService {
     private final RedisService redisService;
 
     public void sendMail(MailRequest request) {
-
         String authCode = createCode();
         MimeMessage mimeMessage = createEmailMessage(request.getEmail(), authCode);
 
