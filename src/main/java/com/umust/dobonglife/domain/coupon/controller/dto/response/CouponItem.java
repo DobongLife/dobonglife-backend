@@ -11,6 +11,8 @@ import java.util.List;
 public record CouponItem(
         Long couponId,
         Long placeId,
+        String placeName,
+        String operatingHour,
         Long promotionId,
         String category,
         String title,
@@ -27,6 +29,8 @@ public record CouponItem(
         return new CouponItem(
                 coupon.getId(),
                 coupon.getPromotion().getPlace().getId(),
+                coupon.getPromotion().getPlace().getName(),
+                coupon.getPromotion().getPlace().getOperatingHour(),
                 coupon.getPromotion().getId(),
                 coupon.getPromotion().getCategory().getDescription(),
                 coupon.getPromotion().getTitle(),
