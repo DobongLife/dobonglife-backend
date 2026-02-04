@@ -21,7 +21,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FormLoginAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final AuthenticationUtil authenticationUtil;
     private final JwtUtil jwtUtil;
@@ -36,13 +36,13 @@ public class FormLoginAuthenticationSuccessHandler implements AuthenticationSucc
         String role = authenticationUtil.getRole();
         Long userId = authenticationUtil.getUserId();
         String userName = authenticationUtil.getUserName();
-        log.info("[FormLoginAuthenticationSuccessHandler] provider={}, role={}, userId={}", provider, role, userId);
+        log.info("[CustomAuthenticationSuccessHandler] provider={}, role={}, userId={}", provider, role, userId);
 
         String accessToken = jwtUtil.createAccessToken(userId, provider, role, userName);
         String refreshToken = jwtUtil.createRefreshToken(userId, provider, role, userName);
 
         jwtService.storeRefreshToken(refreshToken, userId);
-        log.info("[FormLoginAuthenticationSuccessHandler], refreshToken={}", refreshToken);
+        log.info("[CustomAuthenticationSuccessHandler], refreshToken={}", refreshToken);
 
         TokenResponse tokenResponse = TokenResponse.builder()
                 .accessToken(accessToken)

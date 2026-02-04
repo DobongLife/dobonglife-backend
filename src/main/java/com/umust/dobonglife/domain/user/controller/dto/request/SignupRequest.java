@@ -20,7 +20,4 @@ public class SignupRequest {
     @NotNull(message = "비밀번호는 필수입니다")
     @Schema(description = "비밀번호", example = "1234")
     private String password;
-    @NotNull(message = "역할은 필수입니다")
-    @Schema(description = "역할", example = "MEMBER")
-    private String role;
 }

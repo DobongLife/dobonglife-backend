@@ -1,7 +1,9 @@
 package com.umust.dobonglife.domain.user.service;
 
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -40,8 +42,15 @@ public class MailService {
     private final SpringTemplateEngine templateEngine;
 
     private final RedisService redisService;
+    private final UserRepository userRepository;
 
     public void sendMail(MailRequest request) {
+        // 비밀번호 변경 시, 존재하지 않는 email이면 에러 처리
+        if (!request.isForSignUp()){
+            User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
+        }
+
         String authCode = createCode();
         MimeMessage mimeMessage = createEmailMessage(request.getEmail(), authCode);
 
@@ -72,11 +81,14 @@ public class MailService {
         }
     }
 
-    public void checkAuthCode(MailCodeCheckRequest request) {
+    public void checkSignUpAuthCode(MailCodeCheckRequest request) {
+
         String email = request.getEmail();
-        String storedCode;
-        if(request.isForSignUp()) storedCode = getStoredSignUpCode(email);
-        else storedCode = getStoredPasswordCode(email);
+        String storedCode = getStoredSignUpCode(email);
+
+        if (storedCode == null || storedCode.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+        }
 
         if ("VERIFIED".equals(storedCode)) {
             return; // 이미 인증이 완료된 이메일
@@ -88,11 +100,30 @@ public class MailService {
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
 
-        String prefix;
-        if(request.isForSignUp()) prefix = EMAIL_KEY_PREFIX;
-        else prefix = PASSWORD_KEY_PREFIX;
         redisService.setValues(
-                prefix + email,
+                EMAIL_KEY_PREFIX + email,
+                "VERIFIED",
+                Duration.ofSeconds(VERIFIED_TTL_SECONDS)
+        );
+    }
+
+    public void checkPasswordAuthCode(String email, String authCode) {
+        String storedCode = getStoredPasswordCode(email);
+
+        if (storedCode == null || storedCode.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+        }
+
+        if ("VERIFIED".equals(storedCode)) {
+            return;
+        }
+
+        if (!authCode.equals(storedCode)) {
+            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+        }
+
+        redisService.setValues(
+                PASSWORD_KEY_PREFIX + email,
                 "VERIFIED",
                 Duration.ofSeconds(VERIFIED_TTL_SECONDS)
         );

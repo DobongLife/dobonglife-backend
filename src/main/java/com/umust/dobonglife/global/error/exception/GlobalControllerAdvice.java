@@ -41,8 +41,16 @@ public class GlobalControllerAdvice {
     public BaseErrorResponse handle_IllegalArgumentException(Exception e) {
         log.error("[handle_BadRequest]", e);
 
-        if(e instanceof MethodArgumentNotValidException) {
-            return new BaseErrorResponse(ILLEGAL_ARGUMENT, (Objects.requireNonNull(((MethodArgumentNotValidException) e).getBindingResult().getFieldError()).getDefaultMessage()));
+        if (e instanceof MethodArgumentNotValidException manve) {
+            var fieldError = manve.getBindingResult().getFieldError();
+            if (fieldError != null) {
+                String code = fieldError.getCode();
+                if ("NotNull".equals(code) || "NotBlank".equals(code) || "NotEmpty".equals(code)) {
+                    return new BaseErrorResponse(ILLEGAL_NOT_NULL);
+                }
+                return new BaseErrorResponse(ILLEGAL_ARGUMENT);
+            }
+            return new BaseErrorResponse(ILLEGAL_ARGUMENT);
         }
 
         return new BaseErrorResponse(ILLEGAL_ARGUMENT);

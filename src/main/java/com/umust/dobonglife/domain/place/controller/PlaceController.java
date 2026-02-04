@@ -1,9 +1,6 @@
 package com.umust.dobonglife.domain.place.controller;
 
-import com.umust.dobonglife.domain.place.controller.dto.request.PlaceRegisterRequest;
-import com.umust.dobonglife.domain.place.controller.dto.request.ThemeRequest;
 import com.umust.dobonglife.domain.place.controller.dto.response.*;
-import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.service.PlaceReviewService;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
@@ -12,12 +9,8 @@ import com.umust.dobonglife.global.common.response.CursorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Tag(name = "장소 API", description = "장소 관련 API")
 @RequiredArgsConstructor
@@ -26,8 +19,6 @@ import java.util.List;
 public class PlaceController {
     private final PlaceService placeService;
     private final PlaceReviewService placeReviewService;
-
-
 
     @Operation(summary = "장소 좋아요", description = "장소를 좋아요합니다.")
     @ApiResponse(

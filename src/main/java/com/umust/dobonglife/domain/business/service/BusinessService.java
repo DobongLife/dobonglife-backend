@@ -2,8 +2,6 @@ package com.umust.dobonglife.domain.business.service;
 
 
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
-import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
@@ -128,6 +126,6 @@ public class BusinessService {
 
     public String getCategoryUserId(Long userId) {
         Business businessByUser = getBusinessByUser(userId);
-        return businessByUser.getPlace().getCategory().getValue();
+        return businessByUser.getPlace().getCategory().getDescription();
     }
 }
