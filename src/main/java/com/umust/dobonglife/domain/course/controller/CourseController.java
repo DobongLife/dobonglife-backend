@@ -82,7 +82,7 @@ public class CourseController {
             responseCode = "200",
             description = "요청에 성공하였습니다."
     )
-    @PutMapping("/{courseId}")
+    @PatchMapping("/{courseId}")
     public BaseResponse<CourseRegisterResponse> updateCourse(
             @CurrentUserId Long userId,
             @PathVariable("courseId") Long courseId,

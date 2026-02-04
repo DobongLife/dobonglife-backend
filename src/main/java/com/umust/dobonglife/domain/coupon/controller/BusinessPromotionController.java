@@ -1,8 +1,10 @@
 package com.umust.dobonglife.domain.coupon.controller;
 
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
+import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionUpdateRequest;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PresetResponse;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionRegisterResponse;
+import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionUpdateResponse;
 import com.umust.dobonglife.domain.coupon.service.PreSetService;
 import com.umust.dobonglife.domain.coupon.service.PromotionService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
@@ -38,6 +40,20 @@ public class BusinessPromotionController {
             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
             @CurrentUserId Long userId) {
         PromotionRegisterResponse responses = promotionService.registerCoupon(request, userId, imageFiles);
+        return BaseResponse.ok(responses);
+    }
+
+    @Operation(summary = "쿠폰 수정하기", description = "쿠폰을 수정합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @PatchMapping("/update/{promotionId}")
+    public BaseResponse<PromotionUpdateResponse> updateCoupon(
+            @PathVariable Long promotionId,
+            @RequestBody @Valid PromotionUpdateRequest request,
+            @CurrentUserId Long userId) {
+        PromotionUpdateResponse responses = promotionService.updateCoupon(request, promotionId, userId);
         return BaseResponse.ok(responses);
     }
 

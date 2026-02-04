@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.coupon.domain.entity;
 
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
+import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionUpdateRequest;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import com.umust.dobonglife.domain.coupon.domain.constant.PromotionType;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
@@ -159,5 +160,14 @@ public class Promotion {
                 .validPeriod(dto.validityDays() != null ? dto.validityDays().longValue() : null)
                 .businessesId(managerId)
                 .build();
+    }
+
+    public void update(PromotionUpdateRequest request) {
+        if (request.totalQuantity() < this.totalQuantity) {
+            throw new IllegalArgumentException("전체 수량은 이미 발급된 수량보다 적을 수 없습니다.");
+        }
+        this.title = request.couponName();
+        this.description = request.couponDescription();
+        this.totalQuantity = request.totalQuantity();
     }
 }
