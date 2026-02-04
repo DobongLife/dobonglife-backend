@@ -1,11 +1,10 @@
 package com.umust.dobonglife.domain.coupon.controller.dto.request;
 
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
-import com.umust.dobonglife.domain.coupon.domain.constant.PromotionType;
+import com.umust.dobonglife.global.common.model.constant.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public record PromotionRegisterRequest(
         String couponName,
@@ -13,7 +12,7 @@ public record PromotionRegisterRequest(
         Long point,
         @Schema(
                 description = "프로모션 카테고리",
-                implementation = PromotionType.class,
+                implementation = Category.class,
                 example = "RESTAURANT"
         )
         String category,

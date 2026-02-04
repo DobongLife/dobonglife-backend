@@ -38,7 +38,7 @@ public class PlaceDetailResponse {
                 .placeId(place.getId())
                 .name(place.getName())
                 .subName(place.getSubName())
-                .category(place.getCategory().getValue())
+                .category(place.getCategory().getDescription())
                 .content(place.getContent())
                 .amenities(Place.amenityToStrings(place))
                 .placeImages(place.getImageUrls())

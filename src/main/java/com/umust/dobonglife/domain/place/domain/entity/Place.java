@@ -3,8 +3,8 @@ package com.umust.dobonglife.domain.place.domain.entity;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 
-import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.global.common.model.BaseEntity;
+import com.umust.dobonglife.global.common.model.constant.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -82,7 +82,7 @@ public class Place extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
-    private PlaceCategory category;
+    private Category category;
 
     public void applyNewReview(Double newRating) { // TODO: Course 처럼 분리할지 고민
         double totalScore = (this.averageRating * this.reviewCount) + newRating;

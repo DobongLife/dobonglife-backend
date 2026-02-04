@@ -3,7 +3,7 @@ package com.umust.dobonglife.domain.coupon.domain.entity;
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionUpdateRequest;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
-import com.umust.dobonglife.domain.coupon.domain.constant.PromotionType;
+import com.umust.dobonglife.global.common.model.constant.Category;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.global.auth.CouponCodeGenerator;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class Promotion {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
-    private PromotionType category;
+    private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
@@ -85,7 +84,7 @@ public class Promotion {
     private Long businessesId;
 
     @Builder
-    public Promotion(PromotionType category, Place place, String title, String description, List<String> imgUrls,
+    public Promotion(Category category, Place place, String title, String description, List<String> imgUrls,
                      DiscountType discountType, BigDecimal discountValue, Long minPrice,
                      Long maxPrice, String code, Long point, Long totalQuantity, LocalDate startDate,
                      LocalDate endDate, Long validPeriod, Long businessesId) {
@@ -139,7 +138,7 @@ public class Promotion {
     }
 
     public static Promotion createPromotion(PromotionRegisterRequest dto, List<String> imgUrl, Long managerId, Place place) {
-        PromotionType type = PromotionType.valueOf(dto.category());
+        Category type = Category.valueOf(dto.category());
 
         return Promotion.builder()
                 .category(type)

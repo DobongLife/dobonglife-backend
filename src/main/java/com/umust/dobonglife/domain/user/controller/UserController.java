@@ -76,7 +76,7 @@ public class UserController {
 
     @Operation(
             summary = "비밀번호 변경",
-            description = "비밀번호를 변경합니다. 액세스 토큰이 필요합니다."
+            description = "비밀번호를 변경합니다."
     )
     @PatchMapping("/password")
     public BaseResponse<Void> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {

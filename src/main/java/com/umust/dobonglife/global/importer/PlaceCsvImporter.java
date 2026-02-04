@@ -3,9 +3,9 @@ package com.umust.dobonglife.global.importer;
 import com.opencsv.CSVReader;
 import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.domain.constant.PlaceCategory;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
+import com.umust.dobonglife.global.common.model.constant.Category;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -47,15 +47,15 @@ public class PlaceCsvImporter implements CommandLineRunner {
             "자연힐링", CourseTheme.NATURE
     );
 
-    private static final Map<String, PlaceCategory> PLACE_CATEGORY_KR_MAP = Map.ofEntries(
-            Map.entry("음식점", PlaceCategory.RESTAURANT),
-            Map.entry("카페", PlaceCategory.CAFE),
-            Map.entry("쇼핑", PlaceCategory.SHOPPING),
-            Map.entry("의료/IT", PlaceCategory.MEDICAL),
-            Map.entry("뷰티", PlaceCategory.BEAUTY),
-            Map.entry("피트니스", PlaceCategory.FITNESS),
-            Map.entry("명소", PlaceCategory.LANDMARK),
-            Map.entry("기타", PlaceCategory.ETC)
+    private static final Map<String, Category> PLACE_CATEGORY_KR_MAP = Map.ofEntries(
+            Map.entry("음식점", Category.RESTAURANT),
+            Map.entry("카페", Category.CAFE),
+            Map.entry("쇼핑", Category.SHOPPING),
+            Map.entry("의료/IT", Category.MEDICAL_IT),
+            Map.entry("뷰티", Category.BEAUTY),
+            Map.entry("피트니스", Category.FITNESS),
+            Map.entry("체험", Category.EXPERIENCE),
+            Map.entry("기타", Category.ETC)
     );
 
     @Value("${place.import.path:classpath:import/places.csv}")
@@ -111,7 +111,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 String contactNew = defaultIfBlank(contactRaw, "정보없음");
                 String operatingHourNew = defaultIfBlank(operatingHourRaw, "정보없음");
 
-                PlaceCategory categoryNew = parsePlaceCategory(defaultIfBlank(categoryRaw, "명소"));
+                Category categoryNew = parseCategory(defaultIfBlank(categoryRaw, "명소"));
                 List<Amenity> amenitiesNew = parseAmenities(defaultIfBlank(amenitiesRaw, ""));
                 List<String> imageUrlsNew = parseUrlList(defaultIfBlank(imageUrlsRaw, ""));
                 String thumbnailUrlNew = defaultIfBlank(thumbnailUrlRaw, "");
@@ -142,7 +142,7 @@ public class PlaceCsvImporter implements CommandLineRunner {
 
                             // 테마/카테고리
                             applyIfNotEmpty(themesRaw, v -> existing.setThemes(parseThemes(v)));
-                            applyIfPresent(categoryRaw, v -> existing.setCategory(parsePlaceCategory(v)));
+                            applyIfPresent(categoryRaw, v -> existing.setCategory(parseCategory(v)));
 
                             return existing;
                         })
@@ -194,24 +194,24 @@ public class PlaceCsvImporter implements CommandLineRunner {
     // 기존 유틸/파서
     // =========================
 
-    private PlaceCategory parsePlaceCategory(String raw) {
-        if (raw == null || raw.isBlank()) return PlaceCategory.LANDMARK;
+    private Category parseCategory(String raw) {
+        if (raw == null || raw.isBlank()) return Category.EXPERIENCE;
 
         String v = raw.trim();
 
         try {
-            return PlaceCategory.valueOf(v.toUpperCase());
+            return Category.valueOf(v.toUpperCase());
         } catch (IllegalArgumentException ignore) { }
 
-        PlaceCategory mapped = PLACE_CATEGORY_KR_MAP.get(v);
+        Category mapped = PLACE_CATEGORY_KR_MAP.get(v);
         if (mapped != null) return mapped;
 
-        for (PlaceCategory c : PlaceCategory.values()) {
-            if (c.getValue().equals(v)) return c;
+        for (Category c : Category.values()) {
+            if (c.getDescription().equals(v)) return c;
         }
 
         log.warn("[PlaceCsvImporter] 알 수 없는 category 값 '{}', ETC로 저장", v);
-        return PlaceCategory.ETC;
+        return Category.ETC;
     }
 
     private Map<String, Integer> indexMap(String[] header) {
