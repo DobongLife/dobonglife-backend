@@ -64,7 +64,7 @@ public class PlaceService {
                 .name(request.getBusinessName())
                 .subName(request.getBusinessName())
                 .category(PlaceCategory.toEnum(request.getCategory()))
-                .content(request.getIntroduction())
+                .content(request.getContent())
                 .address(request.getBusinessAddress())
                 .operatingHour(request.getOperatingHour())
                 .contact(request.getContact())
@@ -146,7 +146,7 @@ public class PlaceService {
         Place place = business.getPlace();
 
         place.setName(request.getBusinessName());
-        place.setContent(request.getIntroduction());
+        place.setContent(request.getContent());
         place.setAddress(request.getBusinessAddress());
         place.setContact(request.getContact());
         place.setOperatingHour(request.getOperatingHour() == null ? place.getOperatingHour() : request.getOperatingHour());
