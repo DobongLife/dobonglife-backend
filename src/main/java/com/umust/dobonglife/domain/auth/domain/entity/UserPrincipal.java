@@ -77,5 +77,18 @@ public class UserPrincipal implements UserDetails, OAuth2User {
 
         return Collections.unmodifiableSet(merged);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserPrincipal)) return false;
+        UserPrincipal that = (UserPrincipal) o;
+        return Objects.equals(this.userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.userId);
+    }
 }
 
