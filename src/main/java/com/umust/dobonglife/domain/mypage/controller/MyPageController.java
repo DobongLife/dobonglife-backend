@@ -36,7 +36,7 @@ public class MyPageController {
         return BaseResponse.ok(response);
     }
 
-    @Operation(summary = "찜 조회", description = "찜한 코스와 장소 조회")
+    @Operation(summary = "찜 코스 조회", description = "찜한 코스와 장소 조회")
     @ApiResponse(
             responseCode = "200",
             description = "요청에 성공하였습니다."
