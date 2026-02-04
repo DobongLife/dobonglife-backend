@@ -42,7 +42,7 @@ public class GlobalControllerAdvice {
         log.error("[handle_BadRequest]", e);
 
         if(e instanceof MethodArgumentNotValidException) {
-            return new BaseErrorResponse(ILLEGAL_ARGUMENT, (Objects.requireNonNull(((MethodArgumentNotValidException) e).getBindingResult().getFieldError()).getDefaultMessage()));
+            return new BaseErrorResponse(ILLEGAL_NOT_NULL);
         }
 
         return new BaseErrorResponse(ILLEGAL_ARGUMENT);
