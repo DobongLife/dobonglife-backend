@@ -155,5 +155,10 @@ public class UserService {
         User byId = findById(userId);
         byId.setFcmToken(fcmToken);
     }
+
+    public void inValidFcmToken(Long userId) {
+        User byId = findById(userId);
+        byId.setFcmToken(null);
+    }
 }
 

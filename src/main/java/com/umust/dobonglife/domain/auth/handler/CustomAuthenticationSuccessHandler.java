@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.AuthenticationUtil;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -37,6 +39,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Long userId = authenticationUtil.getUserId();
         String userName = authenticationUtil.getUserName();
         log.info("[CustomAuthenticationSuccessHandler] provider={}, role={}, userId={}", provider, role, userId);
+
+        // 폼 로그인만 적용 됨
+        Object details = authentication.getDetails();
+        if (details instanceof String fcmToken && !fcmToken.isBlank()) {
+            userService.updateFcmToken(userId, fcmToken);
+        }
 
         String accessToken = jwtUtil.createAccessToken(userId, provider, role, userName);
         String refreshToken = jwtUtil.createRefreshToken(userId, provider, role, userName);
