@@ -70,7 +70,7 @@ public class TestController {
 
 //    @PostMapping("/device")
 //    public ResponseEntity<String> testDevice(@RequestBody NotificationRequest request) {
-//        notificationUtil.sendToDevice("d50PfyhcQmuRyKtLBOsshO:APA91bHU-RXK8sHXVHKDLEps_5Hs_G-_glJ8oA-yIyQ_1aA09UYxD3fmYNa5dSiwbWK5a6Q4Mn87r1TZo2buZyMJUYjNlV0TfJdu2BLr0D5TqXyvOMT5wAU", request.title(), request.body(), NotificationType.COUPON, 1L);
+//        notificationUtil.sendToDevice("", request.title(), request.body(), NotificationType.COUPON, 1L);
 //        return ResponseEntity.ok("개별 디바이스 전송 시도 성공");
 //    }
 }
