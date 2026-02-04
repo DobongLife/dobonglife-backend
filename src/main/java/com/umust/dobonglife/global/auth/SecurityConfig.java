@@ -2,11 +2,8 @@ package com.umust.dobonglife.global.auth;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umust.dobonglife.domain.auth.exception.handler.*;
 import com.umust.dobonglife.domain.auth.handler.FormLoginAuthenticationSuccessHandler;
-import com.umust.dobonglife.domain.auth.exception.handler.CustomAccessDeniedHandler;
-import com.umust.dobonglife.domain.auth.exception.handler.CustomAuthenticationEntryPoint;
-import com.umust.dobonglife.domain.auth.exception.handler.CustomJsonAuthenticationFailureHandler;
-import com.umust.dobonglife.domain.auth.exception.handler.JwtExceptionHandlerFilter;
 import com.umust.dobonglife.domain.auth.filter.CustomLoginFilter;
 import com.umust.dobonglife.domain.auth.filter.JwtAuthenticationFilter;
 import com.umust.dobonglife.domain.auth.service.CustomOAuth2UserService;
@@ -42,6 +39,7 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration configuration;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomSessionExpiredStrategy customSessionExpiredStrategy;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomLoginFilter customLoginFilter,
@@ -52,12 +50,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(b -> b.disable())
                 .formLogin(fl -> fl.disable())
-                .sessionManagement()
-                .sessionFixation().changeSessionId()
-                .maximumSessions(1)
-                .expiredSessionStrategy(customSessionExpiredStrategy)
-                .maxSessionsPreventsLogin(false)
-                .sessionRegistry(sessionRegistry());
+                .sessionManagement(sm -> sm
+                        .sessionFixation(sf -> sf.changeSessionId())
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false)
+                        .expiredSessionStrategy(customSessionExpiredStrategy)
+                        .sessionRegistry(sessionRegistry())
+                );
 
         http
                 // 인가 규칙

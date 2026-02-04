@@ -83,7 +83,13 @@ public class MailService {
     }
 
     public void checkAuthCode(MailCodeCheckRequest request) {
+
         String email = request.getEmail();
+        // 비밀번호 변경 시, 존재하지 않는 email이면 에러 처리
+        if (!request.isForSignUp()){
+            User user = userRepository.findByEmailAndProvider(email, Provider.LOCAL)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
+        }
         String storedCode;
         if(request.isForSignUp()) storedCode = getStoredSignUpCode(email);
         else storedCode = getStoredPasswordCode(email);
