@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.coupon.domain.entity;
 
 import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionRegisterRequest;
+import com.umust.dobonglife.domain.coupon.controller.dto.request.PromotionUpdateRequest;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import com.umust.dobonglife.domain.coupon.domain.constant.PromotionType;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
@@ -144,6 +145,7 @@ public class Promotion {
                 .category(type)
                 .place(place)
                 .title(dto.couponName())
+                .point(dto.point())
                 .description(dto.couponDescription())
                 .imgUrls(imgUrl.isEmpty() ? Collections.singletonList(type.getImageUrl()) : imgUrl)
                 .discountType(DiscountType.valueOf(dto.discountType()))
@@ -151,12 +153,20 @@ public class Promotion {
                 .minPrice(dto.minPurchaseAmount() != null ? dto.minPurchaseAmount().longValue() : null)
                 .maxPrice(dto.maxDiscountAmount() != null ? dto.maxDiscountAmount().longValue() : null)
                 .code(CouponCodeGenerator.generate())
-                .point(0L)
                 .totalQuantity(dto.totalQuantity())
                 .startDate(dto.issueStartDate())
                 .endDate(dto.issueEndDate())
                 .validPeriod(dto.validityDays() != null ? dto.validityDays().longValue() : null)
                 .businessesId(managerId)
                 .build();
+    }
+
+    public void update(PromotionUpdateRequest request) {
+        if (request.totalQuantity() < this.totalQuantity) {
+            throw new IllegalArgumentException("전체 수량은 이미 발급된 수량보다 적을 수 없습니다.");
+        }
+        this.title = request.couponName();
+        this.description = request.couponDescription();
+        this.totalQuantity = request.totalQuantity();
     }
 }

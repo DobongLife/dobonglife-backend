@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PlaceLikeRepository extends JpaRepository<PlaceLike, Long>, PlaceLikeRepositoryCustom {
     boolean existsByUserIdAndPlaceIdAndStatus(Long userId, Long placeId, BaseStatus status);
+    long countByUserId(Long userId);
 }
