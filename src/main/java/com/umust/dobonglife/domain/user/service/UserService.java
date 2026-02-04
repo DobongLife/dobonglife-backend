@@ -30,8 +30,6 @@ import com.umust.dobonglife.domain.user.domain.entity.User;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final JwtService jwtService;
     private final MailService mailService;
 
     @Transactional
@@ -53,19 +51,12 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteAccount (HttpServletRequest request, Long userId) {
+    public void deleteAccount(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
         inValidFcmToken(userId);
         userRepository.delete(user);
-        String accessToken = jwtUtil.extractAccessToken(request)
-                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                jwtService.invalidAccessToken(accessToken);
-            }
-        });
         SecurityContextHolder.clearContext();
     }
 
