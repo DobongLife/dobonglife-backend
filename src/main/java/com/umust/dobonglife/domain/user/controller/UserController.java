@@ -80,9 +80,8 @@ public class UserController {
             description = "비밀번호를 변경합니다. 액세스 토큰이 필요합니다."
     )
     @PatchMapping("/password")
-    public BaseResponse<Void> updatePassword(@CurrentUserId Long userId,
-                                             @Valid @RequestBody PasswordRequest request) {
-        userService.updateMyPassword(userId, request);
+    public BaseResponse<Void> updatePassword(@Valid @RequestBody PasswordRequest request) {
+        userService.updateMyPassword(request);
         return BaseResponse.ok(null);
     }
 }

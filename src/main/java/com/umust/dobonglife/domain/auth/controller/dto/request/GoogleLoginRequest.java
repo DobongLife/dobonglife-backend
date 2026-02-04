@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GoogleLoginRequest {
     private String idToken;
+    private String fcmToken;
 }

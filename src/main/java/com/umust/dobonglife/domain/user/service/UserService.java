@@ -70,8 +70,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateMyPassword(Long userId, PasswordRequest request) {
-        User user = userRepository.findById(userId)
+    public void updateMyPassword(PasswordRequest request) {
+        User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         if(user.getPassword() == null){
             throw new BusinessException(ErrorCode.USER_IS_SOCIAL_LOGGED);

@@ -9,5 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PasswordRequest {
+    private String email;
+    private String authCode;
     private String newPassword;
 }
