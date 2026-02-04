@@ -145,16 +145,15 @@ public class CourseService {
 
         pointService.earnPoint(userId, COURSE_CREATE.getTitle(), COURSE_CREATE.getPoint());
 
+        Course save = courseRepository.save(course);
+        List<CoursePlans> plans = convertToPlans(course, request.getPlans());
+        coursePlansRepository.saveAll(plans);
+
         notificationService.createNotification(userService.findById(userId),
                 NotificationType.POINT,
                 "포인트 적립 안내",
                 COURSE_CREATE.getPoint() + "포인트가 적립되었습니다! (코스등록)",
                 null);
-
-
-        Course save = courseRepository.save(course);
-        List<CoursePlans> plans = convertToPlans(course, request.getPlans());
-        coursePlansRepository.saveAll(plans);
 
         return save;
     }
