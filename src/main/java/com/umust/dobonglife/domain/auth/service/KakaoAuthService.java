@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.auth.service;
 
+import com.umust.dobonglife.domain.auth.controller.dto.request.KakaoLoginRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
@@ -26,8 +27,8 @@ public class KakaoAuthService {
     @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private String USER_INFO_URI;
 
-    public TokenResponse login(String kakaoAccessToken) {
-        KakaoUserInfo userInfo = getUserInfo(kakaoAccessToken);
+    public TokenResponse login(KakaoLoginRequest request) {
+        KakaoUserInfo userInfo = getUserInfo(request.getAccessToken());
 
         String providerId = String.valueOf(userInfo.id());
         String email = userInfo.kakaoAccount().email();
@@ -36,6 +37,10 @@ public class KakaoAuthService {
         User user = userService.findOrCreateOAuthUser(
                 Provider.KAKAO, providerId, email, name
         );
+
+        if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
+            userService.updateFcmToken(user.getId(), request.getFcmToken());
+        }
 
         String access = jwtUtil.createAccessToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
         String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name(), user.getName());

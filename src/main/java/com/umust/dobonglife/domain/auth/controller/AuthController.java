@@ -43,7 +43,7 @@ public class AuthController {
     )
     @PostMapping("/login/kakao")
     public BaseResponse<TokenResponse> loginKakao(@RequestBody @Valid KakaoLoginRequest request) {
-        return BaseResponse.ok(kakaoAuthService.login(request.getAccessToken()));
+        return BaseResponse.ok(kakaoAuthService.login(request));
     }
 
     @Operation(summary = "구글 로그인", description = "구글 로그인을 합니다.")
@@ -53,7 +53,7 @@ public class AuthController {
     )
     @PostMapping("/login/google")
     public BaseResponse<TokenResponse> loginGoogle(@RequestBody @Valid GoogleLoginRequest request) {
-        return BaseResponse.ok(googleAuthService.login(request.getIdToken()));
+        return BaseResponse.ok(googleAuthService.login(request));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")

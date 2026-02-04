@@ -150,5 +150,10 @@ public class UserService {
         User byId = findById(userId);
         return byId.isBlocked();
     }
+
+    public void updateFcmToken(Long userId, String fcmToken) {
+        User byId = findById(userId);
+        byId.setFcmToken(fcmToken);
+    }
 }
 
