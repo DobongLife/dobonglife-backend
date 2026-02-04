@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRepositoryCustom {
@@ -28,4 +30,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRep
             "JOIN FETCH c.promotion " +
             "WHERE c.userId = :userId AND c.id = :couponId")
     Optional<Coupon> findByUserIdAndCouponId(@Param("userId") Long userId, @Param("couponId") Long couponId);
+
+    List<Coupon> findAllByIssueEndDateBetween(LocalDateTime start, LocalDateTime end);
 }

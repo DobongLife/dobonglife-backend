@@ -5,5 +5,5 @@ import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryRes
 import com.umust.dobonglife.global.common.response.CursorResponse;
 
 public record MyPlaceLikeResponse(Long totalCount,
-                                  CursorResponse<PlaceSummaryResponse> courses) {
+                                  CursorResponse<PlaceSummaryResponse> place) {
 }
