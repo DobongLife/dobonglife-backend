@@ -144,6 +144,7 @@ public class Promotion {
                 .category(type)
                 .place(place)
                 .title(dto.couponName())
+                .point(dto.point())
                 .description(dto.couponDescription())
                 .imgUrls(imgUrl.isEmpty() ? Collections.singletonList(type.getImageUrl()) : imgUrl)
                 .discountType(DiscountType.valueOf(dto.discountType()))
