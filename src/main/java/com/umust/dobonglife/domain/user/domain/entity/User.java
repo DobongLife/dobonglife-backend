@@ -76,7 +76,7 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     @Builder.Default
-    private boolean isReceivedAlarm;
+    private boolean isReceivedAlarm = true;
 
     public void handleDeletion() {
         this.deleteCount++;
