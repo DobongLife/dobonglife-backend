@@ -108,7 +108,9 @@ public class MailService {
         if ("VERIFIED".equals(getStoredCode(request.getEmail()))){return;};
 
         // 입력 코드와 Redis 코드가 다르면 에러
-        if (!String.valueOf(request.getAuthCode()).equals(storedCode)) {
+        if (!request.getAuthCode().equals(storedCode)) {
+            log.info("Request Code: {}", request.getAuthCode());
+            log.info("Stored code: {}", storedCode);
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
         // 인증 성공: 값 변경 + TTL 재설정

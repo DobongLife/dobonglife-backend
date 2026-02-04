@@ -21,11 +21,9 @@ public class BusinessRequest {
     @Schema(description = "사업장명", example = "(주)유머스트알엔디")
     private String businessName;
 
-    @NotNull(message = "사업장 소개는 필수입니다")
     @Schema(description = "사업장 소개", example = "서울특별시 도봉구 마들로")
-    private String introduction;
+    private String content;
 
-    @NotNull(message = "전화번호는 필수입니다")
     @Schema(description = "전화번호", example = "02-123-4567")
     private String contact;
 
@@ -33,7 +31,6 @@ public class BusinessRequest {
     @Schema(description = "이메일", example = "dobonglife@gmail.com")
     private String email;
 
-    @NotNull(message = "주소은 필수입니다")
     @Schema(description = "주소", example = "서울특별시 도봉구 마들로")
     private String businessAddress;
 
@@ -48,19 +45,15 @@ public class BusinessRequest {
     @Schema(description = "사업자등롣번호", example = "2198701322")
     private String businessNumber;
 
-    @NotNull(message = "위도는 필수입니다")
     @Schema(description = "위도", example = "21.98701322")
     private Double latitude;
 
-    @NotNull(message = "경도는 필수입니다")
     @Schema(description = "위도", example = "21.98701322")
     private Double longitude;
 
-    @NotNull(message = "카테고리는 필수입니다")
     @Schema(description = "카테고리", example = "CAFE")
     private String category;
 
-    @NotEmpty(message = "주간테마는 필수입니다")
     @Schema(description = "주간테마", example = "NATURE")
     private List<@NotBlank String> themes;
 }
