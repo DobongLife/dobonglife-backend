@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.user.service;
 
-import com.umust.dobonglife.domain.auth.controller.dto.response.OAuth2Response;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
@@ -25,9 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import com.umust.dobonglife.domain.user.domain.entity.User;
-import com.umust.dobonglife.domain.user.service.MailService;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -44,7 +40,7 @@ public class UserService {
         if (!userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isEmpty()) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
-        if (!"VERIFIED".equals(mailService.getStoredCode(request.getEmail()))){
+        if (!"VERIFIED".equals(mailService.getStoredSignUpCode(request.getEmail()))){
             throw new BusinessException(ErrorCode.AUTHCODE_UNAUTHORIZED);
         }
         User user = User.builder()
@@ -74,20 +70,14 @@ public class UserService {
     }
 
     @Transactional
-    public void sendNewPassword(MailRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
-        String newPassword = mailService.sendPasswordMail(request);
-        user.setPassword(passwordEncoder.encode(newPassword));
-    }
-
-    @Transactional
     public void updateMyPassword(Long userId, PasswordRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        if (!passwordEncoder.matches(request.getPrePassword(), user.getPassword())) {
-            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+        if(user.getPassword() == null){
+            throw new BusinessException(ErrorCode.USER_IS_SOCIAL_LOGGED);
+        }
+        if (!"VERIFIED".equals(mailService.getStoredPasswordCode(user.getEmail()))){
+            throw new BusinessException(ErrorCode.AUTHCODE_UNAUTHORIZED);
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     }

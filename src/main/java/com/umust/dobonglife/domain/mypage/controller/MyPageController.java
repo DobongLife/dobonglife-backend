@@ -63,15 +63,15 @@ public class MyPageController {
         return BaseResponse.ok(response);
     }
 
-    @Operation(summary = "사업자 마이 페이지 조회", description = "사업자 마이 페이지 view")
-    @ApiResponse(
-            responseCode = "200",
-            description = "요청에 성공하였습니다."
-    )
-    @PreAuthorize("hasRole('MANAGER')")
-    @GetMapping("/manager")
-    public BaseResponse<MyPageSummaryManagerResponse> viewMyPageManager(@CurrentUserId Long userId,
-                                                                        @RequestParam(defaultValue = "3") int size){
-        return BaseResponse.ok(myPageService.getMyPageSummaryManager(userId, size));
-    }
+//    @Operation(summary = "사업자 마이 페이지 조회", description = "사업자 마이 페이지 view")
+//    @ApiResponse(
+//            responseCode = "200",
+//            description = "요청에 성공하였습니다."
+//    )
+//    @PreAuthorize("hasRole('MANAGER')")
+//    @GetMapping("/manager")
+//    public BaseResponse<MyPageSummaryManagerResponse> viewMyPageManager(@CurrentUserId Long userId,
+//                                                                        @RequestParam(defaultValue = "3") int size){
+//        return BaseResponse.ok(myPageService.getMyPageSummaryManager(userId, size));
+//    }
 }

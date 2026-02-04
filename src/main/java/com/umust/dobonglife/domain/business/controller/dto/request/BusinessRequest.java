@@ -17,6 +17,9 @@ public class BusinessRequest {
     @Schema(description = "장소 아이디", example = "Optional입니다.")
     private Long placeId;
 
+    @Schema(description = "장소 부제", example = "도봉구 최고의 명소입니다.")
+    private String subName;
+
     @NotNull(message = "사업장명은 필수입니다")
     @Schema(description = "사업장명", example = "(주)유머스트알엔디")
     private String businessName;

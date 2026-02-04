@@ -20,7 +20,6 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.security.SecureRandom;
 import java.time.Duration;
-import java.util.Random;
 
 @Slf4j
 @Transactional
@@ -34,53 +33,28 @@ public class MailService {
 
     private static final String EMAIL_KEY_PREFIX = "auth:email:";
 
+    private static final String PASSWORD_KEY_PREFIX = "auth:password:";
+
     private final JavaMailSender javaMailSender;
 
     private final SpringTemplateEngine templateEngine;
 
-    private final UserRepository userRepository;
-
     private final RedisService redisService;
 
     public void sendMail(MailRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
-        }
-
         String authCode = createCode();
         MimeMessage mimeMessage = createEmailMessage(request.getEmail(), authCode);
 
+        String prefix;
+        if(request.isForSignUp()) prefix = EMAIL_KEY_PREFIX;
+        else prefix = PASSWORD_KEY_PREFIX;
         try {
             javaMailSender.send(mimeMessage);
-
-            String key = EMAIL_KEY_PREFIX + request.getEmail();
+            String key = prefix + request.getEmail();
             redisService.setValues(key, authCode, Duration.ofMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
         } catch (MailException e) {  //JavaMailSender의 전송과정에서 오류 발생 시
             throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
         }
-    }
-
-    public String sendPasswordMail(MailRequest request) {
-        String password = createNewPassword();
-        MimeMessage mimeMessage = createPasswordEmailMessage(request.getEmail(), password);
-        try {
-            javaMailSender.send(mimeMessage);
-        } catch (MailException e) {  //JavaMailSender의 전송과정에서 오류 발생 시
-            throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
-        }
-        return password;
-    }
-
-    // 숫자 6자리로 인증 번호 구현하는 메서드
-    public String createCode() {
-        SecureRandom random = new SecureRandom();
-        StringBuilder key = new StringBuilder();
-
-        for (int i = 0; i < 6; i++) {
-            key.append(random.nextInt(10));
-        }
-
-        return key.toString();
     }
 
     private MimeMessage createEmailMessage(String recipient, String authCode) {
@@ -100,7 +74,9 @@ public class MailService {
 
     public void checkAuthCode(MailCodeCheckRequest request) {
         String email = request.getEmail();
-        String storedCode = getStoredCode(email);
+        String storedCode;
+        if(request.isForSignUp()) storedCode = getStoredSignUpCode(email);
+        else storedCode = getStoredPasswordCode(email);
 
         if ("VERIFIED".equals(storedCode)) {
             return; // 이미 인증이 완료된 이메일
@@ -112,15 +88,35 @@ public class MailService {
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
 
+        String prefix;
+        if(request.isForSignUp()) prefix = EMAIL_KEY_PREFIX;
+        else prefix = PASSWORD_KEY_PREFIX;
         redisService.setValues(
-                EMAIL_KEY_PREFIX + email,
+                prefix + email,
                 "VERIFIED",
                 Duration.ofSeconds(VERIFIED_TTL_SECONDS)
         );
     }
 
-    public String getStoredCode(String email) {
+    // 숫자 6자리로 인증 번호 구현하는 메서드
+    public String createCode() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder key = new StringBuilder();
+
+        for (int i = 0; i < 6; i++) {
+            key.append(random.nextInt(10));
+        }
+
+        return key.toString();
+    }
+
+    public String getStoredSignUpCode(String email) {
         String key = EMAIL_KEY_PREFIX + email;
+        return redisService.getValues(key);
+    }
+
+    public String getStoredPasswordCode(String email) {
+        String key = PASSWORD_KEY_PREFIX + email;
         return redisService.getValues(key);
     }
 
@@ -129,45 +125,6 @@ public class MailService {
         Context context = new Context();
         context.setVariable("code", authCode);
         return templateEngine.process("AuthCode-email.html", context);
-    }
-
-    // thymeleaf를 통한 html 적용
-    public String setPasswordContext(String password) {
-        Context context = new Context();
-        context.setVariable("password", password);
-        return templateEngine.process("Password-email.html", context);
-    }
-
-    // 임시 비밀번호를 구현하는 메서드
-    public String createNewPassword() {
-        Random random = new Random();
-        StringBuffer key = new StringBuffer();
-
-        for (int i = 0; i < 8; i++) {
-            int index = random.nextInt(4);
-
-            switch (index) {
-                case 0: key.append((char) ((int) random.nextInt(26) + 97)); break;
-                case 1: key.append((char) ((int) random.nextInt(26) + 65)); break;
-                default: key.append(random.nextInt(9));
-            }
-        }
-        return key.toString();
-    }
-
-    private MimeMessage createPasswordEmailMessage(String recipient, String password) {
-        try {
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-
-            mimeMessageHelper.setTo(recipient);
-            mimeMessageHelper.setSubject("[도봉라이프] 임시 비밀번호 발송");
-            mimeMessageHelper.setText(setPasswordContext(password), true);
-
-            return mimeMessage;
-        } catch (MessagingException e) {  // SMTP 전송 오류, 포맷 오류 발생 시
-            throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
-        }
     }
 }
 

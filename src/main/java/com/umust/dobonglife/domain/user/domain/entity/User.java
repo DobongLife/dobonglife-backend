@@ -71,6 +71,13 @@ public class User extends BaseEntity {
     @Column(nullable = true)
     private LocalDateTime blockedAt;
 
+    @Column(nullable = true)
+    private String fcmToken;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isReceivedAlarm = true;
+
     public void handleDeletion() {
         this.deleteCount++;
         if (this.deleteCount >= PENALTY_THRESHOLD) {
