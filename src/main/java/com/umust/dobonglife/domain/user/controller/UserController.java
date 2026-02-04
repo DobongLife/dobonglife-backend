@@ -57,7 +57,7 @@ public class UserController {
 
     @Operation(
             summary = "인증번호 전송",
-            description = "메일로 인증번호를 전송합니다."
+            description = "메일로 인증번호를 전송합니다. isForSignUp이 True면 회원 가입 용도, 아닐 시 비밀번호 변경용입니다."
     )
     @PostMapping("/mail/send")
     public BaseResponse<Void> sendAuthCodeMail(@Valid @RequestBody MailRequest request) {
@@ -67,21 +67,11 @@ public class UserController {
 
     @Operation(
             summary = "인증번호 검증",
-            description = "메일로 받은 인증번호를 검증합니다."
+            description = "메일로 받은 인증번호를 검증합니다. isForSignUp이 True면 회원 가입 용도, 아닐 시 비밀번호 변경용입니다."
     )
     @PostMapping("/mail/check")
     public BaseResponse<Void> checkAuthCode(@Valid @RequestBody MailCodeCheckRequest request) {
         mailService.checkAuthCode(request);
-        return BaseResponse.ok(null);
-    }
-
-    @Operation(
-            summary = "임시 비밀번호 발급",
-            description = "임시 비밀번호를 발급합니다."
-    )
-    @PostMapping("/mail/find-password")
-    public BaseResponse<Void> findPassword(@Valid @RequestBody MailRequest request) {
-        userService.sendNewPassword(request);
         return BaseResponse.ok(null);
     }
 

@@ -14,4 +14,8 @@ public class MailRequest {
     @Schema(description = "이메일", example = "dobonglife@gmail.com")
     @NotNull
     private String email;
+
+    @Schema(description = "회원가입 여부")
+    @NotNull
+    private boolean isForSignUp;
 }
