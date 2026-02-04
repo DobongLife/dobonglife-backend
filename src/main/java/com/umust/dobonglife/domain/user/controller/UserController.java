@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +38,7 @@ public class UserController {
             description = "회원가입에 성공하였습니다."
     )
     @PostMapping("/signup")
-    public BaseResponse<Void> signUp(@RequestBody SignupRequest request) {
+    public BaseResponse<Void> signUp(@Valid @RequestBody SignupRequest request) {
         userService.signUp(request);
         return BaseResponse.ok(null);
     }
@@ -59,7 +60,7 @@ public class UserController {
             description = "메일로 인증번호를 전송합니다."
     )
     @PostMapping("/mail/send")
-    public BaseResponse<Void> sendAuthCodeMail(@RequestBody MailRequest request) {
+    public BaseResponse<Void> sendAuthCodeMail(@Valid @RequestBody MailRequest request) {
         mailService.sendMail(request);
         return BaseResponse.ok(null);
     }
@@ -69,7 +70,7 @@ public class UserController {
             description = "메일로 받은 인증번호를 검증합니다."
     )
     @PostMapping("/mail/check")
-    public BaseResponse<Void> checkAuthCode(@RequestBody MailCodeCheckRequest request) {
+    public BaseResponse<Void> checkAuthCode(@Valid @RequestBody MailCodeCheckRequest request) {
         mailService.checkAuthCode(request);
         return BaseResponse.ok(null);
     }
@@ -79,7 +80,7 @@ public class UserController {
             description = "임시 비밀번호를 발급합니다."
     )
     @PostMapping("/mail/find-password")
-    public BaseResponse<Void> findPassword(@RequestBody MailRequest request) {
+    public BaseResponse<Void> findPassword(@Valid @RequestBody MailRequest request) {
         userService.sendNewPassword(request);
         return BaseResponse.ok(null);
     }
@@ -90,7 +91,7 @@ public class UserController {
     )
     @PatchMapping("/password")
     public BaseResponse<Void> updatePassword(@CurrentUserId Long userId,
-                                             @RequestBody PasswordRequest request) {
+                                             @Valid @RequestBody PasswordRequest request) {
         userService.updateMyPassword(userId, request);
         return BaseResponse.ok(null);
     }

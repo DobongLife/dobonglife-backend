@@ -99,22 +99,24 @@ public class MailService {
     }
 
     public void checkAuthCode(MailCodeCheckRequest request) {
-        String storedCode = getStoredCode(request.getEmail());
-        if (storedCode == null) {
-            throw new BusinessException(ErrorCode.EXPIRED_EMAIL_CODE);
+        String email = request.getEmail();
+        String storedCode = getStoredCode(email);
+
+        if ("VERIFIED".equals(storedCode)) {
+            return; // 이미 인증이 완료된 이메일
         }
 
-        // 인증 번호가 이미 인증된 상태인 경우 그냥 리턴
-        if ("VERIFIED".equals(getStoredCode(request.getEmail()))){return;};
-
-        // 입력 코드와 Redis 코드가 다르면 에러
         if (!request.getAuthCode().equals(storedCode)) {
             log.info("Request Code: {}", request.getAuthCode());
             log.info("Stored code: {}", storedCode);
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
-        // 인증 성공: 값 변경 + TTL 재설정
-        redisService.setValues(EMAIL_KEY_PREFIX + request.getEmail(), "VERIFIED", Duration.ofSeconds(VERIFIED_TTL_SECONDS));
+
+        redisService.setValues(
+                EMAIL_KEY_PREFIX + email,
+                "VERIFIED",
+                Duration.ofSeconds(VERIFIED_TTL_SECONDS)
+        );
     }
 
     public String getStoredCode(String email) {

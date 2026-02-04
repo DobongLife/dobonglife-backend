@@ -17,14 +17,14 @@ public class BaseErrorResponse{
 
     public BaseErrorResponse(ErrorCode code) {
         this.success = false;
-        this.status = code.getHttpStatus();
+        this.status = code.getCode();
         this.message = code.getMessage();
         this.timestamp = LocalDateTime.now();
     }
 
     public BaseErrorResponse(ErrorCode code, String customMessage) {
         this.success = false;
-        this.status = code.getHttpStatus();
+        this.status = code.getCode();
         this.message = customMessage;
         this.timestamp = LocalDateTime.now();
     }
