@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.user.controller;
 
+import com.umust.dobonglife.domain.auth.service.AuthService;
+import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.PasswordUpdateRequest;
@@ -29,6 +31,7 @@ public class UserController {
 
     private final UserService userService;
     private final MailService mailService;
+    private final AuthService authService;
 
     @Operation(summary = "회원 가입", description = "회원 가입을 합니다." +
             " role은 MEMBER, MANAGER, ADMIN 3개 입니다.")
@@ -50,7 +53,7 @@ public class UserController {
     @PostMapping("/delete/account")
     public BaseResponse<Void> deleteAccount(HttpServletRequest request,
                                             @CurrentUserId Long userId) {
-        userService.deleteAccount(request, userId);
+        authService.deleteAccount(request, userId);
         return BaseResponse.ok(null);
     }
 

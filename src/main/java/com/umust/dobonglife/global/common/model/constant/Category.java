@@ -12,7 +12,7 @@ public enum Category { // TODO: 추후에 캐시로 올릴 예정 (현재: 빠�
     BEAUTY("뷰티", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/3f049e5c-2fe0-4187-8b79-38ac1a4f1701.png"),
     FITNESS("피트니스", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/5b508e07-0ae8-4c3a-b3da-bd8b6635134f.png"),
     MEDICAL_IT("의료/IT", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/6f399c97-8daf-4a8a-b6de-c6d0e64b2c4b.png"),
-    EXPERIENCE("명소", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/c692c492-443d-446b-bbb2-f4ec5a0a79d4.png"),
+    EXPERIENCE("체험", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/c692c492-443d-446b-bbb2-f4ec5a0a79d4.png"),
     ETC("기타", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/e282cf53-49d1-4ade-9fa6-481bc93a7bbb.png");
 
     private final String description;

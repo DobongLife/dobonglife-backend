@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.auth.controller.dto.request.GoogleLoginReques
 import com.umust.dobonglife.domain.auth.controller.dto.request.KakaoLoginRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.request.RefreshTokenRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.service.AuthService;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.service.KakaoAuthService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
@@ -35,6 +36,7 @@ public class AuthController {
     private final JwtService jwtService;
     private final GoogleAuthService googleAuthService;
     private final KakaoAuthService kakaoAuthService;
+    private final AuthService authService;
 
     @Operation(summary = "카카오 로그인", description = "카카오 로그인을 합니다.")
     @ApiResponse(
@@ -43,7 +45,7 @@ public class AuthController {
     )
     @PostMapping("/login/kakao")
     public BaseResponse<TokenResponse> loginKakao(@RequestBody @Valid KakaoLoginRequest request) {
-        return BaseResponse.ok(kakaoAuthService.login(request.getAccessToken()));
+        return BaseResponse.ok(kakaoAuthService.login(request));
     }
 
     @Operation(summary = "구글 로그인", description = "구글 로그인을 합니다.")
@@ -53,7 +55,7 @@ public class AuthController {
     )
     @PostMapping("/login/google")
     public BaseResponse<TokenResponse> loginGoogle(@RequestBody @Valid GoogleLoginRequest request) {
-        return BaseResponse.ok(googleAuthService.login(request.getIdToken()));
+        return BaseResponse.ok(googleAuthService.login(request));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
@@ -63,7 +65,7 @@ public class AuthController {
     )
     @PostMapping("/logout")
     public BaseResponse<Void> logout(HttpServletRequest request){
-        jwtService.logout(request);
+        authService.logout(request);
         return BaseResponse.ok(null);
     }
 

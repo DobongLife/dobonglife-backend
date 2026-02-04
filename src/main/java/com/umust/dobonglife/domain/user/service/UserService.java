@@ -30,8 +30,6 @@ import com.umust.dobonglife.domain.user.domain.entity.User;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final JwtService jwtService;
     private final MailService mailService;
 
     @Transactional
@@ -53,18 +51,12 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteAccount (HttpServletRequest request, Long userId) {
+    public void deleteAccount(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        inValidFcmToken(userId);
         userRepository.delete(user);
-        String accessToken = jwtUtil.extractAccessToken(request)
-                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                jwtService.invalidAccessToken(accessToken);
-            }
-        });
         SecurityContextHolder.clearContext();
     }
 
@@ -155,6 +147,16 @@ public class UserService {
     public void updateNotificationSetting(Long userId, boolean enabled) {
         User byId = findById(userId);
         byId.updateNotificationEnabled(enabled);
+    }
+
+    public void updateFcmToken(Long userId, String fcmToken) {
+        User byId = findById(userId);
+        byId.setFcmToken(fcmToken);
+    }
+
+    public void inValidFcmToken(Long userId) {
+        User byId = findById(userId);
+        byId.setFcmToken(null);
     }
 }
 

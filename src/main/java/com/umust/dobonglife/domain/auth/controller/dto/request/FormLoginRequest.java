@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class FormLoginRequest {
     private String email;
     private String password;
+    private String fcmToken;
 }

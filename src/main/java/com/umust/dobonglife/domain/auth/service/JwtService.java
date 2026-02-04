@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.external.redis.RedisService;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Duration;
 
@@ -42,25 +46,6 @@ public class JwtService {
 
     private final RedisService redisService;
     private final JwtUtil jwtUtil;
-    private final ObjectMapper objectMapper;
-
-    public void logout(HttpServletRequest request) {
-        String accessToken = jwtUtil.extractAccessToken(request)
-                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
-
-        log.info("LogOut Access Token: {}", accessToken);
-
-        String refreshToken = jwtUtil.extractRefreshToken(request)
-                .orElseThrow(() -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
-        jwtUtil.validateToken(refreshToken);
-        if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
-            throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
-        }
-
-        deleteRefreshToken(refreshToken);
-        //access token blacklist 처리 -> 로그아웃한 사용자가 요청 시 access token이 redis에 존재하면 jwtAuthenticationFilter에서 인증처리 거부
-        invalidAccessToken(accessToken);
-    }
 
     public TokenResponse reissueTokens(HttpServletRequest request, Long userId) {
         String refreshToken = jwtUtil.extractRefreshToken(request)

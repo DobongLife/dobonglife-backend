@@ -57,6 +57,7 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String email = login.getEmail();
         String password = login.getPassword();
+        String fcmToken = login.getFcmToken();
 
         if (email == null || email.isBlank() || password == null || password.isBlank()) {
             throw new BadCredentialsException("이메일/비밀번호가 비어있습니다.");
@@ -64,6 +65,8 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(email.trim(), password);
+
+        authToken.setDetails(fcmToken);
 
         return this.getAuthenticationManager().authenticate(authToken);
     }
