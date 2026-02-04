@@ -67,10 +67,10 @@ public class TestController {
         return BaseResponse.ok(response);
     }
 
-    @PostMapping("/device")
-    public ResponseEntity<String> testDevice(@RequestBody NotificationRequest request) {
-        notificationUtil.sendToDevice("fcmToken", request.title(), request.body(), "relatedUrl");
-        return ResponseEntity.ok("개별 디바이스 전송 시도 성공");
-    }
+//    @PostMapping("/device")
+//    public ResponseEntity<String> testDevice(@RequestBody NotificationRequest request) {
+//        notificationUtil.sendToDevice("", request.title(), request.body(), "relatedUrl");
+//        return ResponseEntity.ok("개별 디바이스 전송 시도 성공");
+//    }
 }
 

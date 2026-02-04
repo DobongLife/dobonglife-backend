@@ -47,7 +47,7 @@ public class NotificationUtil {
                 .setPriority(AndroidConfig.Priority.HIGH)
                 .setNotification(AndroidNotification.builder()
                         .setClickAction("OPEN_ACTIVITY_1") // 클릭 시 앱 열기 액션
-                        .setChannelId("dobong_life_channel") // 안드로이드 8.0+ 필수 채널 ID
+                        .setChannelId("dobong-default-notifications") // 안드로이드 8.0+ 필수 채널 ID
                         .setSound("default")
                         .build())
                 .build();
