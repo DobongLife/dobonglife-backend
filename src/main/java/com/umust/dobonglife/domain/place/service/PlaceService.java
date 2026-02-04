@@ -160,8 +160,4 @@ public class PlaceService {
 
         return place;
     }
-
-    public Long getLikedPlaceCount(Long userId) {
-        return placeLikeRepository.countByUserId(userId);
-    }
 }

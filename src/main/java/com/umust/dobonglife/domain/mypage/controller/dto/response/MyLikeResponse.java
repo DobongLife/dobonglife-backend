@@ -4,6 +4,6 @@ import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryR
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 
-public record MyPlaceLikeResponse(Long totalCount,
-                                  CursorResponse<PlaceSummaryResponse> courses) {
+public record MyLikeResponse(CursorResponse<CourseSummaryResponse> courses,
+                             CursorResponse<PlaceSummaryResponse> places) {
 }

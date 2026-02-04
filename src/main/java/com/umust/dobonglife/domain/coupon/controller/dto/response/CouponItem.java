@@ -10,7 +10,6 @@ import java.util.List;
 
 public record CouponItem(
         Long couponId,
-        Long placeId,
         Long promotionId,
         String category,
         String title,
@@ -26,7 +25,6 @@ public record CouponItem(
     public static CouponItem from(Coupon coupon) {
         return new CouponItem(
                 coupon.getId(),
-                coupon.getPromotion().getPlace().getId(),
                 coupon.getPromotion().getId(),
                 coupon.getPromotion().getCategory().getDescription(),
                 coupon.getPromotion().getTitle(),

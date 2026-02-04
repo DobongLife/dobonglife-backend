@@ -125,9 +125,4 @@ public class BusinessService {
         return businessRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
     }
-
-    public String getCategoryUserId(Long userId) {
-        Business businessByUser = getBusinessByUser(userId);
-        return businessByUser.getPlace().getCategory().getValue();
-    }
 }

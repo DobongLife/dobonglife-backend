@@ -41,8 +41,4 @@ public class CourseLikeService {
     public Set<Long> getFavoriteCourseIds(Long userId, List<Long> courseIds) {
         return courseLikeRepository.findLikedCourseIdsByUserIdAndCourseIds(userId, courseIds);
     }
-
-    public Long getLikedCourseCount(Long userId) {
-        return courseLikeRepository.countByUserId(userId);
-    }
 }

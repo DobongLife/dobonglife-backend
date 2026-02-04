@@ -8,16 +8,16 @@ import java.time.LocalDate;
 public record PresetResponse(
         Long id,
         String category,
-        String couponDescription,
-        Long point,
+        String description,
         String img,
-        String discountType,
-        Integer discountValue,
-        Long minPurchaseAmount,
-        Long maxDiscountAmount,
-        Long validityDays,
-        LocalDate issueStartDate,
-        LocalDate issueEndDate
+        DiscountType discountType,
+        BigDecimal discountValue,
+        Long minPrice,
+        Long maxPrice,
+        Long point,
+        Long validPeriod,
+        LocalDate startDate,
+        LocalDate endDate
 ) {
     public static PresetResponse from(Preset preset) {
         LocalDate now = LocalDate.now();
@@ -26,12 +26,12 @@ public record PresetResponse(
                 preset.getId(),
                 preset.getCategory(),
                 preset.getDescription(),
-                preset.getPoint(),
                 preset.getImg(),
-                preset.getDiscountType().toString(),
-                preset.getDiscountValue().intValue(),
+                preset.getDiscountType(),
+                preset.getDiscountValue(),
                 preset.getMinPrice(),
                 preset.getMaxPrice(),
+                preset.getPoint(),
                 preset.getValidPeriod(),
                 now,
                 now.plusDays(30)

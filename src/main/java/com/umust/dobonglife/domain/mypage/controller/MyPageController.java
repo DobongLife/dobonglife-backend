@@ -1,9 +1,8 @@
 package com.umust.dobonglife.domain.mypage.controller;
 
-import com.umust.dobonglife.domain.mypage.controller.dto.response.MyCourseLikeResponse;
+import com.umust.dobonglife.domain.mypage.controller.dto.response.MyLikeResponse;
 import com.umust.dobonglife.domain.mypage.controller.dto.response.MyPageSummaryManagerResponse;
 import com.umust.dobonglife.domain.mypage.controller.dto.response.MyPageSummaryResponse;
-import com.umust.dobonglife.domain.mypage.controller.dto.response.MyPlaceLikeResponse;
 import com.umust.dobonglife.domain.mypage.service.MyPageService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -37,29 +36,16 @@ public class MyPageController {
         return BaseResponse.ok(response);
     }
 
-    @Operation(summary = "찜 코스 조회", description = "찜한 코스 조회")
+    @Operation(summary = "찜 조회", description = "찜한 코스와 장소 조회")
     @ApiResponse(
             responseCode = "200",
             description = "요청에 성공하였습니다."
     )
-    @GetMapping("/like/course")
-    public BaseResponse<MyCourseLikeResponse> viewMyCourseLike(@CurrentUserId Long userId,
-                                                               @RequestParam(required = false, defaultValue = "3") Long lastId,
-                                                               @RequestParam(defaultValue = "3") int size){
-        MyCourseLikeResponse response = myPageService.getMyCourseLike(userId, size, lastId);
-        return BaseResponse.ok(response);
-    }
-
-    @Operation(summary = "찜 장소 조회", description = "찜한 장소 조회")
-    @ApiResponse(
-            responseCode = "200",
-            description = "요청에 성공하였습니다."
-    )
-    @GetMapping("/like/place")
-    public BaseResponse<MyPlaceLikeResponse> viewMyPlaceLike(@CurrentUserId Long userId,
-                                                             @RequestParam(required = false, defaultValue = "3") Long lastId,
-                                                             @RequestParam(defaultValue = "3") int size){
-        MyPlaceLikeResponse response = myPageService.getMyPlaceLike(userId, size, lastId);
+    @GetMapping("/like")
+    public BaseResponse<MyLikeResponse> viewMyLike(@CurrentUserId Long userId,
+                                                   @RequestParam(required = false, defaultValue = "3") Long lastId,
+                                                   @RequestParam(defaultValue = "3") int size){
+        MyLikeResponse response = myPageService.getMyLike(userId, size, lastId);
         return BaseResponse.ok(response);
     }
 
