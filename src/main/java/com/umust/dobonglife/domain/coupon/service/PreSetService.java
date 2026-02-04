@@ -22,4 +22,5 @@ public class PreSetService {
                 .findFirst() // 첫 번째 요소만
                 .map(PresetResponse::from)
                 .orElseThrow(() -> new EntityNotFoundException("해당 카테고리의 프리셋이 없습니다."));
+    }
 }
