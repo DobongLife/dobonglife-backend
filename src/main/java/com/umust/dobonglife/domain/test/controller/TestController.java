@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.test.controller;
 
+import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
 import com.umust.dobonglife.domain.test.model.Test;
 import com.umust.dobonglife.domain.test.model.UploadImageRequest;
 import com.umust.dobonglife.domain.test.model.UploadImageResponse;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,5 +67,11 @@ public class TestController {
         UploadImageResponse response = new UploadImageResponse(imageUrls);
         return BaseResponse.ok(response);
     }
+
+//    @PostMapping("/device")
+//    public ResponseEntity<String> testDevice(@RequestBody NotificationRequest request) {
+//        notificationUtil.sendToDevice("", request.title(), request.body(), NotificationType.COUPON, 1L);
+//        return ResponseEntity.ok("개별 디바이스 전송 시도 성공");
+//    }
 }
 

@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.notification.domain.entity;
 
 import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,8 +23,9 @@ public class Notification {
     @Column(name = "notification_id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -36,7 +38,7 @@ public class Notification {
     private String content;
 
     @Column(nullable = true)
-    private String relatedUrl;
+    private Long relatedUrlId;
 
     @Column(nullable = false)
     private boolean isRead = false;
@@ -45,22 +47,22 @@ public class Notification {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    private Notification(Long userId, NotificationType type, String title, String content, String relatedUrl) {
-        this.userId = userId;
+    private Notification(User user, NotificationType type, String title, String content, Long relatedUrlId) {
+        this.user = user;
         this.title = title;
         this.type = type;
         this.content = content;
-        this.relatedUrl = relatedUrl;
+        this.relatedUrlId = relatedUrlId;
     }
 
-    public static Notification create(Long userId, NotificationType type, String title, String content, String relatedUrl) {
-        validateRequiredFields(userId, content);
+    public static Notification create(User user, NotificationType type, String title, String content, Long relatedUrlId) {
+        validateRequiredFields(user, content);
 
-        return new Notification(userId, type, title, content, relatedUrl);
+        return new Notification(user, type, title, content, relatedUrlId);
     }
 
-    private static void validateRequiredFields(Long userId, String content) {
-        if (userId == null || userId <= 0) {
+    private static void validateRequiredFields(User user, String content) {
+        if (user.getId() == null || user.getId() <= 0) {
             throw new IllegalArgumentException("알림을 받을 사용자 ID는 필수입니다.");
         }
         if (content == null || content.trim().isEmpty()) {

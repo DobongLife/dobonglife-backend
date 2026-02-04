@@ -17,6 +17,7 @@ services:
     volumes:
       - /home/ubuntu/import/places.csv:/data/import/places.csv:ro
       - /home/ubuntu/import/festivals.csv:/data/import/festivals.csv:ro
+      - /home/ubuntu/config/firebase/firebase-adminsdk-account.json:/app/firebase-key.json:ro
     ports:
       - '8080:8080'
     depends_on:

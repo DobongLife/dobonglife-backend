@@ -9,6 +9,8 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.coupon.controller.dto.response.*;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
+import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
+import com.umust.dobonglife.domain.notification.service.NotificationService;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.domain.point.service.PointService;
@@ -46,6 +48,7 @@ public class PromotionService {
     private final BusinessService businessService;
     private final CouponService couponService;
     private final S3Utils s3Utils;
+    private final NotificationService notificationService;
 
     public void registerPromotion(Promotion promotion) {
         promotionRepository.save(promotion);
@@ -73,6 +76,7 @@ public class PromotionService {
     }
 
     public UsedCouponResponse changePointToCoupon(Long userId, Long promotionId) {
+        User user = userService.findById(userId);
         userService.canExchangeCoupon(userId);
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new EntityNotFoundException("[ERROR] 프로모션이 존재하지 않습니다."));
 
@@ -82,6 +86,12 @@ public class PromotionService {
         pointService.usePoint(userId, promotion.getTitle(), promotion.getPoint());
 
         Long couponId = couponService.createCoupon(promotion, userId, promotion.getStartDate(), promotion.getValidPeriod());
+        notificationService.createNotification(user,
+                NotificationType.POINT,
+                "포인트 사용 안내",
+                promotion.getPoint() + "포인트가 사용되었습니다! (포인트 교환)",
+                null);
+
         return new UsedCouponResponse(couponId, CouponStatus.AVAILABLE);
     }
 

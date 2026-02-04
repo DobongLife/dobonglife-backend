@@ -4,6 +4,8 @@ import com.umust.dobonglife.domain.coupon.service.CouponService;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.service.CourseService;
+import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
+import com.umust.dobonglife.domain.notification.service.NotificationService;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.service.PlaceService;
@@ -30,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.COURSE_CREATE;
 import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.REVIEW_CREATE;
 
 @Service
@@ -42,6 +45,7 @@ public class ReviewService {
     private final UserService userService;
     private final PointService pointService;
     private final S3Utils s3Utils;
+    private final NotificationService notificationService;
 
     public CursorResponse<ReviewSummaryResponse> getReviews(Long userId, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
@@ -89,6 +93,11 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
         pointService.earnPoint(userId, REVIEW_CREATE.getTitle(), REVIEW_CREATE.getPoint());
+        notificationService.createNotification(userService.findById(userId),
+                NotificationType.POINT,
+                "포인트 적립 안내",
+                REVIEW_CREATE.getPoint() + "포인트가 적립되었습니다! (리뷰등록)",
+                null);
 
         return ReviewResponse.from(review);
     }

@@ -114,19 +114,23 @@ public class User extends BaseEntity {
     }
 
     public void earnPoint(long amount) {
-        if (amount <= 0) {
+        if (amount < 0) {
             throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
         }
         this.balance += amount;
     }
 
     public void usePoint(long amount) {
-        if (amount <= 0) {
+        if (amount < 0) {
             throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
         }
         if (this.balance < amount) {
             throw new BusinessException(ErrorCode.INVALID_POINT);
         }
         this.balance -= amount;
+    }
+
+    public void updateNotificationEnabled(boolean enabled) {
+        this.isReceivedAlarm = enabled;
     }
 }
