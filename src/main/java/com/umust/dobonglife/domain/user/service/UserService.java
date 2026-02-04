@@ -154,6 +154,7 @@ public class UserService {
         return byId.isBlocked();
     }
 
+    @Transactional
     public void updateNotificationSetting(Long userId, boolean enabled) {
         User byId = findById(userId);
         byId.updateNotificationEnabled(enabled);

@@ -24,3 +24,7 @@ place:
 festival:
   import:
     path: classpath:import/festivals.csv
+firebase:
+  adminsdk:
+    account:
+      path: ${FIREBASE_ADMINSDK_ACCOUNT_PATH}

@@ -3,7 +3,6 @@ package com.umust.dobonglife.global.external.firebase;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.querydsl.core.annotations.Config;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.annotation.PostConstruct;

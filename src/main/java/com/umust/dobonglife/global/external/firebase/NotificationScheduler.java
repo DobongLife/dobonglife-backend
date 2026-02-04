@@ -33,17 +33,18 @@ public class NotificationScheduler {
         sendDailyScheduleSummary(today);
         sendCouponExpirationNotifications(today.plusDays(3));
     }
-    @Scheduled(cron = "0 0 9 * * *")
-    public void sendDailyScheduleSummary(LocalDate today) {
+
+    private void sendDailyScheduleSummary(LocalDate today) {
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 
         List<Schedule> todaySchedules = scheduleRepository.findAllByStartTimeBetween(startOfDay, endOfDay);
 
         for (Schedule schedule : todaySchedules) {
-            if (schedule.getUser().getFcmToken() != null && !schedule.getUser().getFcmToken().isEmpty()) {
+            User user = schedule.getUser();
+            if (user.getFcmToken() != null && !user.getFcmToken().isEmpty() && user.isReceivedAlarm()) {
                 notificationUtil.sendToDevice(
-                        schedule.getUser().getFcmToken(),
+                        user.getFcmToken(),
                         "오늘의 일정 알림",
                         "오늘은 [" + schedule.getTitle() + "] 일정이 있습니다.",
                         NotificationType.SCHEDULE,
@@ -60,17 +61,17 @@ public class NotificationScheduler {
         List<Coupon> expiringCoupons = couponRepository.findAllByIssueEndDateBetween(startOfExpiryDay, endOfExpiryDay);
 
         for (Coupon userCoupon : expiringCoupons) {
-            Optional<User> byId = userRepository.findById(userCoupon.getUserId());
-            String token = byId.get().getFcmToken();
-            if (token != null && !token.isEmpty()) {
-                notificationUtil.sendToDevice(
-                        token,
-                        "쿠폰 만료 예정 알림",
-                        "[" + userCoupon.getPromotion().getTitle() + "] 쿠폰 만료가 3일 남았습니다!",
-                        NotificationType.COUPON,
-                        userCoupon.getId()
-                );
-            }
+            userRepository.findById(userCoupon.getUserId()).ifPresent(user -> {
+                String token = user.getFcmToken();
+                if (token != null && !token.isEmpty() && user.isReceivedAlarm()) {
+                    notificationUtil.sendToDevice(
+                            token,
+                            "쿠폰 만료 예정 알림",
+                            "[" + userCoupon.getPromotion().getTitle() + "] 쿠폰 만료가 3일 남았습니다!",
+                            NotificationType.COUPON,
+                            userCoupon.getId());
+                }
+            });
         }
     }
 }

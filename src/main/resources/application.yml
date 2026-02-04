@@ -83,11 +83,6 @@ cloud:
       static: ${AWS_REGION}
     s3:
       bucket: ${S3_BUCKET_NAME}
-
-firebase:
-  adminsdk:
-    account:
-      path: firebase/firebase-adminsdk-account.json
 #naver:
 #  map:
 #    client-id: ${NAVER_MAP_CLIENT_ID}
