@@ -28,7 +28,7 @@ public class NotificationService {
 
     public CursorResponse<NotificationResponse> getNotifications(Long userId, String filter, Long lastId, int size) {
         Pageable pageable = PageRequest.of(0, size);
-        NotificationType type = "ALL".equals(filter) ? null : NotificationType.valueOf(filter);
+        String type = "ALL".equals(filter) ? null : NotificationType.valueOf(filter).name();
         Slice<Notification> notifications = notificationRepository.findNotificationsNoOffset(userId, lastId, type, pageable);
 
         return CursorUtils.toCursorResponse(notifications, NotificationResponse::from);

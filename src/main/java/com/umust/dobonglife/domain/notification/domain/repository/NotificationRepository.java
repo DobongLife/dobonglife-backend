@@ -22,6 +22,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Slice<Notification> findNotificationsNoOffset(
             @Param("userId") Long userId,
             @Param("lastId") Long lastId,
-            @Param("type") NotificationType type,
+            @Param("type") String type,
             Pageable pageable);
 }

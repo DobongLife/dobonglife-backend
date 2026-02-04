@@ -34,8 +34,7 @@ public class NotificationScheduler {
         sendCouponExpirationNotifications(today.plusDays(3));
     }
     @Scheduled(cron = "0 0 9 * * *")
-    public void sendDailyScheduleSummary() {
-        LocalDate today = LocalDate.now();
+    public void sendDailyScheduleSummary(LocalDate today) {
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
 

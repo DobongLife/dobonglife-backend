@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Tag(name = "코스 API", description = "코스 관련 API")
-@SecurityRequirement(name = "BearerAuth")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
