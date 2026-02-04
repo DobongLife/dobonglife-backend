@@ -11,7 +11,6 @@ import com.umust.dobonglife.global.external.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -82,17 +81,14 @@ public class MailService {
         }
     }
 
-    public void checkAuthCode(MailCodeCheckRequest request) {
+    public void checkSignUpAuthCode(MailCodeCheckRequest request) {
 
         String email = request.getEmail();
-        // 비밀번호 변경 시, 존재하지 않는 email이면 에러 처리
-        if (!request.isForSignUp()){
-            User user = userRepository.findByEmailAndProvider(email, Provider.LOCAL)
-                    .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
+        String storedCode = getStoredSignUpCode(email);
+
+        if (storedCode == null || storedCode.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
-        String storedCode;
-        if(request.isForSignUp()) storedCode = getStoredSignUpCode(email);
-        else storedCode = getStoredPasswordCode(email);
 
         if ("VERIFIED".equals(storedCode)) {
             return; // 이미 인증이 완료된 이메일
@@ -104,11 +100,30 @@ public class MailService {
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
 
-        String prefix;
-        if(request.isForSignUp()) prefix = EMAIL_KEY_PREFIX;
-        else prefix = PASSWORD_KEY_PREFIX;
         redisService.setValues(
-                prefix + email,
+                EMAIL_KEY_PREFIX + email,
+                "VERIFIED",
+                Duration.ofSeconds(VERIFIED_TTL_SECONDS)
+        );
+    }
+
+    public void checkPasswordAuthCode(String email, String authCode) {
+        String storedCode = getStoredPasswordCode(email);
+
+        if (storedCode == null || storedCode.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+        }
+
+        if ("VERIFIED".equals(storedCode)) {
+            return;
+        }
+
+        if (!authCode.equals(storedCode)) {
+            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+        }
+
+        redisService.setValues(
+                PASSWORD_KEY_PREFIX + email,
                 "VERIFIED",
                 Duration.ofSeconds(VERIFIED_TTL_SECONDS)
         );

@@ -4,8 +4,7 @@ import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
-import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
-import com.umust.dobonglife.domain.user.controller.dto.request.PasswordRequest;
+import com.umust.dobonglife.domain.user.controller.dto.request.PasswordUpdateRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
@@ -70,15 +69,13 @@ public class UserService {
     }
 
     @Transactional
-    public void updateMyPassword(PasswordRequest request) {
+    public void updateMyPassword(PasswordUpdateRequest request) {
         User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         if(user.getPassword() == null){
             throw new BusinessException(ErrorCode.USER_IS_SOCIAL_LOGGED);
         }
-        if (!"VERIFIED".equals(mailService.getStoredPasswordCode(user.getEmail()))){
-            throw new BusinessException(ErrorCode.AUTHCODE_UNAUTHORIZED);
-        }
+        mailService.checkPasswordAuthCode(request.getEmail(), request.getAuthCode());
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     }
 

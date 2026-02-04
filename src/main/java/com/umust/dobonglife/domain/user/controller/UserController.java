@@ -2,8 +2,7 @@ package com.umust.dobonglife.domain.user.controller;
 
 import com.umust.dobonglife.domain.user.controller.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
-import com.umust.dobonglife.domain.user.controller.dto.request.PasswordRequest;
-import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
+import com.umust.dobonglife.domain.user.controller.dto.request.PasswordUpdateRequest;
 import com.umust.dobonglife.domain.user.service.MailService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -71,7 +70,7 @@ public class UserController {
     )
     @PostMapping("/mail/check")
     public BaseResponse<Void> checkAuthCode(@Valid @RequestBody MailCodeCheckRequest request) {
-        mailService.checkAuthCode(request);
+        mailService.checkSignUpAuthCode(request);
         return BaseResponse.ok(null);
     }
 
@@ -80,7 +79,7 @@ public class UserController {
             description = "비밀번호를 변경합니다. 액세스 토큰이 필요합니다."
     )
     @PatchMapping("/password")
-    public BaseResponse<Void> updatePassword(@Valid @RequestBody PasswordRequest request) {
+    public BaseResponse<Void> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
         userService.updateMyPassword(request);
         return BaseResponse.ok(null);
     }
