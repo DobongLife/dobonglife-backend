@@ -2,13 +2,17 @@ package com.umust.dobonglife.global.external.firebase;
 
 import com.google.firebase.messaging.*;
 import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.error.ErrorCode;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class NotificationUtil {
 
     public void subscribeTopic(String fcmToken, String topic) {
@@ -42,6 +46,7 @@ public class NotificationUtil {
         }
     }
 
+    @Async
     public void sendToDevice(String fcmToken, String title, String body, NotificationType type, Long id) {
         AndroidConfig androidConfig = AndroidConfig.builder()
                 .setTtl(3600 * 1000)
@@ -74,7 +79,9 @@ public class NotificationUtil {
 
         try {
             FirebaseMessaging.getInstance().send(message);
+            log.info("FCM 전송 성공");
         } catch (FirebaseMessagingException e) {
+            log.error("FCM 전송 오류: {}", e.getMessage());
             throw new BusinessException(ErrorCode.SERVER_ERROR_MESSAGE);
         }
     }

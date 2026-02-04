@@ -16,6 +16,8 @@ import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepositor
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.courseLike.domain.repository.CourseLikeRepository;
+import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
+import com.umust.dobonglife.domain.notification.service.NotificationService;
 import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
 import com.umust.dobonglife.domain.user.service.UserService;
@@ -53,6 +55,7 @@ public class CourseService {
     private final UserService userService;
     private final PointService pointService;
     private final CourseLikeService courseLikeService;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public CursorResponse<CourseSummaryResponse> getCourses(Long userId, Long lastId, int size) {
@@ -141,6 +144,13 @@ public class CourseService {
                 .build();
 
         pointService.earnPoint(userId, COURSE_CREATE.getTitle(), COURSE_CREATE.getPoint());
+
+        notificationService.createNotification(userService.findById(userId),
+                NotificationType.POINT,
+                "포인트 적립 안내",
+                COURSE_CREATE.getPoint() + "포인트가 적립되었습니다! (코스등록)",
+                null);
+
 
         Course save = courseRepository.save(course);
         List<CoursePlans> plans = convertToPlans(course, request.getPlans());

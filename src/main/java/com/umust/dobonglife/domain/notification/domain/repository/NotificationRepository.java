@@ -15,13 +15,13 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Optional<Long> countByUserIdAndIsReadFalse(Long userId);
 
     @Query("SELECT n FROM Notification n " +
-            "WHERE n.userId = :userId " +
+            "WHERE n.user.id = :userId " +
             "AND (:lastId IS NULL OR n.id < :lastId) " +
             "AND (:type IS NULL OR n.type = :type) " +
             "ORDER BY n.id DESC")
     Slice<Notification> findNotificationsNoOffset(
             @Param("userId") Long userId,
             @Param("lastId") Long lastId,
-            @Param("type") String type,
+            @Param("type") NotificationType type,
             Pageable pageable);
 }
