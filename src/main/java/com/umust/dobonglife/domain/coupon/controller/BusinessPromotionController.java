@@ -47,8 +47,8 @@ public class BusinessPromotionController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping("/preset")
-    public BaseResponse<List<PresetResponse>> getPreset() {
-        List<PresetResponse> responses = preSetService.getAllPresets();
+    public BaseResponse<PresetResponse> getPreset(@CurrentUserId Long userId) {
+        PresetResponse responses = preSetService.getPreset(userId);
         return BaseResponse.ok(responses);
     }
 }
