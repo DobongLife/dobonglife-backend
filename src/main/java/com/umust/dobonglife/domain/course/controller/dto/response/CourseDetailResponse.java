@@ -45,12 +45,12 @@ public record CourseDetailResponse(
      */
     public record UserInfo(
             boolean isRemoved,
-            boolean isFavorite
+            boolean liked
     ) {
-        public static UserInfo from(boolean isRemoved, boolean isFavorite) {
+        public static UserInfo from(boolean isRemoved, boolean liked) {
             return new UserInfo(
                     isRemoved,
-                    isFavorite
+                    liked
             );
         }
     }
