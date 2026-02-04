@@ -10,6 +10,7 @@ import java.util.List;
 public record PromotionRegisterRequest(
         String couponName,
         String couponDescription,
+        Long point,
         @Schema(
                 description = "프로모션 카테고리",
                 implementation = PromotionType.class,

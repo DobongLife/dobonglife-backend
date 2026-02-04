@@ -15,6 +15,7 @@ import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryR
 import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
+import com.umust.dobonglife.domain.courseLike.domain.repository.CourseLikeRepository;
 import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.courseLike.service.CourseLikeService;
 import com.umust.dobonglife.domain.user.service.UserService;
@@ -74,7 +75,7 @@ public class CourseService {
                 .map(Course::getId)
                 .toList();
 
-        Set<Long> favoriteCourseIds = (userId != null)
+        Set<Long> favoriteCourseIds = (userId != null && !courseIds.isEmpty())
                 ? courseLikeService.getFavoriteCourseIds(userId, courseIds)
                 : Collections.emptySet();
 
@@ -271,5 +272,9 @@ public class CourseService {
         Slice<Course> courses = courseRepository.findLikedCourses(userId, null, pageable);
 
         return getCourseSummaryResponseCursorResponse(userId, courses);
+    }
+
+    public Long getLikedCourseCount(Long userId) {
+        return courseLikeService.getLikedCourseCount(userId);
     }
 }

@@ -15,4 +15,6 @@ public interface CourseLikeRepository extends JpaRepository<CourseLike, Long> {
 
     @Query("SELECT cl.courseId FROM CourseLike cl WHERE cl.userId = :userId AND cl.courseId IN :courseIds")
     Set<Long> findLikedCourseIdsByUserIdAndCourseIds(Long userId, List<Long> courseIds);
+
+    long countByUserId(Long userId);
 }
