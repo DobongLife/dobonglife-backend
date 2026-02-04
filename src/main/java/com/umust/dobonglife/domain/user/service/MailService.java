@@ -39,8 +39,6 @@ public class MailService {
 
     private final SpringTemplateEngine templateEngine;
 
-    private final UserRepository userRepository;
-
     private final RedisService redisService;
 
     public void sendMail(MailRequest request) {

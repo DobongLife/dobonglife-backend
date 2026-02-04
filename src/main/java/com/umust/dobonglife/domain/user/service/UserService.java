@@ -73,6 +73,9 @@ public class UserService {
     public void updateMyPassword(Long userId, PasswordRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        if (!"VERIFIED".equals(mailService.getStoredPasswordCode(user.getEmail()))){
+            throw new BusinessException(ErrorCode.AUTHCODE_UNAUTHORIZED);
+        }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     }
 
