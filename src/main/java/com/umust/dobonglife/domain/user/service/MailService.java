@@ -45,6 +45,8 @@ public class MailService {
     private final UserRepository userRepository;
 
     public void sendMail(MailRequest request) {
+        log.info("email={}, isForSignUp={}", request.getEmail(), request.isForSignUp());
+
         // 비밀번호 변경 시, 존재하지 않는 email이면 에러 처리
         if (!request.isForSignUp()){
             User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL)
