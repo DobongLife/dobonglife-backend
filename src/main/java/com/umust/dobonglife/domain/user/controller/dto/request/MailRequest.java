@@ -17,5 +17,5 @@ public class MailRequest {
 
     @Schema(description = "회원가입 여부")
     @NotNull
-    private boolean isForSignUp;
+    private boolean forSignUp;
 }
