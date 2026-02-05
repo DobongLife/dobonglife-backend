@@ -1,28 +1,26 @@
 package com.umust.dobonglife.global.auth;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.exception.handler.*;
-import com.umust.dobonglife.domain.auth.handler.CustomAuthenticationSuccessHandler;
 import com.umust.dobonglife.domain.auth.filter.CustomLoginFilter;
 import com.umust.dobonglife.domain.auth.filter.JwtAuthenticationFilter;
+import com.umust.dobonglife.domain.auth.handler.CustomAuthenticationSuccessHandler;
 import com.umust.dobonglife.domain.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.repository.query.ValueExpressionQueryRewriter;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
@@ -41,11 +39,44 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSessionExpiredStrategy customSessionExpiredStrategy;
 
+    /**
+     * 1) Swagger 전용 체인: 동시 로그인(세션 max 1) 정책 제외
+     * - swagger 관련 URI만 매칭
+     * - 필요하면 permitAll로 열어둠
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomLoginFilter customLoginFilter,
-                                                   CorsConfigurationSource corsConfigurationSource) throws Exception {
+    @Order(1)
+    public SecurityFilterChain swaggerFilterChain(HttpSecurity http,
+                                                  CorsConfigurationSource corsConfigurationSource) throws Exception {
+
         http
-                // 기본 옵션, 폼 로그인 비활성화
+                .securityMatcher(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                )
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .httpBasic(b -> b.disable())
+                .formLogin(fl -> fl.disable())
+                // swagger 쪽은 세션을 아예 안 쓰게 하고 싶으면 아래 한 줄 추천
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        return http.build();
+    }
+
+    /**
+     * 2) API 체인: 기존 정책 유지 (동시 로그인 max 1 + expiredStrategy)
+     */
+    @Bean
+    @Order(2)
+    public SecurityFilterChain apiFilterChain(HttpSecurity http,
+                                              CustomLoginFilter customLoginFilter,
+                                              CorsConfigurationSource corsConfigurationSource) throws Exception {
+
+        http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .httpBasic(b -> b.disable())
@@ -59,10 +90,16 @@ public class SecurityConfig {
                 );
 
         http
-                // 인가 규칙
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
-                        // 나머지 모든 요청은 인증 필요
+                .authorizeHttpRequests(auth -> auth
+                        // 로그인/헬스체크/정적리소스 등 필요하면 여기서 permitAll 추가
+                        .requestMatchers(
+                                "/",
+                                "/error",
+                                "/favicon.ico",
+                                "/actuator/health",
+                                "/api/auth/**",
+                                "/api/users/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -72,18 +109,17 @@ public class SecurityConfig {
                 .addFilterAt(customLoginFilter, UsernamePasswordAuthenticationFilter.class);
 
         http
-                // 시큐리티 표준 예외 핸들러 (401/403)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                         .accessDeniedHandler(customAccessDeniedHandler)
                 );
 
-        // OAuth2 소셜 로그인 설정
         http
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService)))
-                        .successHandler(customAuthenticationSuccessHandler));
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(customAuthenticationSuccessHandler)
+                );
+
         return http.build();
     }
 
