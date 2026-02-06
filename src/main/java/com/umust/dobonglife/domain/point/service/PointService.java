@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.point.service;
 
 import com.umust.dobonglife.domain.point.controller.dto.response.MyPointsResponse;
+import com.umust.dobonglife.domain.point.controller.dto.response.PointGuideResponse;
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
@@ -57,7 +58,12 @@ public class PointService {
         Long userTotalPoint = userService.getUserTotalPoint(userId);
         SliceResponse<PointResponse> pointsByCursor = getPointResponse(userId, size, lastId, order);
 
-        return new MyPointsResponse(userTotalPoint, pointsByCursor);
+        List<PointGuideResponse> guides = List.of( // TODO: 확장성 어떻게 고려할지 생각하기
+                new PointGuideResponse("후기 작성", 10L),
+                new PointGuideResponse("코스 등록", 30L)
+        );
+
+        return new MyPointsResponse(userTotalPoint, guides, pointsByCursor);
     }
 
     @Transactional(readOnly = true)
