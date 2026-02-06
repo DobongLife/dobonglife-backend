@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.business.service;
 
 
+import com.umust.dobonglife.domain.business.controller.dto.response.BusinessPromotionResponse;
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
@@ -35,6 +36,7 @@ public class BusinessService {
     private final BusinessStatusParser parser;
     private final BusinessRepository businessRepository;
     private final PlaceRepository placeRepository;
+
 
     private static final String VALID_CODE = "01";
     private final PlaceService placeService;
@@ -118,6 +120,14 @@ public class BusinessService {
 
         return BusinessResponse.from(business);
     }
+
+//    @Transactional(readOnly = true)
+//    public BusinessPromotionResponse getBusinessPromotion(Long userId, Long businessId){
+//
+//
+//    }
+
+
 
     @Transactional(readOnly = true)
     public Business getBusinessByUser(Long userId) {

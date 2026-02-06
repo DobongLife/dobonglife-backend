@@ -149,6 +149,7 @@ public class UserService {
         byId.updateNotificationEnabled(enabled);
     }
 
+    @Transactional
     public void updateFcmToken(Long userId, String fcmToken) {
         User byId = findById(userId);
         byId.setFcmToken(fcmToken);
