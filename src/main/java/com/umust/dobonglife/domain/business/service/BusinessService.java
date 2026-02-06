@@ -132,35 +132,35 @@ public class BusinessService {
         return BusinessResponse.from(business);
     }
 
-    @Transactional(readOnly = true)
-    public BusinessPromotionResponse getBusinessPromotion(Long userId, Long lastId, int size) {
-        // 1) Promotion (쿼리 1번)
-        Pageable pageable = PageRequest.of(0, size);
-        Slice<Promotion> promotions =
-                promotionRepository.findPromotionNoOffsetByUserId(userId, lastId, pageable);
-
-        // 2) 조회된 promotionIds 추출
-        List<Long> promotionIds = promotions.getContent().stream()
-                .map(Promotion::getId)
-                .toList();
-
-        // 3) 쿠폰 집계 (쿼리 1번)
-        List<CouponUsageCount> rows = couponRepository.countCouponUsageByPromotionIds(promotionIds);
-
-        Map<Long, CouponUsageCount> usageMap = rows.stream()
-                .collect(Collectors.toMap(CouponUsageCount::promotionId, Function.identity()));
-
-        // 4) Promotion에 통계 붙여서 응답
-        return promotions.map(p -> {
-
-            CouponUsageCount usage = usageMap.get(p.getId());
-            long total = p.getTotalQuantity();
-            long used = (usage == null) ? 0 : usage.usedCount();
-            int usedValue = (total == 0) ? 0 : (int) Math.round((double) used * 100 / total);
-
-            return BusinessPromotionResponse.of(p.getId(), p.getTitle(), p.getStartDate(), p.getEndDate() ,p.getDiscountType(), p.getDiscountValue(), usedValue, total, used, p.getCode(), p.getDescription());
-        });
-    }
+//    @Transactional(readOnly = true)
+//    public BusinessPromotionResponse getBusinessPromotion(Long userId, Long lastId, int size) {
+//        // 1) Promotion (쿼리 1번)
+//        Pageable pageable = PageRequest.of(0, size);
+//        Slice<Promotion> promotions =
+//                promotionRepository.findPromotionNoOffsetByUserId(userId, lastId, pageable);
+//
+//        // 2) 조회된 promotionIds 추출
+//        List<Long> promotionIds = promotions.getContent().stream()
+//                .map(Promotion::getId)
+//                .toList();
+//
+//        // 3) 쿠폰 집계 (쿼리 1번)
+//        List<CouponUsageCount> rows = couponRepository.countCouponUsageByPromotionIds(promotionIds);
+//
+//        Map<Long, CouponUsageCount> usageMap = rows.stream()
+//                .collect(Collectors.toMap(CouponUsageCount::promotionId, Function.identity()));
+//
+//        // 4) Promotion에 통계 붙여서 응답
+//        return promotions.map(p -> {
+//
+//            CouponUsageCount usage = usageMap.get(p.getId());
+//            long total = p.getTotalQuantity();
+//            long used = (usage == null) ? 0 : usage.usedCount();
+//            int usedValue = (total == 0) ? 0 : (int) Math.round((double) used * 100 / total);
+//
+//            return BusinessPromotionResponse.of(p.getId(), p.getTitle(), p.getStartDate(), p.getEndDate() ,p.getDiscountType(), p.getDiscountValue(), usedValue, total, used, p.getCode(), p.getDescription());
+//        });
+//    }
 
     @Transactional(readOnly = true)
     public Business getBusinessByUser(Long userId) {

@@ -71,6 +71,9 @@ public class Promotion {
     @Column(name = "total_quantity", nullable = false)
     private Long totalQuantity;
 
+    @Column(name = "used_quantity", nullable = false)
+    private Long usedQuantity;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
@@ -106,6 +109,7 @@ public class Promotion {
         this.code = code;
         this.point = point;
         this.totalQuantity = totalQuantity;
+        this.usedQuantity = 0L;
         this.startDate = startDate;
         this.endDate = endDate;
         this.validPeriod = validPeriod;
