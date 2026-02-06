@@ -12,4 +12,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
             "WHERE (:lastId IS NULL OR p.id < :lastId) " +
             "ORDER BY p.id DESC")
     Slice<Promotion> findPromotionWithPlaceNoOffset(Long lastId, Pageable pageable);
+
+
 }
