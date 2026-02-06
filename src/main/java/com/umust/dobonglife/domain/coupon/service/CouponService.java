@@ -58,23 +58,23 @@ public class CouponService {
 
     @Transactional
     public UsedCouponResponse useMyCoupon(Long userId, CouponCodeRequest request) {
-        validateCode(request.promotionId(), request.code());
+        if(!validateCode(request.promotionId(), request.code()))
+            throw new BusinessException(ErrorCode.INVALID_CODE);
 
         Coupon coupon = couponRepository.findByUserIdAndCouponId(userId, request.couponId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COUPON_ID));
-        coupon.updateCouponStatus();
-        couponRepository.save(coupon);
+        int updatedRow = couponRepository.useIfUsable(userId, coupon.getId());
+        if (updatedRow == 0) {
+            throw new BusinessException(ErrorCode.COUPON_CANNOT_USE);
+        }
 
         return new UsedCouponResponse(request.couponId(), CouponStatus.USED);
     }
 
-    private void validateCode(Long promotionId, String code) {
+    private boolean validateCode(Long promotionId, String code) {
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_PROMOTION_ID));
-        if(!promotion.getCode().equals(code)){
-            throw new BusinessException(ErrorCode.INVALID_CODE);
-        }
-        // promotion.updateCouponStatus();
+        return promotion.getCode().equals(code);
     }
 
     private CursorResponse<CouponItem> convertToCursorResponse(Slice<Coupon> coupons) {

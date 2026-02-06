@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.coupon.domain.repository.custom.CouponReposit
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -44,4 +45,16 @@ public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRep
         GROUP BY c.promotion.id
     """)
     List<CouponUsageCount> countCouponUsageByPromotionIds(List<Long> promotionIds);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+    UPDATE Coupon c
+    SET c.couponStatus = com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus.USED
+    WHERE c.id = :couponId
+      AND c.userId = :userId
+      AND c.couponStatus = com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus.AVAILABLE
+      AND c.issueStartDate <= CURRENT_DATE
+      AND c.issueEndDate >= CURRENT_DATE
+    """)
+    int useIfUsable(@Param("userId") Long userId, @Param("couponId") Long couponId);
 }
