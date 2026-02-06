@@ -18,6 +18,7 @@ import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.CursorUtils;
+import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -135,5 +136,13 @@ public class PromotionService {
 
         promotion.update(request);
         return PromotionUpdateResponse.from(promotion);
+    }
+
+    @Transactional(readOnly = true)
+    public CursorResponse<PromotionBannerItem> getPromotionBanner(Long lastId, int size) {
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Promotion> promotions = promotionRepository.findPromotionBannersNoOffset(lastId, pageable);
+
+        return CursorUtils.toCursorResponse(promotions, PromotionBannerItem::from);
     }
 }

@@ -21,7 +21,9 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "promotion")
+@Table(name = "promotion", indexes = {
+        @Index(name = "idx_promotion_priority", columnList = "priority")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Promotion {
 
@@ -85,6 +87,9 @@ public class Promotion {
 
     @Column(name = "issued_count", nullable = false)
     private Long issuedCount;
+
+    @Column(nullable = true)
+    private Integer priority;
 
     @Builder
     public Promotion(Category category, Place place, String title, String description, List<String> imgUrls,
