@@ -9,7 +9,7 @@ import com.umust.dobonglife.global.auth.CouponCodeGenerator;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
-        import lombok.AccessLevel;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -83,6 +83,9 @@ public class Promotion {
     @Column(name = "businesses_id", nullable = false)
     private Long businessesId;
 
+    @Column(name = "issued_count", nullable = false)
+    private Long issuedCount;
+
     @Builder
     public Promotion(Category category, Place place, String title, String description, List<String> imgUrls,
                      DiscountType discountType, BigDecimal discountValue, Long minPrice,
@@ -107,6 +110,7 @@ public class Promotion {
         this.endDate = endDate;
         this.validPeriod = validPeriod;
         this.businessesId = businessesId;
+        this.issuedCount = 0L;
     }
 
     private void validate(DiscountType discountType, BigDecimal discountValue,

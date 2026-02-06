@@ -6,7 +6,6 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Builder
@@ -16,12 +15,45 @@ public class BusinessPromotionResponse {
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
-    private boolean canUsed;
+    private boolean inPeriod;
     private DiscountType discountType;
     private BigDecimal discountValue;
-    private BigDecimal usedValue;
+    private int usedValue;
     private Long usedCount;
-    private Long issuedCount;
+    private Long totalCount;
     private String code;
     private String description;
+    private Long validPeriod;
+
+    public static BusinessPromotionResponse of(
+            Long promotionId,
+            String title,
+            LocalDate startDate,
+            LocalDate endDate,
+            boolean inPeriod,
+            DiscountType discountType,
+            BigDecimal discountValue,
+            int usedValue,
+            Long usedCount,
+            Long totalCount,
+            String code,
+            String description,
+            Long validPeriod
+    ) {
+        return BusinessPromotionResponse.builder()
+                .promotionId(promotionId)
+                .title(title)
+                .startDate(startDate)
+                .endDate(endDate)
+                .inPeriod(inPeriod)
+                .discountType(discountType)
+                .discountValue(discountValue)
+                .usedValue(usedValue)
+                .usedCount(usedCount)
+                .totalCount(totalCount)
+                .code(code)
+                .description(description)
+                .validPeriod(validPeriod)
+                .build();
+    }
 }

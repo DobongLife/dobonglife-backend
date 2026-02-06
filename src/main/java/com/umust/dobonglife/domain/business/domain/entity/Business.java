@@ -33,7 +33,7 @@ public class Business extends BaseEntity {
     @Builder.Default
     private boolean isAuthenticated = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_id")
     private User user;
 

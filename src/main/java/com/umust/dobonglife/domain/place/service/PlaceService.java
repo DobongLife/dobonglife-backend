@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.place.service;
 
 import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
+import com.umust.dobonglife.domain.business.controller.dto.request.BusinessUpdateRequest;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.controller.dto.response.*;
@@ -132,22 +133,14 @@ public class PlaceService {
     }
 
     @Transactional
-    public Place resolvePlaceForUpdate(Business business, BusinessRequest request) {
+    public Place resolvePlaceForUpdate(Business business, BusinessUpdateRequest request) {
         Place place = business.getPlace();
 
         place.setName(request.getBusinessName());
         place.setContent(request.getContent());
-        place.setAddress(request.getBusinessAddress());
         place.setContact(request.getContact());
         place.setOperatingHour(request.getOperatingHour() == null ? place.getOperatingHour() : request.getOperatingHour());
-        place.setLatitude(request.getLatitude());
-        place.setLongitude(request.getLongitude());
         place.setCategory(Category.toEnum(request.getCategory()));
-
-        place.setThemes(request.getThemes().stream()
-                .map(CourseTheme::toEnum)
-                .toList());
-
         return place;
     }
 
