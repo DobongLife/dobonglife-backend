@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.preset.domain;
 
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
+import com.umust.dobonglife.global.common.model.constant.Category;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,7 +21,8 @@ public class Preset {
     private Long id;
 
     @Column(name = "category", nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;

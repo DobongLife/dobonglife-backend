@@ -15,14 +15,14 @@ public record PromotionRegisterRequest(
                 implementation = Category.class,
                 example = "RESTAURANT"
         )
-        String category,
+        Category category,
 
         @Schema(
                 description = "할인 유형",
                 implementation = DiscountType.class,
                 example = "PERCENT"
         )
-        String discountType,
+        DiscountType discountType,
         Integer discountValue,
         Integer minPurchaseAmount,
         Integer maxDiscountAmount,
