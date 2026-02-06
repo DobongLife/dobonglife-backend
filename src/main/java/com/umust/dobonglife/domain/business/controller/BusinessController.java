@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.business.controller;
 
 import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
+import com.umust.dobonglife.domain.business.controller.dto.request.BusinessUpdateRequest;
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessPromotionResponse;
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
 import com.umust.dobonglife.domain.business.service.BusinessService;
@@ -55,7 +56,7 @@ public class BusinessController {
     )
     @PatchMapping
     public BaseResponse<BusinessResponse> updateBusiness(
-                                             @RequestBody BusinessRequest request,
+                                             @RequestBody BusinessUpdateRequest request,
                                              @CurrentUserId Long userId) {
         return BaseResponse.ok(businessService.updateBusiness(userId, request));
     }

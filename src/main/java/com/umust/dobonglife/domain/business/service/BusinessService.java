@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.business.service;
 
 
+import com.umust.dobonglife.domain.business.controller.dto.request.BusinessUpdateRequest;
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessPromotionResponse;
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
@@ -113,7 +114,7 @@ public class BusinessService {
     }
 
     @Transactional
-    public BusinessResponse updateBusiness(Long userId, BusinessRequest request) {
+    public BusinessResponse updateBusiness(Long userId, BusinessUpdateRequest request) {
         Business business = getBusinessByUser(userId);
         // 소유자 검증
         if (business.getUser() == null || !business.getUser().getId().equals(userId)) {
@@ -121,7 +122,6 @@ public class BusinessService {
         }
 
         // Business 필드 업데이트
-        business.setBusinessNumber(request.getBusinessNumber());
         business.setEmail(request.getEmail());
         business.setManagerName(request.getManagerName());
 
