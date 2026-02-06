@@ -27,7 +27,7 @@ public class NotificationScheduler {
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
 
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "0 10 11 * * *")
     public void sendDailyNotifications() {
         LocalDate today = LocalDate.now();
         sendDailyScheduleSummary(today);

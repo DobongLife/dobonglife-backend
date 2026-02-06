@@ -143,6 +143,11 @@ public class UserService {
         return byId.isBlocked();
     }
 
+    public boolean isReceivedAlarmUser(Long userId) {
+        User byId = findById(userId);
+        return byId.isReceivedAlarm();
+    }
+
     @Transactional
     public void updateNotificationSetting(Long userId, boolean enabled) {
         User byId = findById(userId);
