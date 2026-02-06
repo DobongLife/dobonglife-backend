@@ -139,10 +139,14 @@ public class BusinessService {
     public CursorResponse<BusinessPromotionResponse> getBusinessPromotion(
             Long userId, Long lastId, int size
     ) {
-        // 1) Promotion 조회
+        // 1) Promotion 조회 비어있으면, 조기 리턴
         Pageable pageable = PageRequest.of(0, size);
         Slice<Promotion> promotions =
                 promotionRepository.findPromotionNoOffsetByUserId(userId, lastId, pageable);
+
+        if (promotions.isEmpty()) {
+            return new CursorResponse<>(List.of(), false);
+        }
 
         // 2) promotionIds 추출
         List<Long> promotionIds = promotions.getContent().stream()

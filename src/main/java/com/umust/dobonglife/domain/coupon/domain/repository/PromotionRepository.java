@@ -34,7 +34,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
         UPDATE Promotion p
         SET p.issuedCount = p.issuedCount + 1
         WHERE p.id = :promotionId
-          AND p.issuedCount <= p.totalQuantity
+          AND p.issuedCount < p.totalQuantity
           AND p.startDate <= :today
           AND p.endDate >= :today
     """)
