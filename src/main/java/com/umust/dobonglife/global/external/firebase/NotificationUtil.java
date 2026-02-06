@@ -48,20 +48,33 @@ public class NotificationUtil {
 
     @Async("notificationExecutor")
     public void sendToDevice(String fcmToken, String title, String body, NotificationType type, Long id) {
+        String stringId = String.valueOf(id != null ? id : 0L);
+        String stringType = (type != null) ? type.name() : "NONE";
+
+        ApnsConfig apnsConfig = ApnsConfig.builder()
+                .setAps(Aps.builder()
+                        .setAlert(ApsAlert.builder()
+                                .setTitle(title)
+                                .setBody(body)
+                                .build())
+                        .setSound("default")
+                        .setCategory("NEW_MESSAGE_CATEGORY")
+                        .setContentAvailable(true)
+                        .setMutableContent(true)
+                        .build())
+                .putCustomData("id", stringId)
+                .putCustomData("type", stringType)
+                .build();
+
         AndroidConfig androidConfig = AndroidConfig.builder()
                 .setTtl(3600 * 1000)
                 .setPriority(AndroidConfig.Priority.HIGH)
                 .setNotification(AndroidNotification.builder()
-                        .setClickAction("OPEN_ACTIVITY_1") // 클릭 시 앱 열기 액션
-                        .setChannelId("dobong-default-notifications") // 안드로이드 8.0+ 필수 채널 ID
+                        .setTitle(title)
+                        .setBody(body)
+                        .setClickAction("OPEN_ACTIVITY_1")
+                        .setChannelId("dobong-default-notifications")
                         .setSound("default")
-                        .build())
-                .build();
-
-        ApnsConfig apnsConfig = ApnsConfig.builder()
-                .setAps(Aps.builder()
-                        .setSound("default")
-                        .setCategory("NEW_MESSAGE_CATEGORY") // iOS 전용 카테고리
                         .build())
                 .build();
 
@@ -71,17 +84,18 @@ public class NotificationUtil {
                         .setTitle(title)
                         .setBody(body)
                         .build())
-                .putData("id", String.valueOf(id != null ? id : 0L))
-                .putData("type", type != null ? type.name() : "NONE")
+                .putData("id", stringId)
+                .putData("type", stringType)
                 .setAndroidConfig(androidConfig)
                 .setApnsConfig(apnsConfig)
                 .build();
 
         try {
-            FirebaseMessaging.getInstance().send(message);
-            log.info("FCM 전송 성공");
+            log.info("[FCM_DEBUG] 전송 시도 - Token: {}, ID: {}, Type: {}", fcmToken, stringId, stringType);
+            String response = FirebaseMessaging.getInstance().send(message);
+            log.info("[FCM_DEBUG] 전송 성공 - Response: {}", response);
         } catch (FirebaseMessagingException e) {
-            log.error("FCM 전송 오류: {}", e.getMessage());
+            log.error("[FCM_DEBUG] 전송 실패 - Code: {}, Msg: {}", e.getMessagingErrorCode(), e.getMessage());
             throw new BusinessException(ErrorCode.SERVER_ERROR_MESSAGE);
         }
     }

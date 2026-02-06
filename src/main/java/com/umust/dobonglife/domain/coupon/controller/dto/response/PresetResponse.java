@@ -24,7 +24,7 @@ public record PresetResponse(
 
         return new PresetResponse(
                 preset.getId(),
-                preset.getCategory(),
+                preset.getCategory().name(),
                 preset.getDescription(),
                 preset.getPoint(),
                 preset.getImg(),

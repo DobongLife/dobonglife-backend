@@ -11,6 +11,7 @@ import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
+import com.umust.dobonglife.global.common.model.constant.Category;
 import com.umust.dobonglife.global.common.webclient.business.parser.BusinessStatusParser;
 import com.umust.dobonglife.global.common.webclient.service.WebClientService;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -124,8 +125,8 @@ public class BusinessService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
     }
 
-    public String getCategoryUserId(Long userId) {
+    public Category getCategoryUserId(Long userId) {
         Business businessByUser = getBusinessByUser(userId);
-        return businessByUser.getPlace().getCategory().getDescription();
+        return businessByUser.getPlace().getCategory();
     }
 }

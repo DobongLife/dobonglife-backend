@@ -138,7 +138,7 @@ public class Promotion {
     }
 
     public static Promotion createPromotion(PromotionRegisterRequest dto, List<String> imgUrl, Long managerId, Place place) {
-        Category type = Category.valueOf(dto.category());
+        Category type = Category.valueOf(dto.category().name());
 
         return Promotion.builder()
                 .category(type)
@@ -147,7 +147,7 @@ public class Promotion {
                 .point(dto.point())
                 .description(dto.couponDescription())
                 .imgUrls(imgUrl.isEmpty() ? Collections.singletonList(type.getImageUrl()) : imgUrl)
-                .discountType(DiscountType.valueOf(dto.discountType()))
+                .discountType(DiscountType.valueOf(dto.discountType().name()))
                 .discountValue(BigDecimal.valueOf(dto.discountValue()))
                 .minPrice(dto.minPurchaseAmount() != null ? dto.minPurchaseAmount().longValue() : null)
                 .maxPrice(dto.maxDiscountAmount() != null ? dto.maxDiscountAmount().longValue() : null)
