@@ -4,7 +4,11 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDate;
 
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     @Query("SELECT p FROM Promotion p " +
@@ -24,4 +28,16 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
             Long lastId,
             Pageable pageable
     );
+
+    @Modifying
+    @Query("""
+        UPDATE Promotion p
+        SET p.issuedCount = p.issuedCount + 1
+        WHERE p.id = :promotionId
+          AND p.issuedCount <= p.totalQuantity
+          AND p.startDate <= :today
+          AND p.endDate >= :today
+    """)
+    int tryIssueCoupon(@Param("promotionId") Long promotionId,
+                       @Param("today") LocalDate today);
 }

@@ -91,6 +91,16 @@ public class CouponService {
 
     @Transactional
     public Long createCoupon(Promotion promotion, Long userId, LocalDate start, Long period) {
+        LocalDate today = LocalDate.now();
+        int updated = promotionRepository.tryIssueCoupon(promotion.getId(), today);
+
+        if (updated == 0) {
+            if (today.isBefore(promotion.getStartDate()) || today.isAfter(promotion.getEndDate())) {
+                throw new BusinessException(ErrorCode.PROMOTION_PERIOD_INVALID);
+            }
+            throw new BusinessException(ErrorCode.COUPON_SOLD_OUT);
+        }
+
         LocalDate end = start.plus(period, ChronoUnit.DAYS);
         Coupon newCoupon = Coupon.builder()
                 .promotion(promotion)

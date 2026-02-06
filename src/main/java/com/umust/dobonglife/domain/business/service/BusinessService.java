@@ -16,6 +16,7 @@ import com.umust.dobonglife.domain.user.domain.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.webclient.business.parser.BusinessStatusParser;
 import com.umust.dobonglife.global.common.webclient.service.WebClientService;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -133,33 +135,65 @@ public class BusinessService {
     }
 
     @Transactional(readOnly = true)
-    public BusinessPromotionResponse getBusinessPromotion(Long userId, Long lastId, int size) {
-        // 1) Promotion (쿼리 1번)
+    public CursorResponse<BusinessPromotionResponse> getBusinessPromotion(
+            Long userId, Long lastId, int size
+    ) {
+        // 1) Promotion 조회
         Pageable pageable = PageRequest.of(0, size);
         Slice<Promotion> promotions =
                 promotionRepository.findPromotionNoOffsetByUserId(userId, lastId, pageable);
 
-        // 2) 조회된 promotionIds 추출
+        // 2) promotionIds 추출
         List<Long> promotionIds = promotions.getContent().stream()
                 .map(Promotion::getId)
                 .toList();
 
-        // 3) 쿠폰 집계 (쿼리 1번)
-        List<CouponUsageCount> rows = couponRepository.countCouponUsageByPromotionIds(promotionIds);
+        // 3) 쿠폰 집계
+        List<CouponUsageCount> rows =
+                couponRepository.countCouponUsageByPromotionIds(promotionIds);
 
         Map<Long, CouponUsageCount> usageMap = rows.stream()
-                .collect(Collectors.toMap(CouponUsageCount::promotionId, Function.identity()));
+                .collect(Collectors.toMap(
+                        CouponUsageCount::promotionId,
+                        Function.identity()
+                ));
 
-        // 4) Promotion에 통계 붙여서 응답
-        return promotions.map(p -> {
+        // 4) Promotion → BusinessPromotionResponse 변환
+        LocalDate today = LocalDate.now();
 
-            CouponUsageCount usage = usageMap.get(p.getId());
-            long total = p.getTotalQuantity();
-            long used = (usage == null) ? 0 : usage.usedCount();
-            int usedValue = (total == 0) ? 0 : (int) Math.round((double) used * 100 / total);
+        List<BusinessPromotionResponse> content = promotions.getContent().stream()
+                .map(p -> {
+                    CouponUsageCount usage = usageMap.get(p.getId());
+                    long total = p.getTotalQuantity();
+                    long used = (usage == null) ? 0 : usage.usedCount();
+                    int usedValue = (total == 0)
+                            ? 0
+                            : (int) Math.round((double) used * 100 / total);
 
-            return BusinessPromotionResponse.of(p.getId(), p.getTitle(), p.getStartDate(), p.getEndDate() ,p.getDiscountType(), p.getDiscountValue(), usedValue, total, used, p.getCode(), p.getDescription());
-        });
+                    boolean inPeriod =
+                            !today.isBefore(p.getStartDate()) &&
+                                    !today.isAfter(p.getEndDate());
+
+                    return BusinessPromotionResponse.of(
+                            p.getId(),
+                            p.getTitle(),
+                            p.getStartDate(),
+                            p.getEndDate(),
+                            inPeriod,
+                            p.getDiscountType(),
+                            p.getDiscountValue(),
+                            usedValue,
+                            total,
+                            used,
+                            p.getCode(),
+                            p.getDescription(),
+                            p.getValidPeriod()
+                    );
+                })
+                .toList();
+
+        // 5) CursorResponse로 감싸서 반환
+        return new CursorResponse<>(content, promotions.hasNext());
     }
 
     @Transactional(readOnly = true)

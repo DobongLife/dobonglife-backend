@@ -78,7 +78,9 @@ public class PromotionService {
     public UsedCouponResponse changePointToCoupon(Long userId, Long promotionId) {
         User user = userService.findById(userId);
         userService.canExchangeCoupon(userId);
-        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new EntityNotFoundException("[ERROR] 프로모션이 존재하지 않습니다."));
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PROMOTION_NOT_FOUND));
+
 
         if(!pointService.processUserPoint(userId, promotion.getPoint()))
             throw new BusinessException(ErrorCode.INVALID_POINT);

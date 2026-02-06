@@ -83,7 +83,3 @@ cloud:
       static: ${AWS_REGION}
     s3:
       bucket: ${S3_BUCKET_NAME}
-#naver:
-#  map:
-#    client-id: ${NAVER_MAP_CLIENT_ID}
-#    client-secret: ${NAVER_MAP_CLIENT_SECRET}

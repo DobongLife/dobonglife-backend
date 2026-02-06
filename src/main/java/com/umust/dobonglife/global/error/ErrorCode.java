@@ -75,7 +75,10 @@ public enum ErrorCode{
     COUPON_CANNOT_USE(405, HttpStatus.CONFLICT.value(), "쿠폰을 사용할 수 없습니다"),
 
     // Promotion
-    INVALID_PROMOTION_ID(403, HttpStatus.FORBIDDEN.value(), "유효하지 않은 프로모션 아이디 입니다."),
+    INVALID_PROMOTION_ID(400, HttpStatus.FORBIDDEN.value(), "유효하지 않은 프로모션 아이디 입니다."),
+    PROMOTION_NOT_FOUND(401, HttpStatus.NOT_FOUND.value(), "프로모션을 찾을 수 없습니다."),
+    PROMOTION_PERIOD_INVALID(402, HttpStatus.CONFLICT.value(), "쿠폰을 발급할 수 있는 기간이 지났습니다."),
+    COUPON_SOLD_OUT(403, HttpStatus.CONFLICT.value(), "쿠폰의 재고가 없습니다."),
 
     // Review
     NOT_REVIEW_OWNER(403, HttpStatus.FORBIDDEN.value(), "해당 리뷰에 대한 권한이 없습니다."),

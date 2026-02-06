@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.business.service.BusinessService;
 import com.umust.dobonglife.domain.courseLike.controller.dto.request.CourseLikeResponse;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
+import com.umust.dobonglife.global.common.response.CursorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,9 +66,9 @@ public class BusinessController {
             description = "사업장 프로모션 조회에 성공하였습니다."
     )
     @GetMapping("/promotion")
-    public BaseResponse<BusinessPromotionResponse> getBusinessPromotion(@CurrentUserId Long userId,
-                                                                        @RequestParam(required = false) Long lastId,
-                                                                        @RequestParam(defaultValue = "2") int size) {
+    public BaseResponse<CursorResponse<BusinessPromotionResponse>> getBusinessPromotion(@CurrentUserId Long userId,
+                                                                                        @RequestParam(required = false) Long lastId,
+                                                                                        @RequestParam(defaultValue = "3") int size) {
         return BaseResponse.ok(businessService.getBusinessPromotion(userId,  lastId, size));
     }
 }

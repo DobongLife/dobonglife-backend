@@ -71,9 +71,6 @@ public class Promotion {
     @Column(name = "total_quantity", nullable = false)
     private Long totalQuantity;
 
-    @Column(name = "used_quantity", nullable = false)
-    private Long usedQuantity;
-
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
@@ -86,8 +83,8 @@ public class Promotion {
     @Column(name = "businesses_id", nullable = false)
     private Long businessesId;
 
-    @Column(name = "can_use", nullable = false)
-    private boolean canUse;
+    @Column(name = "issued_count", nullable = false)
+    private Long issuedCount;
 
     @Builder
     public Promotion(Category category, Place place, String title, String description, List<String> imgUrls,
@@ -109,12 +106,11 @@ public class Promotion {
         this.code = code;
         this.point = point;
         this.totalQuantity = totalQuantity;
-        this.usedQuantity = 0L;
         this.startDate = startDate;
         this.endDate = endDate;
         this.validPeriod = validPeriod;
         this.businessesId = businessesId;
-        this.canUse = true;
+        this.issuedCount = 0L;
     }
 
     private void validate(DiscountType discountType, BigDecimal discountValue,
