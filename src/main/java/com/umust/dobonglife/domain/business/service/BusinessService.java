@@ -5,6 +5,10 @@ import com.umust.dobonglife.domain.business.controller.dto.response.BusinessProm
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.domain.repository.BusinessRepository;
+import com.umust.dobonglife.domain.business.service.dto.CouponUsageCount;
+import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
+import com.umust.dobonglife.domain.coupon.domain.repository.CouponRepository;
+import com.umust.dobonglife.domain.coupon.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
 import com.umust.dobonglife.domain.place.service.PlaceService;
@@ -17,14 +21,21 @@ import com.umust.dobonglife.global.common.webclient.service.WebClientService;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +46,8 @@ public class BusinessService {
     private final BusinessStatusParser parser;
     private final BusinessRepository businessRepository;
     private final PlaceRepository placeRepository;
-
+    private final CouponRepository couponRepository;
+    private final PromotionRepository promotionRepository;
 
     private static final String VALID_CODE = "01";
     private final PlaceService placeService;
@@ -120,13 +132,35 @@ public class BusinessService {
         return BusinessResponse.from(business);
     }
 
-//    @Transactional(readOnly = true)
-//    public BusinessPromotionResponse getBusinessPromotion(Long userId, Long businessId){
-//
-//
-//    }
+    @Transactional(readOnly = true)
+    public BusinessPromotionResponse getBusinessPromotion(Long userId, Long lastId, int size) {
+        // 1) Promotion (쿼리 1번)
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Promotion> promotions =
+                promotionRepository.findPromotionNoOffsetByUserId(userId, lastId, pageable);
 
+        // 2) 조회된 promotionIds 추출
+        List<Long> promotionIds = promotions.getContent().stream()
+                .map(Promotion::getId)
+                .toList();
 
+        // 3) 쿠폰 집계 (쿼리 1번)
+        List<CouponUsageCount> rows = couponRepository.countCouponUsageByPromotionIds(promotionIds);
+
+        Map<Long, CouponUsageCount> usageMap = rows.stream()
+                .collect(Collectors.toMap(CouponUsageCount::promotionId, Function.identity()));
+
+        // 4) Promotion에 통계 붙여서 응답
+        return promotions.map(p -> {
+
+            CouponUsageCount usage = usageMap.get(p.getId());
+            long total = p.getTotalQuantity();
+            long used = (usage == null) ? 0 : usage.usedCount();
+            int usedValue = (total == 0) ? 0 : (int) Math.round((double) used * 100 / total);
+
+            return BusinessPromotionResponse.of(p.getId(), p.getTitle(), p.getStartDate(), p.getEndDate() ,p.getDiscountType(), p.getDiscountValue(), usedValue, total, used, p.getCode(), p.getDescription());
+        });
+    }
 
     @Transactional(readOnly = true)
     public Business getBusinessByUser(Long userId) {

@@ -59,14 +59,15 @@ public class BusinessController {
         return BaseResponse.ok(businessService.updateBusiness(userId, businessId, request));
     }
 
-//    @Operation(summary = "사업장 프로모션 조회", description = "사업장 프로모션을 조회합니다.")
-//    @ApiResponse(
-//            responseCode = "200",
-//            description = "사업장 프로모션 조회에 성공하였습니다."
-//    )
-//    @GetMapping("/{businessId}/promotion")
-//    public BaseResponse<BusinessPromotionResponse> getBusinessPromotion(@PathVariable Long businessId,
-//                                                                        @CurrentUserId Long userId) {
-//        return BaseResponse.ok(businessService.getBusinessPromotion(userId, businessId));
-//    }
+    @Operation(summary = "사업장 프로모션 조회", description = "사업장 프로모션을 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "사업장 프로모션 조회에 성공하였습니다."
+    )
+    @GetMapping("/promotion")
+    public BaseResponse<BusinessPromotionResponse> getBusinessPromotion(@CurrentUserId Long userId,
+                                                                        @RequestParam(required = false) Long lastId,
+                                                                        @RequestParam(defaultValue = "2") int size) {
+        return BaseResponse.ok(businessService.getBusinessPromotion(userId,  lastId, size));
+    }
 }

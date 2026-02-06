@@ -19,9 +19,39 @@ public class BusinessPromotionResponse {
     private boolean canUsed;
     private DiscountType discountType;
     private BigDecimal discountValue;
-    private BigDecimal usedValue;
+    private int usedValue;
     private Long usedCount;
     private Long issuedCount;
     private String code;
     private String description;
+
+    public static BusinessPromotionResponse of(
+            Long promotionId,
+            String title,
+            LocalDate startDate,
+            LocalDate endDate,
+            boolean canUsed,
+            DiscountType discountType,
+            BigDecimal discountValue,
+            int usedValue,
+            Long usedCount,
+            Long issuedCount,
+            String code,
+            String description
+    ) {
+        return BusinessPromotionResponse.builder()
+                .promotionId(promotionId)
+                .title(title)
+                .startDate(startDate)
+                .endDate(endDate)
+                .canUsed(canUsed)
+                .discountType(discountType)
+                .discountValue(discountValue)
+                .usedValue(usedValue)
+                .usedCount(usedCount)
+                .issuedCount(issuedCount)
+                .code(code)
+                .description(description)
+                .build();
+    }
 }

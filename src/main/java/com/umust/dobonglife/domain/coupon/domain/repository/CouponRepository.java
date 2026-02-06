@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.coupon.domain.repository;
 
+import com.umust.dobonglife.domain.business.service.dto.CouponUsageCount;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.repository.custom.CouponRepositoryCustom;
@@ -32,4 +33,15 @@ public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRep
     Optional<Coupon> findByUserIdAndCouponId(@Param("userId") Long userId, @Param("couponId") Long couponId);
 
     List<Coupon> findAllByIssueEndDateBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("""
+        SELECT new com.umust.dobonglife.domain.business.service.dto.CouponUsageCount(
+            c.promotion.id,
+            SUM(CASE WHEN c.couponStatus = com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus.USED THEN 1 ELSE 0 END)
+        )
+        FROM Coupon c
+        WHERE c.promotion.id IN :promotionIds
+        GROUP BY c.promotion.id
+    """)
+    List<CouponUsageCount> countCouponUsageByPromotionIds(List<Long> promotionIds);
 }
