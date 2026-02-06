@@ -47,7 +47,6 @@ public class NotificationUtil {
     }
 
     @Async("notificationExecutor")
-    @Async("notificationExecutor")
     public void sendToDevice(String fcmToken, String title, String body, NotificationType type, Long id) {
         String stringId = String.valueOf(id != null ? id : 0L);
         String stringType = (type != null) ? type.name() : "NONE";
