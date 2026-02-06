@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.business.controller;
 
 import com.umust.dobonglife.domain.business.controller.dto.request.BusinessRequest;
+import com.umust.dobonglife.domain.business.controller.dto.response.BusinessPromotionResponse;
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessResponse;
 import com.umust.dobonglife.domain.business.service.BusinessService;
 import com.umust.dobonglife.domain.courseLike.controller.dto.request.CourseLikeResponse;
@@ -23,7 +24,7 @@ public class BusinessController {
 
     private final BusinessService businessService;
 
-    @Operation(summary = "사업장 등록", description = "카테고리는 다음과 같습니다. RESTAURANT, CAFE, SHOPPING, CULTURE, EDUCATION, MEDICAL, BEAUTY, FITNESS, LANDMARK, ETC")
+    @Operation(summary = "사업장 등록", description = "카테고리는 다음과 같습니다. RESTAURANT, CAFE, SHOPPING, MEDICAL_IT, BEAUTY, FITNESS, EXPERIENCE, ETC")
     @ApiResponse(
             responseCode = "200",
             description = "사업장 등록에 성공하였습니다."
@@ -31,7 +32,7 @@ public class BusinessController {
     @PostMapping
     public BaseResponse<Void> registerBusiness(@CurrentUserId Long userId,
                                                @RequestPart(value = "request") BusinessRequest request,
-                                               @RequestPart(value = "imageFiles", required = true) List<MultipartFile> imageFiles) {
+                                               @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles) {
         businessService.registerBusiness(request, userId, imageFiles);
         return BaseResponse.ok(null);
     }
@@ -56,5 +57,16 @@ public class BusinessController {
                                              @RequestBody BusinessRequest request,
                                              @CurrentUserId Long userId) {
         return BaseResponse.ok(businessService.updateBusiness(userId, businessId, request));
+    }
+
+    @Operation(summary = "사업장 프로모션 조회", description = "사업장 프로모션을 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "사업장 프로모션 조회에 성공하였습니다."
+    )
+    @GetMapping("/{businessId}/promotion")
+    public BaseResponse<BusinessPromotionResponse> getBusinessPromotion(@PathVariable Long businessId,
+                                                                        @CurrentUserId Long userId) {
+        return BaseResponse.ok(businessService.getBusinessPromotion(userId, businessId));
     }
 }
