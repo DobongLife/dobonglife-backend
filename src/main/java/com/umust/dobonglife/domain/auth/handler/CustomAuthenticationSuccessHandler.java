@@ -31,7 +31,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final UserService userService;
 
     @Override
-    @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
         String provider = authenticationUtil.getProvider();

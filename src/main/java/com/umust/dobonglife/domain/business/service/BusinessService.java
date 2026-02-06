@@ -120,11 +120,11 @@ public class BusinessService {
         return BusinessResponse.from(business);
     }
 
-    @Transactional(readOnly = true)
-    public BusinessPromotionResponse getBusinessPromotion(Long userId, Long businessId){
-
-
-    }
+//    @Transactional(readOnly = true)
+//    public BusinessPromotionResponse getBusinessPromotion(Long userId, Long businessId){
+//
+//
+//    }
 
 
 
