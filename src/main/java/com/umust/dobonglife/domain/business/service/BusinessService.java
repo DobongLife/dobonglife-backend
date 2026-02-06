@@ -107,17 +107,14 @@ public class BusinessService {
     }
 
     @Transactional(readOnly = true)
-    public BusinessResponse getBusinessResponse(Long businessId) {
-        Business business = businessRepository.findById(businessId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
+    public BusinessResponse getBusinessResponse(Long userId) {
+        Business business = getBusinessByUser(userId);
         return BusinessResponse.from(business);
     }
 
     @Transactional
-    public BusinessResponse updateBusiness(Long userId, Long businessId, BusinessRequest request) {
-        Business business = businessRepository.findById(businessId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
-
+    public BusinessResponse updateBusiness(Long userId, BusinessRequest request) {
+        Business business = getBusinessByUser(userId);
         // 소유자 검증
         if (business.getUser() == null || !business.getUser().getId().equals(userId)) {
             throw new BusinessException(ErrorCode.NOT_BUSINESS_OWNER);
