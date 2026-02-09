@@ -82,9 +82,9 @@ public class CourseService {
                 ? courseLikeService.getFavoriteCourseIds(userId, courseIds)
                 : Collections.emptySet();
 
-        return CursorUtils.toCursorResponse(courses, course ->
-                CourseSummaryResponse.of(course, favoriteCourseIds.contains(course.getId()))
-        );
+        return CursorUtils.toCursorResponse(
+                courses,
+                course -> CourseSummaryResponse.of(course, favoriteCourseIds.contains(course.getId())));
     }
 
     public CourseMyResponse getMyCourses(Long lastId, int size, Long userId) {

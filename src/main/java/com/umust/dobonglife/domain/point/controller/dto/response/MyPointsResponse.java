@@ -7,6 +7,6 @@ import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 import java.util.List;
 
 public record MyPointsResponse(Long totalPoint,
-                               List<PointGuideResponse> accumulationGuides,
+                               List<PointGuideResponse> pointGuides,
                                SliceResponse<PointResponse> pointList) {
 }

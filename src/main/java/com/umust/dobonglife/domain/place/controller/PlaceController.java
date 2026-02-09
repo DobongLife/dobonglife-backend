@@ -54,9 +54,9 @@ public class PlaceController {
     @GetMapping("/{placeId}")
     public BaseResponse<PlaceDetailResponse> getPlaceDetail(@PathVariable Long placeId,
                                                             @CurrentUserId Long userId,
-                                                            @RequestParam(required = false) Long lastReviewId,
+                                                            @RequestParam(required = false) Long lastId,
                                                             @RequestParam(defaultValue = "2") int size) {
-        return BaseResponse.ok(placeReviewService.getPlaceDetail(placeId, userId, lastReviewId, size));
+        return BaseResponse.ok(placeReviewService.getPlaceDetail(placeId, userId, lastId, size));
     }
 
     @Operation(summary = "장소 전체 조회", description = "장소를 전체 조회합니다.")

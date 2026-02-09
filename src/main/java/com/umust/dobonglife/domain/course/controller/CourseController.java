@@ -42,7 +42,7 @@ public class CourseController {
     )
     @GetMapping
     public BaseResponse<CursorResponse<CourseSummaryResponse>> getCourses(@CurrentUserId Long userId,
-                                                                          @RequestParam(required = false, defaultValue = "5") Long lastId,
+                                                                          @RequestParam(required = false) Long lastId,
                                                                           @RequestParam(defaultValue = "2") int size) {
         CursorResponse<CourseSummaryResponse> responses = courseService.getCourses(userId, lastId, size);
         return BaseResponse.ok(responses);
@@ -111,7 +111,7 @@ public class CourseController {
     )
     @GetMapping("/my")
     public BaseResponse<CourseMyResponse> getMyCourses(@CurrentUserId Long userId,
-                                                       @RequestParam(required = false, defaultValue = "5") Long lastId,
+                                                       @RequestParam(required = false) Long lastId,
                                                        @RequestParam(defaultValue = "2") int size) {
         CourseMyResponse responses = courseService.getMyCourses(lastId, size, userId);
         return BaseResponse.ok(responses);

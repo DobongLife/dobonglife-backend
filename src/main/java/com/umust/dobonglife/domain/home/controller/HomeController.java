@@ -28,7 +28,7 @@ public class HomeController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping
-    public BaseResponse<HomeSummaryResponse> viewHome(@RequestParam(required = false, defaultValue = "10") Long lastId,
+    public BaseResponse<HomeSummaryResponse> viewHome(@RequestParam(required = false) Long lastId,
                                                                 @RequestParam(defaultValue = "3") int size){
         HomeSummaryResponse response = homeService.getHomeSummary(lastId, size);
         return BaseResponse.ok(response);

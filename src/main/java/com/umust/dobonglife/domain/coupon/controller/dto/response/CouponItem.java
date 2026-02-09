@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.coupon.controller.dto.response;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
+import com.umust.dobonglife.global.common.Identifiable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,7 +25,7 @@ public record CouponItem(
         Long maxPrice,
         LocalDate endDate,
         CouponStatus couponStatus
-) {
+)implements Identifiable {
     public static CouponItem from(Coupon coupon) {
         return new CouponItem(
                 coupon.getId(),
@@ -43,5 +44,10 @@ public record CouponItem(
                 coupon.getIssueEndDate(),
                 coupon.getCouponStatus()
         );
+    }
+
+    @Override
+    public Long getId() {
+        return couponId;
     }
 }

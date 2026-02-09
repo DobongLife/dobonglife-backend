@@ -33,7 +33,7 @@ public class PointController {
     )
     @GetMapping
     public BaseResponse<PointPageResponse> getMyPoint(@CurrentUserId Long userId,
-                                                      @RequestParam(required = false, defaultValue = "5") Long lastId,
+                                                      @RequestParam(required = false) Long lastId,
                                                       @RequestParam(defaultValue = "4") int size) {
         PointPageResponse response = pointPromotionService.getMyPoint(userId, lastId, size);
         return BaseResponse.ok(response);

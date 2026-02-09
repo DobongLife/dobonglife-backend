@@ -34,7 +34,7 @@ public class NotificationController {
     public BaseResponse<CursorResponse<NotificationResponse>> getNotifications(
             @CurrentUserId Long userId,
             @RequestParam(defaultValue = "ALL") String filter,
-            @RequestParam(required = false, defaultValue = "5") Long lastId,
+            @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "2") int size) {
         CursorResponse<NotificationResponse> response = notificationService.getNotifications(userId, filter, lastId, size);
         return BaseResponse.ok(response);

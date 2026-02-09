@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.review.controller.dto.response;
 
 import com.umust.dobonglife.domain.review.domain.entity.Review;
+import com.umust.dobonglife.global.common.Identifiable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +13,7 @@ public record ReviewSummaryResponse(Long reviewId,
                                     List<String> imageUrls,
                                     LocalDateTime updatedAt,
                                     boolean owner
-                                    ) {
+                                    ) implements Identifiable {
     public static ReviewSummaryResponse from(Long userId, Review review) {
         boolean owner = userId == review.getUser().getId(); // TODO: 위치 다시 고민
         return new ReviewSummaryResponse(
@@ -24,5 +25,10 @@ public record ReviewSummaryResponse(Long reviewId,
                 review.getUpdatedAt(),
                 owner
         );
+    }
+
+    @Override
+    public Long getId() {
+        return reviewId;
     }
 }
