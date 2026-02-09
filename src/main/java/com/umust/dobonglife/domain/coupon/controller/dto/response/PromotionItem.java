@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.coupon.controller.dto.response;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.global.common.Identifiable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ public record PromotionItem(
         String category, String title, String description, List<String> imgUrls,
         DiscountType discountType, BigDecimal discountValue,
         Long point, Long minPrice, Long maxPrice, LocalDate endDate
-) {
+)implements Identifiable {
     public static PromotionItem from(Promotion promotion) {
         Place place = promotion.getPlace();
         return new PromotionItem(
@@ -32,5 +33,10 @@ public record PromotionItem(
                 promotion.getMaxPrice(),
                 promotion.getEndDate()
         );
+    }
+
+    @Override
+    public Long getId() {
+        return promotionId;
     }
 }

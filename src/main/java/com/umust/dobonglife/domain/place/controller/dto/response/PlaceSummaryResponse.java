@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.place.controller.dto.response;
 
 import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.global.common.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-public class PlaceSummaryResponse {
+public class PlaceSummaryResponse implements Identifiable {
     private Long placeId;
     private String placeName;
     private String category;
@@ -39,5 +40,10 @@ public class PlaceSummaryResponse {
                                 .map(CourseTheme::name)
                                 .toList())
                 .build();
+    }
+
+    @Override
+    public Long getId() {
+        return placeId;
     }
 }

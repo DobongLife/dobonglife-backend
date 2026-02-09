@@ -1,6 +1,8 @@
 package com.umust.dobonglife.domain.review.controller;
 
 import com.umust.dobonglife.domain.review.controller.dto.request.CreateReviewRequest;
+import com.umust.dobonglife.domain.review.controller.dto.response.CourseReviewSummaryResponse;
+import com.umust.dobonglife.domain.review.controller.dto.response.PlaceReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewDetailResponse;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewResponse;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
@@ -110,16 +112,29 @@ public class ReviewController {
 //    }
 
     // 내후기 - 리뷰 조회하기
-    @Operation(summary = "내후기 조회", description = "내 리뷰를 조회합니다.")
+    @Operation(summary = "내 코스후기 조회", description = "내 리뷰를 조회합니다.")
     @ApiResponse(
             responseCode = "200",
             description = "요청에 성공하였습니다."
     )
-    @GetMapping("/my")
-    public BaseResponse<CursorResponse<ReviewSummaryResponse>> getMyReviews(@CurrentUserId Long userId,
-                                                                          @RequestParam(required = false) Long lastReviewId,
-                                                                          @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<ReviewSummaryResponse> responses = reviewService.getMyReviews(userId, lastReviewId, size);
+    @GetMapping("/my/course")
+    public BaseResponse<CursorResponse<CourseReviewSummaryResponse>> getMyCourseReviews(@CurrentUserId Long userId,
+                                                                                  @RequestParam(required = false) Long lastReviewId,
+                                                                                  @RequestParam(defaultValue = "2") int size) {
+        CursorResponse<CourseReviewSummaryResponse> responses = reviewService.getMyCourseReviews(userId, lastReviewId, size);
+        return BaseResponse.ok(responses);
+    }
+
+    @Operation(summary = "내 장소후기 조회", description = "내 리뷰를 조회합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "요청에 성공하였습니다."
+    )
+    @GetMapping("/my/place")
+    public BaseResponse<CursorResponse<PlaceReviewSummaryResponse>> getMyPlaceReviews(@CurrentUserId Long userId,
+                                                                                 @RequestParam(required = false) Long lastReviewId,
+                                                                                 @RequestParam(defaultValue = "2") int size) {
+        CursorResponse<PlaceReviewSummaryResponse> responses = reviewService.getMyPlaceReviews(userId, lastReviewId, size);
         return BaseResponse.ok(responses);
     }
 

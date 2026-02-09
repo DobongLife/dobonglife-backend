@@ -29,9 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -155,5 +154,13 @@ public class PlaceService {
 
     public Long getLikedPlaceCount(Long userId) {
         return placeLikeRepository.countByUserId(userId);
+    }
+
+    public List<Place> findAllById(List<Long> placeIds) {
+        return placeRepository.findAllById(placeIds);
+    }
+
+    public Set<Long> getFavoritePlaceIds(Long userId, List<Long> placeIds) {
+        return placeLikeRepository.findLikedPlaceIdsByUserIdAndPlaceIds(userId, placeIds);
     }
 }

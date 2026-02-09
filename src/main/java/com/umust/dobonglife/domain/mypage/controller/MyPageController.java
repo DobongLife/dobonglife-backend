@@ -44,7 +44,7 @@ public class MyPageController {
     )
     @GetMapping("/like/course")
     public BaseResponse<MyCourseLikeResponse> viewMyCourseLike(@CurrentUserId Long userId,
-                                                               @RequestParam(required = false, defaultValue = "3") Long lastId,
+                                                               @RequestParam(required = false) Long lastId,
                                                                @RequestParam(defaultValue = "3") int size){
         MyCourseLikeResponse response = myPageService.getMyCourseLike(userId, size, lastId);
         return BaseResponse.ok(response);
@@ -57,7 +57,7 @@ public class MyPageController {
     )
     @GetMapping("/like/place")
     public BaseResponse<MyPlaceLikeResponse> viewMyPlaceLike(@CurrentUserId Long userId,
-                                                             @RequestParam(required = false, defaultValue = "3") Long lastId,
+                                                             @RequestParam(required = false) Long lastId,
                                                              @RequestParam(defaultValue = "3") int size){
         MyPlaceLikeResponse response = myPageService.getMyPlaceLike(userId, size, lastId);
         return BaseResponse.ok(response);
