@@ -55,7 +55,7 @@ public class PlaceService {
 
         Place place = Place.builder()
                 .name(request.getBusinessName())
-                .subName(request.getBusinessName())
+                .subName(request.getSubName())
                 .category(Category.toEnum(request.getCategory()))
                 .content(request.getContent())
                 .address(request.getBusinessAddress())
@@ -145,7 +145,7 @@ public class PlaceService {
         }
 
         place.setName(request.getBusinessName());
-        place.setSubName(request.getBusinessName());
+        place.setSubName(request.getSubName());
         place.setContent(request.getContent());
         place.setContact(request.getContact());
         place.setOperatingHour(request.getOperatingHour());
