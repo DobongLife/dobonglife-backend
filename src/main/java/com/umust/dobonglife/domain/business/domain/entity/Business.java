@@ -29,10 +29,6 @@ public class Business extends BaseEntity {
     @Column(nullable = false)
     private String managerName;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean isAuthenticated = false;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_id")
     private User user;

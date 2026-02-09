@@ -1,7 +1,6 @@
 package com.umust.dobonglife.global.importer;
 
 import com.opencsv.CSVReader;
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
@@ -30,13 +29,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
 
     private final PlaceRepository placeRepository;
     private final ResourceLoader resourceLoader;
-
-    private static final Map<String, Amenity> AMENITY_KR_MAP = Map.of(
-            "주차장", Amenity.PARKING,
-            "화장실", Amenity.TOILET,
-            "분수대", Amenity.FOUNTAIN,
-            "벤치", Amenity.BENCH
-    );
 
     private static final Map<String, CourseTheme> THEME_KR_MAP = Map.of(
             "맛집탐방", CourseTheme.RESTAURANT,
@@ -112,7 +104,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
                 String operatingHourNew = defaultIfBlank(operatingHourRaw, "정보없음");
 
                 Category categoryNew = parseCategory(defaultIfBlank(categoryRaw, "명소"));
-                List<Amenity> amenitiesNew = parseAmenities(defaultIfBlank(amenitiesRaw, ""));
                 List<String> imageUrlsNew = parseUrlList(defaultIfBlank(imageUrlsRaw, ""));
                 String thumbnailUrlNew = defaultIfBlank(thumbnailUrlRaw, "");
                 Double latitudeNew = parseDoubleOrNull(defaultIfBlank(latitudeRaw, ""));
@@ -132,7 +123,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
                             applyIfPresent(operatingHourRaw, existing::setOperatingHour);
 
                             // 리스트 계열: 빈 값이면 업데이트 안 함, 값 있으면 파싱해서 업데이트
-                            applyIfNotEmpty(amenitiesRaw, v -> existing.setAmenities(parseAmenities(v)));
                             applyIfNotEmpty(imageUrlsRaw, v -> existing.setImageUrls(parseUrlList(v)));
                             applyIfPresent(thumbnailUrlRaw, existing::setThumbnailUrl);
 
@@ -153,7 +143,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
                                 .address(addressNew)
                                 .contact(contactNew)
                                 .operatingHour(operatingHourNew)
-                                .amenities(amenitiesNew)
                                 .imageUrls(imageUrlsNew)
                                 .thumbnailUrl(thumbnailUrlNew)
                                 .latitude(latitudeNew)
@@ -255,32 +244,6 @@ public class PlaceCsvImporter implements CommandLineRunner {
             log.warn("[PlaceCsvImporter] 위경도 파싱 실패: '{}'", v);
             return null;
         }
-    }
-
-    private List<Amenity> parseAmenities(String v) {
-        if (v == null || v.isBlank()) return new ArrayList<>();
-
-        String normalized = v.replace(" / ", "|")
-                .replace("/", "|")
-                .replace(",", "|")
-                .replace(" ", "");
-
-        String[] tokens = normalized.split("\\|");
-
-        List<Amenity> result = new ArrayList<>();
-        for (String t : tokens) {
-            if (t == null || t.isBlank()) continue;
-
-            try {
-                result.add(Amenity.valueOf(t));
-                continue;
-            } catch (IllegalArgumentException ignore) { }
-
-            Amenity mapped = AMENITY_KR_MAP.get(t);
-            if (mapped != null) result.add(mapped);
-            else log.warn("[PlaceCsvImporter] 알 수 없는 편의시설 값 skip: '{}'", t);
-        }
-        return result;
     }
 
     private List<CourseTheme> parseThemes(String v) {

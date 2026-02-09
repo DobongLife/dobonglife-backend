@@ -114,7 +114,7 @@ public class BusinessService {
     }
 
     @Transactional
-    public BusinessResponse updateBusiness(Long userId, BusinessUpdateRequest request) {
+    public BusinessResponse updateBusiness(Long userId, BusinessUpdateRequest request, List<MultipartFile> imageFiles) {
         Business business = getBusinessByUser(userId);
         // 소유자 검증
         if (business.getUser() == null || !business.getUser().getId().equals(userId)) {
@@ -126,7 +126,7 @@ public class BusinessService {
         business.setManagerName(request.getManagerName());
 
         // Place 업데이트/교체
-        Place updatedPlace = placeService.resolvePlaceForUpdate(business, request);
+        Place updatedPlace = placeService.resolvePlaceForUpdate(business, request, imageFiles);
         business.setPlace(updatedPlace);
 
         return BusinessResponse.from(business);
@@ -185,8 +185,8 @@ public class BusinessService {
                             p.getDiscountType(),
                             p.getDiscountValue(),
                             usedValue,
-                            total,
                             used,
+                            total,
                             p.getCode(),
                             p.getDescription(),
                             p.getValidPeriod()

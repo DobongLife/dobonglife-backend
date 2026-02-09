@@ -56,9 +56,10 @@ public class BusinessController {
     )
     @PatchMapping
     public BaseResponse<BusinessResponse> updateBusiness(
-                                             @RequestBody BusinessUpdateRequest request,
+                                             @RequestPart(value = "request") BusinessUpdateRequest request,
+                                             @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
                                              @CurrentUserId Long userId) {
-        return BaseResponse.ok(businessService.updateBusiness(userId, request));
+        return BaseResponse.ok(businessService.updateBusiness(userId, request, imageFiles));
     }
 
     @Operation(summary = "사업장 프로모션 조회", description = "사업장 프로모션을 조회합니다.")

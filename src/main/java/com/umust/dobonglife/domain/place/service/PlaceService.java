@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class PlaceService {
 
         Place place = Place.builder()
                 .name(request.getBusinessName())
-                .subName(request.getBusinessName())
+                .subName(request.getSubName())
                 .category(Category.toEnum(request.getCategory()))
                 .content(request.getContent())
                 .address(request.getBusinessAddress())
@@ -132,13 +133,21 @@ public class PlaceService {
     }
 
     @Transactional
-    public Place resolvePlaceForUpdate(Business business, BusinessUpdateRequest request) {
+    public Place resolvePlaceForUpdate(Business business, BusinessUpdateRequest request, List<MultipartFile> imageFiles) {
         Place place = business.getPlace();
 
+        if (imageFiles != null && !imageFiles.isEmpty()) {
+            List<String> oldUrls = new ArrayList<>(place.getImageUrls());;
+            List<String> uploadedUrls = s3Utils.uploadImages(imageFiles);
+            place.changeImages(uploadedUrls);
+            s3Utils.deleteImages(oldUrls);
+        }
+
         place.setName(request.getBusinessName());
+        place.setSubName(request.getSubName());
         place.setContent(request.getContent());
         place.setContact(request.getContact());
-        place.setOperatingHour(request.getOperatingHour() == null ? place.getOperatingHour() : request.getOperatingHour());
+        place.setOperatingHour(request.getOperatingHour());
         place.setCategory(Category.toEnum(request.getCategory()));
         return place;
     }

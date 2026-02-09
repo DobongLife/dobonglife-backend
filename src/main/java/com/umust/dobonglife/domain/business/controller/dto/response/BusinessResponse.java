@@ -2,7 +2,6 @@ package com.umust.dobonglife.domain.business.controller.dto.response;
 
 import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,7 +36,6 @@ public class BusinessResponse {
 
     // ===== Place 세부사항 =====
     private String category;
-    private List<Amenity> amenities;
     private List<CourseTheme> themes;
 
     public static BusinessResponse from(Business business) {
@@ -64,7 +62,6 @@ public class BusinessResponse {
                 .thumbnailUrl(place.getThumbnailUrl())
                 .imageUrls(place.getImageUrls())
                 .category(place.getCategory().getDescription())
-                .amenities(place.getAmenities())
                 .themes(place.getThemes())
                 .build();
     }
