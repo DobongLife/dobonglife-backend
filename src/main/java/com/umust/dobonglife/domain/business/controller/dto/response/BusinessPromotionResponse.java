@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.business.controller.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import com.umust.dobonglife.global.common.Identifiable;
 import lombok.Builder;
@@ -58,6 +59,7 @@ public class BusinessPromotionResponse implements Identifiable {
                 .build();
     }
 
+    @JsonIgnore
     @Override
     public Long getId() {
         return promotionId;
