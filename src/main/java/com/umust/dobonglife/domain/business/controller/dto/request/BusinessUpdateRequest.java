@@ -13,9 +13,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BusinessUpdateRequest {
 
-    @Schema(description = "장소 아이디", example = "Optional입니다.")
-    private Long placeId;
-
     @Schema(description = "장소 부제", example = "도봉구 최고의 명소입니다.")
     private String subName;
 

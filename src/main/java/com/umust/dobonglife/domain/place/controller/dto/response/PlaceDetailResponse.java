@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.place.controller.dto.response;
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -20,7 +19,6 @@ public class PlaceDetailResponse {
     private String subName;
     private String category;
     private String content;
-    private List<String> amenities;
     private String address;
     private List<String> placeImages;
     private String operatingHour;
@@ -40,7 +38,6 @@ public class PlaceDetailResponse {
                 .subName(place.getSubName())
                 .category(place.getCategory().getDescription())
                 .content(place.getContent())
-                .amenities(Place.amenityToStrings(place))
                 .placeImages(place.getImageUrls())
                 .address(place.getAddress())
                 .contact(place.getContact())

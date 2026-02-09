@@ -1,16 +1,15 @@
 package com.umust.dobonglife.domain.place.domain.entity;
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import com.umust.dobonglife.global.common.model.constant.Category;
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -35,18 +34,14 @@ public class Place extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @ElementCollection(targetClass = Amenity.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "amenities", joinColumns = @JoinColumn(name = "place_id"))
-    @Enumerated(EnumType.STRING)
-    private List<Amenity> amenities;
-
     @Column(name = "address", nullable = false)
     private String address;
 
     @ElementCollection
     @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
     @Column(name = "image_url", columnDefinition = "TEXT")
-    private List<String> imageUrls;
+    @Builder.Default
+    private List<String> imageUrls = new ArrayList<>();;
 
     @Column(name = "operating_hour", nullable = false)
     private String operatingHour;
@@ -110,14 +105,14 @@ public class Place extends BaseEntity {
         }
     }
 
-    public static List<String> amenityToStrings(Place place) {
-        if (place == null || place.getAmenities() == null) {
-            return Collections.emptyList();
+    public void changeImages(List<String> newImages) {
+        if (newImages == null || newImages.isEmpty()) {
+            throw new BusinessException(ErrorCode.PLACE_IMAGE_REQUIRED);
         }
 
-        return place.getAmenities().stream()
-                .map(Amenity::getLabel)
-                .toList();
+        this.imageUrls.clear();
+        this.imageUrls.addAll(newImages);
+        this.thumbnailUrl = newImages.getFirst();
     }
 }
 
