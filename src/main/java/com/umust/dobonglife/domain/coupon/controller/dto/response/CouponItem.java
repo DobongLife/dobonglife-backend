@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.coupon.controller.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
@@ -46,6 +47,7 @@ public record CouponItem(
         );
     }
 
+    @JsonIgnore
     @Override
     public Long getId() {
         return couponId;

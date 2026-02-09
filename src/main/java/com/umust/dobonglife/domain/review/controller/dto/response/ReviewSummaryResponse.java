@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.review.controller.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.global.common.Identifiable;
@@ -28,6 +29,7 @@ public record ReviewSummaryResponse(Long reviewId,
         );
     }
 
+    @JsonIgnore
     @Override
     public Long getId() {
         return reviewId;
