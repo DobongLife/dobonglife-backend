@@ -133,13 +133,20 @@ public class PlaceService {
     }
 
     @Transactional
-    public Place resolvePlaceForUpdate(Business business, BusinessUpdateRequest request) {
+    public Place resolvePlaceForUpdate(Business business, BusinessUpdateRequest request, List<MultipartFile> imageFiles) {
         Place place = business.getPlace();
+        s3Utils.deleteImages(place.getImageUrls());
+
+        if (imageFiles != null && !imageFiles.isEmpty()) {
+            List<String> uploadedUrls = s3Utils.uploadImages(imageFiles);
+            place.changeImages(uploadedUrls);
+        }
 
         place.setName(request.getBusinessName());
+        place.setSubName(request.getBusinessName());
         place.setContent(request.getContent());
         place.setContact(request.getContact());
-        place.setOperatingHour(request.getOperatingHour() == null ? place.getOperatingHour() : request.getOperatingHour());
+        place.setOperatingHour(request.getOperatingHour());
         place.setCategory(Category.toEnum(request.getCategory()));
         return place;
     }

@@ -49,12 +49,4 @@ public class MyPageService {
         CursorResponse<CourseSummaryResponse> likedCourse = courseService.getLikedCourse(userId, size, lastId);
         return new MyCourseLikeResponse(totalCount, likedCourse);
     }
-
-    public MyPageSummaryManagerResponse getMyPageSummaryManager(Long userId, int size) {
-        MyPageResponse userInfo = userService.getUserInfo(userId);
-        SliceResponse<PointResponse> pointList = pointService.getPointResponse(userId, size, null, DESC.name());
-
-        Business business = businessService.getBusinessByUser(userId);
-        return MyPageSummaryManagerResponse.of(userInfo, pointList, business.isAuthenticated(), business.getId());
-    }
 }

@@ -5,6 +5,8 @@ import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import com.umust.dobonglife.global.common.model.constant.Category;
+import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -118,6 +120,16 @@ public class Place extends BaseEntity {
         return place.getAmenities().stream()
                 .map(Amenity::getLabel)
                 .toList();
+    }
+
+    public void changeImages(List<String> newImages) {
+        if (newImages == null || newImages.isEmpty()) {
+            throw new BusinessException(ErrorCode.PLACE_IMAGE_REQUIRED);
+        }
+
+        this.imageUrls.clear();
+        this.imageUrls.addAll(newImages);
+        this.thumbnailUrl = newImages.getFirst();
     }
 }
 
