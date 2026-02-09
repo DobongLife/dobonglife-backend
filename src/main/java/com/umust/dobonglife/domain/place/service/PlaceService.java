@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -135,11 +136,12 @@ public class PlaceService {
     @Transactional
     public Place resolvePlaceForUpdate(Business business, BusinessUpdateRequest request, List<MultipartFile> imageFiles) {
         Place place = business.getPlace();
-        s3Utils.deleteImages(place.getImageUrls());
 
         if (imageFiles != null && !imageFiles.isEmpty()) {
+            List<String> oldUrls = new ArrayList<>(place.getImageUrls());;
             List<String> uploadedUrls = s3Utils.uploadImages(imageFiles);
             place.changeImages(uploadedUrls);
+            s3Utils.deleteImages(oldUrls);
         }
 
         place.setName(request.getBusinessName());

@@ -9,6 +9,7 @@ import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,7 +40,8 @@ public class Place extends BaseEntity {
     @ElementCollection
     @CollectionTable(name = "place_images", joinColumns = @JoinColumn(name = "place_id"))
     @Column(name = "image_url", columnDefinition = "TEXT")
-    private List<String> imageUrls;
+    @Builder.Default
+    private List<String> imageUrls = new ArrayList<>();;
 
     @Column(name = "operating_hour", nullable = false)
     private String operatingHour;
