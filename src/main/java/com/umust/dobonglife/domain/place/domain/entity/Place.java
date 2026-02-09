@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.place.domain.entity;
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
-import com.umust.dobonglife.domain.place.domain.constant.Amenity;
 
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import com.umust.dobonglife.global.common.model.constant.Category;
@@ -10,9 +9,6 @@ import com.umust.dobonglife.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -36,11 +32,6 @@ public class Place extends BaseEntity {
 
     @Column(name = "content", nullable = false)
     private String content;
-
-    @ElementCollection(targetClass = Amenity.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "amenities", joinColumns = @JoinColumn(name = "place_id"))
-    @Enumerated(EnumType.STRING)
-    private List<Amenity> amenities;
 
     @Column(name = "address", nullable = false)
     private String address;
@@ -110,16 +101,6 @@ public class Place extends BaseEntity {
         if (!Double.isFinite(this.averageRating)) {
             this.averageRating = 0.0;
         }
-    }
-
-    public static List<String> amenityToStrings(Place place) {
-        if (place == null || place.getAmenities() == null) {
-            return Collections.emptyList();
-        }
-
-        return place.getAmenities().stream()
-                .map(Amenity::getLabel)
-                .toList();
     }
 
     public void changeImages(List<String> newImages) {

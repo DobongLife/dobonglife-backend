@@ -23,9 +23,6 @@ public class PlaceRegisterRequest {
     @Schema(description = "장소 설명", example = "편안한 산책을 즐길 수 있는 곳입니다.")
     private String content;
 
-    @Schema(description = "편의 시설", example = "PARKING, FOUNTAIN, TOILET, BENCH")
-    private List<String> amenities;
-
     @NotNull(message = "주소는 필수입니다")
     @Schema(description = "주소", example = "서울특별시 도봉구 도봉산 도봉산길 79")
     private String address;
