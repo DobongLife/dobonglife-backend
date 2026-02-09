@@ -185,8 +185,8 @@ public class BusinessService {
                             p.getDiscountType(),
                             p.getDiscountValue(),
                             usedValue,
-                            total,
                             used,
+                            total,
                             p.getCode(),
                             p.getDescription(),
                             p.getValidPeriod()
