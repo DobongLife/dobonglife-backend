@@ -16,4 +16,6 @@ public interface CoursePlansRepository extends JpaRepository<CoursePlans, Long> 
     @Modifying
     @Query("delete from CoursePlans cp where cp.course = :course")
     void deleteByCourseCustom(@Param("course") Course course);
+
+    void deleteByCourseId(Long courseId);
 }
