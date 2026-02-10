@@ -31,7 +31,7 @@ public class MailService {
 
     private static final long VERIFICATION_CODE_EXPIRY_MINUTES = 5;
 
-    private static final long VERIFIED_TTL_SECONDS = 1800; // 30분
+    private static final long VERIFIED_TTL_SECONDS = 600; // 10분
 
     private static final String EMAIL_KEY_PREFIX = "auth:email:";
 
