@@ -22,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.COURSE_CREATE;
+import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.REVIEW_CREATE;
+
 /**
  * 포인트 계산 결과 필드를 User 엔티티에 두는 이유
  * 비록 포인트가 갱신될때마다 필드로 갱신해줘야 되서 쿼리가 1개 늘어나긴 하지만,
@@ -59,8 +62,8 @@ public class PointService {
         SliceResponse<PointResponse> pointsByCursor = getPointResponse(userId, size, lastId, order);
 
         List<PointGuideResponse> guides = List.of( // TODO: 확장성 어떻게 고려할지 생각하기
-                new PointGuideResponse("후기 작성", 10L),
-                new PointGuideResponse("코스 등록", 30L)
+                new PointGuideResponse("후기 작성", REVIEW_CREATE.getPoint()),
+                new PointGuideResponse("코스 등록", COURSE_CREATE.getPoint())
         );
 
         return new MyPointsResponse(userTotalPoint, guides, pointsByCursor);
