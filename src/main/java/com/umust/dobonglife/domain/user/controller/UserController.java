@@ -73,7 +73,7 @@ public class UserController {
     )
     @PostMapping("/mail/check")
     public BaseResponse<Void> checkAuthCode(@Valid @RequestBody MailCodeCheckRequest request) {
-        mailService.checkSignUpAuthCode(request);
+        mailService.checkAuthCode(request);
         return BaseResponse.ok(null);
     }
 

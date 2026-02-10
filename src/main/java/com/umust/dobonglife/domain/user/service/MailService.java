@@ -83,10 +83,18 @@ public class MailService {
         }
     }
 
-    public void checkSignUpAuthCode(MailCodeCheckRequest request) {
+    public void checkAuthCode(MailCodeCheckRequest request) {
 
         String email = request.getEmail();
-        String storedCode = getStoredSignUpCode(email);
+        String storedCode;
+        String prefix;
+        if(request.isForSignUp()){
+            storedCode = getStoredSignUpCode(email);
+            prefix = EMAIL_KEY_PREFIX;
+        } else {
+            storedCode = getStoredPasswordCode(email);
+            prefix = PASSWORD_KEY_PREFIX;
+        }
 
         if (storedCode == null || storedCode.isBlank()) {
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
@@ -103,7 +111,7 @@ public class MailService {
         }
 
         redisService.setValues(
-                EMAIL_KEY_PREFIX + email,
+                prefix + email,
                 "VERIFIED",
                 Duration.ofSeconds(VERIFIED_TTL_SECONDS)
         );
@@ -123,12 +131,6 @@ public class MailService {
         if (!authCode.equals(storedCode)) {
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
-
-        redisService.setValues(
-                PASSWORD_KEY_PREFIX + email,
-                "VERIFIED",
-                Duration.ofSeconds(VERIFIED_TTL_SECONDS)
-        );
     }
 
     // 숫자 6자리로 인증 번호 구현하는 메서드
