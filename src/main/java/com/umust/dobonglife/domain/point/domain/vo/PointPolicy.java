@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum PointPolicy {
 
     REVIEW_CREATE("리뷰 등록", 10L),
-    COURSE_CREATE("코스 등록", 10L);
+    COURSE_CREATE("코스 등록", 30L);
 
     private final String title;
     private final long point;
