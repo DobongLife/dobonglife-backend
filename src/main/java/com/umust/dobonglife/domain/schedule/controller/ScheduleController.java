@@ -70,7 +70,7 @@ public class ScheduleController {
             responseCode = "200",
             description = "일정 수정에 성공하였습니다."
     )
-    @PutMapping("/{scheduleId}")
+    @PatchMapping("/{scheduleId}")
     public BaseResponse<Void> updateSchedule(@PathVariable Long scheduleId,
                                              @CurrentUserId Long userId,
                                              @RequestBody ScheduleRequest request) {
