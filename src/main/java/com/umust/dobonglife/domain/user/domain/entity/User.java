@@ -44,12 +44,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
-    @Column(columnDefinition = "DATE")
-    private LocalDate birthday;
-
-    @Column(length = 30)
-    private String phoneNumber;
-
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
