@@ -94,6 +94,14 @@ public class Course {
         reviewStats.update(averageRating, reviewCount);
     }
 
+    public void updateRating(double newRating) {
+        double totalScore = this.getAverageRating() - this.getAverageRating() + newRating;
+
+        Double averageRating = totalScore / this.getReviewCount();
+
+        reviewStats.update(averageRating, this.getReviewCount());
+    }
+
     public void deleteReview(Double rating) {
         double totalScore = this.getAverageRating() * this.getReviewCount();
 

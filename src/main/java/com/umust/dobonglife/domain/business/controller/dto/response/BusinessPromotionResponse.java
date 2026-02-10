@@ -1,6 +1,8 @@
 package com.umust.dobonglife.domain.business.controller.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
+import com.umust.dobonglife.global.common.Identifiable;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,7 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Builder
-public class BusinessPromotionResponse {
+public class BusinessPromotionResponse implements Identifiable {
 
     private Long promotionId;
     private String title;
@@ -55,5 +57,11 @@ public class BusinessPromotionResponse {
                 .description(description)
                 .validPeriod(validPeriod)
                 .build();
+    }
+
+    @JsonIgnore
+    @Override
+    public Long getId() {
+        return promotionId;
     }
 }

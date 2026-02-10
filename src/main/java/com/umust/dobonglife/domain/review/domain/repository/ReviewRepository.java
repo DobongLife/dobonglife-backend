@@ -22,10 +22,27 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
 
     @Query("SELECT r FROM Review r " +
             "JOIN FETCH r.user " +
-            "WHERE (:lastId IS NULL OR r.id < :lastId) " +
-            "AND r.user.id = :userId " +
+            "WHERE r.user.id = :userId " +
+            "AND r.courseId IS NOT NULL " + // 코스 리뷰 조건
+            "AND r.placeId IS NULL " +
+            "AND (:lastId IS NULL OR r.id < :lastId) " +
+            "AND r.status = 'POSTED' " +
             "ORDER BY r.id DESC")
-    Slice<Review> findMyReviewsNoOffset(
+    Slice<Review> findMyCourseReviewsNoOffset(
+            @Param("userId") Long userId,
+            @Param("lastId") Long lastId,
+            Pageable pageable
+    );
+
+    @Query("SELECT r FROM Review r " +
+            "JOIN FETCH r.user " +
+            "WHERE r.user.id = :userId " +
+            "AND r.placeId IS NOT NULL " + // 장소 리뷰 조건
+            "AND r.courseId IS NULL " +
+            "AND (:lastId IS NULL OR r.id < :lastId) " +
+            "AND r.status = 'POSTED' " +
+            "ORDER BY r.id DESC")
+    Slice<Review> findMyPlaceReviewsNoOffset(
             @Param("userId") Long userId,
             @Param("lastId") Long lastId,
             Pageable pageable

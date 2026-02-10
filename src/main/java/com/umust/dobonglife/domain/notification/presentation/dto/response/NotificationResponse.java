@@ -1,20 +1,22 @@
 package com.umust.dobonglife.domain.notification.presentation.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
 import com.umust.dobonglife.domain.notification.domain.entity.Notification;
+import com.umust.dobonglife.global.common.Identifiable;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 public record NotificationResponse(
-        Long id,
+        Long notificationId,
         NotificationType type,
         String title,
         String content,
         boolean isRead,
         LocalDateTime createdAt,
         String timeAgo, // 화면에 표시될 "몇 시간 전", "2일 전" 정보
-        Long relatedUrlId) {
+        Long relatedUrlId) implements Identifiable {
     public static NotificationResponse from(Notification notification) {
         String timeAgo = calculateTimeAgo(notification.getCreatedAt());
 
@@ -47,5 +49,11 @@ public record NotificationResponse(
         }
 
         return "방금 전";
+    }
+
+    @JsonIgnore
+    @Override
+    public Long getId() {
+        return notificationId;
     }
 }

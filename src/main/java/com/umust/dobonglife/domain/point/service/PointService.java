@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.point.service;
 
 import com.umust.dobonglife.domain.point.controller.dto.response.MyPointsResponse;
+import com.umust.dobonglife.domain.point.controller.dto.response.PointGuideResponse;
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
@@ -20,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.COURSE_CREATE;
+import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.REVIEW_CREATE;
 
 /**
  * 포인트 계산 결과 필드를 User 엔티티에 두는 이유
@@ -57,7 +61,12 @@ public class PointService {
         Long userTotalPoint = userService.getUserTotalPoint(userId);
         SliceResponse<PointResponse> pointsByCursor = getPointResponse(userId, size, lastId, order);
 
-        return new MyPointsResponse(userTotalPoint, pointsByCursor);
+        List<PointGuideResponse> guides = List.of( // TODO: 확장성 어떻게 고려할지 생각하기
+                new PointGuideResponse("후기 작성", REVIEW_CREATE.getPoint()),
+                new PointGuideResponse("코스 등록", COURSE_CREATE.getPoint())
+        );
+
+        return new MyPointsResponse(userTotalPoint, guides, pointsByCursor);
     }
 
     @Transactional(readOnly = true)

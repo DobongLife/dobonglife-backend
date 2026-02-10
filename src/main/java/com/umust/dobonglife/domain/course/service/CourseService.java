@@ -15,7 +15,6 @@ import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryR
 import com.umust.dobonglife.domain.course.domain.repository.CoursePlansRepository;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
-import com.umust.dobonglife.domain.courseLike.domain.repository.CourseLikeRepository;
 import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
 import com.umust.dobonglife.domain.notification.service.NotificationService;
 import com.umust.dobonglife.domain.point.service.PointService;
@@ -38,10 +37,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.umust.dobonglife.domain.point.domain.vo.PointPolicy.COURSE_CREATE;
 
@@ -82,9 +78,9 @@ public class CourseService {
                 ? courseLikeService.getFavoriteCourseIds(userId, courseIds)
                 : Collections.emptySet();
 
-        return CursorUtils.toCursorResponse(courses, course ->
-                CourseSummaryResponse.of(course, favoriteCourseIds.contains(course.getId()))
-        );
+        return CursorUtils.toCursorResponse(
+                courses,
+                course -> CourseSummaryResponse.of(course, favoriteCourseIds.contains(course.getId())));
     }
 
     public CourseMyResponse getMyCourses(Long lastId, int size, Long userId) {
@@ -242,7 +238,6 @@ public class CourseService {
         }
 
         List<String> imagesToDelete = new ArrayList<>(course.getImageUrls());
-        courseRepository.delete(course);
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
@@ -251,7 +246,12 @@ public class CourseService {
                 }
             }
         });
+
+        coursePlansRepository.deleteByCourseId(courseId);
+        courseRepository.delete(course);
+
         userService.handleDeletion(userId);
+
         return CourseDeleteResponse.from(courseId);
     }
 
@@ -263,10 +263,14 @@ public class CourseService {
     }
 
     @Transactional
-    public void updateCourseRatingAndCount(Long courseId, Double rating) {
+    public void updateCourseRatingAndCount(Long courseId, Double rating, String mode) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
-        course.applyNewReview(rating);
+        if(mode.equals("create")){
+            course.applyNewReview(rating);
+        }else{
+            course.updateRating(rating);
+        }
     }
 
     @Transactional
@@ -285,5 +289,9 @@ public class CourseService {
 
     public Long getLikedCourseCount(Long userId) {
         return courseLikeService.getLikedCourseCount(userId);
+    }
+
+    public List<Course> findAllById(List<Long> courseIds) {
+        return courseRepository.findAllById(courseIds);
     }
 }

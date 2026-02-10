@@ -32,8 +32,10 @@ public class PointController {
             description = "요청에 성공하였습니다."
     )
     @GetMapping
-    public BaseResponse<PointPageResponse> getMyPoint(@CurrentUserId Long userId) {
-        PointPageResponse response = pointPromotionService.getMyPoint(userId);
+    public BaseResponse<PointPageResponse> getMyPoint(@CurrentUserId Long userId,
+                                                      @RequestParam(required = false) Long lastId,
+                                                      @RequestParam(defaultValue = "4") int size) {
+        PointPageResponse response = pointPromotionService.getMyPoint(userId, lastId, size);
         return BaseResponse.ok(response);
     }
 

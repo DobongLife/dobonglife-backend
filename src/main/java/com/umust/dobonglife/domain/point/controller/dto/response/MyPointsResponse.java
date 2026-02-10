@@ -4,6 +4,9 @@ import com.umust.dobonglife.domain.coupon.controller.dto.response.PromotionItem;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 
+import java.util.List;
+
 public record MyPointsResponse(Long totalPoint,
-                              SliceResponse<PointResponse> pointList) {
+                               List<PointGuideResponse> pointGuides,
+                               SliceResponse<PointResponse> pointList) {
 }
