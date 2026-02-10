@@ -19,7 +19,7 @@ public record CouponItem(
         String category,
         String title,
         String description,
-        List<String> img,
+        List<String> imgUrls,
         DiscountType discountType,
         BigDecimal discountValue,
         Long minPrice,

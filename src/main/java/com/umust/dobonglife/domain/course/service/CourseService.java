@@ -238,7 +238,6 @@ public class CourseService {
         }
 
         List<String> imagesToDelete = new ArrayList<>(course.getImageUrls());
-        courseRepository.delete(course);
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
@@ -247,7 +246,12 @@ public class CourseService {
                 }
             }
         });
+
+        coursePlansRepository.deleteByCourseId(courseId);
+        courseRepository.delete(course);
+
         userService.handleDeletion(userId);
+
         return CourseDeleteResponse.from(courseId);
     }
 
