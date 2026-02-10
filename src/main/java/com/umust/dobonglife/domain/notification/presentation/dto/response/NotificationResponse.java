@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public record NotificationResponse(
-        Long id,
+        Long notificationId,
         NotificationType type,
         String title,
         String content,
@@ -54,6 +54,6 @@ public record NotificationResponse(
     @JsonIgnore
     @Override
     public Long getId() {
-        return id;
+        return notificationId;
     }
 }
