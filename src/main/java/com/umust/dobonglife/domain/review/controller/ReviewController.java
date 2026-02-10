@@ -49,7 +49,7 @@ public class ReviewController {
             responseCode = "200",
             description = "요청에 성공하였습니다."
     )
-    @PutMapping("/{reviewId}")
+    @PatchMapping("/{reviewId}")
     public BaseResponse<ReviewResponse> updateReview(@CurrentUserId Long userId,
                                                        @PathVariable("reviewId") Long reviewId,
                                                        @RequestPart("request") @Valid CreateReviewRequest request, @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles){
