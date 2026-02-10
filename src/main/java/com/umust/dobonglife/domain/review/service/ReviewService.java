@@ -139,9 +139,9 @@ public class ReviewService {
         List<String> imageUrls = getStrings(imageFiles);
 
         if(request.courseId() != null){
-            courseService.updateCourseRatingAndCount(request.courseId(), request.rating());
+            courseService.updateCourseRatingAndCount(request.courseId(), request.rating(), "create");
         }else {
-            placeService.updatePlaceRatingAndCount(request.placeId(), request.rating());
+            placeService.updatePlaceRatingAndCount(request.placeId(), request.rating(), "create");
         }
 
         Review review = Review.builder()
@@ -180,9 +180,9 @@ public class ReviewService {
         List<String> imageUrls = getStrings(imageFiles);
 
         if(request.courseId() != null){
-            courseService.updateCourseRatingAndCount(request.courseId(), request.rating());
+            courseService.updateCourseRatingAndCount(request.courseId(), request.rating(), "modify");
         }else {
-            placeService.updatePlaceRatingAndCount(request.placeId(), request.rating());
+            placeService.updatePlaceRatingAndCount(request.placeId(), request.rating(), "modify");
         }
 
         review.update(request.courseId(), request.placeId(), request.rating(), request.content(), imageUrls);

@@ -259,10 +259,14 @@ public class CourseService {
     }
 
     @Transactional
-    public void updateCourseRatingAndCount(Long courseId, Double rating) {
+    public void updateCourseRatingAndCount(Long courseId, Double rating, String mode) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
-        course.applyNewReview(rating);
+        if(mode.equals("create")){
+            course.applyNewReview(rating);
+        }else{
+            course.updateRating(rating);
+        }
     }
 
     @Transactional

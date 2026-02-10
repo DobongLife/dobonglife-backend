@@ -85,6 +85,11 @@ public class Place extends BaseEntity {
         this.averageRating = totalScore / reviewCount;
     }
 
+    public void updateRating(double newRating) {
+        double totalScore = this.getAverageRating() - this.getAverageRating() + newRating;
+        this.averageRating = totalScore / this.getReviewCount();
+    }
+
     public void applyDeleteReview(Double deletedRating) {
         double totalScore = (this.averageRating * this.reviewCount) - deletedRating;
 

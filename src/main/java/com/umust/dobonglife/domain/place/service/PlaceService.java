@@ -109,9 +109,13 @@ public class PlaceService {
     }
 
     @Transactional
-    public void updatePlaceRatingAndCount(Long placeId, Double rating) {
+    public void updatePlaceRatingAndCount(Long placeId, Double rating, String mode) {
         Place place = findById(placeId);
-        place.applyNewReview(rating);
+        if(mode.equals("create")){
+            place.applyNewReview(rating);
+        }else{
+            place.updateRating(rating);
+        }
         placeRepository.save(place);
     }
 
