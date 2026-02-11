@@ -80,10 +80,10 @@ public class AuthService {
                 reviewService.deleteByPlaceId(placeId);         // 리뷰 삭제
                 placeService.deletePlaceLikeByPlaceId(placeId); // 찜 삭제
                 courseService.nullifyPlaceInPlans(placeId);     // 코스 내 참조 null 처리
-            }
 
-            placeService.deleteByPlace(place);              // 장소 삭제
-            promotionService.deleteByBusinessId(businessId);
+                promotionService.deleteByBusinessId(businessId);
+                placeService.deleteByPlace(place);              // 장소 삭제
+            }
             businessService.deleteById(businessId);         // 비즈니스 삭제
         }
 
