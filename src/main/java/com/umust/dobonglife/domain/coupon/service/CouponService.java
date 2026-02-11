@@ -120,13 +120,9 @@ public class CouponService {
     }
 
     @Transactional
-    public void setDisabled(List<Promotion> promotion) {
+    public void deleteCoupons(List<Promotion> promotion) {
         if (promotion.isEmpty()) return;
 
-        couponRepository.updateStatusByPromotions(
-                promotion,
-                CouponStatus.AVAILABLE,
-                CouponStatus.DISABLED
-        );
+        couponRepository.deleteAllByPromotionIn(promotion);
     }
 }

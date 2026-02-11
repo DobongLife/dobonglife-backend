@@ -23,7 +23,9 @@ import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.external.s3.S3Utils;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -37,11 +39,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PromotionService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
     private final PromotionRepository promotionRepository;
     private final PointService pointService;
     private final PlaceService placeService;
@@ -146,18 +152,36 @@ public class PromotionService {
         return CursorUtils.toCursorResponse(promotions, PromotionBannerItem::from);
     }
 
+//    @Transactional
+//    public void deleteByBusinessId(Long businessId) {
+//        List<Promotion> promotions = promotionRepository.findAllByBusinessId(businessId);
+//
+//        if (!promotions.isEmpty()) {
+//            couponService.setDisabled(promotions);
+//            promotionRepository.deleteAll(promotions);
+//        }
+//    }
+
     @Transactional
     public void deleteByBusinessId(Long businessId) {
-        List<Promotion> promotions = promotionRepository.findAllByBusinessId(businessId);
+        log.info("=== [Promotion 삭제] businessId: {} 조회 시작", businessId);
+        List<Promotion> promotions = promotionRepository.findAllByBusinessesId(businessId);
 
+        log.info("=== 찾은 Promotion 개수: {}", promotions.size());
         if (!promotions.isEmpty()) {
-            couponService.setDisabled(promotions);
-            promotionRepository.deleteAll(promotions);
-        }
-    }
+            log.info("=== Promotion ID 목록: {}",
+                    promotions.stream().map(Promotion::getId).collect(Collectors.toList()));
 
-    @Transactional
-    public void flush() {
-        promotionRepository.flush();
+            couponService.deleteCoupons(promotions);
+            log.info("=== Coupon 비활성화 완료");
+
+            promotionRepository.clearPlaceByBusinessesId(businessId);
+            promotionRepository.deleteAllInBatch(promotions);
+            entityManager.flush();
+            entityManager.clear();
+            log.info("=== Promotion deleteAll 호출 완료");
+        } else {
+            log.warn("=== ⚠️ 삭제할 Promotion이 없습니다! businessId: {}", businessId);
+        }
     }
 }
