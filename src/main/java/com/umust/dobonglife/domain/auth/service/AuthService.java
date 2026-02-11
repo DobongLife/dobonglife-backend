@@ -82,6 +82,7 @@ public class AuthService {
                 courseService.nullifyPlaceInPlans(placeId);     // 코스 내 참조 null 처리
 
                 promotionService.deleteByBusinessId(businessId);
+                promotionService.flush();
                 placeService.deleteByPlace(place);              // 장소 삭제
             }
             businessService.deleteById(businessId);         // 비즈니스 삭제
