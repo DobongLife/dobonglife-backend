@@ -50,8 +50,8 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     Slice<Promotion> findPromotionBannersNoOffset(@Param("lastId") Long lastId, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
-    @Query("DELETE FROM Promotion p WHERE p.businessesId = :businessId")
-    void deleteByBusinessId(@Param("businessId") Long businessId);
+    @Query("DELETE FROM Promotion p WHERE p.businessesId = :businessesId")
+    void deleteByBusinessId(@Param("businessesId") Long businessesId);
 
     @Query("SELECT p FROM Promotion p WHERE p.businessesId = :businessesId")
     List<Promotion> findAllByBusinessId(@Param("businessId") Long businessesId);
