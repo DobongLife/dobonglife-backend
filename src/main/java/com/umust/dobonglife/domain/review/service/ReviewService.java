@@ -231,4 +231,14 @@ public class ReviewService {
         userService.handleDeletion(userId);
         return ReviewResponse.from(review);
     }
+
+    @Transactional
+    public void deleteByPlaceId(Long placeId) {
+        reviewRepository.deleteByPlaceId(placeId);
+    }
+
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        reviewRepository.deleteByUserId(userId);
+    }
 }

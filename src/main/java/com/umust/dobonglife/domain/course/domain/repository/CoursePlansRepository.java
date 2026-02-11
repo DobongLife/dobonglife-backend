@@ -18,4 +18,8 @@ public interface CoursePlansRepository extends JpaRepository<CoursePlans, Long> 
     void deleteByCourseCustom(@Param("course") Course course);
 
     void deleteByCourseId(Long courseId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE CoursePlans p SET p.placeId = null WHERE p.placeId = :placeId")
+    void nullifyPlaceId(@Param("placeId") Long placeId);
 }
