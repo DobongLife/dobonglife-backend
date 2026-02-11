@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.coupon.domain.repository;
 import com.umust.dobonglife.domain.business.service.dto.CouponUsageCount;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
+import com.umust.dobonglife.domain.coupon.domain.entity.Promotion;
 import com.umust.dobonglife.domain.coupon.domain.repository.custom.CouponRepositoryCustom;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -57,4 +58,17 @@ public interface CouponRepository extends JpaRepository<Coupon, Long>, CouponRep
       AND c.issueEndDate >= CURRENT_DATE
     """)
     int useIfUsable(@Param("userId") Long userId, @Param("couponId") Long couponId);
+
+    @Modifying
+    @Query("DELETE FROM Coupon c WHERE c.userId = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Coupon c SET c.couponStatus = :targetStatus " +
+            "WHERE c.promotion IN :promotions AND c.couponStatus = :currentStatus")
+    int updateStatusByPromotions(
+            @Param("promotions") List<Promotion> promotions,
+            @Param("currentStatus") CouponStatus currentStatus,
+            @Param("targetStatus") CouponStatus targetStatus
+    );
 }

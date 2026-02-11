@@ -33,4 +33,8 @@ public interface PointRepository extends JpaRepository<Point, Long>, PointReposi
     int markUsedWithAfterBalance(@Param("userId") Long userId,
                                  @Param("pointId") Long pointId,
                                  @Param("afterBalance") long afterBalance);
+
+    @Modifying
+    @Query("DELETE FROM Point p WHERE p.user.id = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
 }

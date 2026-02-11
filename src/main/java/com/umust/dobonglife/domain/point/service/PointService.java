@@ -111,4 +111,9 @@ public class PointService {
 
         pointRepository.save(newPoint);
     }
+
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        pointRepository.deleteByUserId(userId);
+    }
 }
