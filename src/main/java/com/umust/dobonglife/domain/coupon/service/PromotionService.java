@@ -152,8 +152,8 @@ public class PromotionService {
 
         if (!promotions.isEmpty()) {
             couponService.setDisabled(promotions);
+            promotionRepository.deletePromotions(promotions);
         }
-        promotionRepository.deleteByBusinessId(businessId);
     }
 
     @Transactional
