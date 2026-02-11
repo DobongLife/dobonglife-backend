@@ -155,4 +155,9 @@ public class PromotionService {
         }
         promotionRepository.deleteByBusinessId(businessId);
     }
+
+    @Transactional
+    public void flush() {
+        promotionRepository.flush();
+    }
 }
