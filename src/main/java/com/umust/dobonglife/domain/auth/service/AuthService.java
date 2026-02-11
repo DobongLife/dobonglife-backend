@@ -16,6 +16,8 @@ import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
     private final JwtService jwtService;
     private final UserService userService;
     private final PointService pointService;
@@ -64,35 +68,41 @@ public class AuthService {
         jwtService.deleteRefreshToken(refreshToken);
         jwtService.invalidAccessToken(accessToken);
     }
-
     @Transactional
-    public void deleteAccount(HttpServletRequest request, Long userId) { // TODO: 이벤트 형식으로 변경
+    public void deleteAccount(HttpServletRequest request, Long userId) {
+        log.info("=== [회원탈퇴 시작] userId: {}", userId);
+
         String accessToken = jwtUtil.extractAccessToken(request)
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
 
         Business business = businessService.getBusinessByUser(userId);
+
         if (business != null) {
             Long businessId = business.getId();
             Place place = business.getPlace();
 
-            if(place != null) {
+            if (place != null) {
                 Long placeId = place.getId();
-                reviewService.deleteByPlaceId(placeId);         // 리뷰 삭제
-                placeService.deletePlaceLikeByPlaceId(placeId); // 찜 삭제
-                courseService.nullifyPlaceInPlans(placeId);     // 코스 내 참조 null 처리
+
+                reviewService.deleteByPlaceId(placeId);
+                placeService.deletePlaceLikeByPlaceId(placeId);
+                courseService.nullifyPlaceInPlans(placeId);
 
                 promotionService.deleteByBusinessId(businessId);
-                promotionService.flush();
-                placeService.deleteByPlace(place);              // 장소 삭제
-            }
-            businessService.deleteById(businessId);         // 비즈니스 삭제
-        }
+                businessService.nullifyPlace(businessId);
+                entityManager.flush();
 
+                log.info("=== DB와 메모리 정화 완료. Place 삭제 시도 ===");
+                placeService.deleteById(placeId);
+                entityManager.flush();
+            }
+            log.info("=== DB와 메모리 정화 완료. Business 삭제 시도 ===");
+            businessService.deleteById(businessId);
+        }
         reviewService.deleteByUserId(userId);
         pointService.deleteByUserId(userId);
         couponService.deleteByUserId(userId);
-        userService.deleteAccount(userId); // 유저 삭제(FCM 포함)
-
+        userService.deleteAccount(userId);
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -101,4 +111,41 @@ public class AuthService {
             }
         });
     }
+
+//    @Transactional
+//    public void deleteAccount(HttpServletRequest request, Long userId) { // TODO: 이벤트 형식으로 변경
+//        String accessToken = jwtUtil.extractAccessToken(request)
+//                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+//
+//        Business business = businessService.getBusinessByUser(userId);
+//        if (business != null) {
+//            Long businessId = business.getId();
+//            Place place = business.getPlace();
+//
+//            if(place != null) {
+//                Long placeId = place.getId();
+//                reviewService.deleteByPlaceId(placeId);         // 리뷰 삭제
+//                placeService.deletePlaceLikeByPlaceId(placeId); // 찜 삭제
+//                courseService.nullifyPlaceInPlans(placeId);     // 코스 내 참조 null 처리
+//
+//                promotionService.deleteByBusinessId(businessId);
+//                promotionService.flush();
+//                placeService.deleteByPlace(place);              // 장소 삭제
+//            }
+//            businessService.deleteById(businessId);         // 비즈니스 삭제
+//        }
+//
+//        reviewService.deleteByUserId(userId);
+//        pointService.deleteByUserId(userId);
+//        couponService.deleteByUserId(userId);
+//        userService.deleteAccount(userId); // 유저 삭제(FCM 포함)
+//
+//
+//        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+//            @Override
+//            public void afterCommit() {
+//                jwtService.invalidAccessToken(accessToken);
+//            }
+//        });
+//    }
 }

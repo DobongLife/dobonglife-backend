@@ -35,7 +35,8 @@ public class Coupon {
     private LocalDate issueEndDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "coupon_status", nullable = false)
+    @Column(name = "coupon_status", nullable = false,
+            columnDefinition = "ENUM('AVAILABLE', 'EXPIRED', 'USED', 'DISABLED')")
     private CouponStatus couponStatus = CouponStatus.AVAILABLE;
 
     @Builder

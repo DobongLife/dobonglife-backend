@@ -212,4 +212,9 @@ public class BusinessService {
     public void deleteById(Long id) {
         businessRepository.deleteById(id);
     }
+
+    @Transactional
+    public void nullifyPlace(Long businessId) {
+        businessRepository.nullifyPlaceById(businessId);
+    }
 }

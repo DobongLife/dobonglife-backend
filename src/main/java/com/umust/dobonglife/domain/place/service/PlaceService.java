@@ -177,4 +177,9 @@ public class PlaceService {
     public void deleteByPlace(Place place) {
         placeRepository.delete(place);
     }
+
+    @Transactional
+    public void deleteById(Long placeId) {
+        placeRepository.deleteById(placeId);
+    }
 }
