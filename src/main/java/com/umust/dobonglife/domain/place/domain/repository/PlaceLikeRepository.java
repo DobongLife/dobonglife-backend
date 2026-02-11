@@ -21,4 +21,6 @@ public interface PlaceLikeRepository extends JpaRepository<PlaceLike, Long>, Pla
             @Param("userId") Long userId,
             @Param("placeIds") List<Long> placeIds
     );
+
+    void deleteByPlaceId(Long placeId);
 }

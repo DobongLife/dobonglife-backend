@@ -8,7 +8,11 @@ import com.umust.dobonglife.domain.business.service.BusinessService;
 import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
 import com.umust.dobonglife.domain.coupon.service.CouponService;
 import com.umust.dobonglife.domain.coupon.service.PromotionService;
+import com.umust.dobonglife.domain.course.service.CourseService;
+import com.umust.dobonglife.domain.place.domain.entity.Place;
+import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.domain.point.service.PointService;
+import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -19,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -31,6 +37,9 @@ public class AuthService {
     private final CouponService couponService;
     private final PromotionService promotionService;
     private final BusinessService businessService;
+    private final ReviewService reviewService;
+    private final PlaceService placeService;
+    private final CourseService courseService;
     private final JwtUtil jwtUtil;
 
     @Transactional
@@ -57,20 +66,32 @@ public class AuthService {
     }
 
     @Transactional
-    public void deleteAccount(HttpServletRequest request, Long userId) {
+    public void deleteAccount(HttpServletRequest request, Long userId) { // TODO: 이벤트 형식으로 변경
         String accessToken = jwtUtil.extractAccessToken(request)
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
 
         Business business = businessService.getBusinessByUser(userId);
         if (business != null) {
-            promotionService.deleteByBusinessId(business.getId());
-            businessService.deleteById(business.getId());
+            Long businessId = business.getId();
+            Place place = business.getPlace();
+
+            if(place != null) {
+                Long placeId = place.getId();
+                reviewService.deleteByPlaceId(placeId);         // 리뷰 삭제
+                placeService.deletePlaceLikeByPlaceId(placeId); // 찜 삭제
+                courseService.nullifyPlaceInPlans(placeId);     // 코스 내 참조 null 처리
+            }
+
+            placeService.deleteByPlace(place);              // 장소 삭제
+            promotionService.deleteByBusinessId(businessId);
+            businessService.deleteById(businessId);         // 비즈니스 삭제
         }
 
+        reviewService.deleteByUserId(userId);
         pointService.deleteByUserId(userId);
         couponService.deleteByUserId(userId);
-
         userService.deleteAccount(userId); // 유저 삭제(FCM 포함)
+
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override

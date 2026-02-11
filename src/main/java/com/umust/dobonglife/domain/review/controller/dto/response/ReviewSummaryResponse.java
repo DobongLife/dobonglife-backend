@@ -18,16 +18,32 @@ public record ReviewSummaryResponse(Long reviewId,
                                           boolean owner
 ) implements Identifiable {
     public static ReviewSummaryResponse from(Long userId, Review review) {
+        if (review == null) return null;
+
         User user = review.getUser();
-        boolean owner = (user != null && userId != null) && userId.equals(user.getId());
+        String userName = "알 수 없는 사용자";
+
+        boolean isOwner = false;
+
+        if (user != null) {
+            try {
+                userName = user.getName();
+                if (userId != null && userId.equals(user.getId())) {
+                    isOwner = true;
+                }
+            } catch (Exception e) {
+                userName = "알 수 없는 사용자";
+            }
+        }
+
         return new ReviewSummaryResponse(
                 review.getId(),
-                (user != null) ? user.getName() : "알 수 없는 사용자",
+                userName,
                 review.getRating(),
                 review.getContent(),
                 review.getImageUrls(),
                 review.getUpdatedAt(),
-                owner
+                isOwner
         );
     }
 

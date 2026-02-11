@@ -167,4 +167,14 @@ public class PlaceService {
     public Set<Long> getFavoritePlaceIds(Long userId, List<Long> placeIds) {
         return placeLikeRepository.findLikedPlaceIdsByUserIdAndPlaceIds(userId, placeIds);
     }
+
+    @Transactional
+    public void deletePlaceLikeByPlaceId(Long placeId) {
+        placeLikeRepository.deleteByPlaceId(placeId);
+    }
+
+    @Transactional
+    public void deleteByPlace(Place place) {
+        placeRepository.delete(place);
+    }
 }

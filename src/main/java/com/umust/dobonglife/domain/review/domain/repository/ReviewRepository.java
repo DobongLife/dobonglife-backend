@@ -62,4 +62,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
             "AND (:lastId IS NULL OR r.id < :lastId) " +
             "ORDER BY r.id DESC")
     Slice<Review> findPlaceReviewsNoOffset(Long placeId, Long lastId, Pageable pageable);
+
+    void deleteByPlaceId(Long placeId);
+
+    void deleteByUserId(Long userId);
 }

@@ -294,4 +294,9 @@ public class CourseService {
     public List<Course> findAllById(List<Long> courseIds) {
         return courseRepository.findAllById(courseIds);
     }
+
+    @Transactional
+    public void nullifyPlaceInPlans(Long placeId) {
+        coursePlansRepository.nullifyPlaceId(placeId);
+    }
 }
