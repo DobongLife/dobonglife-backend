@@ -145,4 +145,14 @@ public class PromotionService {
 
         return CursorUtils.toCursorResponse(promotions, PromotionBannerItem::from);
     }
+
+    @Transactional
+    public void deleteByBusinessId(Long businessId) {
+        List<Promotion> promotions = promotionRepository.findAllByBusinessId(businessId);
+
+        if (!promotions.isEmpty()) {
+            couponService.setDisabled(promotions);
+        }
+        promotionRepository.deleteByBusinessId(businessId);
+    }
 }

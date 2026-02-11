@@ -3,6 +3,12 @@ package com.umust.dobonglife.domain.auth.service;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.business.domain.entity.Business;
+import com.umust.dobonglife.domain.business.service.BusinessService;
+import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
+import com.umust.dobonglife.domain.coupon.service.CouponService;
+import com.umust.dobonglife.domain.coupon.service.PromotionService;
+import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -21,6 +27,10 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final UserService userService;
+    private final PointService pointService;
+    private final CouponService couponService;
+    private final PromotionService promotionService;
+    private final BusinessService businessService;
     private final JwtUtil jwtUtil;
 
     @Transactional
@@ -50,6 +60,15 @@ public class AuthService {
     public void deleteAccount(HttpServletRequest request, Long userId) {
         String accessToken = jwtUtil.extractAccessToken(request)
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+
+        Business business = businessService.getBusinessByUser(userId);
+        if (business != null) {
+            promotionService.deleteByBusinessId(business.getId());
+            businessService.deleteById(business.getId());
+        }
+
+        pointService.deleteByUserId(userId);
+        couponService.deleteByUserId(userId);
 
         userService.deleteAccount(userId); // 유저 삭제(FCM 포함)
 

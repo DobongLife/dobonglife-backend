@@ -208,4 +208,8 @@ public class BusinessService {
         Business businessByUser = getBusinessByUser(userId);
         return businessByUser.getPlace().getCategory();
     }
+
+    public void deleteById(Long id) {
+        businessRepository.deleteById(id);
+    }
 }

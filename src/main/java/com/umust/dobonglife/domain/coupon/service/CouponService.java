@@ -113,4 +113,20 @@ public class CouponService {
 
         return newCoupon.getId();
     }
+
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        couponRepository.deleteByUserId(userId);
+    }
+
+    @Transactional
+    public void setDisabled(List<Promotion> promotion) {
+        if (promotion.isEmpty()) return;
+
+        couponRepository.updateStatusByPromotions(
+                promotion,
+                CouponStatus.AVAILABLE,
+                CouponStatus.DISABLED
+        );
+    }
 }

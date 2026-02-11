@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     @Query("SELECT p FROM Promotion p " +
@@ -47,4 +48,11 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
             "AND (:lastId IS NULL OR p.id < :lastId) " +
             "ORDER BY p.priority ASC, p.id ASC")
     Slice<Promotion> findPromotionBannersNoOffset(@Param("lastId") Long lastId, Pageable pageable);
+
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM Promotion p WHERE p.businessesId = :businessId")
+    void deleteByBusinessId(@Param("businessId") Long businessId);
+
+    @Query("SELECT p FROM Promotion p WHERE p.businessesId = :businessesId")
+    List<Promotion> findAllByBusinessId(@Param("businessId") Long businessesId);
 }
