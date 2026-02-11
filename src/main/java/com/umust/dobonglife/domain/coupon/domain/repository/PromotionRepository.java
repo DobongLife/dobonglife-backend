@@ -55,4 +55,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 
     @Query("SELECT p FROM Promotion p WHERE p.businessesId = :businessesId")
     List<Promotion> findAllByBusinessId(@Param("businessesId") Long businessesId);
+
+    void deletePromotions(List<Promotion> promotions);
 }
