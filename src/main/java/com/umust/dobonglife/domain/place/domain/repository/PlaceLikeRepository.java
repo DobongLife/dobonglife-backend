@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.place.domain.entity.PlaceLike;
 import com.umust.dobonglife.domain.place.domain.repository.custom.PlaceLikeRepositoryCustom;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -22,5 +23,7 @@ public interface PlaceLikeRepository extends JpaRepository<PlaceLike, Long>, Pla
             @Param("placeIds") List<Long> placeIds
     );
 
-    void deleteByPlaceId(Long placeId);
+    @Modifying
+    @Query("DELETE FROM PlaceLike pl WHERE pl.place.id = :placeId")
+    void hardDeleteByPlaceId(@Param("placeId") Long placeId);
 }
