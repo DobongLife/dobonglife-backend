@@ -238,7 +238,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteByUserId(Long userId) {
-        reviewRepository.deleteByUserId(userId);
+    public void setNullByUserId(Long userId) {
+        reviewRepository.setNullByUserId(userId);
     }
 }

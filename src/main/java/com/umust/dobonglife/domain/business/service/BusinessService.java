@@ -33,8 +33,6 @@ import com.umust.dobonglife.domain.business.controller.dto.request.BusinessReque
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -202,6 +200,9 @@ public class BusinessService {
     public Business getBusinessByUser(Long userId) {
         return businessRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.BUSINESS_NOT_FOUND));
+    }
+    public boolean isBusiness(Long userId) {
+        return businessRepository.findByUserId(userId).isPresent();
     }
 
     public Category getCategoryUserId(Long userId) {
