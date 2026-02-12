@@ -170,7 +170,7 @@ public class PlaceService {
 
     @Transactional
     public void deletePlaceLikeByPlaceId(Long placeId) {
-        placeLikeRepository.deleteByPlaceId(placeId);
+        placeLikeRepository.hardDeleteByPlaceId(placeId);
     }
 
     @Transactional
