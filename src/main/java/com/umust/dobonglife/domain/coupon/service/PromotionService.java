@@ -136,7 +136,7 @@ public class PromotionService {
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_PROMOTION_ID));
 
-        if (!promotion.getBusinessesId().equals(userId)) {
+        if (!promotion.getUserId().equals(userId)) {
             throw new BusinessException(ErrorCode.BUSINESS_NOT_FOUND);
         }
 
@@ -163,9 +163,9 @@ public class PromotionService {
 //    }
 
     @Transactional
-    public void deleteByBusinessId(Long businessId) {
-        log.info("=== [Promotion 삭제] businessId: {} 조회 시작", businessId);
-        List<Promotion> promotions = promotionRepository.findAllByBusinessesId(businessId);
+    public void deleteByUserId(Long userId) {
+        log.info("=== [Promotion 삭제] userId: {} 조회 시작", userId);
+        List<Promotion> promotions = promotionRepository.findAllByUserId(userId);
 
         log.info("=== 찾은 Promotion 개수: {}", promotions.size());
         if (!promotions.isEmpty()) {
@@ -175,13 +175,13 @@ public class PromotionService {
             couponService.deleteCoupons(promotions);
             log.info("=== Coupon 비활성화 완료");
 
-            promotionRepository.clearPlaceByBusinessesId(businessId);
+            promotionRepository.clearPlaceByUserId(userId);
             promotionRepository.deleteAllInBatch(promotions);
             entityManager.flush();
             entityManager.clear();
             log.info("=== Promotion deleteAll 호출 완료");
         } else {
-            log.warn("=== ⚠️ 삭제할 Promotion이 없습니다! businessId: {}", businessId);
+            log.warn("=== ⚠️ 삭제할 Promotion이 없습니다! userId: {}", userId);
         }
     }
 }
