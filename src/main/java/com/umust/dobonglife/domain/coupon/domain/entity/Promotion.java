@@ -82,8 +82,8 @@ public class Promotion {
     @Column(name = "coupon_period", nullable = false)
     private Long validPeriod;
 
-    @Column(name = "businesses_id", nullable = false)
-    private Long businessesId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(name = "issued_count", nullable = false)
     private Long issuedCount;
@@ -95,7 +95,7 @@ public class Promotion {
     public Promotion(Category category, Place place, String title, String description, List<String> imgUrls,
                      DiscountType discountType, BigDecimal discountValue, Long minPrice,
                      Long maxPrice, String code, Long point, Long totalQuantity, LocalDate startDate,
-                     LocalDate endDate, Long validPeriod, Long businessesId) {
+                     LocalDate endDate, Long validPeriod, Long userId) {
 
         validate(discountType, discountValue, minPrice, maxPrice, code, startDate, endDate);
 
@@ -114,7 +114,7 @@ public class Promotion {
         this.startDate = startDate;
         this.endDate = endDate;
         this.validPeriod = validPeriod;
-        this.businessesId = businessesId;
+        this.userId = userId;
         this.issuedCount = 0L;
     }
 
@@ -146,7 +146,7 @@ public class Promotion {
         }
     }
 
-    public static Promotion createPromotion(PromotionRegisterRequest dto, List<String> imgUrl, Long managerId, Place place) {
+    public static Promotion createPromotion(PromotionRegisterRequest dto, List<String> imgUrl, Long userId, Place place) {
         Category type = Category.valueOf(dto.category().name());
 
         return Promotion.builder()
@@ -165,7 +165,7 @@ public class Promotion {
                 .startDate(dto.issueStartDate())
                 .endDate(dto.issueEndDate())
                 .validPeriod(dto.validityDays() != null ? dto.validityDays().longValue() : null)
-                .businessesId(managerId)
+                .userId(userId)
                 .build();
     }
 

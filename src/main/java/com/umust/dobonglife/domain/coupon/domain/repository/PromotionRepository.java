@@ -21,7 +21,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 
     @Query("""
         SELECT p FROM Promotion p
-        WHERE p.businessesId = :userId
+        WHERE p.userId = :userId
           AND (:lastId IS NULL OR p.id < :lastId)
         ORDER BY p.id DESC
     """)
@@ -49,10 +49,10 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
             "ORDER BY p.priority ASC, p.id ASC")
     Slice<Promotion> findPromotionBannersNoOffset(@Param("lastId") Long lastId, Pageable pageable);
 
-    @Query("SELECT p FROM Promotion p WHERE p.businessesId = :businessesId")
-    List<Promotion> findAllByBusinessesId(@Param("businessesId") Long businessesId);
+    @Query("SELECT p FROM Promotion p WHERE p.userId = :userId")
+    List<Promotion> findAllByUserId(@Param("userId") Long userId);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("UPDATE Promotion p SET p.place = null WHERE p.businessesId = :businessesId")
-    void clearPlaceByBusinessesId(@Param("businessesId") Long businessesId);
+    @Query("UPDATE Promotion p SET p.place = null WHERE p.userId = :userId")
+    void clearPlaceByUserId(@Param("userId") Long userId);
 }

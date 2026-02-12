@@ -78,7 +78,6 @@ public class AuthService {
         Business business = businessService.getBusinessByUser(userId);
 
         if (business != null) {
-            Long businessId = business.getId();
             Place place = business.getPlace();
 
             if (place != null) {
@@ -88,8 +87,8 @@ public class AuthService {
                 placeService.deletePlaceLikeByPlaceId(placeId);
                 courseService.nullifyPlaceInPlans(placeId);
 
-                promotionService.deleteByBusinessId(businessId);
-                businessService.nullifyPlace(businessId);
+                promotionService.deleteByUserId(userId);
+                businessService.nullifyPlace(business.getId());
                 entityManager.flush();
 
                 log.info("=== DB와 메모리 정화 완료. Place 삭제 시도 ===");
@@ -97,7 +96,7 @@ public class AuthService {
                 entityManager.flush();
             }
             log.info("=== DB와 메모리 정화 완료. Business 삭제 시도 ===");
-            businessService.deleteById(businessId);
+            businessService.deleteById(business.getId());
         }
         reviewService.deleteByUserId(userId);
         pointService.deleteByUserId(userId);
