@@ -6,11 +6,15 @@ import com.umust.dobonglife.domain.course.domain.vo.CourseBasicInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseOperationInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CoursePolicyInfo;
 import com.umust.dobonglife.domain.course.domain.vo.CourseReviewStats;
+import com.umust.dobonglife.global.common.model.BaseEntity;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +23,7 @@ import java.util.regex.Pattern;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Course {
+public class Course extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "course_id", nullable = false)
@@ -82,38 +86,6 @@ public class Course {
         if (basicInfo == null) throw new IllegalArgumentException("기본 정보는 필수입니다.");
     }
 
-    public void updateRatingInfo(Double newAverageRating, Long newReviewCount) {
-        this.reviewStats.update(newAverageRating, newReviewCount);
-    }
-
-    public void applyNewReview(Double newRating) {
-        double totalScore = (this.getAverageRating() * this.getReviewCount()) + newRating;
-        Long reviewCount = this.getReviewCount() + 1;
-        Double averageRating = totalScore / reviewCount;
-
-        reviewStats.update(averageRating, reviewCount);
-    }
-
-    public void updateRating(double newRating) {
-        double totalScore = this.getAverageRating() - this.getAverageRating() + newRating;
-
-        Double averageRating = totalScore / this.getReviewCount();
-
-        reviewStats.update(averageRating, this.getReviewCount());
-    }
-
-    public void deleteReview(Double rating) {
-        double totalScore = this.getAverageRating() * this.getReviewCount();
-
-        long newReviewCount = Math.max(0, this.getReviewCount() - 1);
-
-        Double newAverageRating = 0.0;
-        if (newReviewCount > 0) {
-            newAverageRating = (totalScore - rating) / newReviewCount; // TODO: 소수점 어디서 관리할지 정의
-        }
-        reviewStats.update(newAverageRating, newReviewCount);
-    }
-
     // TODO: Getter 편의 메서드, 불필요시 삭제
     public String getTitle() {
         return basicInfo.getTitle();
@@ -131,11 +103,40 @@ public class Course {
         return reviewStats.getAverageRating();
     }
 
+    public Double getRatingSum() {
+        return reviewStats.getRatingSum();
+    }
+
     public Long getReviewCount() {
         return reviewStats.getReviewCount();
     }
 
+    public void applyNewReview(Double newRating) {
+        if (newRating == null) throw new IllegalArgumentException("rating is null");
+        reviewStats.applyNewReview(newRating);
+    }
+
+    public void updateReviewRating(Double oldRating, Double newRating) {
+        if (oldRating == null || newRating == null) throw new IllegalArgumentException("rating is null");
+        if (getReviewCount() <= 0) {
+            throw new IllegalStateException("Cannot update review rating when reviewCount is 0");
+        }
+        reviewStats.updateReview(oldRating, newRating);
+    }
+
+    public void deleteReview(Double rating) {
+        if (rating == null) throw new IllegalArgumentException("rating is null");
+        reviewStats.deleteReview(rating);
+    }
+
     public void updateBasicInfo(CourseBasicInfo basicInfo) {
         this.basicInfo = basicInfo;
+    }
+
+    public void deactivate() {
+        if (this.status == BaseStatus.INACTIVE) {
+            return;
+        }
+        this.status = BaseStatus.INACTIVE;
     }
 }

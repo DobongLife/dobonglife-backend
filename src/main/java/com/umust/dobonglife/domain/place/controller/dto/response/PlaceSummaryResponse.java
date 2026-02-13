@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.place.controller.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.global.common.Identifiable;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class PlaceSummaryResponse implements Identifiable {
     private double latitude;
     private double longitude;
     private List<String> themes;
+    private BaseStatus status;
 
     public static PlaceSummaryResponse from(Place place, boolean isLiked, List<CourseTheme> themes) {
         return PlaceSummaryResponse.builder()
@@ -40,6 +42,7 @@ public class PlaceSummaryResponse implements Identifiable {
                         themes.stream()
                                 .map(CourseTheme::name)
                                 .toList())
+                .status(place.getStatus())
                 .build();
     }
 
