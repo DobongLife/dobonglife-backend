@@ -38,7 +38,7 @@ public class GoogleAuthService {
         String name = (String) payload.get("name");
         String providerId = payload.getSubject();
 
-        if(userService.isExistByEmail(email, Provider.GOOGLE)){
+        if(userService.isExistByEmail(email)){
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
 

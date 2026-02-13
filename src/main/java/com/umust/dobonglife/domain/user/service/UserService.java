@@ -34,7 +34,7 @@ public class UserService {
 
     @Transactional
     public void signUp(SignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (isExistByEmail(request.getEmail())) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
         if (!"VERIFIED".equals(mailService.getStoredSignUpCode(request.getEmail()))){
@@ -165,8 +165,8 @@ public class UserService {
         byId.setFcmToken(null);
     }
 
-    public boolean isExistByEmail(String email, Provider provider) {
-        return userRepository.existsByEmailAndProvider(email, provider);
+    public boolean isExistByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
 

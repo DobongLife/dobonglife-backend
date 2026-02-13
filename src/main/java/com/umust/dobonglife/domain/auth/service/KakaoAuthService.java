@@ -34,7 +34,7 @@ public class KakaoAuthService {
         String email = userInfo.kakaoAccount().email();
         String name = userInfo.kakaoAccount().profile().nickname();
 
-        if(userService.isExistByEmail(email, Provider.KAKAO)){
+        if(userService.isExistByEmail(email)){
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
 

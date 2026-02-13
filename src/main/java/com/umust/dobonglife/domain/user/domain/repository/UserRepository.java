@@ -18,7 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     long findBalanceById (Long userId);
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
-    boolean existsByEmailAndProvider(String email, Provider provider);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select u from User u where u.id = :userId")
