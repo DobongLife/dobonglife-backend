@@ -47,6 +47,13 @@ public class MailService {
     public void sendMail(MailRequest request) {
         log.info("email={}, isForSignUp={}", request.getEmail(), request.isForSignUp());
 
+        // 이미 존재하는 이메일이면, 메일 전송 취소
+        if(request.isForSignUp()) {
+            if(userRepository.existsByEmail(request.getEmail())) {
+              throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
+            }
+        }
+
         // 비밀번호 변경 시, 존재하지 않는 email이면 에러 처리
         if (!request.isForSignUp()){
             User user = userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL)
