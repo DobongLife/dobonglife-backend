@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.global.common.Identifiable;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 
 import java.util.List;
 
@@ -13,7 +14,8 @@ public record CourseSummaryResponse(
         String subTitle,
         List<String> tags,
         CourseLevel level,
-        boolean liked
+        boolean liked,
+        BaseStatus status
 
 )implements Identifiable{
     public static CourseSummaryResponse of(Course course, boolean liked) {
@@ -24,7 +26,8 @@ public record CourseSummaryResponse(
                 course.getSubTitle(),
                 course.getTags(),
                 course.getLevel(),
-                liked
+                liked,
+                course.getStatus()
         );
     }
 

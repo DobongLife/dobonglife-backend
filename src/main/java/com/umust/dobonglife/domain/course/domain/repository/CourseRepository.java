@@ -14,11 +14,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long>, CourseRepositoryCustom {
-    @Query("SELECT c FROM Course c " +
-            "WHERE (:lastId IS NULL OR c.id < :lastId) " +
-            "ORDER BY c.id DESC")
-    Slice<Course> findCoursesNoOffset(@Param("lastId") Long lastId, Pageable pageable);
 
+
+    @Query("""
+        SELECT c FROM Course c
+        WHERE c.status = "ACTIVE"
+        AND (:lastId IS NULL OR c.id < :lastId)
+        ORDER BY c.id DESC
+        """)
+    Slice<Course> findCoursesNoOffset(@Param("lastId") Long lastId, Pageable pageable);
     // 목록 조회 - description 제외
     @Query("SELECT c FROM Course c")
     Page<Course> findAllForList(Pageable pageable);

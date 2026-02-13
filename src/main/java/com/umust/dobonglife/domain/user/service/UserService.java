@@ -37,7 +37,7 @@ public class UserService {
         if (userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL).isPresent()) {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
-        if (!"VERIFIED".equals(mailService.getStoredSignUpCode(request.getEmail()))){
+        if (!"VERIFIED".equals(mailService.getStoredSignUpCode(request.getEmail()))) {
             throw new BusinessException(ErrorCode.AUTHCODE_UNAUTHORIZED);
         }
         User user = User.builder()

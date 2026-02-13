@@ -237,6 +237,8 @@ public class CourseService {
             throw new BusinessException(ErrorCode.NOT_OWNER);
         }
 
+        course.deactivate();
+
         List<String> imagesToDelete = new ArrayList<>(course.getImageUrls());
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -246,9 +248,6 @@ public class CourseService {
                 }
             }
         });
-
-        coursePlansRepository.deleteByCourseId(courseId);
-        courseRepository.delete(course);
 
         userService.handleDeletion(userId);
 
@@ -263,13 +262,13 @@ public class CourseService {
     }
 
     @Transactional
-    public void updateCourseRatingAndCount(Long courseId, Double rating, String mode) {
+    public void updateCourseRatingAndCount(Long courseId, Double oldRating, Double newRating, String mode) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         if(mode.equals("create")){
-            course.applyNewReview(rating);
+            course.applyNewReview(newRating);
         }else{
-            course.updateRating(rating);
+            course.updateReviewRating(oldRating, newRating);
         }
     }
 
