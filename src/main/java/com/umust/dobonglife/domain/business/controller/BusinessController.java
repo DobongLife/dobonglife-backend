@@ -12,6 +12,7 @@ import com.umust.dobonglife.global.common.response.CursorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,7 @@ public class BusinessController {
     )
     @PostMapping
     public BaseResponse<Void> registerBusiness(@CurrentUserId Long userId,
-                                               @RequestPart(value = "request") BusinessRequest request,
+                                               @Valid @RequestPart(value = "request") BusinessRequest request,
                                                @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles) {
         businessService.registerBusiness(request, userId, imageFiles);
         return BaseResponse.ok(null);
@@ -55,8 +56,7 @@ public class BusinessController {
             description = "사업장 정보 수정에 성공하였습니다."
     )
     @PatchMapping
-    public BaseResponse<BusinessResponse> updateBusiness(
-                                             @RequestPart(value = "request") BusinessUpdateRequest request,
+    public BaseResponse<BusinessResponse> updateBusiness(@Valid @RequestPart(value = "request") BusinessUpdateRequest request,
                                              @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
                                              @CurrentUserId Long userId) {
         return BaseResponse.ok(businessService.updateBusiness(userId, request, imageFiles));
