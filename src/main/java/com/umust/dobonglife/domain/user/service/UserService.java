@@ -86,6 +86,10 @@ public class UserService {
 
     private User createOAuthUserSafely(Provider provider, String providerId, String email, String name) {
         try {
+            if(isExistByEmail(email)){
+                throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
+            }
+
             User user = User.builder()
                     .provider(provider)
                     .providerId(providerId)
