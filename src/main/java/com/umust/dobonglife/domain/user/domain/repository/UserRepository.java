@@ -17,6 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     Optional<User> findByProviderAndProviderId(Provider provider, String providerId);
     long findBalanceById (Long userId);
     Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select u from User u where u.id = :userId")
