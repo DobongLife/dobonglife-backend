@@ -1,0 +1,29 @@
+spring:
+  config:
+    activate:
+      on-profile: swagger-db
+  datasource:
+    url: jdbc:h2:mem:swaggerdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+firebase:
+  adminsdk:
+    account:
+      path: dummy
+      enabled: false

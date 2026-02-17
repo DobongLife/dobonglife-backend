@@ -5,7 +5,8 @@ spring:
     group:
       local: local-db, common
       prod: prod-db, common
-    active: prod
+      swagger: swagger-db, common
+    active: local
 
   config:
     activate:
@@ -60,11 +61,12 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /docs/swagger
+    urls-primary-name: Springdoc
     urls:
       - name: Springdoc
         url: /v3/api-docs
-#      - name: RestDocs
-#        url: /docs/openapi3.json
+      - name: RestDocs
+        url: /docs/openapi3.json
 jwt:
   secret: ${JWT_SECRET_KEY}
   access:

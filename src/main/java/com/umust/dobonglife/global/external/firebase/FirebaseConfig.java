@@ -23,8 +23,16 @@ public class FirebaseConfig {
     @Value("${firebase.adminsdk.account.path}")
     private String firebaseAccountPath;
 
+    @Value("${firebase.adminsdk.account.enabled:true}")
+    private boolean firebaseEnabled;
+
     @PostConstruct
     public void initialize() {
+        if (!firebaseEnabled) {
+            log.info("Firebase 초기화 비활성화 (firebase.adminsdk.account.enabled=false)");
+            return;
+        }
+
         try {
             Resource resource = firebaseAccountPath.startsWith("/") ?
                     new FileSystemResource(firebaseAccountPath) :

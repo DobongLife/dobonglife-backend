@@ -114,7 +114,7 @@ public class PlaceService {
         if(mode.equals("create")){
             place.applyNewReview(rating);
         }else{
-            place.updateRating(rating);
+            //place.applyUpdateReview(rating);
         }
         placeRepository.save(place);
     }
