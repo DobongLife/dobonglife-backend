@@ -27,7 +27,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
     private final FestivalService festivalService;
 
-    @Operation(summary = "일정 등록", description = "일정을 등록합니다.")
+    @Operation(summary = "일정 등록", description = "일정을 등록합니다. 색 enum은 RED, ORANGE, YELLOW, GREEN, BLUE, BROWN, PINK")
     @ApiResponse(
             responseCode = "200",
             description = "일정 등록에 성공하였습니다."

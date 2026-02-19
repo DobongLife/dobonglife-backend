@@ -29,12 +29,6 @@ repositories {
 	mavenCentral()
 }
 
-ext {
-	set('snippetsDir', file("build/generated-snippets"))
-	set('openapiOutDir', file("build/api-spec"))                 // ✅ openapi 산출 고정
-	set('openapiStaticDir', file("build/resources/main/static/docs"))
-}
-
 dependencies {
 	// Spring Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -120,16 +114,15 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.h2database:h2'
 	testRuntimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
 }
 
 ext {
 	set('snippetsDir', file("build/generated-snippets"))
-	// openapi 결과를 한곳에 고정
-	set('openapiOutDir', file("$buildDir/api-spec"))
-	// swagger-ui가 읽을 파일을 static 아래에 두기
-	set('openapiStaticDir', file("$buildDir/resources/main/static/docs"))
+	set('openapiOutDir', file("build/api-spec"))
+	set('openapiStaticDir', file("build/resources/main/static/docs"))
 }
 
 // 2. 테스트 및 asciidoctor 설정
@@ -172,15 +165,57 @@ tasks.register("injectSecurityDefinition") {
 		]
 
 		json.components = json.components ?: [:]
-		json.components.securitySchemes = [
+		json.components.securitySchemes = (json.components.securitySchemes ?: [:]) + [
+				// Access Token: Authorization: Bearer <accessToken>
 				BearerAuth: [
 						type        : "http",
 						scheme      : "bearer",
 						bearerFormat: "JWT"
+				],
+
+				// Refresh Token: Authorization-refresh: Bearer <refreshToken>
+				RefreshAuth: [
+						type: "apiKey",
+						in  : "header",
+						name: "Authorization-refresh"
 				]
 		]
 
 		json.security = [[BearerAuth: []]]
+
+		def publicPaths = [
+				"/api/auth/signup",
+				"/api/auth/login",
+				"/api/users/send-email",
+				"/api/users/mail/check"
+		]
+
+		publicPaths.each { p ->
+			def pathItem = json.paths?.get(p)
+			if (pathItem == null) return
+
+			["post", "get"].each { method ->
+				def op = pathItem[method]
+				if (op != null) {
+					op.security = []
+				}
+			}
+		}
+
+		def refreshOnlyPaths = [
+				"/api/auth/logout",
+				"/api/auth/reissue"
+		]
+
+		refreshOnlyPaths.each { p ->
+			def pathItem = json.paths?.get(p)
+			if (pathItem == null) return
+
+			def op = pathItem["post"]
+			if (op == null) return
+
+			op.security = [[BearerAuth: [], RefreshAuth: []]]
+		}
 
 		f.text = groovy.json.JsonOutput.prettyPrint(
 				groovy.json.JsonOutput.toJson(json)
