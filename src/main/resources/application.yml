@@ -5,8 +5,7 @@ spring:
     group:
       local: local-db, common
       prod: prod-db, common
-      swagger: swagger-db, common
-    active: local
+    active: prod
 
   config:
     activate:
