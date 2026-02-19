@@ -79,37 +79,42 @@ public class Place extends BaseEntity {
     @Column(name = "category", nullable = false)
     private Category category;
 
-    public void applyNewReview(Double newRating) { // TODO: Course 처럼 분리할지 고민
-        double totalScore = (this.averageRating * this.reviewCount) + newRating;
-        this.reviewCount = this.reviewCount + 1;
-        this.averageRating = totalScore / reviewCount;
+    @Builder.Default
+    @Column(name = "rating_sum", nullable = false)
+    private Double ratingSum = 0.0;
+
+    public void applyNewReview(double newRating) {
+        this.ratingSum += newRating;
+        this.reviewCount += 1;
+        recalcAverage();
     }
 
-//    public void applyUpdateReview(double oldRating, double newRating) {
-//        if (reviewCount <= 0) return;
-//        double total = averageRating * reviewCount;
-//        total = total - oldRating + newRating;
-//        averageRating = total / reviewCount;
-//        if (!Double.isFinite(averageRating)) averageRating = 0.0;
-//    }
-
-    public void applyDeleteReview(Double deletedRating) {
-        double totalScore = (this.averageRating * this.reviewCount) - deletedRating;
-
-        long newCount = this.reviewCount - 1;
-
-        // 만약 0개가 될 경우
-        if (newCount <= 0) {
-            this.reviewCount = 0L;
-            this.averageRating = 0.0;
-            return;
+    public void updateReviewRating(double oldRating, double newRating) {
+        if (this.reviewCount <= 0) {
+            throw new IllegalStateException("Cannot update review rating when reviewCount is 0");
         }
+        this.ratingSum = this.ratingSum - oldRating + newRating;
+        recalcAverage();
+    }
 
-        this.reviewCount = newCount;
-        this.averageRating = totalScore / newCount;
+    public void applyDeleteReview(double deletedRating) {
+        if (this.reviewCount <= 0) return;
 
-        if (!Double.isFinite(this.averageRating)) {
+        this.ratingSum -= deletedRating;
+        this.reviewCount = Math.max(0L, this.reviewCount - 1);
+
+        if (this.reviewCount == 0L) {
+            this.ratingSum = 0.0;
+        }
+        recalcAverage();
+    }
+
+    private void recalcAverage() {
+        if (this.reviewCount == 0L) {
             this.averageRating = 0.0;
+        } else {
+            this.averageRating = this.ratingSum / this.reviewCount;
+            if (!Double.isFinite(this.averageRating)) this.averageRating = 0.0;
         }
     }
 

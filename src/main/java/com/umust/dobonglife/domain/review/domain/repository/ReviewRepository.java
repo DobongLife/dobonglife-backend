@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.review.domain.repository.custom.ReviewReposit
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -66,4 +67,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRep
     void deleteByPlaceId(Long placeId);
 
     void deleteByUserId(Long userId);
+
+    @Modifying
+    @Query("UPDATE Review r SET r.user = null WHERE r.user.id = :userId")
+    void setNullByUserId(@Param("userId") Long userId);
 }

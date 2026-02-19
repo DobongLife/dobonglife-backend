@@ -139,16 +139,16 @@ public class ReviewService {
         List<String> imageUrls = getStrings(imageFiles);
 
         if(request.courseId() != null){
-            courseService.updateCourseRatingAndCount(request.courseId(), request.rating(), "create");
+            courseService.updateCourseRatingAndCount(request.courseId(), 0.0, request.newRating(), "create");
         }else {
-            placeService.updatePlaceRatingAndCount(request.placeId(), request.rating(), "create");
+            placeService.updatePlaceRatingAndCount(request.placeId(), 0.0, request.newRating(), "create");
         }
 
         Review review = Review.builder()
                 .courseId(request.courseId())
                 .placeId(request.placeId())
                 .user(userService.findById(userId))
-                .rating(request.rating())
+                .rating(request.newRating())
                 .content(request.content())
                 .imageUrls(imageUrls)
                 .build();
@@ -180,12 +180,12 @@ public class ReviewService {
         List<String> imageUrls = getStrings(imageFiles);
 
         if(request.courseId() != null){
-            courseService.updateCourseRatingAndCount(request.courseId(), request.rating(), "modify");
+            courseService.updateCourseRatingAndCount(request.courseId(), request.oldRating(), request.newRating(), "modify");
         }else {
-            placeService.updatePlaceRatingAndCount(request.placeId(), request.rating(), "modify");
+            placeService.updatePlaceRatingAndCount(request.placeId(), request.oldRating(), request.newRating(), "modify");
         }
 
-        review.update(request.courseId(), request.placeId(), request.rating(), request.content(), imageUrls);
+        review.update(request.courseId(), request.placeId(), request.newRating(), request.content(), imageUrls);
         reviewRepository.save(review);
 
         return ReviewResponse.from(review);
@@ -238,7 +238,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteByUserId(Long userId) {
-        reviewRepository.deleteByUserId(userId);
+    public void setNullByUserId(Long userId) {
+        reviewRepository.setNullByUserId(userId);
     }
 }

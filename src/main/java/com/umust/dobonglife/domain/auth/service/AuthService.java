@@ -75,9 +75,8 @@ public class AuthService {
         String accessToken = jwtUtil.extractAccessToken(request)
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
 
-        Business business = businessService.getBusinessByUser(userId);
-
-        if (business != null) {
+        if (businessService.isBusiness(userId)) {
+            Business business = businessService.getBusinessByUser(userId);
             Place place = business.getPlace();
 
             if (place != null) {
@@ -98,7 +97,7 @@ public class AuthService {
             log.info("=== DB와 메모리 정화 완료. Business 삭제 시도 ===");
             businessService.deleteById(business.getId());
         }
-        reviewService.deleteByUserId(userId);
+        reviewService.setNullByUserId(userId);
         pointService.deleteByUserId(userId);
         couponService.deleteByUserId(userId);
         userService.deleteAccount(userId);
