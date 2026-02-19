@@ -102,7 +102,7 @@ class ScheduleControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Schedule")
+                                    .tag("일정 API")
                                     .summary("일정 등록")
                                     .description("새로운 일정을 등록합니다.")
                                     .requestFields(
@@ -172,7 +172,7 @@ class ScheduleControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Schedule")
+                                    .tag("일정 API")
                                     .summary("월별 일정 조회")
                                     .description("해당 월의 일정 목록을 조회합니다.")
                                     .queryParameters(
@@ -236,7 +236,7 @@ class ScheduleControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Schedule")
+                                    .tag("일정 API")
                                     .summary("일정 수정")
                                     .description("기존 일정을 수정합니다.")
                                     .pathParameters(
@@ -283,7 +283,7 @@ class ScheduleControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Schedule")
+                                    .tag("일정 API")
                                     .summary("일정 삭제")
                                     .description("일정을 삭제합니다.")
                                     .pathParameters(
@@ -334,7 +334,7 @@ class ScheduleControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Schedule")
+                                    .tag("일정 API")
                                     .summary("다가오는 축제 조회")
                                     .description("다가오는 축제 목록을 조회합니다.")
                                     .responseFields(

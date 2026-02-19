@@ -107,7 +107,7 @@ class MyPageControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("MyPage")
+                                            .tag("마이 페이지 API")
                                             .summary("마이페이지 조회")
                                             .description("마이페이지 정보와 포인트 내역을 조회합니다.")
                                             .queryParameters(
@@ -197,7 +197,7 @@ class MyPageControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("MyPage")
+                                            .tag("마이 페이지 API")
                                             .summary("찜한 코스 조회")
                                             .description("찜한 코스 목록을 조회합니다.")
                                             .queryParameters(
@@ -289,7 +289,7 @@ class MyPageControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("MyPage")
+                                            .tag("마이 페이지 API")
                                             .summary("찜한 장소 조회")
                                             .description("찜한 장소 목록을 조회합니다.")
                                             .queryParameters(

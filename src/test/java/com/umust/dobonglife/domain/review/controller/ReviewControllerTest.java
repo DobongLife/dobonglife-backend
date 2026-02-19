@@ -106,7 +106,7 @@ class ReviewControllerTest {
                             ),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Review")
+                                            .tag("리뷰 API")
                                             .summary("리뷰 등록")
                                             .description("코스 또는 장소에 리뷰를 등록합니다.")
                                             .responseFields(
@@ -180,7 +180,7 @@ class ReviewControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Review")
+                                            .tag("리뷰 API")
                                             .summary("코스 리뷰 조회")
                                             .description("코스의 리뷰 목록을 조회합니다.")
                                             .pathParameters(
@@ -277,7 +277,7 @@ class ReviewControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Review")
+                                            .tag("리뷰 API")
                                             .summary("장소 리뷰 조회")
                                             .description("장소의 리뷰 목록을 조회합니다.")
                                             .pathParameters(
@@ -350,7 +350,7 @@ class ReviewControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Review")
+                                            .tag("리뷰 API")
                                             .summary("리뷰 삭제")
                                             .description("리뷰를 삭제합니다.")
                                             .pathParameters(

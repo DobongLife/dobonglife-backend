@@ -123,7 +123,7 @@ class BusinessPromotionControllerTest {
                                     partWithName("imageFiles").description("쿠폰 이미지 파일 목록 (선택)").optional()
                             ),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Business Promotion")
+                                    .tag("비즈니스 쿠폰 API")
                                     .summary("사업장 쿠폰 등록")
                                     .description("사업장 프로모션 쿠폰을 등록합니다.")
                                     .responseFields(
@@ -212,7 +212,7 @@ class BusinessPromotionControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Business Promotion")
+                                    .tag("비즈니스 쿠폰 API")
                                     .summary("사업장 쿠폰 수정")
                                     .description("사업장 프로모션 쿠폰을 수정합니다.")
                                     .pathParameters(
@@ -269,7 +269,7 @@ class BusinessPromotionControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Business Promotion")
+                                    .tag("비즈니스 쿠폰 API")
                                     .summary("프리셋 조회")
                                     .description("쿠폰 등록용 프리셋을 조회합니다.")
                                     .responseFields(

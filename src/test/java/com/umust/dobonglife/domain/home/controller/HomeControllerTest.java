@@ -94,7 +94,7 @@ class HomeControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Home")
+                                            .tag("홈 API")
                                             .summary("홈 화면 조회")
                                             .description("홈 화면의 배너와 프로모션을 조회합니다.")
                                             .queryParameters(

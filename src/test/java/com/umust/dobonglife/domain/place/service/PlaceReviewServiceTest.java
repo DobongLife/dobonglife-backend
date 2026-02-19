@@ -1,11 +1,10 @@
-package com.umust.dobonglife.domain.place;
+package com.umust.dobonglife.domain.place.service;
 
 import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResponse;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceLikeRepository;
 import com.umust.dobonglife.domain.place.domain.repository.PlaceRepository;
-import com.umust.dobonglife.domain.place.service.PlaceReviewService;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.service.ReviewService;
 import com.umust.dobonglife.domain.user.domain.entity.User;

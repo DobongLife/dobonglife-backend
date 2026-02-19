@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.auth;
+package com.umust.dobonglife.domain.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
@@ -95,7 +95,7 @@ class AuthControllerTest {
                         preprocessResponse(prettyPrint()),
                         resource(
                                 ResourceSnippetParameters.builder()
-                                        .tag("Auth")
+                                        .tag("인증 인가 API")
                                         .summary("카카오 로그인")
                                         .description("카카오 Access Token으로 로그인합니다.")
                                         .requestFields(
@@ -146,7 +146,7 @@ class AuthControllerTest {
                         preprocessResponse(prettyPrint()),
                         resource(
                                 ResourceSnippetParameters.builder()
-                                        .tag("Auth")
+                                        .tag("인증 인가 API")
                                         .summary("구글 로그인")
                                         .description("구글 ID Token으로 로그인합니다.")
                                         .requestFields(
@@ -182,7 +182,7 @@ class AuthControllerTest {
                         preprocessResponse(prettyPrint()),
                         resource(
                                 ResourceSnippetParameters.builder()
-                                        .tag("Auth")
+                                        .tag("인증 인가 API")
                                         .summary("로그아웃")
                                         .description("현재 사용자를 로그아웃합니다.")
                                         .responseFields(
@@ -220,7 +220,7 @@ class AuthControllerTest {
                         preprocessResponse(prettyPrint()),
                         resource(
                                 ResourceSnippetParameters.builder()
-                                        .tag("Auth")
+                                        .tag("인증 인가 API")
                                         .summary("토큰 재발급")
                                         .description("Refresh Token으로 Access Token을 재발급합니다.")
                                         .responseFields(

@@ -100,7 +100,7 @@ class PromotionControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Promotion")
+                                    .tag("프로모션 API")
                                     .summary("프로모션 목록 조회")
                                     .description("프로모션 목록을 조회합니다.")
                                     .queryParameters(
@@ -194,7 +194,7 @@ class PromotionControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Promotion")
+                                    .tag("프로모션 API")
                                     .summary("포인트로 쿠폰 발급")
                                     .description("포인트를 사용하여 쿠폰을 발급합니다.")
                                     .pathParameters(

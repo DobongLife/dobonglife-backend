@@ -110,7 +110,7 @@ class CouponControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Coupon")
+                                            .tag("쿠폰 API")
                                             .summary("내 쿠폰 조회")
                                             .description("내 쿠폰 목록과 상태를 조회합니다.")
                                             .queryParameters(
@@ -198,7 +198,7 @@ class CouponControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Coupon")
+                                            .tag("쿠폰 API")
                                             .summary("쿠폰 사용")
                                             .description("쿠폰 코드로 쿠폰을 사용합니다.")
                                             .requestFields(

@@ -43,7 +43,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureRestDocs(outputDir = "build/generated-snippets")
-class UserControllerRestDocsTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -91,7 +91,7 @@ class UserControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("User")
+                                .tag("사용자 API")
                                 .summary("회원가입")
                                 .description("이메일로 회원가입합니다.")
                                 .requestFields(
@@ -137,7 +137,7 @@ class UserControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("User")
+                                .tag("사용자 API")
                                 .summary("회원가입 실패 - 중복 이메일")
                                 .description("중복 이메일로 회원가입 시 에러를 반환합니다.")
                                 .responseFields(
@@ -179,7 +179,7 @@ class UserControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("User")
+                                .tag("사용자 API")
                                 .summary("인증코드 전송")
                                 .description("이메일로 인증코드를 전송합니다.")
                                 .requestFields(
@@ -227,7 +227,7 @@ class UserControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("User")
+                                .tag("사용자 API")
                                 .summary("인증코드 확인")
                                 .description("이메일 인증코드를 확인합니다.")
                                 .requestFields(
@@ -277,7 +277,7 @@ class UserControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("User")
+                                .tag("사용자 API")
                                 .summary("비밀번호 변경")
                                 .description("비밀번호를 변경합니다.")
                                 .requestFields(
@@ -325,7 +325,7 @@ class UserControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("User")
+                                .tag("사용자 API")
                                 .summary("회원 탈퇴")
                                 .description("회원 탈퇴를 진행합니다.")
                                 .responseFields(

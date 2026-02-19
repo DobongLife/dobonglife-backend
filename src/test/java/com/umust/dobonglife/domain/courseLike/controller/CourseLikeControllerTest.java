@@ -73,7 +73,7 @@ class CourseLikeControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Course Like")
+                                            .tag("코스 API")
                                             .summary("코스 찜하기")
                                             .description("코스를 찜하거나 해제합니다.")
                                             .pathParameters(

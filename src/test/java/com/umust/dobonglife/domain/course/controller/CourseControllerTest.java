@@ -102,7 +102,7 @@ class CourseControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Course")
+                                    .tag("코스 API")
                                     .summary("코스 목록 조회")
                                     .description("코스 목록을 조회합니다.")
                                     .queryParameters(
@@ -180,7 +180,7 @@ class CourseControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Course")
+                                    .tag("코스 API")
                                     .summary("코스 상세 조회")
                                     .description("코스 상세 정보와 리뷰를 조회합니다.")
                                     .pathParameters(
@@ -243,7 +243,7 @@ class CourseControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Course")
+                                    .tag("코스 API")
                                     .summary("코스 상세 조회 실패")
                                     .description("존재하지 않는 코스 조회 시 에러를 반환합니다.")
                                     .pathParameters(
@@ -311,7 +311,7 @@ class CourseControllerTest {
                                     partWithName("imageFiles").description("코스 이미지 파일 목록").optional()
                             ),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Course")
+                                    .tag("코스 API")
                                     .summary("코스 등록")
                                     .description("새로운 코스를 등록합니다.")
                                     .responseFields(
@@ -351,7 +351,7 @@ class CourseControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Course")
+                                    .tag("코스 API")
                                     .summary("코스 삭제")
                                     .description("코스를 삭제합니다.")
                                     .pathParameters(
@@ -395,7 +395,7 @@ class CourseControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Course")
+                                    .tag("코스 API")
                                     .summary("내 코스 조회")
                                     .description("내가 등록한 코스 목록을 조회합니다.")
                                     .queryParameters(
@@ -448,7 +448,7 @@ class CourseControllerTest {
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
-                                    .tag("Course")
+                                    .tag("코스 API")
                                     .summary("테마별 코스 조회")
                                     .description("테마별 코스 목록을 조회합니다.")
                                     .queryParameters(

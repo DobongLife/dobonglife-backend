@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.business;
+package com.umust.dobonglife.domain.business.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.business.controller.dto.response.BusinessPromotionResponse;
@@ -110,7 +110,7 @@ public class BusinessControllerTest {
                         ),
                         resource(
                                 ResourceSnippetParameters.builder()
-                                        .tag("Business")
+                                        .tag("사업자 API")
                                         .summary("사업장 등록")
                                         .description("사업장 정보를 등록합니다.")
                                         .responseFields(
@@ -166,7 +166,7 @@ public class BusinessControllerTest {
                         preprocessResponse(prettyPrint()),
                         resource(
                                 ResourceSnippetParameters.builder()
-                                        .tag("Business")
+                                        .tag("사업자 API")
                                         .summary("사업장 조회")
                                         .description("사업장 정보를 조회합니다.")
                                         .responseFields(
@@ -237,7 +237,7 @@ public class BusinessControllerTest {
                         preprocessResponse(prettyPrint()),
                         resource(
                                 ResourceSnippetParameters.builder()
-                                        .tag("Business")
+                                        .tag("사업자 API")
                                         .summary("사업장 프로모션 목록 조회")
                                         .description("사업장의 프로모션 목록을 조회합니다.")
                                         .queryParameters(

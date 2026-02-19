@@ -92,7 +92,7 @@ class NotificationControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Notification")
+                                            .tag("알림 API")
                                             .summary("알림 목록 조회")
                                             .description("알림 목록을 필터별로 조회합니다.")
                                             .queryParameters(
@@ -177,7 +177,7 @@ class NotificationControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Notification")
+                                            .tag("알림 API")
                                             .summary("새 알림 확인")
                                             .description("새로운 알림이 있는지 확인합니다.")
                                             .build()
@@ -216,7 +216,7 @@ class NotificationControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Notification")
+                                            .tag("알림 API")
                                             .summary("알림 읽음 처리")
                                             .description("알림을 읽음 처리합니다.")
                                             .pathParameters(
@@ -246,7 +246,7 @@ class NotificationControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Notification")
+                                            .tag("알림 API")
                                             .summary("알림 설정 변경")
                                             .description("알림 수신 설정을 변경합니다.")
                                             .queryParameters(

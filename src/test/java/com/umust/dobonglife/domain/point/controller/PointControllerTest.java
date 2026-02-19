@@ -95,7 +95,7 @@ class PointControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Point")
+                                            .tag("포인트 API")
                                             .summary("쿠폰 첫화면 조회")
                                             .description("포인트와 프로모션(광고)를 조회합니다.")
                                             .queryParameters(
@@ -217,7 +217,7 @@ class PointControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("Point")
+                                            .tag("포인트 API")
                                             .summary("포인트 내역 조회")
                                             .description("포인트 내역과 포인트 가이드를 조회합니다.")
                                             .queryParameters(

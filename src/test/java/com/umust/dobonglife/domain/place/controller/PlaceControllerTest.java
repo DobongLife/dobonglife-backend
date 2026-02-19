@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.place;
+package com.umust.dobonglife.domain.place.controller;
 
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceDetailResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryListResponse;
@@ -45,7 +45,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureRestDocs(outputDir = "build/generated-snippets")
-class PlaceControllerRestDocsTest {
+class PlaceControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -82,7 +82,7 @@ class PlaceControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("Place")
+                                .tag("장소 API")
                                 .summary("장소 좋아요")
                                 .description("장소를 좋아요하거나 해제합니다.")
                                 .pathParameters(
@@ -137,7 +137,7 @@ class PlaceControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("Place")
+                                .tag("장소 API")
                                 .summary("찜한 장소 목록 조회")
                                 .description("내가 찜한 장소 목록을 조회합니다.")
                                 .queryParameters(
@@ -206,7 +206,7 @@ class PlaceControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("Place")
+                                .tag("장소 API")
                                 .summary("찜한 장소 목록 커서 조회")
                                 .description("커서 기반으로 찜한 장소 목록을 조회합니다.")
                                 .queryParameters(
@@ -272,7 +272,7 @@ class PlaceControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("Place")
+                                .tag("장소 API")
                                 .summary("장소 상세 조회")
                                 .description("장소 상세 정보와 리뷰를 조회합니다.")
                                 .pathParameters(
@@ -337,7 +337,7 @@ class PlaceControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("Place")
+                                .tag("장소 API")
                                 .summary("장소 상세 조회 실패")
                                 .description("존재하지 않는 장소 조회 시 에러를 반환합니다.")
                                 .pathParameters(
@@ -402,7 +402,7 @@ class PlaceControllerRestDocsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
-                                .tag("Place")
+                                .tag("장소 API")
                                 .summary("전체 장소 조회")
                                 .description("전체 장소 목록을 조회합니다.")
                                 .responseFields(

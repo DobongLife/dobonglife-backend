@@ -83,7 +83,7 @@ class AppPolicyControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(
                                     ResourceSnippetParameters.builder()
-                                            .tag("App Policy")
+                                            .tag("이용약관 API")
                                             .summary("앱 정책 조회")
                                             .description("앱 정책 및 알림 설정을 조회합니다.")
                                             .responseFields(
