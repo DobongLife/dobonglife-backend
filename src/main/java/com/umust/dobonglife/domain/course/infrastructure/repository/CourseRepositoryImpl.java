@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.umust.dobonglife.global.common.model.BaseStatus;
+
 import static com.umust.dobonglife.domain.course.domain.entity.QCourse.course;
 import static com.umust.dobonglife.domain.courseLike.domain.entity.QCourseLike.courseLike;
 
@@ -34,7 +36,10 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
         return queryFactory
                 .selectDistinct(course)
                 .from(course)
-                .where(course.themes.any().eq(theme))
+                .where(
+                        course.status.eq(BaseStatus.ACTIVE),
+                        course.themes.any().eq(theme)
+                )
                 .orderBy(course.id.desc())
                 .fetch();
     }
@@ -45,7 +50,10 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
         return queryFactory
                 .selectDistinct(course)
                 .from(course)
-                .where(course.themes.contains(theme))
+                .where(
+                        course.status.eq(BaseStatus.ACTIVE),
+                        course.themes.contains(theme)
+                )
                 .orderBy(course.id.desc())
                 .limit(3)
                 .fetch();
@@ -58,6 +66,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .from(course)
                 .join(courseLike).on(courseLike.courseId.eq(course.id))
                 .where(
+                        course.status.eq(BaseStatus.ACTIVE),
                         courseLike.userId.eq(userId),
                         ltCourseId(lastId)
                 )

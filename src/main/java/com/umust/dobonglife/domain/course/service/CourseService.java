@@ -230,7 +230,7 @@ public class CourseService {
 
     @Transactional
     public CourseDeleteResponse deleteCourse(Long userId, Long courseId) {
-        Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findActiveById(courseId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_COURSE_ID));
 
         if (!userService.validateOwner(userId, course.getUserId())) {
@@ -263,7 +263,7 @@ public class CourseService {
 
     @Transactional
     public void updateCourseRatingAndCount(Long courseId, Double oldRating, Double newRating, String mode) {
-        Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findActiveById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         if(mode.equals("create")){
             course.applyNewReview(newRating);
@@ -274,7 +274,7 @@ public class CourseService {
 
     @Transactional
     public void deleteCourseReview(Long userId, Long courseId, Double rating) {
-        Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findActiveById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Course 엔티티를 찾을 수 없습니다: " + courseId));
         course.deleteReview(rating);
     }

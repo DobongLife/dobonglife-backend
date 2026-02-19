@@ -23,20 +23,26 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseRep
         ORDER BY c.id DESC
         """)
     Slice<Course> findCoursesNoOffset(@Param("lastId") Long lastId, Pageable pageable);
+
     // 목록 조회 - description 제외
-    @Query("SELECT c FROM Course c")
+    @Query("SELECT c FROM Course c WHERE c.status = 'ACTIVE'")
     Page<Course> findAllForList(Pageable pageable);
 
     // 상세 조회 - description 포함
     @Query("SELECT c FROM Course c " +
             "LEFT JOIN FETCH c.description " +
-            "WHERE c.id = :id")
+            "WHERE c.id = :id AND c.status = 'ACTIVE'")
     Optional<Course> findByIdWithDescription(@Param("id") Long id);
+
+    // ID 단건 조회 (ACTIVE만)
+    @Query("SELECT c FROM Course c WHERE c.id = :id AND c.status = 'ACTIVE'")
+    Optional<Course> findActiveById(@Param("id") Long id);
 
     // 테마별 조회 - description 제외
     @Query("SELECT c FROM Course c " +
             "JOIN c.themes t " +
             "WHERE t = :theme " +
+            "AND c.status = 'ACTIVE' " +
             "AND (:lastId IS NULL OR c.id < :lastId) " +
             "ORDER BY c.id DESC")
     Slice<Course> findByThemeNoOffset(
@@ -47,9 +53,11 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseRep
 
     @Query("SELECT c FROM Course c " +
             "WHERE c.userId = :userId " +
+            "AND c.status = 'ACTIVE' " +
             "AND (:lastId IS NULL OR c.id < :lastId) " +
             "ORDER BY c.id DESC")
     Slice<Course> findMyCoursesNoOffset(Long userId, Long lastId, Pageable pageable);
 
-    Long countByUserId(Long userId);
+    @Query("SELECT COUNT(c) FROM Course c WHERE c.userId = :userId AND c.status = 'ACTIVE'")
+    Long countByUserId(@Param("userId") Long userId);
 }
