@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.course.domain.constant.CourseTheme;
 import com.umust.dobonglife.domain.course.service.CourseReviewService;
 import com.umust.dobonglife.domain.course.service.CourseService;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -72,7 +73,8 @@ class CourseControllerTest {
                 "테스트 부제목",
                 List.of("역사"),
                 CourseLevel.BEGINNER,
-                false
+                false,
+                BaseStatus.ACTIVE
         );
         return new CursorResponse<>(List.of(summary), 1L, false);
     }
