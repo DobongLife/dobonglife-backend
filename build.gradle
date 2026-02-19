@@ -173,15 +173,57 @@ tasks.register("injectSecurityDefinition") {
 		]
 
 		json.components = json.components ?: [:]
-		json.components.securitySchemes = [
+		json.components.securitySchemes = (json.components.securitySchemes ?: [:]) + [
+				// Access Token: Authorization: Bearer <accessToken>
 				BearerAuth: [
 						type        : "http",
 						scheme      : "bearer",
 						bearerFormat: "JWT"
+				],
+
+				// Refresh Token: Authorization-refresh: Bearer <refreshToken>
+				RefreshAuth: [
+						type: "apiKey",
+						in  : "header",
+						name: "Authorization-refresh"
 				]
 		]
 
 		json.security = [[BearerAuth: []]]
+
+		def publicPaths = [
+				"/api/auth/signup",
+				"/api/auth/login",
+				"/api/users/send-email",
+				"/api/users/mail/check"
+		]
+
+		publicPaths.each { p ->
+			def pathItem = json.paths?.get(p)
+			if (pathItem == null) return
+
+			["post", "get"].each { method ->
+				def op = pathItem[method]
+				if (op != null) {
+					op.security = []
+				}
+			}
+		}
+
+		def refreshOnlyPaths = [
+				"/api/auth/logout",
+				"/api/auth/reissue"
+		]
+
+		refreshOnlyPaths.each { p ->
+			def pathItem = json.paths?.get(p)
+			if (pathItem == null) return
+
+			def op = pathItem["post"]
+			if (op == null) return
+
+			op.security = [[BearerAuth: [], RefreshAuth: []]]
+		}
 
 		f.text = groovy.json.JsonOutput.prettyPrint(
 				groovy.json.JsonOutput.toJson(json)
