@@ -125,6 +125,104 @@ public class BusinessControllerTest {
     }
 
     // =========================================================================
+    // PATCH /api/business - 사업장 수정
+    // =========================================================================
+    @Test
+    @DisplayName("사업장 수정 - 성공")
+    @WithMockCustomUser
+    void updateBusiness_success() throws Exception {
+        BusinessResponse response = BusinessResponse.builder()
+                .businessId(1L)
+                .businessNumber("2198701322")
+                .email("updated@example.com")
+                .managerName("이강파")
+                .userId(1L)
+                .placeId(10L)
+                .placeName("도봉 카페")
+                .subName("도봉구 최고의 명소입니다.")
+                .content("서울특별시 도봉구 마들로")
+                .address("서울 도봉구 도봉로 123")
+                .contact("02-123-4567")
+                .operatingHour("평일 09:00 ~ 18:00")
+                .latitude(37.6898)
+                .longitude(127.0472)
+                .thumbnailUrl("https://example.com/thumb.jpg")
+                .imageUrls(List.of("https://example.com/img1.jpg"))
+                .category("카페")
+                .themes(List.of(CourseTheme.NATURE))
+                .build();
+
+        given(businessService.updateBusiness(any(), any(), any())).willReturn(response);
+
+        String requestJson = """
+                {
+                    "businessName": "(주)유머스트알엔디",
+                    "subName": "도봉구 최고의 명소입니다.",
+                    "content": "서울특별시 도봉구 마들로",
+                    "contact": "02-123-4567",
+                    "email": "updated@example.com",
+                    "operatingHour": "평일 09:00 ~ 18:00",
+                    "managerName": "이강파",
+                    "category": "CAFE"
+                }
+                """;
+
+        MockMultipartFile requestPart = new MockMultipartFile(
+                "request", "", MediaType.APPLICATION_JSON_VALUE, requestJson.getBytes());
+        MockMultipartFile imagePart = new MockMultipartFile(
+                "imageFiles", "updated.jpg", MediaType.IMAGE_JPEG_VALUE, "image-data".getBytes());
+
+        mockMvc.perform(multipart("/api/business")
+                        .file(requestPart)
+                        .file(imagePart)
+                        .with(request -> { request.setMethod("PATCH"); return request; })
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.businessId").value(1))
+                .andExpect(jsonPath("$.data.email").value("updated@example.com"))
+                .andDo(print())
+                .andDo(document("business-update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("request").description("사업장 수정 요청 JSON (businessName, subName, content, contact, email, operatingHour, managerName, category)"),
+                                partWithName("imageFiles").description("사업장 이미지 파일 목록").optional()
+                        ),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("사업자 API")
+                                        .summary("사업장 수정")
+                                        .description("사업장 정보를 수정합니다.")
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data.businessId").type(JsonFieldType.NUMBER).description("사업장 ID"),
+                                                fieldWithPath("data.businessNumber").type(JsonFieldType.STRING).description("사업자등록번호"),
+                                                fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
+                                                fieldWithPath("data.managerName").type(JsonFieldType.STRING).description("대표자 이름"),
+                                                fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                                                fieldWithPath("data.placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                                fieldWithPath("data.placeName").type(JsonFieldType.STRING).description("장소명"),
+                                                fieldWithPath("data.subName").type(JsonFieldType.STRING).description("장소 부제"),
+                                                fieldWithPath("data.content").type(JsonFieldType.STRING).description("사업장 소개"),
+                                                fieldWithPath("data.address").type(JsonFieldType.STRING).description("주소"),
+                                                fieldWithPath("data.contact").type(JsonFieldType.STRING).description("전화번호"),
+                                                fieldWithPath("data.operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
+                                                fieldWithPath("data.latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                                fieldWithPath("data.longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                                fieldWithPath("data.thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
+                                                fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                                fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
+                                                fieldWithPath("data.themes").type(JsonFieldType.ARRAY).description("테마 목록")
+                                        )
+                                        .build()
+                        )
+                ));
+    }
+
+    // =========================================================================
     // GET /api/business - 사업장 정보 조회
     // =========================================================================
     @Test

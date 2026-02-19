@@ -329,6 +329,76 @@ class CourseControllerTest {
     }
 
     // =========================================================================
+    // PATCH /api/course/{courseId} - 코스 수정
+    // =========================================================================
+    @Nested
+    @DisplayName("PATCH /api/course/{courseId} - 코스 수정")
+    class UpdateCourse {
+
+        @Test
+        @WithMockCustomUser
+        @DisplayName("코스 수정 성공 200")
+        void success() throws Exception {
+            CourseRegisterResponse response = new CourseRegisterResponse(1L, "수정된 코스", LocalDateTime.now(), 0L);
+
+            given(courseService.updateCourse(any(), eq(1L), any(), any()))
+                    .willReturn(response);
+
+            String requestJson = """
+                    {
+                        "title": "수정된 도봉구 역사 탐방 코스",
+                        "subTitle": "도봉구의 숨겨진 역사를 찾아서",
+                        "themes": ["HISTORY", "CULTURE"],
+                        "duration": 180,
+                        "level": "INTERMEDIATE",
+                        "tags": ["역사", "문화"],
+                        "content": "도봉구의 역사적 장소를 둘러보는 수정된 코스입니다.",
+                        "highlights": ["조선시대 유적 탐방", "전통 시장 체험"],
+                        "plans": [{"placeId": 1, "order": 1, "title": "도봉서원 방문", "content": "조선시대 서원 탐방"}]
+                    }
+                    """;
+
+            MockMultipartFile requestPart = new MockMultipartFile(
+                    "request", "", MediaType.APPLICATION_JSON_VALUE, requestJson.getBytes());
+            MockMultipartFile imagePart = new MockMultipartFile(
+                    "imageFiles", "updated.jpg", MediaType.IMAGE_JPEG_VALUE, "image-data".getBytes());
+
+            mockMvc.perform(multipart("/api/course/{courseId}", 1L)
+                            .file(requestPart)
+                            .file(imagePart)
+                            .with(request -> { request.setMethod("PATCH"); return request; })
+                            .contentType(MediaType.MULTIPART_FORM_DATA))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.data.courseId").value(1))
+                    .andExpect(jsonPath("$.data.title").value("수정된 코스"))
+                    .andDo(print())
+                    .andDo(document("course-update",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestParts(
+                                    partWithName("request").description("코스 수정 요청 JSON (title, subTitle, urlsToDelete, themes, duration, level, tags, content, highlights, plans)"),
+                                    partWithName("imageFiles").description("코스 이미지 파일 목록").optional()
+                            ),
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("코스 API")
+                                    .summary("코스 수정")
+                                    .description("코스를 수정합니다.")
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
+                                            fieldWithPath("data.title").type(JsonFieldType.STRING).description("코스 제목"),
+                                            fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 일시"),
+                                            fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("적립 포인트")
+                                    )
+                                    .build())
+                    ));
+        }
+    }
+
+    // =========================================================================
     // DELETE /api/course/{courseId} - 코스 삭제
     // =========================================================================
     @Nested
