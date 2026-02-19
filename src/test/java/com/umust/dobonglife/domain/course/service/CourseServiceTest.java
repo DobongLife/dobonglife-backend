@@ -411,7 +411,7 @@ class CourseServiceTest {
                 Long courseId = 1L;
                 Course course = createTestCourse(courseId);
 
-                given(courseRepository.findById(courseId)).willReturn(Optional.of(course));
+                given(courseRepository.findActiveById(courseId)).willReturn(Optional.of(course));
                 given(userService.validateOwner(userId, course.getUserId())).willReturn(true);
 
                 // when
@@ -431,7 +431,7 @@ class CourseServiceTest {
             Long courseId = 1L;
             Course course = createTestCourse(courseId);
 
-            given(courseRepository.findById(courseId)).willReturn(Optional.of(course));
+            given(courseRepository.findActiveById(courseId)).willReturn(Optional.of(course));
             given(userService.validateOwner(userId, course.getUserId())).willReturn(false);
 
             // when & then
@@ -445,7 +445,7 @@ class CourseServiceTest {
         @DisplayName("존재하지 않는 코스 삭제 시 INVALID_COURSE_ID 예외")
         void courseNotFound() {
             // given
-            given(courseRepository.findById(99L)).willReturn(Optional.empty());
+            given(courseRepository.findActiveById(99L)).willReturn(Optional.empty());
 
             // when & then
             assertThatThrownBy(() -> courseService.deleteCourse(1L, 99L))
@@ -466,7 +466,7 @@ class CourseServiceTest {
             Long courseId = 1L;
             Course course = createTestCourse(courseId);
 
-            given(courseRepository.findById(courseId)).willReturn(Optional.of(course));
+            given(courseRepository.findActiveById(courseId)).willReturn(Optional.of(course));
 
             // when
             courseService.updateCourseRatingAndCount(courseId, 0.0, 5.0, "create");
@@ -482,7 +482,7 @@ class CourseServiceTest {
             Long courseId = 1L;
             Course course = createTestCourse(courseId);
 
-            given(courseRepository.findById(courseId)).willReturn(Optional.of(course));
+            given(courseRepository.findActiveById(courseId)).willReturn(Optional.of(course));
 
             // when
             courseService.updateCourseRatingAndCount(courseId, 4.0, 3.0, "modify");
@@ -503,7 +503,7 @@ class CourseServiceTest {
             Long courseId = 1L;
             Course course = createTestCourse(courseId);
 
-            given(courseRepository.findById(courseId)).willReturn(Optional.of(course));
+            given(courseRepository.findActiveById(courseId)).willReturn(Optional.of(course));
 
             // when
             courseService.deleteCourseReview(1L, courseId, 4.0);
