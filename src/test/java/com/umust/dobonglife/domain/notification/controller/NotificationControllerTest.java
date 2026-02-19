@@ -179,7 +179,7 @@ class NotificationControllerTest {
                                     ResourceSnippetParameters.builder()
                                             .tag("알림 API")
                                             .summary("새 알림 확인")
-                                            .description("새로운 알림이 있는지 확인합니다.")
+                                            .description("새로운 알림이 있으면 true가 반환됩니다.")
                                             .build()
                             )
                     ));

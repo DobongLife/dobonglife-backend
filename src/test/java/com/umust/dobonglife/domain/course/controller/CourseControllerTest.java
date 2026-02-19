@@ -449,8 +449,8 @@ class CourseControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
                                     .tag("코스 API")
-                                    .summary("테마별 코스 조회")
-                                    .description("테마별 코스 목록을 조회합니다.")
+                                    .summary("주간 테마별 코스 조회")
+                                    .description("주간테마별 코스를 조회합니다. theme은 영어로 보내주시면 됩니다. (예시: HISTORY)")
                                     .queryParameters(
                                             parameterWithName("theme").description("테마 (HISTORY, NATURE, CULTURE 등)"),
                                             parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),

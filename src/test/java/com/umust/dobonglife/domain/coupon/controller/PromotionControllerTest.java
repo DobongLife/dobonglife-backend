@@ -195,7 +195,7 @@ class PromotionControllerTest {
                             preprocessResponse(prettyPrint()),
                             resource(ResourceSnippetParameters.builder()
                                     .tag("프로모션 API")
-                                    .summary("포인트로 쿠폰 발급")
+                                    .summary("쿠폰 발급(포인트 교환)")
                                     .description("포인트를 사용하여 쿠폰을 발급합니다.")
                                     .pathParameters(
                                             parameterWithName("promotionId").description("프로모션 ID")

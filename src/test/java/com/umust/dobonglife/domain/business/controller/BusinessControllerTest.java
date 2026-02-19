@@ -112,7 +112,7 @@ public class BusinessControllerTest {
                                 ResourceSnippetParameters.builder()
                                         .tag("사업자 API")
                                         .summary("사업장 등록")
-                                        .description("사업장 정보를 등록합니다.")
+                                        .description("카테고리는 다음과 같습니다. RESTAURANT, CAFE, SHOPPING, MEDICAL_IT, BEAUTY, FITNESS, EXPERIENCE, ETC")
                                         .responseFields(
                                                 fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
                                                 fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
@@ -167,7 +167,7 @@ public class BusinessControllerTest {
                         resource(
                                 ResourceSnippetParameters.builder()
                                         .tag("사업자 API")
-                                        .summary("사업장 조회")
+                                        .summary("사업장 정보 조회")
                                         .description("사업장 정보를 조회합니다.")
                                         .responseFields(
                                                 fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
