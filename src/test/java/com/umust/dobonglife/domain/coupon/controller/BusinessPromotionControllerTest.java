@@ -44,6 +44,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -120,19 +122,25 @@ class BusinessPromotionControllerTest {
                                     partWithName("request").description("쿠폰 등록 요청 JSON"),
                                     partWithName("imageFiles").description("쿠폰 이미지 파일 목록 (선택)").optional()
                             ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
-                                    fieldWithPath("data.couponName").type(JsonFieldType.STRING).description("쿠폰 이름"),
-                                    fieldWithPath("data.code").type(JsonFieldType.STRING).description("쿠폰 코드"),
-                                    fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("필요 포인트"),
-                                    fieldWithPath("data.discountType").type(JsonFieldType.STRING).description("할인 유형 (PERCENT, AMOUNT)"),
-                                    fieldWithPath("data.discountValue").type(JsonFieldType.NUMBER).description("할인 값"),
-                                    fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("시작일"),
-                                    fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("종료일"),
-                                    fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록")
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Business Promotion")
+                                    .summary("사업장 쿠폰 등록")
+                                    .description("사업장 프로모션 쿠폰을 등록합니다.")
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
+                                            fieldWithPath("data.couponName").type(JsonFieldType.STRING).description("쿠폰 이름"),
+                                            fieldWithPath("data.code").type(JsonFieldType.STRING).description("쿠폰 코드"),
+                                            fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("필요 포인트"),
+                                            fieldWithPath("data.discountType").type(JsonFieldType.STRING).description("할인 유형 (PERCENT, AMOUNT)"),
+                                            fieldWithPath("data.discountValue").type(JsonFieldType.NUMBER).description("할인 값"),
+                                            fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("시작일"),
+                                            fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("종료일"),
+                                            fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록")
+                                    )
+                                    .build()
                             )
                     ));
         }
@@ -203,21 +211,27 @@ class BusinessPromotionControllerTest {
                     .andDo(document("business-promotion-update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("promotionId").description("수정할 프로모션 ID")
-                            ),
-                            requestFields(
-                                    fieldWithPath("couponName").type(JsonFieldType.STRING).description("쿠폰 이름"),
-                                    fieldWithPath("couponDescription").type(JsonFieldType.STRING).description("쿠폰 설명"),
-                                    fieldWithPath("totalQuantity").type(JsonFieldType.NUMBER).description("총 수량")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.couponName").type(JsonFieldType.STRING).description("쿠폰 이름"),
-                                    fieldWithPath("data.couponDescription").type(JsonFieldType.STRING).description("쿠폰 설명"),
-                                    fieldWithPath("data.totalQuantity").type(JsonFieldType.NUMBER).description("총 수량")
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Business Promotion")
+                                    .summary("사업장 쿠폰 수정")
+                                    .description("사업장 프로모션 쿠폰을 수정합니다.")
+                                    .pathParameters(
+                                            parameterWithName("promotionId").description("수정할 프로모션 ID")
+                                    )
+                                    .requestFields(
+                                            fieldWithPath("couponName").type(JsonFieldType.STRING).description("쿠폰 이름"),
+                                            fieldWithPath("couponDescription").type(JsonFieldType.STRING).description("쿠폰 설명"),
+                                            fieldWithPath("totalQuantity").type(JsonFieldType.NUMBER).description("총 수량")
+                                    )
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.couponName").type(JsonFieldType.STRING).description("쿠폰 이름"),
+                                            fieldWithPath("data.couponDescription").type(JsonFieldType.STRING).description("쿠폰 설명"),
+                                            fieldWithPath("data.totalQuantity").type(JsonFieldType.NUMBER).description("총 수량")
+                                    )
+                                    .build()
                             )
                     ));
         }
@@ -254,22 +268,28 @@ class BusinessPromotionControllerTest {
                     .andDo(document("business-promotion-preset",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("프리셋 ID"),
-                                    fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
-                                    fieldWithPath("data.couponDescription").type(JsonFieldType.STRING).description("쿠폰 설명"),
-                                    fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("필요 포인트"),
-                                    fieldWithPath("data.img").type(JsonFieldType.STRING).description("프리셋 이미지 URL"),
-                                    fieldWithPath("data.discountType").type(JsonFieldType.STRING).description("할인 유형 (PERCENT, AMOUNT)"),
-                                    fieldWithPath("data.discountValue").type(JsonFieldType.NUMBER).description("할인 값"),
-                                    fieldWithPath("data.minPurchaseAmount").type(JsonFieldType.NUMBER).description("최소 구매 금액"),
-                                    fieldWithPath("data.maxDiscountAmount").type(JsonFieldType.NUMBER).description("최대 할인 금액"),
-                                    fieldWithPath("data.validityDays").type(JsonFieldType.NUMBER).description("유효 기간 (일)"),
-                                    fieldWithPath("data.issueStartDate").type(JsonFieldType.STRING).description("발행 시작일"),
-                                    fieldWithPath("data.issueEndDate").type(JsonFieldType.STRING).description("발행 종료일")
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Business Promotion")
+                                    .summary("프리셋 조회")
+                                    .description("쿠폰 등록용 프리셋을 조회합니다.")
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("프리셋 ID"),
+                                            fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
+                                            fieldWithPath("data.couponDescription").type(JsonFieldType.STRING).description("쿠폰 설명"),
+                                            fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("필요 포인트"),
+                                            fieldWithPath("data.img").type(JsonFieldType.STRING).description("프리셋 이미지 URL"),
+                                            fieldWithPath("data.discountType").type(JsonFieldType.STRING).description("할인 유형 (PERCENT, AMOUNT)"),
+                                            fieldWithPath("data.discountValue").type(JsonFieldType.NUMBER).description("할인 값"),
+                                            fieldWithPath("data.minPurchaseAmount").type(JsonFieldType.NUMBER).description("최소 구매 금액"),
+                                            fieldWithPath("data.maxDiscountAmount").type(JsonFieldType.NUMBER).description("최대 할인 금액"),
+                                            fieldWithPath("data.validityDays").type(JsonFieldType.NUMBER).description("유효 기간 (일)"),
+                                            fieldWithPath("data.issueStartDate").type(JsonFieldType.STRING).description("발행 시작일"),
+                                            fieldWithPath("data.issueEndDate").type(JsonFieldType.STRING).description("발행 종료일")
+                                    )
+                                    .build()
                             )
                     ));
         }

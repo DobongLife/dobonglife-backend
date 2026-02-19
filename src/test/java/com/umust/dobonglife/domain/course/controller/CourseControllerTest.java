@@ -40,6 +40,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -99,25 +101,30 @@ class CourseControllerTest {
                     .andDo(document("course-list",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("코스 목록"),
-                                    fieldWithPath("data.content[].courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
-                                    fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                    fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("코스 제목"),
-                                    fieldWithPath("data.content[].subTitle").type(JsonFieldType.STRING).description("코스 부제목"),
-                                    fieldWithPath("data.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
-                                    fieldWithPath("data.content[].level").type(JsonFieldType.STRING).description("난이도 (BEGINNER, INTERMEDIATE, ADVANCED)"),
-                                    fieldWithPath("data.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
-                                    fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
-                                    fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
-                            )
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Course")
+                                    .summary("코스 목록 조회")
+                                    .description("코스 목록을 조회합니다.")
+                                    .queryParameters(
+                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
+                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
+                                    )
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("코스 목록"),
+                                            fieldWithPath("data.content[].courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
+                                            fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                            fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("코스 제목"),
+                                            fieldWithPath("data.content[].subTitle").type(JsonFieldType.STRING).description("코스 부제목"),
+                                            fieldWithPath("data.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
+                                            fieldWithPath("data.content[].level").type(JsonFieldType.STRING).description("난이도 (BEGINNER, INTERMEDIATE, ADVANCED)"),
+                                            fieldWithPath("data.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                            fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
+                                            fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                    )
+                                    .build())
                     ));
         }
     }
@@ -172,47 +179,52 @@ class CourseControllerTest {
                     .andDo(document("course-detail",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("courseId").description("코스 고유 ID")
-                            ),
-                            queryParameters(
-                                    parameterWithName("lastId").optional().description("리뷰 커서 - 마지막 리뷰 ID (첫 요청 시 생략)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("코스 ID"),
-                                    fieldWithPath("data.userInfo.isRemoved").type(JsonFieldType.BOOLEAN).description("삭제된 코스 여부"),
-                                    fieldWithPath("data.userInfo.liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
-                                    fieldWithPath("data.basicInfo.title").type(JsonFieldType.STRING).description("코스 제목"),
-                                    fieldWithPath("data.basicInfo.subTitle").type(JsonFieldType.STRING).description("코스 부제목"),
-                                    fieldWithPath("data.basicInfo.duration").type(JsonFieldType.NUMBER).description("소요 시간 (분)"),
-                                    fieldWithPath("data.basicInfo.level").type(JsonFieldType.STRING).description("난이도"),
-                                    fieldWithPath("data.basicInfo.themes").type(JsonFieldType.ARRAY).description("테마 목록"),
-                                    fieldWithPath("data.basicInfo.tags").type(JsonFieldType.ARRAY).description("태그 목록"),
-                                    fieldWithPath("data.descriptionInfo.content").type(JsonFieldType.STRING).description("상세 설명"),
-                                    fieldWithPath("data.descriptionInfo.highlights").type(JsonFieldType.ARRAY).description("하이라이트 목록"),
-                                    fieldWithPath("data.reviewSummary.rating").type(JsonFieldType.NUMBER).description("평균 평점"),
-                                    fieldWithPath("data.reviewSummary.count").type(JsonFieldType.NUMBER).description("리뷰 수"),
-                                    fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("코스 이미지 URL 목록"),
-                                    fieldWithPath("data.plans[]").type(JsonFieldType.ARRAY).description("코스 계획 목록"),
-                                    fieldWithPath("data.plans[].id").type(JsonFieldType.NUMBER).description("계획 ID"),
-                                    fieldWithPath("data.plans[].order").type(JsonFieldType.NUMBER).description("순서"),
-                                    fieldWithPath("data.plans[].placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
-                                    fieldWithPath("data.plans[].title").type(JsonFieldType.STRING).description("계획 제목"),
-                                    fieldWithPath("data.plans[].content").type(JsonFieldType.STRING).description("계획 내용"),
-                                    fieldWithPath("data.reviews.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
-                                    fieldWithPath("data.reviews.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
-                                    fieldWithPath("data.reviews.content[].name").type(JsonFieldType.STRING).description("작성자 이름"),
-                                    fieldWithPath("data.reviews.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
-                                    fieldWithPath("data.reviews.content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                    fieldWithPath("data.reviews.content[].imageUrls").type(JsonFieldType.ARRAY).description("리뷰 이미지 URL"),
-                                    fieldWithPath("data.reviews.content[].updatedAt").type(JsonFieldType.STRING).description("수정 일시"),
-                                    fieldWithPath("data.reviews.content[].owner").type(JsonFieldType.BOOLEAN).description("현재 사용자 작성 여부"),
-                                    fieldWithPath("data.reviews.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
-                                    fieldWithPath("data.reviews.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
-                            )
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Course")
+                                    .summary("코스 상세 조회")
+                                    .description("코스 상세 정보와 리뷰를 조회합니다.")
+                                    .pathParameters(
+                                            parameterWithName("courseId").description("코스 고유 ID")
+                                    )
+                                    .queryParameters(
+                                            parameterWithName("lastId").optional().description("리뷰 커서 - 마지막 리뷰 ID (첫 요청 시 생략)")
+                                    )
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.id").type(JsonFieldType.NUMBER).description("코스 ID"),
+                                            fieldWithPath("data.userInfo.isRemoved").type(JsonFieldType.BOOLEAN).description("삭제된 코스 여부"),
+                                            fieldWithPath("data.userInfo.liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                            fieldWithPath("data.basicInfo.title").type(JsonFieldType.STRING).description("코스 제목"),
+                                            fieldWithPath("data.basicInfo.subTitle").type(JsonFieldType.STRING).description("코스 부제목"),
+                                            fieldWithPath("data.basicInfo.duration").type(JsonFieldType.NUMBER).description("소요 시간 (분)"),
+                                            fieldWithPath("data.basicInfo.level").type(JsonFieldType.STRING).description("난이도"),
+                                            fieldWithPath("data.basicInfo.themes").type(JsonFieldType.ARRAY).description("테마 목록"),
+                                            fieldWithPath("data.basicInfo.tags").type(JsonFieldType.ARRAY).description("태그 목록"),
+                                            fieldWithPath("data.descriptionInfo.content").type(JsonFieldType.STRING).description("상세 설명"),
+                                            fieldWithPath("data.descriptionInfo.highlights").type(JsonFieldType.ARRAY).description("하이라이트 목록"),
+                                            fieldWithPath("data.reviewSummary.rating").type(JsonFieldType.NUMBER).description("평균 평점"),
+                                            fieldWithPath("data.reviewSummary.count").type(JsonFieldType.NUMBER).description("리뷰 수"),
+                                            fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("코스 이미지 URL 목록"),
+                                            fieldWithPath("data.plans[]").type(JsonFieldType.ARRAY).description("코스 계획 목록"),
+                                            fieldWithPath("data.plans[].id").type(JsonFieldType.NUMBER).description("계획 ID"),
+                                            fieldWithPath("data.plans[].order").type(JsonFieldType.NUMBER).description("순서"),
+                                            fieldWithPath("data.plans[].placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                            fieldWithPath("data.plans[].title").type(JsonFieldType.STRING).description("계획 제목"),
+                                            fieldWithPath("data.plans[].content").type(JsonFieldType.STRING).description("계획 내용"),
+                                            fieldWithPath("data.reviews.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
+                                            fieldWithPath("data.reviews.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+                                            fieldWithPath("data.reviews.content[].name").type(JsonFieldType.STRING).description("작성자 이름"),
+                                            fieldWithPath("data.reviews.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
+                                            fieldWithPath("data.reviews.content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                            fieldWithPath("data.reviews.content[].imageUrls").type(JsonFieldType.ARRAY).description("리뷰 이미지 URL"),
+                                            fieldWithPath("data.reviews.content[].updatedAt").type(JsonFieldType.STRING).description("수정 일시"),
+                                            fieldWithPath("data.reviews.content[].owner").type(JsonFieldType.BOOLEAN).description("현재 사용자 작성 여부"),
+                                            fieldWithPath("data.reviews.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
+                                            fieldWithPath("data.reviews.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                    )
+                                    .build())
                     ));
         }
 
@@ -230,15 +242,20 @@ class CourseControllerTest {
                     .andDo(document("course-detail-not-found",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("courseId").description("코스 고유 ID")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("에러 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
-                                    fieldWithPath("timestamp").type(JsonFieldType.STRING).description("에러 발생 시각")
-                            )
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Course")
+                                    .summary("코스 상세 조회 실패")
+                                    .description("존재하지 않는 코스 조회 시 에러를 반환합니다.")
+                                    .pathParameters(
+                                            parameterWithName("courseId").description("코스 고유 ID")
+                                    )
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("에러 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
+                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("에러 발생 시각")
+                                    )
+                                    .build())
                     ));
         }
     }
@@ -293,15 +310,20 @@ class CourseControllerTest {
                                     partWithName("request").description("코스 등록 요청 JSON (title, subTitle, themes, duration, level, tags, content, highlights, plans)"),
                                     partWithName("imageFiles").description("코스 이미지 파일 목록").optional()
                             ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.courseId").type(JsonFieldType.NUMBER).description("생성된 코스 ID"),
-                                    fieldWithPath("data.title").type(JsonFieldType.STRING).description("코스 제목"),
-                                    fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 일시"),
-                                    fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("적립 포인트")
-                            )
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Course")
+                                    .summary("코스 등록")
+                                    .description("새로운 코스를 등록합니다.")
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.courseId").type(JsonFieldType.NUMBER).description("생성된 코스 ID"),
+                                            fieldWithPath("data.title").type(JsonFieldType.STRING).description("코스 제목"),
+                                            fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("생성 일시"),
+                                            fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("적립 포인트")
+                                    )
+                                    .build())
                     ));
         }
     }
@@ -328,15 +350,20 @@ class CourseControllerTest {
                     .andDo(document("course-delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("courseId").description("코스 고유 ID")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.courseId").type(JsonFieldType.NUMBER).description("삭제된 코스 ID")
-                            )
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Course")
+                                    .summary("코스 삭제")
+                                    .description("코스를 삭제합니다.")
+                                    .pathParameters(
+                                            parameterWithName("courseId").description("코스 고유 ID")
+                                    )
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.courseId").type(JsonFieldType.NUMBER).description("삭제된 코스 ID")
+                                    )
+                                    .build())
                     ));
         }
     }
@@ -367,26 +394,31 @@ class CourseControllerTest {
                     .andDo(document("course-my",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER).description("총 코스 수"),
-                                    fieldWithPath("data.course.content[]").type(JsonFieldType.ARRAY).description("코스 목록"),
-                                    fieldWithPath("data.course.content[].courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
-                                    fieldWithPath("data.course.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL"),
-                                    fieldWithPath("data.course.content[].title").type(JsonFieldType.STRING).description("코스 제목"),
-                                    fieldWithPath("data.course.content[].subTitle").type(JsonFieldType.STRING).description("코스 부제목"),
-                                    fieldWithPath("data.course.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
-                                    fieldWithPath("data.course.content[].level").type(JsonFieldType.STRING).description("난이도"),
-                                    fieldWithPath("data.course.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
-                                    fieldWithPath("data.course.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
-                                    fieldWithPath("data.course.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
-                            )
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Course")
+                                    .summary("내 코스 조회")
+                                    .description("내가 등록한 코스 목록을 조회합니다.")
+                                    .queryParameters(
+                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
+                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
+                                    )
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.totalCount").type(JsonFieldType.NUMBER).description("총 코스 수"),
+                                            fieldWithPath("data.course.content[]").type(JsonFieldType.ARRAY).description("코스 목록"),
+                                            fieldWithPath("data.course.content[].courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
+                                            fieldWithPath("data.course.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL"),
+                                            fieldWithPath("data.course.content[].title").type(JsonFieldType.STRING).description("코스 제목"),
+                                            fieldWithPath("data.course.content[].subTitle").type(JsonFieldType.STRING).description("코스 부제목"),
+                                            fieldWithPath("data.course.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
+                                            fieldWithPath("data.course.content[].level").type(JsonFieldType.STRING).description("난이도"),
+                                            fieldWithPath("data.course.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                            fieldWithPath("data.course.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
+                                            fieldWithPath("data.course.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                    )
+                                    .build())
                     ));
         }
     }
@@ -415,26 +447,31 @@ class CourseControllerTest {
                     .andDo(document("course-theme",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("theme").description("테마 (HISTORY, NATURE, CULTURE 등)"),
-                                    parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("코스 목록"),
-                                    fieldWithPath("data.content[].courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
-                                    fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL"),
-                                    fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("코스 제목"),
-                                    fieldWithPath("data.content[].subTitle").type(JsonFieldType.STRING).description("코스 부제목"),
-                                    fieldWithPath("data.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
-                                    fieldWithPath("data.content[].level").type(JsonFieldType.STRING).description("난이도"),
-                                    fieldWithPath("data.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
-                                    fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
-                                    fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
-                            )
+                            resource(ResourceSnippetParameters.builder()
+                                    .tag("Course")
+                                    .summary("테마별 코스 조회")
+                                    .description("테마별 코스 목록을 조회합니다.")
+                                    .queryParameters(
+                                            parameterWithName("theme").description("테마 (HISTORY, NATURE, CULTURE 등)"),
+                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
+                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
+                                    )
+                                    .responseFields(
+                                            fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                            fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("코스 목록"),
+                                            fieldWithPath("data.content[].courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
+                                            fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL"),
+                                            fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("코스 제목"),
+                                            fieldWithPath("data.content[].subTitle").type(JsonFieldType.STRING).description("코스 부제목"),
+                                            fieldWithPath("data.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
+                                            fieldWithPath("data.content[].level").type(JsonFieldType.STRING).description("난이도"),
+                                            fieldWithPath("data.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                            fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
+                                            fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                    )
+                                    .build())
                     ));
         }
     }

@@ -31,6 +31,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -91,17 +93,24 @@ class AuthControllerTest {
                 .andDo(document("auth-login-kakao",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("카카오 Access Token"),
-                                fieldWithPath("fcmToken").type(JsonFieldType.STRING).description("FCM 토큰")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("Access Token"),
-                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
-                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 역할")
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("Auth")
+                                        .summary("카카오 로그인")
+                                        .description("카카오 Access Token으로 로그인합니다.")
+                                        .requestFields(
+                                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("카카오 Access Token"),
+                                                fieldWithPath("fcmToken").type(JsonFieldType.STRING).description("FCM 토큰")
+                                        )
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("Access Token"),
+                                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 역할")
+                                        )
+                                        .build()
                         )
                 ));
     }
@@ -135,17 +144,24 @@ class AuthControllerTest {
                 .andDo(document("auth-login-google",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("idToken").type(JsonFieldType.STRING).description("구글 ID Token"),
-                                fieldWithPath("fcmToken").type(JsonFieldType.STRING).description("FCM 토큰")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("Access Token"),
-                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
-                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 역할")
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("Auth")
+                                        .summary("구글 로그인")
+                                        .description("구글 ID Token으로 로그인합니다.")
+                                        .requestFields(
+                                                fieldWithPath("idToken").type(JsonFieldType.STRING).description("구글 ID Token"),
+                                                fieldWithPath("fcmToken").type(JsonFieldType.STRING).description("FCM 토큰")
+                                        )
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("Access Token"),
+                                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 역할")
+                                        )
+                                        .build()
                         )
                 ));
     }
@@ -164,11 +180,18 @@ class AuthControllerTest {
                 .andDo(document("auth-logout",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (없음)")
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("Auth")
+                                        .summary("로그아웃")
+                                        .description("현재 사용자를 로그아웃합니다.")
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (없음)")
+                                        )
+                                        .build()
                         )
                 ));
     }
@@ -195,13 +218,20 @@ class AuthControllerTest {
                 .andDo(document("auth-reissue",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("재발급된 Access Token"),
-                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("재발급된 Refresh Token"),
-                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 역할")
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("Auth")
+                                        .summary("토큰 재발급")
+                                        .description("Refresh Token으로 Access Token을 재발급합니다.")
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("재발급된 Access Token"),
+                                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("재발급된 Refresh Token"),
+                                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 역할")
+                                        )
+                                        .build()
                         )
                 ));
     }

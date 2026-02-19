@@ -61,7 +61,8 @@
       "Bash(bash -c 'cd /mnt/e/dobonglife-backend && pwd')",
       "Bash(/bin/bash -c 'echo hello')",
       "Bash(/bin/ls:*)",
-      "Bash(/bin/echo:*)"
+      "Bash(/bin/echo:*)",
+      "Bash(./gradlew openapi3:*)"
     ]
   }
 }

@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -90,31 +92,38 @@ class HomeControllerTest {
                     .andDo(document("home-main",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("lastId").optional()
-                                            .description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional()
-                                            .description("조회 개수 (기본값: 3)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Home")
+                                            .summary("홈 화면 조회")
+                                            .description("홈 화면의 배너와 프로모션을 조회합니다.")
+                                            .queryParameters(
+                                                    parameterWithName("lastId").optional()
+                                                            .description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)"),
+                                                    parameterWithName("size").optional()
+                                                            .description("조회 개수 (기본값: 3)")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
 
-                                    fieldWithPath("data.banners.content[]").type(JsonFieldType.ARRAY).description("배너 목록"),
-                                    fieldWithPath("data.banners.content[].title").type(JsonFieldType.STRING).description("배너 제목"),
-                                    fieldWithPath("data.banners.content[].description").type(JsonFieldType.STRING).description("배너 설명"),
-                                    fieldWithPath("data.banners.content[].link").type(JsonFieldType.STRING).description("배너 링크"),
-                                    fieldWithPath("data.banners.lastId").type(JsonFieldType.NUMBER).description("마지막 배너 ID"),
-                                    fieldWithPath("data.banners.hasNext").type(JsonFieldType.BOOLEAN).description("배너 다음 페이지 여부"),
+                                                    fieldWithPath("data.banners.content[]").type(JsonFieldType.ARRAY).description("배너 목록"),
+                                                    fieldWithPath("data.banners.content[].title").type(JsonFieldType.STRING).description("배너 제목"),
+                                                    fieldWithPath("data.banners.content[].description").type(JsonFieldType.STRING).description("배너 설명"),
+                                                    fieldWithPath("data.banners.content[].link").type(JsonFieldType.STRING).description("배너 링크"),
+                                                    fieldWithPath("data.banners.lastId").type(JsonFieldType.NUMBER).description("마지막 배너 ID"),
+                                                    fieldWithPath("data.banners.hasNext").type(JsonFieldType.BOOLEAN).description("배너 다음 페이지 여부"),
 
-                                    fieldWithPath("data.promotions.content[]").type(JsonFieldType.ARRAY).description("프로모션 목록"),
-                                    fieldWithPath("data.promotions.content[].promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
-                                    fieldWithPath("data.promotions.content[].category").type(JsonFieldType.STRING).description("카테고리"),
-                                    fieldWithPath("data.promotions.content[].title").type(JsonFieldType.STRING).description("프로모션 제목"),
-                                    fieldWithPath("data.promotions.content[].imgUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                    fieldWithPath("data.promotions.lastId").type(JsonFieldType.NUMBER).description("마지막 프로모션 ID"),
-                                    fieldWithPath("data.promotions.hasNext").type(JsonFieldType.BOOLEAN).description("프로모션 다음 페이지 여부")
+                                                    fieldWithPath("data.promotions.content[]").type(JsonFieldType.ARRAY).description("프로모션 목록"),
+                                                    fieldWithPath("data.promotions.content[].promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
+                                                    fieldWithPath("data.promotions.content[].category").type(JsonFieldType.STRING).description("카테고리"),
+                                                    fieldWithPath("data.promotions.content[].title").type(JsonFieldType.STRING).description("프로모션 제목"),
+                                                    fieldWithPath("data.promotions.content[].imgUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                                    fieldWithPath("data.promotions.lastId").type(JsonFieldType.NUMBER).description("마지막 프로모션 ID"),
+                                                    fieldWithPath("data.promotions.hasNext").type(JsonFieldType.BOOLEAN).description("프로모션 다음 페이지 여부")
+                                            )
+                                            .build()
                             )
                     ));
         }

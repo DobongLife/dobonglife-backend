@@ -41,6 +41,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -101,13 +104,20 @@ class ReviewControllerTest {
                                     partWithName("request").description("리뷰 등록 요청 JSON (courseId, placeId, rating, content)"),
                                     partWithName("imageFiles").description("리뷰 이미지 파일 목록 (선택)").optional()
                             ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
-                                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                    fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("적립 포인트")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Review")
+                                            .summary("리뷰 등록")
+                                            .description("코스 또는 장소에 리뷰를 등록합니다.")
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+                                                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                                    fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("적립 포인트")
+                                            )
+                                            .build()
                             )
                     ));
         }
@@ -168,29 +178,36 @@ class ReviewControllerTest {
                     .andDo(document("review-course-list",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("courseId").description("코스 ID")
-                            ),
-                            queryParameters(
-                                    parameterWithName("lastReviewId").optional()
-                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional()
-                                            .description("조회 개수 (기본값: 3)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
-                                    fieldWithPath("data.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
-                                    fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("작성자 이름"),
-                                    fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
-                                    fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                    fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                    fieldWithPath("data.content[].updatedAt").type(JsonFieldType.STRING).description("수정 일시"),
-                                    fieldWithPath("data.content[].owner").type(JsonFieldType.BOOLEAN).description("본인 작성 여부"),
-                                    fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
-                                    fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Review")
+                                            .summary("코스 리뷰 조회")
+                                            .description("코스의 리뷰 목록을 조회합니다.")
+                                            .pathParameters(
+                                                    parameterWithName("courseId").description("코스 ID")
+                                            )
+                                            .queryParameters(
+                                                    parameterWithName("lastReviewId").optional()
+                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
+                                                    parameterWithName("size").optional()
+                                                            .description("조회 개수 (기본값: 3)")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
+                                                    fieldWithPath("data.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+                                                    fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("작성자 이름"),
+                                                    fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
+                                                    fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                                    fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                                    fieldWithPath("data.content[].updatedAt").type(JsonFieldType.STRING).description("수정 일시"),
+                                                    fieldWithPath("data.content[].owner").type(JsonFieldType.BOOLEAN).description("본인 작성 여부"),
+                                                    fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
+                                                    fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                            )
+                                            .build()
                             )
                     ));
         }
@@ -258,29 +275,36 @@ class ReviewControllerTest {
                     .andDo(document("review-place-list",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("placeId").description("장소 ID")
-                            ),
-                            queryParameters(
-                                    parameterWithName("lastReviewId").optional()
-                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional()
-                                            .description("조회 개수 (기본값: 3)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
-                                    fieldWithPath("data.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
-                                    fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("작성자 이름"),
-                                    fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
-                                    fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                    fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                    fieldWithPath("data.content[].updatedAt").type(JsonFieldType.STRING).description("수정 일시"),
-                                    fieldWithPath("data.content[].owner").type(JsonFieldType.BOOLEAN).description("본인 작성 여부"),
-                                    fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
-                                    fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Review")
+                                            .summary("장소 리뷰 조회")
+                                            .description("장소의 리뷰 목록을 조회합니다.")
+                                            .pathParameters(
+                                                    parameterWithName("placeId").description("장소 ID")
+                                            )
+                                            .queryParameters(
+                                                    parameterWithName("lastReviewId").optional()
+                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
+                                                    parameterWithName("size").optional()
+                                                            .description("조회 개수 (기본값: 3)")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
+                                                    fieldWithPath("data.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+                                                    fieldWithPath("data.content[].name").type(JsonFieldType.STRING).description("작성자 이름"),
+                                                    fieldWithPath("data.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
+                                                    fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                                    fieldWithPath("data.content[].imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                                    fieldWithPath("data.content[].updatedAt").type(JsonFieldType.STRING).description("수정 일시"),
+                                                    fieldWithPath("data.content[].owner").type(JsonFieldType.BOOLEAN).description("본인 작성 여부"),
+                                                    fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
+                                                    fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                            )
+                                            .build()
                             )
                     ));
         }
@@ -324,16 +348,23 @@ class ReviewControllerTest {
                     .andDo(document("review-delete",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("reviewId").description("삭제할 리뷰 ID")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
-                                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                    fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("적립 포인트")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Review")
+                                            .summary("리뷰 삭제")
+                                            .description("리뷰를 삭제합니다.")
+                                            .pathParameters(
+                                                    parameterWithName("reviewId").description("삭제할 리뷰 ID")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+                                                    fieldWithPath("data.content").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                                    fieldWithPath("data.point").type(JsonFieldType.NUMBER).description("적립 포인트")
+                                            )
+                                            .build()
                             )
                     ));
         }

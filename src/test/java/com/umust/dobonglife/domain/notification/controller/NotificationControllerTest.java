@@ -35,6 +35,9 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -87,29 +90,36 @@ class NotificationControllerTest {
                     .andDo(document("notification-list",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("filter").optional()
-                                            .description("알림 필터 (ALL, UNREAD, POINT, SCHEDULE, COURSE, COUPON / 기본값: ALL)"),
-                                    parameterWithName("lastId").optional()
-                                            .description("커서 - 마지막 알림 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional()
-                                            .description("조회 개수 (기본값: 2)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("알림 목록"),
-                                    fieldWithPath("data.content[].notificationId").type(JsonFieldType.NUMBER).description("알림 ID"),
-                                    fieldWithPath("data.content[].type").type(JsonFieldType.STRING).description("알림 유형 (POINT, SCHEDULE, COURSE, COUPON)"),
-                                    fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("알림 제목"),
-                                    fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("알림 내용"),
-                                    fieldWithPath("data.content[].isRead").type(JsonFieldType.BOOLEAN).description("읽음 여부"),
-                                    fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING).description("생성 일시"),
-                                    fieldWithPath("data.content[].timeAgo").type(JsonFieldType.STRING).description("경과 시간 (예: 3시간 전)"),
-                                    fieldWithPath("data.content[].relatedUrlId").type(JsonFieldType.NULL).description("관련 URL ID").optional(),
-                                    fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 알림 ID"),
-                                    fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Notification")
+                                            .summary("알림 목록 조회")
+                                            .description("알림 목록을 필터별로 조회합니다.")
+                                            .queryParameters(
+                                                    parameterWithName("filter").optional()
+                                                            .description("알림 필터 (ALL, UNREAD, POINT, SCHEDULE, COURSE, COUPON / 기본값: ALL)"),
+                                                    parameterWithName("lastId").optional()
+                                                            .description("커서 - 마지막 알림 ID (첫 요청 시 생략)"),
+                                                    parameterWithName("size").optional()
+                                                            .description("조회 개수 (기본값: 2)")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("알림 목록"),
+                                                    fieldWithPath("data.content[].notificationId").type(JsonFieldType.NUMBER).description("알림 ID"),
+                                                    fieldWithPath("data.content[].type").type(JsonFieldType.STRING).description("알림 유형 (POINT, SCHEDULE, COURSE, COUPON)"),
+                                                    fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("알림 제목"),
+                                                    fieldWithPath("data.content[].content").type(JsonFieldType.STRING).description("알림 내용"),
+                                                    fieldWithPath("data.content[].isRead").type(JsonFieldType.BOOLEAN).description("읽음 여부"),
+                                                    fieldWithPath("data.content[].createdAt").type(JsonFieldType.STRING).description("생성 일시"),
+                                                    fieldWithPath("data.content[].timeAgo").type(JsonFieldType.STRING).description("경과 시간 (예: 3시간 전)"),
+                                                    fieldWithPath("data.content[].relatedUrlId").type(JsonFieldType.NULL).description("관련 URL ID").optional(),
+                                                    fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 알림 ID"),
+                                                    fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                            )
+                                            .build()
                             )
                     ));
         }
@@ -165,7 +175,13 @@ class NotificationControllerTest {
                     .andDo(document("notification-check-new",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            responseBody()
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Notification")
+                                            .summary("새 알림 확인")
+                                            .description("새로운 알림이 있는지 확인합니다.")
+                                            .build()
+                            )
                     ));
         }
 
@@ -198,8 +214,15 @@ class NotificationControllerTest {
                     .andDo(document("notification-mark-read",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("notificationId").description("읽음 처리할 알림 ID")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Notification")
+                                            .summary("알림 읽음 처리")
+                                            .description("알림을 읽음 처리합니다.")
+                                            .pathParameters(
+                                                    parameterWithName("notificationId").description("읽음 처리할 알림 ID")
+                                            )
+                                            .build()
                             )
                     ));
         }
@@ -221,8 +244,15 @@ class NotificationControllerTest {
                     .andDo(document("notification-toggle-setting",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("enabled").description("알림 수신 여부 (true/false)")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Notification")
+                                            .summary("알림 설정 변경")
+                                            .description("알림 수신 설정을 변경합니다.")
+                                            .queryParameters(
+                                                    parameterWithName("enabled").description("알림 수신 여부 (true/false)")
+                                            )
+                                            .build()
                             )
                     ));
         }

@@ -42,6 +42,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
+
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -105,39 +108,46 @@ class CouponControllerTest {
                     .andDo(document("coupon-my-list",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("lastId").optional()
-                                            .description("커서 - 마지막 쿠폰 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional()
-                                            .description("조회 개수 (기본값: 2)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Coupon")
+                                            .summary("내 쿠폰 조회")
+                                            .description("내 쿠폰 목록과 상태를 조회합니다.")
+                                            .queryParameters(
+                                                    parameterWithName("lastId").optional()
+                                                            .description("커서 - 마지막 쿠폰 ID (첫 요청 시 생략)"),
+                                                    parameterWithName("size").optional()
+                                                            .description("조회 개수 (기본값: 2)")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
 
-                                    fieldWithPath("data.myCouponStatus.available").type(JsonFieldType.NUMBER).description("사용 가능 쿠폰 수"),
-                                    fieldWithPath("data.myCouponStatus.used").type(JsonFieldType.NUMBER).description("사용 완료 쿠폰 수"),
-                                    fieldWithPath("data.myCouponStatus.expired").type(JsonFieldType.NUMBER).description("만료 쿠폰 수"),
+                                                    fieldWithPath("data.myCouponStatus.available").type(JsonFieldType.NUMBER).description("사용 가능 쿠폰 수"),
+                                                    fieldWithPath("data.myCouponStatus.used").type(JsonFieldType.NUMBER).description("사용 완료 쿠폰 수"),
+                                                    fieldWithPath("data.myCouponStatus.expired").type(JsonFieldType.NUMBER).description("만료 쿠폰 수"),
 
-                                    fieldWithPath("data.myCouponList.content[]").type(JsonFieldType.ARRAY).description("쿠폰 목록"),
-                                    fieldWithPath("data.myCouponList.content[].couponId").type(JsonFieldType.NUMBER).description("쿠폰 ID"),
-                                    fieldWithPath("data.myCouponList.content[].placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
-                                    fieldWithPath("data.myCouponList.content[].placeName").type(JsonFieldType.STRING).description("장소 이름"),
-                                    fieldWithPath("data.myCouponList.content[].operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
-                                    fieldWithPath("data.myCouponList.content[].promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
-                                    fieldWithPath("data.myCouponList.content[].category").type(JsonFieldType.STRING).description("카테고리"),
-                                    fieldWithPath("data.myCouponList.content[].title").type(JsonFieldType.STRING).description("쿠폰 제목"),
-                                    fieldWithPath("data.myCouponList.content[].description").type(JsonFieldType.STRING).description("쿠폰 설명"),
-                                    fieldWithPath("data.myCouponList.content[].imgUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                    fieldWithPath("data.myCouponList.content[].discountType").type(JsonFieldType.STRING).description("할인 유형 (PERCENT/AMOUNT)"),
-                                    fieldWithPath("data.myCouponList.content[].discountValue").type(JsonFieldType.NUMBER).description("할인 값"),
-                                    fieldWithPath("data.myCouponList.content[].minPrice").type(JsonFieldType.NUMBER).description("최소 금액"),
-                                    fieldWithPath("data.myCouponList.content[].maxPrice").type(JsonFieldType.NUMBER).description("최대 금액"),
-                                    fieldWithPath("data.myCouponList.content[].endDate").type(JsonFieldType.STRING).description("만료일"),
-                                    fieldWithPath("data.myCouponList.content[].couponStatus").type(JsonFieldType.STRING).description("쿠폰 상태 (AVAILABLE/USED/EXPIRED/DISABLED)"),
-                                    fieldWithPath("data.myCouponList.lastId").type(JsonFieldType.NUMBER).description("마지막 쿠폰 ID"),
-                                    fieldWithPath("data.myCouponList.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                                    fieldWithPath("data.myCouponList.content[]").type(JsonFieldType.ARRAY).description("쿠폰 목록"),
+                                                    fieldWithPath("data.myCouponList.content[].couponId").type(JsonFieldType.NUMBER).description("쿠폰 ID"),
+                                                    fieldWithPath("data.myCouponList.content[].placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                                    fieldWithPath("data.myCouponList.content[].placeName").type(JsonFieldType.STRING).description("장소 이름"),
+                                                    fieldWithPath("data.myCouponList.content[].operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
+                                                    fieldWithPath("data.myCouponList.content[].promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
+                                                    fieldWithPath("data.myCouponList.content[].category").type(JsonFieldType.STRING).description("카테고리"),
+                                                    fieldWithPath("data.myCouponList.content[].title").type(JsonFieldType.STRING).description("쿠폰 제목"),
+                                                    fieldWithPath("data.myCouponList.content[].description").type(JsonFieldType.STRING).description("쿠폰 설명"),
+                                                    fieldWithPath("data.myCouponList.content[].imgUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                                    fieldWithPath("data.myCouponList.content[].discountType").type(JsonFieldType.STRING).description("할인 유형 (PERCENT/AMOUNT)"),
+                                                    fieldWithPath("data.myCouponList.content[].discountValue").type(JsonFieldType.NUMBER).description("할인 값"),
+                                                    fieldWithPath("data.myCouponList.content[].minPrice").type(JsonFieldType.NUMBER).description("최소 금액"),
+                                                    fieldWithPath("data.myCouponList.content[].maxPrice").type(JsonFieldType.NUMBER).description("최대 금액"),
+                                                    fieldWithPath("data.myCouponList.content[].endDate").type(JsonFieldType.STRING).description("만료일"),
+                                                    fieldWithPath("data.myCouponList.content[].couponStatus").type(JsonFieldType.STRING).description("쿠폰 상태 (AVAILABLE/USED/EXPIRED/DISABLED)"),
+                                                    fieldWithPath("data.myCouponList.lastId").type(JsonFieldType.NUMBER).description("마지막 쿠폰 ID"),
+                                                    fieldWithPath("data.myCouponList.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                            )
+                                            .build()
                             )
                     ));
         }
@@ -186,17 +196,24 @@ class CouponControllerTest {
                     .andDo(document("coupon-use",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            requestFields(
-                                    fieldWithPath("couponId").type(JsonFieldType.NUMBER).description("쿠폰 ID"),
-                                    fieldWithPath("promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
-                                    fieldWithPath("code").type(JsonFieldType.STRING).description("쿠폰 코드")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.couponId").type(JsonFieldType.NUMBER).description("쿠폰 ID"),
-                                    fieldWithPath("data.couponStatus").type(JsonFieldType.STRING).description("쿠폰 상태 (USED)")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Coupon")
+                                            .summary("쿠폰 사용")
+                                            .description("쿠폰 코드로 쿠폰을 사용합니다.")
+                                            .requestFields(
+                                                    fieldWithPath("couponId").type(JsonFieldType.NUMBER).description("쿠폰 ID"),
+                                                    fieldWithPath("promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
+                                                    fieldWithPath("code").type(JsonFieldType.STRING).description("쿠폰 코드")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.couponId").type(JsonFieldType.NUMBER).description("쿠폰 ID"),
+                                                    fieldWithPath("data.couponStatus").type(JsonFieldType.STRING).description("쿠폰 상태 (USED)")
+                                            )
+                                            .build()
                             )
                     ));
         }

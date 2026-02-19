@@ -93,25 +93,32 @@ class PointControllerTest {
                     .andDo(document("point-main",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("lastId").optional()
-                                            .description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)"),
-                                    parameterWithName("size").optional()
-                                            .description("조회 개수 (기본값: 4)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.totalPoint").type(JsonFieldType.NUMBER).description("총 포인트"),
-                                    fieldWithPath("data.promotionList.content[]").type(JsonFieldType.ARRAY).description("프로모션 배너 목록"),
-                                    fieldWithPath("data.promotionList.content[].promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
-                                    fieldWithPath("data.promotionList.content[].category").type(JsonFieldType.STRING).description("카테고리"),
-                                    fieldWithPath("data.promotionList.content[].title").type(JsonFieldType.STRING).description("프로모션 제목"),
-                                    fieldWithPath("data.promotionList.content[].description").type(JsonFieldType.STRING).description("프로모션 설명"),
-                                    fieldWithPath("data.promotionList.content[].imgUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                    fieldWithPath("data.promotionList.lastId").type(JsonFieldType.NUMBER).description("마지막 프로모션 ID"),
-                                    fieldWithPath("data.promotionList.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Point")
+                                            .summary("쿠폰 첫화면 조회")
+                                            .description("포인트와 프로모션(광고)를 조회합니다.")
+                                            .queryParameters(
+                                                    parameterWithName("lastId").optional()
+                                                            .description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)"),
+                                                    parameterWithName("size").optional()
+                                                            .description("조회 개수 (기본값: 4)")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.totalPoint").type(JsonFieldType.NUMBER).description("총 포인트"),
+                                                    fieldWithPath("data.promotionList.content[]").type(JsonFieldType.ARRAY).description("프로모션 배너 목록"),
+                                                    fieldWithPath("data.promotionList.content[].promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
+                                                    fieldWithPath("data.promotionList.content[].category").type(JsonFieldType.STRING).description("카테고리"),
+                                                    fieldWithPath("data.promotionList.content[].title").type(JsonFieldType.STRING).description("프로모션 제목"),
+                                                    fieldWithPath("data.promotionList.content[].description").type(JsonFieldType.STRING).description("프로모션 설명"),
+                                                    fieldWithPath("data.promotionList.content[].imgUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                                    fieldWithPath("data.promotionList.lastId").type(JsonFieldType.NUMBER).description("마지막 프로모션 ID"),
+                                                    fieldWithPath("data.promotionList.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                            )
+                                            .build()
                             )
                     ));
         }
@@ -208,32 +215,39 @@ class PointControllerTest {
                     .andDo(document("point-my-list",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            queryParameters(
-                                    parameterWithName("size").optional()
-                                            .description("조회 개수 (기본값: 20)"),
-                                    parameterWithName("lastId").optional()
-                                            .description("커서 - 마지막 포인트 ID (첫 요청 시 생략)"),
-                                    parameterWithName("order").optional()
-                                            .description("정렬 순서 (DESC/ASC, 기본값: DESC)")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.totalPoint").type(JsonFieldType.NUMBER).description("총 포인트"),
-                                    fieldWithPath("data.pointGuides[]").type(JsonFieldType.ARRAY).description("포인트 가이드 목록"),
-                                    fieldWithPath("data.pointGuides[].title").type(JsonFieldType.STRING).description("가이드 제목"),
-                                    fieldWithPath("data.pointGuides[].rewardPoint").type(JsonFieldType.NUMBER).description("보상 포인트"),
-                                    fieldWithPath("data.pointList.content[]").type(JsonFieldType.ARRAY).description("포인트 내역 목록"),
-                                    fieldWithPath("data.pointList.content[].pointId").type(JsonFieldType.NUMBER).description("포인트 ID"),
-                                    fieldWithPath("data.pointList.content[].title").type(JsonFieldType.STRING).description("포인트 사유"),
-                                    fieldWithPath("data.pointList.content[].amount").type(JsonFieldType.NUMBER).description("포인트 금액"),
-                                    fieldWithPath("data.pointList.content[].createAt").type(JsonFieldType.STRING).description("생성 일시"),
-                                    fieldWithPath("data.pointList.content[].afterBalance").type(JsonFieldType.NUMBER).description("적립/사용 후 잔액"),
-                                    fieldWithPath("data.pointList.content[].used").type(JsonFieldType.BOOLEAN).description("사용 여부"),
-                                    fieldWithPath("data.pointList.size").type(JsonFieldType.NUMBER).description("조회 크기"),
-                                    fieldWithPath("data.pointList.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부"),
-                                    fieldWithPath("data.pointList.nextCursor").type(JsonFieldType.NULL).description("다음 커서 값").optional()
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Point")
+                                            .summary("포인트 내역 조회")
+                                            .description("포인트 내역과 포인트 가이드를 조회합니다.")
+                                            .queryParameters(
+                                                    parameterWithName("size").optional()
+                                                            .description("조회 개수 (기본값: 20)"),
+                                                    parameterWithName("lastId").optional()
+                                                            .description("커서 - 마지막 포인트 ID (첫 요청 시 생략)"),
+                                                    parameterWithName("order").optional()
+                                                            .description("정렬 순서 (DESC/ASC, 기본값: DESC)")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.totalPoint").type(JsonFieldType.NUMBER).description("총 포인트"),
+                                                    fieldWithPath("data.pointGuides[]").type(JsonFieldType.ARRAY).description("포인트 가이드 목록"),
+                                                    fieldWithPath("data.pointGuides[].title").type(JsonFieldType.STRING).description("가이드 제목"),
+                                                    fieldWithPath("data.pointGuides[].rewardPoint").type(JsonFieldType.NUMBER).description("보상 포인트"),
+                                                    fieldWithPath("data.pointList.content[]").type(JsonFieldType.ARRAY).description("포인트 내역 목록"),
+                                                    fieldWithPath("data.pointList.content[].pointId").type(JsonFieldType.NUMBER).description("포인트 ID"),
+                                                    fieldWithPath("data.pointList.content[].title").type(JsonFieldType.STRING).description("포인트 사유"),
+                                                    fieldWithPath("data.pointList.content[].amount").type(JsonFieldType.NUMBER).description("포인트 금액"),
+                                                    fieldWithPath("data.pointList.content[].createAt").type(JsonFieldType.STRING).description("생성 일시"),
+                                                    fieldWithPath("data.pointList.content[].afterBalance").type(JsonFieldType.NUMBER).description("적립/사용 후 잔액"),
+                                                    fieldWithPath("data.pointList.content[].used").type(JsonFieldType.BOOLEAN).description("사용 여부"),
+                                                    fieldWithPath("data.pointList.size").type(JsonFieldType.NUMBER).description("조회 크기"),
+                                                    fieldWithPath("data.pointList.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부"),
+                                                    fieldWithPath("data.pointList.nextCursor").type(JsonFieldType.NULL).description("다음 커서 값").optional()
+                                            )
+                                            .build()
                             )
                     ));
         }

@@ -36,6 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -88,23 +90,29 @@ class UserControllerRestDocsTest {
                 .andDo(document("user-signup",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING)
-                                        .description("이메일"),
-                                fieldWithPath("name").type(JsonFieldType.STRING)
-                                        .description("이름"),
-                                fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
-                                        .description("성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("응답 데이터")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("User")
+                                .summary("회원가입")
+                                .description("이메일로 회원가입합니다.")
+                                .requestFields(
+                                        fieldWithPath("email").type(JsonFieldType.STRING)
+                                                .description("이메일"),
+                                        fieldWithPath("name").type(JsonFieldType.STRING)
+                                                .description("이름"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING)
+                                                .description("비밀번호")
+                                )
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                                .description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL)
+                                                .description("응답 데이터")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -128,15 +136,21 @@ class UserControllerRestDocsTest {
                 .andDo(document("user-signup-duplicate-email",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
-                                        .description("성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER)
-                                        .description("에러 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("에러 메시지"),
-                                fieldWithPath("timestamp").type(JsonFieldType.STRING)
-                                        .description("에러 발생 시각")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("User")
+                                .summary("회원가입 실패 - 중복 이메일")
+                                .description("중복 이메일로 회원가입 시 에러를 반환합니다.")
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                                .description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                                .description("에러 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("에러 메시지"),
+                                        fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                .description("에러 발생 시각")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -164,21 +178,27 @@ class UserControllerRestDocsTest {
                 .andDo(document("user-mail-send",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING)
-                                        .description("이메일"),
-                                fieldWithPath("forSignUp").type(JsonFieldType.BOOLEAN)
-                                        .description("회원가입 여부 (true: 회원가입, false: 비밀번호 변경)")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
-                                        .description("성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("응답 데이터")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("User")
+                                .summary("인증코드 전송")
+                                .description("이메일로 인증코드를 전송합니다.")
+                                .requestFields(
+                                        fieldWithPath("email").type(JsonFieldType.STRING)
+                                                .description("이메일"),
+                                        fieldWithPath("forSignUp").type(JsonFieldType.BOOLEAN)
+                                                .description("회원가입 여부 (true: 회원가입, false: 비밀번호 변경)")
+                                )
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                                .description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL)
+                                                .description("응답 데이터")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -206,23 +226,29 @@ class UserControllerRestDocsTest {
                 .andDo(document("user-mail-check",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING)
-                                        .description("이메일"),
-                                fieldWithPath("authCode").type(JsonFieldType.STRING)
-                                        .description("인증 코드 6자리"),
-                                fieldWithPath("forSignUp").type(JsonFieldType.BOOLEAN)
-                                        .description("회원가입 여부 (true: 회원가입, false: 비밀번호 변경)")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
-                                        .description("성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("응답 데이터")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("User")
+                                .summary("인증코드 확인")
+                                .description("이메일 인증코드를 확인합니다.")
+                                .requestFields(
+                                        fieldWithPath("email").type(JsonFieldType.STRING)
+                                                .description("이메일"),
+                                        fieldWithPath("authCode").type(JsonFieldType.STRING)
+                                                .description("인증 코드 6자리"),
+                                        fieldWithPath("forSignUp").type(JsonFieldType.BOOLEAN)
+                                                .description("회원가입 여부 (true: 회원가입, false: 비밀번호 변경)")
+                                )
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                                .description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL)
+                                                .description("응답 데이터")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -250,23 +276,29 @@ class UserControllerRestDocsTest {
                 .andDo(document("user-password-update",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING)
-                                        .description("이메일"),
-                                fieldWithPath("authCode").type(JsonFieldType.STRING)
-                                        .description("인증 코드"),
-                                fieldWithPath("newPassword").type(JsonFieldType.STRING)
-                                        .description("새 비밀번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
-                                        .description("성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("응답 데이터")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("User")
+                                .summary("비밀번호 변경")
+                                .description("비밀번호를 변경합니다.")
+                                .requestFields(
+                                        fieldWithPath("email").type(JsonFieldType.STRING)
+                                                .description("이메일"),
+                                        fieldWithPath("authCode").type(JsonFieldType.STRING)
+                                                .description("인증 코드"),
+                                        fieldWithPath("newPassword").type(JsonFieldType.STRING)
+                                                .description("새 비밀번호")
+                                )
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                                .description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL)
+                                                .description("응답 데이터")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -292,15 +324,21 @@ class UserControllerRestDocsTest {
                 .andDo(document("user-delete-account",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
-                                        .description("성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER)
-                                        .description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("응답 데이터")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("User")
+                                .summary("회원 탈퇴")
+                                .description("회원 탈퇴를 진행합니다.")
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                                .description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                                .description("상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING)
+                                                .description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL)
+                                                .description("응답 데이터")
+                                )
+                                .build()
                         )
                 ));
     }

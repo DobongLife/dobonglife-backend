@@ -27,6 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -69,16 +71,23 @@ class CourseLikeControllerTest {
                     .andDo(document("course-like-update",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            pathParameters(
-                                    parameterWithName("courseId").description("코스 ID")
-                            ),
-                            responseFields(
-                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
-                                    fieldWithPath("data.courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
-                                    fieldWithPath("data.isFavorite").type(JsonFieldType.BOOLEAN).description("찜 여부 (true: 찜 추가, false: 찜 해제)")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("Course Like")
+                                            .summary("코스 찜하기")
+                                            .description("코스를 찜하거나 해제합니다.")
+                                            .pathParameters(
+                                                    parameterWithName("courseId").description("코스 ID")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                                                    fieldWithPath("data.courseId").type(JsonFieldType.NUMBER).description("코스 ID"),
+                                                    fieldWithPath("data.isFavorite").type(JsonFieldType.BOOLEAN).description("찜 여부 (true: 찜 추가, false: 찜 해제)")
+                                            )
+                                            .build()
                             )
                     ));
         }

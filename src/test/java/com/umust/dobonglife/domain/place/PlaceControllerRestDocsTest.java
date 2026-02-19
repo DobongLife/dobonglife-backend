@@ -38,6 +38,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -79,14 +81,20 @@ class PlaceControllerRestDocsTest {
                 .andDo(document("place-like",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        pathParameters(
-                                parameterWithName("placeId").description("장소 고유 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (없음)")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Place")
+                                .summary("장소 좋아요")
+                                .description("장소를 좋아요하거나 해제합니다.")
+                                .pathParameters(
+                                        parameterWithName("placeId").description("장소 고유 ID")
+                                )
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (없음)")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -128,29 +136,35 @@ class PlaceControllerRestDocsTest {
                 .andDo(document("place-liked-list",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("lastId").optional()
-                                        .description("커서 - 마지막 장소 ID (첫 요청 시 생략)"),
-                                parameterWithName("size").optional()
-                                        .description("조회 개수 (기본값: 2)")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("장소 목록"),
-                                fieldWithPath("data.content[].placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
-                                fieldWithPath("data.content[].placeName").type(JsonFieldType.STRING).description("장소명"),
-                                fieldWithPath("data.content[].category").type(JsonFieldType.STRING).description("카테고리"),
-                                fieldWithPath("data.content[].thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
-                                fieldWithPath("data.content[].averageRating").type(JsonFieldType.NUMBER).description("평균 평점"),
-                                fieldWithPath("data.content[].reviewCount").type(JsonFieldType.NUMBER).description("리뷰 수"),
-                                fieldWithPath("data.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
-                                fieldWithPath("data.content[].latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("data.content[].longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("data.content[].themes").type(JsonFieldType.ARRAY).description("테마 목록"),
-                                fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 장소 ID"),
-                                fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Place")
+                                .summary("찜한 장소 목록 조회")
+                                .description("내가 찜한 장소 목록을 조회합니다.")
+                                .queryParameters(
+                                        parameterWithName("lastId").optional()
+                                                .description("커서 - 마지막 장소 ID (첫 요청 시 생략)"),
+                                        parameterWithName("size").optional()
+                                                .description("조회 개수 (기본값: 2)")
+                                )
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("장소 목록"),
+                                        fieldWithPath("data.content[].placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                        fieldWithPath("data.content[].placeName").type(JsonFieldType.STRING).description("장소명"),
+                                        fieldWithPath("data.content[].category").type(JsonFieldType.STRING).description("카테고리"),
+                                        fieldWithPath("data.content[].thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
+                                        fieldWithPath("data.content[].averageRating").type(JsonFieldType.NUMBER).description("평균 평점"),
+                                        fieldWithPath("data.content[].reviewCount").type(JsonFieldType.NUMBER).description("리뷰 수"),
+                                        fieldWithPath("data.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                        fieldWithPath("data.content[].latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                        fieldWithPath("data.content[].longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                        fieldWithPath("data.content[].themes").type(JsonFieldType.ARRAY).description("테마 목록"),
+                                        fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 장소 ID"),
+                                        fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -191,9 +205,15 @@ class PlaceControllerRestDocsTest {
                 .andDo(document("place-liked-list-cursor",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("lastId")
-                                        .description("이전 페이지에서 받은 마지막 장소 ID (커서)")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Place")
+                                .summary("찜한 장소 목록 커서 조회")
+                                .description("커서 기반으로 찜한 장소 목록을 조회합니다.")
+                                .queryParameters(
+                                        parameterWithName("lastId")
+                                                .description("이전 페이지에서 받은 마지막 장소 ID (커서)")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -251,45 +271,51 @@ class PlaceControllerRestDocsTest {
                 .andDo(document("place-detail",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        pathParameters(
-                                parameterWithName("placeId").description("장소 고유 ID")
-                        ),
-                        queryParameters(
-                                parameterWithName("lastId").optional()
-                                        .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
-                                parameterWithName("size").optional()
-                                        .description("리뷰 조회 개수 (기본값: 2)")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING).description("장소명"),
-                                fieldWithPath("data.subName").type(JsonFieldType.STRING).description("장소 부제"),
-                                fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
-                                fieldWithPath("data.content").type(JsonFieldType.STRING).description("장소 설명"),
-                                fieldWithPath("data.address").type(JsonFieldType.STRING).description("주소"),
-                                fieldWithPath("data.placeImages").type(JsonFieldType.ARRAY).description("장소 이미지 URL 목록"),
-                                fieldWithPath("data.operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
-                                fieldWithPath("data.contact").type(JsonFieldType.STRING).description("연락처"),
-                                fieldWithPath("data.themes").type(JsonFieldType.ARRAY).description("테마 목록"),
-                                fieldWithPath("data.averageRating").type(JsonFieldType.NUMBER).description("평균 평점"),
-                                fieldWithPath("data.reviewCount").type(JsonFieldType.NUMBER).description("리뷰 수"),
-                                fieldWithPath("data.latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("data.longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("data.liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
-                                fieldWithPath("data.reviews").type(JsonFieldType.OBJECT).description("리뷰 커서 페이징 응답"),
-                                fieldWithPath("data.reviews.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
-                                fieldWithPath("data.reviews.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
-                                fieldWithPath("data.reviews.content[].name").type(JsonFieldType.STRING).description("작성자 이름"),
-                                fieldWithPath("data.reviews.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
-                                fieldWithPath("data.reviews.content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
-                                fieldWithPath("data.reviews.content[].imageUrls").type(JsonFieldType.ARRAY).description("리뷰 이미지 URL"),
-                                fieldWithPath("data.reviews.content[].updatedAt").type(JsonFieldType.STRING).description("수정 일시"),
-                                fieldWithPath("data.reviews.content[].owner").type(JsonFieldType.BOOLEAN).description("현재 사용자 작성 여부"),
-                                fieldWithPath("data.reviews.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
-                                fieldWithPath("data.reviews.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Place")
+                                .summary("장소 상세 조회")
+                                .description("장소 상세 정보와 리뷰를 조회합니다.")
+                                .pathParameters(
+                                        parameterWithName("placeId").description("장소 고유 ID")
+                                )
+                                .queryParameters(
+                                        parameterWithName("lastId").optional()
+                                                .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
+                                        parameterWithName("size").optional()
+                                                .description("리뷰 조회 개수 (기본값: 2)")
+                                )
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                        fieldWithPath("data.name").type(JsonFieldType.STRING).description("장소명"),
+                                        fieldWithPath("data.subName").type(JsonFieldType.STRING).description("장소 부제"),
+                                        fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
+                                        fieldWithPath("data.content").type(JsonFieldType.STRING).description("장소 설명"),
+                                        fieldWithPath("data.address").type(JsonFieldType.STRING).description("주소"),
+                                        fieldWithPath("data.placeImages").type(JsonFieldType.ARRAY).description("장소 이미지 URL 목록"),
+                                        fieldWithPath("data.operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
+                                        fieldWithPath("data.contact").type(JsonFieldType.STRING).description("연락처"),
+                                        fieldWithPath("data.themes").type(JsonFieldType.ARRAY).description("테마 목록"),
+                                        fieldWithPath("data.averageRating").type(JsonFieldType.NUMBER).description("평균 평점"),
+                                        fieldWithPath("data.reviewCount").type(JsonFieldType.NUMBER).description("리뷰 수"),
+                                        fieldWithPath("data.latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                        fieldWithPath("data.longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                        fieldWithPath("data.liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                        fieldWithPath("data.reviews").type(JsonFieldType.OBJECT).description("리뷰 커서 페이징 응답"),
+                                        fieldWithPath("data.reviews.content[]").type(JsonFieldType.ARRAY).description("리뷰 목록"),
+                                        fieldWithPath("data.reviews.content[].reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+                                        fieldWithPath("data.reviews.content[].name").type(JsonFieldType.STRING).description("작성자 이름"),
+                                        fieldWithPath("data.reviews.content[].rating").type(JsonFieldType.NUMBER).description("평점"),
+                                        fieldWithPath("data.reviews.content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
+                                        fieldWithPath("data.reviews.content[].imageUrls").type(JsonFieldType.ARRAY).description("리뷰 이미지 URL"),
+                                        fieldWithPath("data.reviews.content[].updatedAt").type(JsonFieldType.STRING).description("수정 일시"),
+                                        fieldWithPath("data.reviews.content[].owner").type(JsonFieldType.BOOLEAN).description("현재 사용자 작성 여부"),
+                                        fieldWithPath("data.reviews.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
+                                        fieldWithPath("data.reviews.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -310,14 +336,20 @@ class PlaceControllerRestDocsTest {
                 .andDo(document("place-detail-not-found",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        pathParameters(
-                                parameterWithName("placeId").description("장소 고유 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("에러 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
-                                fieldWithPath("timestamp").type(JsonFieldType.STRING).description("에러 발생 시각")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Place")
+                                .summary("장소 상세 조회 실패")
+                                .description("존재하지 않는 장소 조회 시 에러를 반환합니다.")
+                                .pathParameters(
+                                        parameterWithName("placeId").description("장소 고유 ID")
+                                )
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("에러 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
+                                        fieldWithPath("timestamp").type(JsonFieldType.STRING).description("에러 발생 시각")
+                                )
+                                .build()
                         )
                 ));
     }
@@ -369,21 +401,27 @@ class PlaceControllerRestDocsTest {
                 .andDo(document("place-list",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.responseList[]").type(JsonFieldType.ARRAY).description("장소 목록"),
-                                fieldWithPath("data.responseList[].placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
-                                fieldWithPath("data.responseList[].placeName").type(JsonFieldType.STRING).description("장소명"),
-                                fieldWithPath("data.responseList[].category").type(JsonFieldType.STRING).description("카테고리"),
-                                fieldWithPath("data.responseList[].thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
-                                fieldWithPath("data.responseList[].averageRating").type(JsonFieldType.NUMBER).description("평균 평점"),
-                                fieldWithPath("data.responseList[].reviewCount").type(JsonFieldType.NUMBER).description("리뷰 수"),
-                                fieldWithPath("data.responseList[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
-                                fieldWithPath("data.responseList[].latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("data.responseList[].longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("data.responseList[].themes").type(JsonFieldType.ARRAY).description("테마 목록")
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Place")
+                                .summary("전체 장소 조회")
+                                .description("전체 장소 목록을 조회합니다.")
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data.responseList[]").type(JsonFieldType.ARRAY).description("장소 목록"),
+                                        fieldWithPath("data.responseList[].placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                        fieldWithPath("data.responseList[].placeName").type(JsonFieldType.STRING).description("장소명"),
+                                        fieldWithPath("data.responseList[].category").type(JsonFieldType.STRING).description("카테고리"),
+                                        fieldWithPath("data.responseList[].thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
+                                        fieldWithPath("data.responseList[].averageRating").type(JsonFieldType.NUMBER).description("평균 평점"),
+                                        fieldWithPath("data.responseList[].reviewCount").type(JsonFieldType.NUMBER).description("리뷰 수"),
+                                        fieldWithPath("data.responseList[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                        fieldWithPath("data.responseList[].latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                        fieldWithPath("data.responseList[].longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                        fieldWithPath("data.responseList[].themes").type(JsonFieldType.ARRAY).description("테마 목록")
+                                )
+                                .build()
                         )
                 ));
     }

@@ -39,6 +39,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -106,11 +108,18 @@ public class BusinessControllerTest {
                                 partWithName("request").description("사업장 등록 요청 JSON (businessName, businessAddress, content, contact, email, operatingHour, managerName, businessNumber, category, themes, latitude, longitude)"),
                                 partWithName("imageFiles").description("사업장 이미지 파일 목록").optional()
                         ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (없음)")
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("Business")
+                                        .summary("사업장 등록")
+                                        .description("사업장 정보를 등록합니다.")
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (없음)")
+                                        )
+                                        .build()
                         )
                 ));
     }
@@ -155,28 +164,35 @@ public class BusinessControllerTest {
                 .andDo(document("business-get",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.businessId").type(JsonFieldType.NUMBER).description("사업장 ID"),
-                                fieldWithPath("data.businessNumber").type(JsonFieldType.STRING).description("사업자등록번호"),
-                                fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
-                                fieldWithPath("data.managerName").type(JsonFieldType.STRING).description("대표자 이름"),
-                                fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
-                                fieldWithPath("data.placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
-                                fieldWithPath("data.placeName").type(JsonFieldType.STRING).description("장소명"),
-                                fieldWithPath("data.subName").type(JsonFieldType.STRING).description("장소 부제"),
-                                fieldWithPath("data.content").type(JsonFieldType.STRING).description("사업장 소개"),
-                                fieldWithPath("data.address").type(JsonFieldType.STRING).description("주소"),
-                                fieldWithPath("data.contact").type(JsonFieldType.STRING).description("전화번호"),
-                                fieldWithPath("data.operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
-                                fieldWithPath("data.latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("data.longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("data.thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
-                                fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
-                                fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
-                                fieldWithPath("data.themes").type(JsonFieldType.ARRAY).description("테마 목록")
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("Business")
+                                        .summary("사업장 조회")
+                                        .description("사업장 정보를 조회합니다.")
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data.businessId").type(JsonFieldType.NUMBER).description("사업장 ID"),
+                                                fieldWithPath("data.businessNumber").type(JsonFieldType.STRING).description("사업자등록번호"),
+                                                fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
+                                                fieldWithPath("data.managerName").type(JsonFieldType.STRING).description("대표자 이름"),
+                                                fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                                                fieldWithPath("data.placeId").type(JsonFieldType.NUMBER).description("장소 ID"),
+                                                fieldWithPath("data.placeName").type(JsonFieldType.STRING).description("장소명"),
+                                                fieldWithPath("data.subName").type(JsonFieldType.STRING).description("장소 부제"),
+                                                fieldWithPath("data.content").type(JsonFieldType.STRING).description("사업장 소개"),
+                                                fieldWithPath("data.address").type(JsonFieldType.STRING).description("주소"),
+                                                fieldWithPath("data.contact").type(JsonFieldType.STRING).description("전화번호"),
+                                                fieldWithPath("data.operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
+                                                fieldWithPath("data.latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                                fieldWithPath("data.longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                                fieldWithPath("data.thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
+                                                fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
+                                                fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
+                                                fieldWithPath("data.themes").type(JsonFieldType.ARRAY).description("테마 목록")
+                                        )
+                                        .build()
                         )
                 ));
     }
@@ -219,30 +235,37 @@ public class BusinessControllerTest {
                 .andDo(document("business-promotion-list",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("lastId").optional().description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)"),
-                                parameterWithName("size").optional().description("조회 개수 (기본값: 3)")
-                        ),
-                        responseFields(
-                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                                fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("프로모션 목록"),
-                                fieldWithPath("data.content[].promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
-                                fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("프로모션 제목"),
-                                fieldWithPath("data.content[].startDate").type(JsonFieldType.STRING).description("시작일"),
-                                fieldWithPath("data.content[].endDate").type(JsonFieldType.STRING).description("종료일"),
-                                fieldWithPath("data.content[].inPeriod").type(JsonFieldType.BOOLEAN).description("진행 중 여부"),
-                                fieldWithPath("data.content[].discountType").type(JsonFieldType.STRING).description("할인 유형 (PERCENT, AMOUNT)"),
-                                fieldWithPath("data.content[].discountValue").type(JsonFieldType.NUMBER).description("할인 값"),
-                                fieldWithPath("data.content[].usedValue").type(JsonFieldType.NUMBER).description("사용 금액"),
-                                fieldWithPath("data.content[].usedCount").type(JsonFieldType.NUMBER).description("사용 횟수"),
-                                fieldWithPath("data.content[].totalCount").type(JsonFieldType.NUMBER).description("총 발급 수"),
-                                fieldWithPath("data.content[].code").type(JsonFieldType.STRING).description("쿠폰 코드"),
-                                fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("프로모션 설명"),
-                                fieldWithPath("data.content[].validPeriod").type(JsonFieldType.NUMBER).description("유효 기간 (일)"),
-                                fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 프로모션 ID"),
-                                fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("Business")
+                                        .summary("사업장 프로모션 목록 조회")
+                                        .description("사업장의 프로모션 목록을 조회합니다.")
+                                        .queryParameters(
+                                                parameterWithName("lastId").optional().description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)"),
+                                                parameterWithName("size").optional().description("조회 개수 (기본값: 3)")
+                                        )
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data.content[]").type(JsonFieldType.ARRAY).description("프로모션 목록"),
+                                                fieldWithPath("data.content[].promotionId").type(JsonFieldType.NUMBER).description("프로모션 ID"),
+                                                fieldWithPath("data.content[].title").type(JsonFieldType.STRING).description("프로모션 제목"),
+                                                fieldWithPath("data.content[].startDate").type(JsonFieldType.STRING).description("시작일"),
+                                                fieldWithPath("data.content[].endDate").type(JsonFieldType.STRING).description("종료일"),
+                                                fieldWithPath("data.content[].inPeriod").type(JsonFieldType.BOOLEAN).description("진행 중 여부"),
+                                                fieldWithPath("data.content[].discountType").type(JsonFieldType.STRING).description("할인 유형 (PERCENT, AMOUNT)"),
+                                                fieldWithPath("data.content[].discountValue").type(JsonFieldType.NUMBER).description("할인 값"),
+                                                fieldWithPath("data.content[].usedValue").type(JsonFieldType.NUMBER).description("사용 금액"),
+                                                fieldWithPath("data.content[].usedCount").type(JsonFieldType.NUMBER).description("사용 횟수"),
+                                                fieldWithPath("data.content[].totalCount").type(JsonFieldType.NUMBER).description("총 발급 수"),
+                                                fieldWithPath("data.content[].code").type(JsonFieldType.STRING).description("쿠폰 코드"),
+                                                fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("프로모션 설명"),
+                                                fieldWithPath("data.content[].validPeriod").type(JsonFieldType.NUMBER).description("유효 기간 (일)"),
+                                                fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 프로모션 ID"),
+                                                fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                        )
+                                        .build()
                         )
                 ));
     }

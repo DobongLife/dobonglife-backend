@@ -30,6 +30,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -79,12 +81,19 @@ class AppPolicyControllerTest {
                     .andDo(document("app-policies",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
-                            responseFields(
-                                    fieldWithPath("isReceivedAlarm").type(JsonFieldType.BOOLEAN).description("알림 수신 여부"),
-                                    fieldWithPath("policies[]").type(JsonFieldType.ARRAY).description("정책 목록"),
-                                    fieldWithPath("policies[].type").type(JsonFieldType.STRING).description("정책 유형 (TERMS, PRIVACY, LOCATION)"),
-                                    fieldWithPath("policies[].version").type(JsonFieldType.STRING).description("정책 버전"),
-                                    fieldWithPath("policies[].content").type(JsonFieldType.STRING).description("정책 내용")
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("App Policy")
+                                            .summary("앱 정책 조회")
+                                            .description("앱 정책 및 알림 설정을 조회합니다.")
+                                            .responseFields(
+                                                    fieldWithPath("isReceivedAlarm").type(JsonFieldType.BOOLEAN).description("알림 수신 여부"),
+                                                    fieldWithPath("policies[]").type(JsonFieldType.ARRAY).description("정책 목록"),
+                                                    fieldWithPath("policies[].type").type(JsonFieldType.STRING).description("정책 유형 (TERMS, PRIVACY, LOCATION)"),
+                                                    fieldWithPath("policies[].version").type(JsonFieldType.STRING).description("정책 버전"),
+                                                    fieldWithPath("policies[].content").type(JsonFieldType.STRING).description("정책 내용")
+                                            )
+                                            .build()
                             )
                     ));
         }
