@@ -123,6 +123,7 @@ class CourseControllerTest {
                                             fieldWithPath("data.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
                                             fieldWithPath("data.content[].level").type(JsonFieldType.STRING).description("난이도 (BEGINNER, INTERMEDIATE, ADVANCED)"),
                                             fieldWithPath("data.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                            fieldWithPath("data.content[].status").type(JsonFieldType.STRING).description("코스 상태 (ACTIVE, INACTIVE)"),
                                             fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
                                             fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                     )
@@ -487,6 +488,7 @@ class CourseControllerTest {
                                             fieldWithPath("data.course.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
                                             fieldWithPath("data.course.content[].level").type(JsonFieldType.STRING).description("난이도"),
                                             fieldWithPath("data.course.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                            fieldWithPath("data.course.content[].status").type(JsonFieldType.STRING).description("코스 상태 (ACTIVE, INACTIVE)"),
                                             fieldWithPath("data.course.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
                                             fieldWithPath("data.course.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                     )
@@ -540,6 +542,7 @@ class CourseControllerTest {
                                             fieldWithPath("data.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
                                             fieldWithPath("data.content[].level").type(JsonFieldType.STRING).description("난이도"),
                                             fieldWithPath("data.content[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
+                                            fieldWithPath("data.content[].status").type(JsonFieldType.STRING).description("코스 상태 (ACTIVE, INACTIVE)"),
                                             fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
                                             fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                     )

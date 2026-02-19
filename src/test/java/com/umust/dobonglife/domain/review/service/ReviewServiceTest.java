@@ -223,7 +223,7 @@ class ReviewServiceTest {
             // given
             Long userId = 1L;
             User user = createTestUser(userId);
-            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.5, "좋아요");
+            CreateReviewRequest request = new CreateReviewRequest(10L, null, null, 4.5, "좋아요");
 
             given(userService.findById(userId)).willReturn(user);
             given(reviewRepository.save(any(Review.class))).willAnswer(invocation -> {
@@ -237,8 +237,8 @@ class ReviewServiceTest {
 
             // then
             assertThat(result.reviewId()).isEqualTo(1L);
-            then(courseService).should().updateCourseRatingAndCount(10L, 4.5, "create");
-            then(placeService).should(never()).updatePlaceRatingAndCount(anyLong(), anyDouble(), anyString());
+            then(courseService).should().updateCourseRatingAndCount(10L, 0.0, 4.5, "create");
+            then(placeService).should(never()).updatePlaceRatingAndCount(anyLong(), anyDouble(), anyDouble(), anyString());
         }
 
         @Test
@@ -247,7 +247,7 @@ class ReviewServiceTest {
             // given
             Long userId = 1L;
             User user = createTestUser(userId);
-            CreateReviewRequest request = new CreateReviewRequest(null, 20L, 3.5, "괜찮아요");
+            CreateReviewRequest request = new CreateReviewRequest(null, 20L, null, 3.5, "괜찮아요");
 
             given(userService.findById(userId)).willReturn(user);
             given(reviewRepository.save(any(Review.class))).willAnswer(invocation -> {
@@ -261,8 +261,8 @@ class ReviewServiceTest {
 
             // then
             assertThat(result.reviewId()).isEqualTo(2L);
-            then(placeService).should().updatePlaceRatingAndCount(20L, 3.5, "create");
-            then(courseService).should(never()).updateCourseRatingAndCount(anyLong(), anyDouble(), anyString());
+            then(placeService).should().updatePlaceRatingAndCount(20L, 0.0, 3.5, "create");
+            then(courseService).should(never()).updateCourseRatingAndCount(anyLong(), anyDouble(), anyDouble(), anyString());
         }
 
         @Test
@@ -271,7 +271,7 @@ class ReviewServiceTest {
             // given
             Long userId = 1L;
             User user = createTestUser(userId);
-            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.0, "내용");
+            CreateReviewRequest request = new CreateReviewRequest(10L, null, null, 4.0, "내용");
 
             given(userService.findById(userId)).willReturn(user);
             given(reviewRepository.save(any(Review.class))).willAnswer(invocation -> {
@@ -293,7 +293,7 @@ class ReviewServiceTest {
             // given
             Long userId = 1L;
             User user = createTestUser(userId);
-            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.0, "좋아요");
+            CreateReviewRequest request = new CreateReviewRequest(10L, null, null, 4.0, "좋아요");
 
             given(userService.findById(userId)).willReturn(user);
             given(reviewRepository.save(any(Review.class))).willAnswer(invocation -> {
@@ -321,7 +321,7 @@ class ReviewServiceTest {
             Long userId = 1L;
             User user = createTestUser(userId);
             Review review = createTestReview(1L, 10L, null, user);
-            CreateReviewRequest request = new CreateReviewRequest(10L, null, 5.0, "수정된 내용");
+            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.0, 5.0, "수정된 내용");
 
             given(reviewRepository.findById(1L)).willReturn(Optional.of(review));
             given(reviewRepository.save(any(Review.class))).willReturn(review);
@@ -331,7 +331,7 @@ class ReviewServiceTest {
 
             // then
             assertThat(result.reviewId()).isEqualTo(1L);
-            then(courseService).should().updateCourseRatingAndCount(10L, 5.0, "modify");
+            then(courseService).should().updateCourseRatingAndCount(10L, 4.0, 5.0, "modify");
         }
 
         @Test
@@ -339,7 +339,7 @@ class ReviewServiceTest {
         void 리뷰_없음_예외() {
             // given
             given(reviewRepository.findById(999L)).willReturn(Optional.empty());
-            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.0, "내용");
+            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.0, 4.0, "내용");
 
             // when & then
             assertThatThrownBy(() -> reviewService.updateReview(999L, 1L, request, null))
@@ -352,7 +352,7 @@ class ReviewServiceTest {
             // given
             User owner = createTestUser(1L);
             Review review = createTestReview(1L, 10L, null, owner);
-            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.0, "내용");
+            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.0, 4.0, "내용");
 
             given(reviewRepository.findById(1L)).willReturn(Optional.of(review));
 
@@ -370,7 +370,7 @@ class ReviewServiceTest {
             Long userId = 1L;
             User user = createTestUser(userId);
             Review review = createTestReview(1L, 10L, null, user);
-            CreateReviewRequest request = new CreateReviewRequest(10L, null, 3.0, "수정");
+            CreateReviewRequest request = new CreateReviewRequest(10L, null, 4.0, 3.0, "수정");
 
             given(reviewRepository.findById(1L)).willReturn(Optional.of(review));
             given(reviewRepository.save(any(Review.class))).willReturn(review);
@@ -379,7 +379,7 @@ class ReviewServiceTest {
             reviewService.updateReview(1L, userId, request, null);
 
             // then
-            then(courseService).should().updateCourseRatingAndCount(10L, 3.0, "modify");
+            then(courseService).should().updateCourseRatingAndCount(10L, 4.0, 3.0, "modify");
         }
     }
 
@@ -537,17 +537,17 @@ class ReviewServiceTest {
     }
 
     @Nested
-    @DisplayName("deleteByUserId - 사용자 리뷰 전체 삭제")
-    class DeleteByUserId {
+    @DisplayName("setNullByUserId - 사용자 리뷰 user null 처리")
+    class SetNullByUserId {
 
         @Test
         @DisplayName("호출 확인")
         void 호출_확인() {
             // when
-            reviewService.deleteByUserId(1L);
+            reviewService.setNullByUserId(1L);
 
             // then
-            then(reviewRepository).should().deleteByUserId(1L);
+            then(reviewRepository).should().setNullByUserId(1L);
         }
     }
 }

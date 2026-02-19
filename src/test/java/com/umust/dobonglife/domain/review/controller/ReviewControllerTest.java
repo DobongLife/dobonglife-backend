@@ -10,6 +10,7 @@ import com.umust.dobonglife.domain.review.controller.dto.response.PlaceReviewSum
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewResponse;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.service.ReviewService;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -82,7 +83,7 @@ class ReviewControllerTest {
             when(reviewService.createReview(eq(1L), any(CreateReviewRequest.class), anyList()))
                     .thenReturn(response);
 
-            CreateReviewRequest request = new CreateReviewRequest(1L, null, 4.5, "맛있는 코스였습니다!");
+            CreateReviewRequest request = new CreateReviewRequest(1L, null, null, 4.5, "맛있는 코스였습니다!");
             String requestJson = objectMapper.writeValueAsString(request);
 
             MockMultipartFile requestPart = new MockMultipartFile(
@@ -136,7 +137,7 @@ class ReviewControllerTest {
             when(reviewService.createReview(eq(1L), any(CreateReviewRequest.class), any()))
                     .thenReturn(response);
 
-            CreateReviewRequest request = new CreateReviewRequest(null, 1L, 3.0, "좋은 장소입니다.");
+            CreateReviewRequest request = new CreateReviewRequest(null, 1L, null, 3.0, "좋은 장소입니다.");
             String requestJson = objectMapper.writeValueAsString(request);
 
             MockMultipartFile requestPart = new MockMultipartFile(
@@ -344,7 +345,7 @@ class ReviewControllerTest {
             when(reviewService.updateReview(eq(1L), eq(1L), any(CreateReviewRequest.class), anyList()))
                     .thenReturn(response);
 
-            CreateReviewRequest request = new CreateReviewRequest(1L, null, 5.0, "수정된 리뷰입니다!");
+            CreateReviewRequest request = new CreateReviewRequest(1L, null, 4.0, 5.0, "수정된 리뷰입니다!");
             String requestJson = objectMapper.writeValueAsString(request);
 
             MockMultipartFile requestPart = new MockMultipartFile(
@@ -400,7 +401,7 @@ class ReviewControllerTest {
         void 내_코스_후기_조회_성공() throws Exception {
             CourseSummaryResponse courseInfo = new CourseSummaryResponse(
                     10L, List.of("course-img.jpg"), "테스트 코스", "부제목",
-                    List.of("역사"), CourseLevel.BEGINNER, true
+                    List.of("역사"), CourseLevel.BEGINNER, true, BaseStatus.ACTIVE
             );
             CourseReviewSummaryResponse review = new CourseReviewSummaryResponse(
                     1L, "홍길동", 4.5, "좋은 코스였습니다.",
@@ -454,6 +455,7 @@ class ReviewControllerTest {
                                                     fieldWithPath("data.content[].courseInfo.tags").type(JsonFieldType.ARRAY).description("코스 태그"),
                                                     fieldWithPath("data.content[].courseInfo.level").type(JsonFieldType.STRING).description("코스 난이도"),
                                                     fieldWithPath("data.content[].courseInfo.liked").type(JsonFieldType.BOOLEAN).description("찜 여부"),
+                                                    fieldWithPath("data.content[].courseInfo.status").type(JsonFieldType.STRING).description("코스 상태 (ACTIVE, INACTIVE)"),
                                                     fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
                                                     fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                             )
@@ -482,6 +484,7 @@ class ReviewControllerTest {
                     .latitude(37.6898)
                     .longitude(127.0472)
                     .themes(List.of("NATURE"))
+                    .status(BaseStatus.ACTIVE)
                     .build();
             PlaceReviewSummaryResponse review = new PlaceReviewSummaryResponse(
                     2L, "홍길동", 4.0, "분위기가 좋아요.",
@@ -538,6 +541,7 @@ class ReviewControllerTest {
                                                     fieldWithPath("data.content[].placeInfo.latitude").type(JsonFieldType.NUMBER).description("위도"),
                                                     fieldWithPath("data.content[].placeInfo.longitude").type(JsonFieldType.NUMBER).description("경도"),
                                                     fieldWithPath("data.content[].placeInfo.themes").type(JsonFieldType.ARRAY).description("테마 목록"),
+                                                    fieldWithPath("data.content[].placeInfo.status").type(JsonFieldType.STRING).description("장소 상태 (ACTIVE, INACTIVE)"),
                                                     fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 리뷰 ID"),
                                                     fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                             )

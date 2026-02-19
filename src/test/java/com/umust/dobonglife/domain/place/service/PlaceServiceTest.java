@@ -276,7 +276,7 @@ class PlaceServiceTest {
         given(placeRepository.findById(1L)).willReturn(Optional.of(place));
 
         // when
-        placeService.updatePlaceRatingAndCount(1L, 4.5, "create");
+        placeService.updatePlaceRatingAndCount(1L, 0.0, 4.5, "create");
 
         // then
         assertThat(place.getAverageRating()).isEqualTo(4.5);

@@ -62,7 +62,9 @@
       "Bash(/bin/bash -c 'echo hello')",
       "Bash(/bin/ls:*)",
       "Bash(/bin/echo:*)",
-      "Bash(./gradlew openapi3:*)"
+      "Bash(./gradlew openapi3:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:)"
     ]
   }
 }

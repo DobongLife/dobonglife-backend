@@ -10,6 +10,7 @@ import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryRes
 import com.umust.dobonglife.domain.point.controller.dto.response.PointResponse;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.slice.SliceResponse;
 import com.umust.dobonglife.global.external.firebase.FirebaseConfig;
@@ -173,7 +174,7 @@ class MyPageControllerTest {
             CourseSummaryResponse course = new CourseSummaryResponse(
                     1L, List.of("img1.jpg"), "도봉산 코스",
                     "아름다운 도봉산 산책로", List.of("자연", "힐링"),
-                    CourseLevel.BEGINNER, true
+                    CourseLevel.BEGINNER, true, BaseStatus.ACTIVE
             );
             CursorResponse<CourseSummaryResponse> courseList =
                     new CursorResponse<>(List.of(course), false);
@@ -220,6 +221,7 @@ class MyPageControllerTest {
                                                     fieldWithPath("data.course.content[].tags").type(JsonFieldType.ARRAY).description("태그 목록"),
                                                     fieldWithPath("data.course.content[].level").type(JsonFieldType.STRING).description("코스 난이도 (BEGINNER/INTERMEDIATE/ADVANCED)"),
                                                     fieldWithPath("data.course.content[].liked").type(JsonFieldType.BOOLEAN).description("찜 여부"),
+                                                    fieldWithPath("data.course.content[].status").type(JsonFieldType.STRING).description("코스 상태 (ACTIVE, INACTIVE)"),
                                                     fieldWithPath("data.course.lastId").type(JsonFieldType.NUMBER).description("마지막 코스 ID"),
                                                     fieldWithPath("data.course.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                             )
@@ -265,6 +267,7 @@ class MyPageControllerTest {
                     .latitude(37.6688)
                     .longitude(127.0467)
                     .themes(List.of("NATURE", "HEALING"))
+                    .status(BaseStatus.ACTIVE)
                     .build();
             CursorResponse<PlaceSummaryResponse> placeList =
                     new CursorResponse<>(List.of(place), false);
@@ -315,6 +318,7 @@ class MyPageControllerTest {
                                                     fieldWithPath("data.place.content[].latitude").type(JsonFieldType.NUMBER).description("위도"),
                                                     fieldWithPath("data.place.content[].longitude").type(JsonFieldType.NUMBER).description("경도"),
                                                     fieldWithPath("data.place.content[].themes").type(JsonFieldType.ARRAY).description("테마 목록"),
+                                                    fieldWithPath("data.place.content[].status").type(JsonFieldType.STRING).description("장소 상태 (ACTIVE, INACTIVE)"),
                                                     fieldWithPath("data.place.lastId").type(JsonFieldType.NUMBER).description("마지막 장소 ID"),
                                                     fieldWithPath("data.place.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                             )

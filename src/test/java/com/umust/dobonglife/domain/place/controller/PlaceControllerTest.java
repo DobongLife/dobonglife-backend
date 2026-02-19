@@ -6,6 +6,7 @@ import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryRes
 import com.umust.dobonglife.domain.place.service.PlaceReviewService;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.domain.review.controller.dto.response.ReviewSummaryResponse;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -118,6 +119,7 @@ class PlaceControllerTest {
                         .latitude(37.6898)
                         .longitude(127.0472)
                         .themes(List.of("NATURE"))
+                        .status(BaseStatus.ACTIVE)
                         .build()
         );
 
@@ -161,6 +163,7 @@ class PlaceControllerTest {
                                         fieldWithPath("data.content[].latitude").type(JsonFieldType.NUMBER).description("위도"),
                                         fieldWithPath("data.content[].longitude").type(JsonFieldType.NUMBER).description("경도"),
                                         fieldWithPath("data.content[].themes").type(JsonFieldType.ARRAY).description("테마 목록"),
+                                        fieldWithPath("data.content[].status").type(JsonFieldType.STRING).description("장소 상태 (ACTIVE, INACTIVE)"),
                                         fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 장소 ID"),
                                         fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                 )
@@ -187,6 +190,7 @@ class PlaceControllerTest {
                         .latitude(37.6800)
                         .longitude(127.0400)
                         .themes(List.of("RESTAURANT"))
+                        .status(BaseStatus.ACTIVE)
                         .build()
         );
 
@@ -373,6 +377,7 @@ class PlaceControllerTest {
                         .latitude(37.6898)
                         .longitude(127.0472)
                         .themes(List.of("NATURE"))
+                        .status(BaseStatus.ACTIVE)
                         .build(),
                 PlaceSummaryResponse.builder()
                         .placeId(2L)
@@ -385,6 +390,7 @@ class PlaceControllerTest {
                         .latitude(37.6800)
                         .longitude(127.0400)
                         .themes(List.of("RESTAURANT"))
+                        .status(BaseStatus.ACTIVE)
                         .build()
         );
 
@@ -419,7 +425,8 @@ class PlaceControllerTest {
                                         fieldWithPath("data.responseList[].liked").type(JsonFieldType.BOOLEAN).description("좋아요 여부"),
                                         fieldWithPath("data.responseList[].latitude").type(JsonFieldType.NUMBER).description("위도"),
                                         fieldWithPath("data.responseList[].longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                        fieldWithPath("data.responseList[].themes").type(JsonFieldType.ARRAY).description("테마 목록")
+                                        fieldWithPath("data.responseList[].themes").type(JsonFieldType.ARRAY).description("테마 목록"),
+                                        fieldWithPath("data.responseList[].status").type(JsonFieldType.STRING).description("장소 상태 (ACTIVE, INACTIVE)")
                                 )
                                 .build()
                         )

@@ -419,8 +419,6 @@ class CourseServiceTest {
 
                 // then
                 assertThat(result.courseId()).isEqualTo(courseId);
-                then(coursePlansRepository).should().deleteByCourseId(courseId);
-                then(courseRepository).should().delete(course);
                 then(userService).should().handleDeletion(userId);
             }
         }
@@ -471,7 +469,7 @@ class CourseServiceTest {
             given(courseRepository.findById(courseId)).willReturn(Optional.of(course));
 
             // when
-            courseService.updateCourseRatingAndCount(courseId, 5.0, "create");
+            courseService.updateCourseRatingAndCount(courseId, 0.0, 5.0, "create");
 
             // then
             assertThat(course.getReviewCount()).isEqualTo(6L);
@@ -487,7 +485,7 @@ class CourseServiceTest {
             given(courseRepository.findById(courseId)).willReturn(Optional.of(course));
 
             // when
-            courseService.updateCourseRatingAndCount(courseId, 3.0, "modify");
+            courseService.updateCourseRatingAndCount(courseId, 4.0, 3.0, "modify");
 
             // then
             assertThat(course.getReviewCount()).isEqualTo(5L);

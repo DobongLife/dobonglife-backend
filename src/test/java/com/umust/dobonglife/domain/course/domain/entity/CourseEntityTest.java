@@ -24,10 +24,11 @@ class CourseEntityTest {
     }
 
     private Course createCourse(double averageRating, long reviewCount) {
+        double ratingSum = averageRating * reviewCount;
         return Course.builder()
                 .userId(1L)
                 .basicInfo(createBasicInfo())
-                .reviewStats(new CourseReviewStats(averageRating, reviewCount))
+                .reviewStats(new CourseReviewStats(ratingSum, reviewCount))
                 .themes(List.of(CourseTheme.HISTORY))
                 .tags(List.of("역사", "문화"))
                 .build();
@@ -113,19 +114,19 @@ class CourseEntityTest {
     }
 
     @Nested
-    @DisplayName("updateRating - 평점 업데이트")
-    class UpdateRating {
+    @DisplayName("updateReviewRating - 평점 업데이트")
+    class UpdateReviewRating {
 
         @Test
         @DisplayName("리뷰 2개 상태에서 평점 업데이트")
         void updateRatingCalculation() {
-            // updateRating: totalScore = averageRating - averageRating + newRating = newRating
-            // newAverage = newRating / reviewCount
+            // 평균 4.0, 리뷰 2개 → ratingSum = 8.0
+            // oldRating=3.0 → newRating=5.0 → ratingSum = 8.0 - 3.0 + 5.0 = 10.0 → 평균 5.0
             Course course = createCourse(4.0, 2);
 
-            course.updateRating(5.0);
+            course.updateReviewRating(3.0, 5.0);
 
-            assertThat(course.getAverageRating()).isCloseTo(5.0 / 2, within(0.001));
+            assertThat(course.getAverageRating()).isCloseTo(10.0 / 2, within(0.001));
             assertThat(course.getReviewCount()).isEqualTo(2L);
         }
     }
