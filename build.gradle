@@ -29,12 +29,6 @@ repositories {
 	mavenCentral()
 }
 
-ext {
-	set('snippetsDir', file("build/generated-snippets"))
-	set('openapiOutDir', file("build/api-spec"))
-	set('openapiStaticDir', file("build/resources/main/static/docs"))
-}
-
 dependencies {
 	// Spring Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -127,10 +121,8 @@ dependencies {
 
 ext {
 	set('snippetsDir', file("build/generated-snippets"))
-	// openapi 결과를 한곳에 고정
-	set('openapiOutDir', file("$buildDir/api-spec"))
-	// swagger-ui가 읽을 파일을 static 아래에 두기
-	set('openapiStaticDir', file("$buildDir/resources/main/static/docs"))
+	set('openapiOutDir', file("build/api-spec"))
+	set('openapiStaticDir', file("build/resources/main/static/docs"))
 }
 
 // 2. 테스트 및 asciidoctor 설정

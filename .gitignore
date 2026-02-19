@@ -47,6 +47,8 @@ out/
 src/main/resources/application-local.yml
 src/test/resources/application-test.yml
 
+### Claude ###
+.claude/settings.local.json
 
 # 테스트가 생성하는 스니펫
 /build/generated-snippets/
