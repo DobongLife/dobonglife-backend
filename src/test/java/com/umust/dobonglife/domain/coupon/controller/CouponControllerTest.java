@@ -36,6 +36,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -115,9 +117,9 @@ class CouponControllerTest {
                                             .description("내 쿠폰 목록과 상태를 조회합니다.")
                                             .queryParameters(
                                                     parameterWithName("lastId").optional()
-                                                            .description("커서 - 마지막 쿠폰 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 쿠폰 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 2)")
+                                                            .description("조회 개수 (기본값: 2)").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),

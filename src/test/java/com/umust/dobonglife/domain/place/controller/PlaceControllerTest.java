@@ -36,6 +36,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -87,7 +89,7 @@ class PlaceControllerTest {
                                 .summary("장소 좋아요")
                                 .description("장소를 좋아요하거나 해제합니다.")
                                 .pathParameters(
-                                        parameterWithName("placeId").description("장소 고유 ID")
+                                        parameterWithName("placeId").description("장소 고유 ID").type(INTEGER)
                                 )
                                 .responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -144,9 +146,9 @@ class PlaceControllerTest {
                                 .description("내가 찜한 장소 목록을 조회합니다.")
                                 .queryParameters(
                                         parameterWithName("lastId").optional()
-                                                .description("커서 - 마지막 장소 ID (첫 요청 시 생략)"),
+                                                .description("커서 - 마지막 장소 ID (첫 요청 시 생략)").type(INTEGER),
                                         parameterWithName("size").optional()
-                                                .description("조회 개수 (기본값: 2)")
+                                                .description("조회 개수 (기본값: 2)").type(INTEGER)
                                 )
                                 .responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -215,7 +217,7 @@ class PlaceControllerTest {
                                 .description("커서 기반으로 찜한 장소 목록을 조회합니다.")
                                 .queryParameters(
                                         parameterWithName("lastId")
-                                                .description("이전 페이지에서 받은 마지막 장소 ID (커서)")
+                                                .description("이전 페이지에서 받은 마지막 장소 ID (커서)").type(INTEGER)
                                 )
                                 .build()
                         )
@@ -280,13 +282,13 @@ class PlaceControllerTest {
                                 .summary("장소 상세 조회")
                                 .description("장소 상세 정보와 리뷰를 조회합니다.")
                                 .pathParameters(
-                                        parameterWithName("placeId").description("장소 고유 ID")
+                                        parameterWithName("placeId").description("장소 고유 ID").type(INTEGER)
                                 )
                                 .queryParameters(
                                         parameterWithName("lastId").optional()
-                                                .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
+                                                .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)").type(INTEGER),
                                         parameterWithName("size").optional()
-                                                .description("리뷰 조회 개수 (기본값: 2)")
+                                                .description("리뷰 조회 개수 (기본값: 2)").type(INTEGER)
                                 )
                                 .responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -345,7 +347,7 @@ class PlaceControllerTest {
                                 .summary("장소 상세 조회 실패")
                                 .description("존재하지 않는 장소 조회 시 에러를 반환합니다.")
                                 .pathParameters(
-                                        parameterWithName("placeId").description("장소 고유 ID")
+                                        parameterWithName("placeId").description("장소 고유 ID").type(INTEGER)
                                 )
                                 .responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),

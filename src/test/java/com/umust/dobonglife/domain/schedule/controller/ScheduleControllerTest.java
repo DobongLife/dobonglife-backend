@@ -35,6 +35,8 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -135,6 +137,9 @@ class ScheduleControllerTest {
         @DisplayName("월간 일정 조회 성공 200")
         void success() throws Exception {
             // given
+            int year = 2025;
+            int month = 1;
+
             ScheduleResponse scheduleResponse = ScheduleResponse.builder()
                     .id(1L)
                     .title("독서 회의")
@@ -155,13 +160,13 @@ class ScheduleControllerTest {
             MonthlyScheduleListResponse monthlyResponse =
                     MonthlyScheduleListResponse.from(List.of(dailyResponse));
 
-            given(scheduleService.getMonthlyScheduleList(any(), eq(2025), eq(1)))
+            given(scheduleService.getMonthlyScheduleList(any(), eq(year), eq(month)))
                     .willReturn(monthlyResponse);
 
             // when & then
             mockMvc.perform(get("/api/schedules/monthly")
-                            .param("year", "2025")
-                            .param("month", "1"))
+                            .param("year", String.valueOf(year))
+                            .param("month", String.valueOf(month)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.data.scheduleList").isArray())
@@ -176,8 +181,8 @@ class ScheduleControllerTest {
                                     .summary("월별 일정 조회")
                                     .description("해당 월의 일정 목록을 조회합니다.")
                                     .queryParameters(
-                                            parameterWithName("year").description("조회 연도"),
-                                            parameterWithName("month").description("조회 월")
+                                            parameterWithName("year").description("조회 연도").type(INTEGER),
+                                            parameterWithName("month").description("조회 월").type(INTEGER)
                                     )
                                     .responseFields(
                                             fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -240,7 +245,7 @@ class ScheduleControllerTest {
                                     .summary("일정 수정")
                                     .description("기존 일정을 수정합니다.")
                                     .pathParameters(
-                                            parameterWithName("scheduleId").description("일정 고유 ID")
+                                            parameterWithName("scheduleId").description("일정 고유 ID").type(INTEGER)
                                     )
                                     .requestFields(
                                             fieldWithPath("title").type(JsonFieldType.STRING).description("일정 제목"),
@@ -287,7 +292,7 @@ class ScheduleControllerTest {
                                     .summary("일정 삭제")
                                     .description("일정을 삭제합니다.")
                                     .pathParameters(
-                                            parameterWithName("scheduleId").description("일정 고유 ID")
+                                            parameterWithName("scheduleId").description("일정 고유 ID").type(INTEGER)
                                     )
                                     .responseFields(
                                             fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),

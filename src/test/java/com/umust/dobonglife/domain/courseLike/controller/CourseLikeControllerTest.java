@@ -23,6 +23,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -77,7 +79,7 @@ class CourseLikeControllerTest {
                                             .summary("코스 찜하기")
                                             .description("코스를 찜하거나 해제합니다.")
                                             .pathParameters(
-                                                    parameterWithName("courseId").description("코스 ID")
+                                                    parameterWithName("courseId").description("코스 ID").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),

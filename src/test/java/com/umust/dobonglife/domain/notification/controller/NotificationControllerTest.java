@@ -21,7 +21,10 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.restdocs.snippet.Attributes.key;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.BOOLEAN;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
+import static com.epages.restdocs.apispec.SimpleType.STRING;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -103,11 +106,11 @@ class NotificationControllerTest {
                                             .description("알림 목록을 필터별로 조회합니다.")
                                             .queryParameters(
                                                     parameterWithName("filter").optional()
-                                                            .description("알림 필터 (ALL, UNREAD, POINT, SCHEDULE, COURSE, COUPON / 기본값: ALL)"),
+                                                            .description("알림 필터 (ALL, UNREAD, POINT, SCHEDULE, COURSE, COUPON / 기본값: ALL)").type(STRING),
                                                     parameterWithName("lastId").optional()
-                                                            .description("커서 - 마지막 알림 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 알림 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 2)")
+                                                            .description("조회 개수 (기본값: 2)").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -150,14 +153,15 @@ class NotificationControllerTest {
         @DisplayName("커서 파라미터 전달 성공")
         @WithMockCustomUser
         void 커서_파라미터_전달_성공() throws Exception {
+            Long lastId = 5L;
             CursorResponse<NotificationResponse> response =
                     new CursorResponse<>(List.of(), false);
 
-            when(notificationService.getNotifications(eq(1L), eq("ALL"), eq(5L), eq(2)))
+            when(notificationService.getNotifications(eq(1L), eq("ALL"), eq(lastId), eq(2)))
                     .thenReturn(response);
 
             mockMvc.perform(get("/api/notifications")
-                            .param("lastId", "5"))
+                            .param("lastId", String.valueOf(lastId)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content").isEmpty());
         }
@@ -271,7 +275,7 @@ class NotificationControllerTest {
                                             .summary("알림 읽음 처리")
                                             .description("알림을 읽음 처리합니다.")
                                             .pathParameters(
-                                                    parameterWithName("notificationId").description("읽음 처리할 알림 ID")
+                                                    parameterWithName("notificationId").description("읽음 처리할 알림 ID").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -306,7 +310,7 @@ class NotificationControllerTest {
                                             .summary("알림 읽음 처리 실패")
                                             .description("존재하지 않는 알림 ID로 요청 시 에러 응답입니다.")
                                             .pathParameters(
-                                                    parameterWithName("notificationId").description("읽음 처리할 알림 ID")
+                                                    parameterWithName("notificationId").description("읽음 처리할 알림 ID").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -328,9 +332,11 @@ class NotificationControllerTest {
         @DisplayName("알림 설정 활성화 성공")
         @WithMockCustomUser
         void 알림_설정_활성화_성공() throws Exception {
-            doNothing().when(userService).updateNotificationSetting(eq(1L), eq(true));
+            boolean enabled = true;
+            doNothing().when(userService).updateNotificationSetting(eq(1L), eq(enabled));
 
-            mockMvc.perform(patch("/api/notifications/settings/notification?enabled=true"))
+            mockMvc.perform(patch("/api/notifications/settings/notification")
+                            .queryParam("enabled", String.valueOf(enabled)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.status").value(200))
@@ -345,9 +351,7 @@ class NotificationControllerTest {
                                             .summary("알림 설정 변경")
                                             .description("알림 수신 설정을 변경합니다.")
                                             .queryParameters(
-                                                    parameterWithName("enabled").description("알림 수신 여부 (true/false)").attributes(
-                                                            key("type").value("boolean")
-                                                    )
+                                                    parameterWithName("enabled").type(BOOLEAN).description("알림 수신 여부 (true/false)")
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -364,9 +368,11 @@ class NotificationControllerTest {
         @DisplayName("알림 설정 비활성화 성공")
         @WithMockCustomUser
         void 알림_설정_비활성화_성공() throws Exception {
-            doNothing().when(userService).updateNotificationSetting(eq(1L), eq(false));
+            boolean enabled = false;
+            doNothing().when(userService).updateNotificationSetting(eq(1L), eq(enabled));
 
-            mockMvc.perform(patch("/api/notifications/settings/notification?enabled=false"))
+            mockMvc.perform(patch("/api/notifications/settings/notification")
+                            .queryParam("enabled", String.valueOf(enabled)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.status").value(200))

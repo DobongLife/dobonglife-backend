@@ -34,6 +34,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
+import static com.epages.restdocs.apispec.SimpleType.STRING;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -100,9 +103,9 @@ class PointControllerTest {
                                             .description("포인트와 프로모션(광고)를 조회합니다.")
                                             .queryParameters(
                                                     parameterWithName("lastId").optional()
-                                                            .description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 4)")
+                                                            .description("조회 개수 (기본값: 4)").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -127,14 +130,15 @@ class PointControllerTest {
         @DisplayName("lastId 파라미터 전달 성공")
         @WithMockCustomUser
         void lastId_파라미터_전달_성공() throws Exception {
+            Long lastId = 5L;
             CursorResponse<PromotionBannerItem> promotions =
                     new CursorResponse<>(List.of(), false);
             PointPageResponse response = new PointPageResponse(300L, promotions);
 
-            when(pointPromotionService.getMyPoint(eq(1L), eq(5L), eq(4)))
+            when(pointPromotionService.getMyPoint(eq(1L), eq(lastId), eq(4)))
                     .thenReturn(response);
 
-            mockMvc.perform(get("/api/points").param("lastId", "5"))
+            mockMvc.perform(get("/api/points").param("lastId", String.valueOf(lastId)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.totalPoint").value(300));
         }
@@ -222,11 +226,11 @@ class PointControllerTest {
                                             .description("포인트 내역과 포인트 가이드를 조회합니다.")
                                             .queryParameters(
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 20)"),
+                                                            .description("조회 개수 (기본값: 20)").type(INTEGER),
                                                     parameterWithName("lastId").optional()
-                                                            .description("커서 - 마지막 포인트 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 포인트 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("order").optional()
-                                                            .description("정렬 순서 (DESC/ASC, 기본값: DESC)")
+                                                            .description("정렬 순서 (DESC/ASC, 기본값: DESC)").type(STRING)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -256,21 +260,25 @@ class PointControllerTest {
         @DisplayName("커스텀 파라미터 전달 성공")
         @WithMockCustomUser
         void 커스텀_파라미터_전달_성공() throws Exception {
+            int size = 10;
+            Long lastId = 5L;
+            String order = "ASC";
+
             SliceResponse<PointResponse> slice = SliceResponse.<PointResponse>builder()
                     .content(List.of())
-                    .size(10)
+                    .size(size)
                     .hasNext(false)
                     .nextCursor(null)
                     .build();
             MyPointsResponse response = new MyPointsResponse(0L, List.of(), slice);
 
-            when(pointService.getPointList(eq(1L), eq(10), eq(5L), eq("ASC")))
+            when(pointService.getPointList(eq(1L), eq(size), eq(lastId), eq(order)))
                     .thenReturn(response);
 
             mockMvc.perform(get("/api/points/my")
-                            .param("size", "10")
-                            .param("lastId", "5")
-                            .param("order", "ASC"))
+                            .param("size", String.valueOf(size))
+                            .param("lastId", String.valueOf(lastId))
+                            .param("order", order))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.totalPoint").value(0));
         }

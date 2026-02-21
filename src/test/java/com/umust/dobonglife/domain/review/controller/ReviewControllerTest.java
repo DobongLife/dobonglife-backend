@@ -42,6 +42,8 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -190,13 +192,13 @@ class ReviewControllerTest {
                                             .summary("코스 리뷰 조회")
                                             .description("코스의 리뷰 목록을 조회합니다.")
                                             .pathParameters(
-                                                    parameterWithName("courseId").description("코스 ID")
+                                                    parameterWithName("courseId").description("코스 ID").type(INTEGER)
                                             )
                                             .queryParameters(
                                                     parameterWithName("lastReviewId").optional()
-                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 3)")
+                                                            .description("조회 개수 (기본값: 3)").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -222,14 +224,15 @@ class ReviewControllerTest {
         @DisplayName("커서 파라미터 전달 성공")
         @WithMockCustomUser
         void 커서_파라미터_전달_성공() throws Exception {
+            Long lastReviewId = 5L;
             CursorResponse<ReviewSummaryResponse> response =
                     new CursorResponse<>(List.of(), false);
 
-            when(reviewService.getCourseReviews(eq(10L), eq(1L), eq(5L), eq(3)))
+            when(reviewService.getCourseReviews(eq(10L), eq(1L), eq(lastReviewId), eq(3)))
                     .thenReturn(response);
 
             mockMvc.perform(get("/api/review/course/{courseId}", 10L)
-                            .param("lastReviewId", "5"))
+                            .param("lastReviewId", String.valueOf(lastReviewId)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content").isEmpty());
         }
@@ -287,13 +290,13 @@ class ReviewControllerTest {
                                             .summary("장소 리뷰 조회")
                                             .description("장소의 리뷰 목록을 조회합니다.")
                                             .pathParameters(
-                                                    parameterWithName("placeId").description("장소 ID")
+                                                    parameterWithName("placeId").description("장소 ID").type(INTEGER)
                                             )
                                             .queryParameters(
                                                     parameterWithName("lastReviewId").optional()
-                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 3)")
+                                                            .description("조회 개수 (기본값: 3)").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -319,14 +322,15 @@ class ReviewControllerTest {
         @DisplayName("커서 파라미터 전달 성공")
         @WithMockCustomUser
         void 커서_파라미터_전달_성공() throws Exception {
+            Long lastReviewId = 3L;
             CursorResponse<ReviewSummaryResponse> response =
                     new CursorResponse<>(List.of(), false);
 
-            when(reviewService.getPlaceReviews(eq(20L), eq(1L), eq(3L), eq(3)))
+            when(reviewService.getPlaceReviews(eq(20L), eq(1L), eq(lastReviewId), eq(3)))
                     .thenReturn(response);
 
             mockMvc.perform(get("/api/review/place/{placeId}", 20L)
-                            .param("lastReviewId", "3"))
+                            .param("lastReviewId", String.valueOf(lastReviewId)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content").isEmpty());
         }
@@ -432,9 +436,9 @@ class ReviewControllerTest {
                                             .description("내가 작성한 코스 리뷰 목록을 조회합니다.")
                                             .queryParameters(
                                                     parameterWithName("lastReviewId").optional()
-                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 2)")
+                                                            .description("조회 개수 (기본값: 2)").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -515,9 +519,9 @@ class ReviewControllerTest {
                                             .description("내가 작성한 장소 리뷰 목록을 조회합니다.")
                                             .queryParameters(
                                                     parameterWithName("lastReviewId").optional()
-                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 리뷰 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 2)")
+                                                            .description("조회 개수 (기본값: 2)").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -579,7 +583,7 @@ class ReviewControllerTest {
                                             .summary("리뷰 삭제")
                                             .description("리뷰를 삭제합니다.")
                                             .pathParameters(
-                                                    parameterWithName("reviewId").description("삭제할 리뷰 ID")
+                                                    parameterWithName("reviewId").description("삭제할 리뷰 ID").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),

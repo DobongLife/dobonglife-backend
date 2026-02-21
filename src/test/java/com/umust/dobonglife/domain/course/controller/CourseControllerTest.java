@@ -38,6 +38,9 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
+import static com.epages.restdocs.apispec.SimpleType.STRING;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -90,11 +93,12 @@ class CourseControllerTest {
         @WithMockCustomUser
         @DisplayName("코스 목록 조회 성공 200")
         void success() throws Exception {
-            given(courseService.getCourses(any(), any(), anyInt()))
+            int size = 10;
+            given(courseService.getCourses(any(), any(), eq(size)))
                     .willReturn(createCourseSummaryResponse());
 
             mockMvc.perform(get("/api/course")
-                            .param("size", "10"))
+                            .param("size", String.valueOf(size)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.data.content[0].courseId").value(1))
@@ -108,8 +112,8 @@ class CourseControllerTest {
                                     .summary("코스 목록 조회")
                                     .description("코스 목록을 조회합니다.")
                                     .queryParameters(
-                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
-                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
+                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)").type(INTEGER),
+                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)").type(INTEGER)
                                     )
                                     .responseFields(
                                             fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -187,10 +191,10 @@ class CourseControllerTest {
                                     .summary("코스 상세 조회")
                                     .description("코스 상세 정보와 리뷰를 조회합니다.")
                                     .pathParameters(
-                                            parameterWithName("courseId").description("코스 고유 ID")
+                                            parameterWithName("courseId").description("코스 고유 ID").type(INTEGER)
                                     )
                                     .queryParameters(
-                                            parameterWithName("lastId").optional().description("리뷰 커서 - 마지막 리뷰 ID (첫 요청 시 생략)")
+                                            parameterWithName("lastId").optional().description("리뷰 커서 - 마지막 리뷰 ID (첫 요청 시 생략)").type(INTEGER)
                                     )
                                     .responseFields(
                                             fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -250,7 +254,7 @@ class CourseControllerTest {
                                     .summary("코스 상세 조회 실패")
                                     .description("존재하지 않는 코스 조회 시 에러를 반환합니다.")
                                     .pathParameters(
-                                            parameterWithName("courseId").description("코스 고유 ID")
+                                            parameterWithName("courseId").description("코스 고유 ID").type(INTEGER)
                                     )
                                     .responseFields(
                                             fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -428,7 +432,7 @@ class CourseControllerTest {
                                     .summary("코스 삭제")
                                     .description("코스를 삭제합니다.")
                                     .pathParameters(
-                                            parameterWithName("courseId").description("코스 고유 ID")
+                                            parameterWithName("courseId").description("코스 고유 ID").type(INTEGER)
                                     )
                                     .responseFields(
                                             fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -452,14 +456,15 @@ class CourseControllerTest {
         @WithMockCustomUser
         @DisplayName("내 코스 조회 성공 200")
         void success() throws Exception {
+            int size = 10;
             CursorResponse<CourseSummaryResponse> cursorResponse = createCourseSummaryResponse();
             CourseMyResponse myResponse = new CourseMyResponse(1L, cursorResponse);
 
-            given(courseService.getMyCourses(any(), anyInt(), any()))
+            given(courseService.getMyCourses(any(), eq(size), any()))
                     .willReturn(myResponse);
 
             mockMvc.perform(get("/api/course/my")
-                            .param("size", "10"))
+                            .param("size", String.valueOf(size)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.data.totalCount").value(1))
@@ -472,8 +477,8 @@ class CourseControllerTest {
                                     .summary("내 코스 조회")
                                     .description("내가 등록한 코스 목록을 조회합니다.")
                                     .queryParameters(
-                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
-                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
+                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)").type(INTEGER),
+                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)").type(INTEGER)
                                     )
                                     .responseFields(
                                             fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -508,12 +513,13 @@ class CourseControllerTest {
         @WithMockCustomUser
         @DisplayName("테마별 코스 조회 성공 200")
         void success() throws Exception {
-            given(courseService.getCourses(any(), eq(CourseTheme.HISTORY), any(), anyInt()))
+            int size = 10;
+            given(courseService.getCourses(any(), eq(CourseTheme.HISTORY), any(), eq(size)))
                     .willReturn(createCourseSummaryResponse());
 
             mockMvc.perform(get("/api/course/theme")
                             .param("theme", "HISTORY")
-                            .param("size", "10"))
+                            .param("size", String.valueOf(size)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.data.content[0].courseId").value(1))
@@ -526,9 +532,9 @@ class CourseControllerTest {
                                     .summary("주간 테마별 코스 조회")
                                     .description("주간테마별 코스를 조회합니다. theme은 영어로 보내주시면 됩니다. (예시: HISTORY)")
                                     .queryParameters(
-                                            parameterWithName("theme").description("테마 (HISTORY, NATURE, CULTURE 등)"),
-                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)"),
-                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)")
+                                            parameterWithName("theme").description("테마 (HISTORY, NATURE, CULTURE 등)").type(STRING),
+                                            parameterWithName("lastId").optional().description("커서 - 마지막 코스 ID (첫 요청 시 생략)").type(INTEGER),
+                                            parameterWithName("size").optional().description("조회 개수 (기본값: 2)").type(INTEGER)
                                     )
                                     .responseFields(
                                             fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),

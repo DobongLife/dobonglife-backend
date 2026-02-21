@@ -27,6 +27,8 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -216,7 +218,9 @@ class BusinessPromotionControllerTest {
                                     .summary("사업장 쿠폰 수정")
                                     .description("사업장 프로모션 쿠폰을 수정합니다.")
                                     .pathParameters(
-                                            parameterWithName("promotionId").description("수정할 프로모션 ID")
+                                            parameterWithName("promotionId")
+                                                    .type(INTEGER)
+                                                    .description("수정할 프로모션 ID")
                                     )
                                     .requestFields(
                                             fieldWithPath("couponName").type(JsonFieldType.STRING).description("쿠폰 이름"),

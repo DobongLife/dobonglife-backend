@@ -28,6 +28,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -99,9 +101,9 @@ class HomeControllerTest {
                                             .description("홈 화면의 배너와 프로모션을 조회합니다.")
                                             .queryParameters(
                                                     parameterWithName("lastId").optional()
-                                                            .description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)"),
+                                                            .description("커서 - 마지막 프로모션 ID (첫 요청 시 생략)").type(INTEGER),
                                                     parameterWithName("size").optional()
-                                                            .description("조회 개수 (기본값: 3)")
+                                                            .description("조회 개수 (기본값: 3)").type(INTEGER)
                                             )
                                             .responseFields(
                                                     fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
@@ -132,16 +134,17 @@ class HomeControllerTest {
         @DisplayName("lastId 파라미터 전달 성공")
         @WithMockCustomUser
         void lastId_파라미터_전달_성공() throws Exception {
+            Long lastId = 5L;
             CursorResponse<BannerSummaryResponse> banners =
                     new CursorResponse<>(List.of(), false);
             CursorResponse<PromotionSummaryItem> promotions =
                     new CursorResponse<>(List.of(), false);
             HomeSummaryResponse response = new HomeSummaryResponse(banners, promotions);
 
-            when(homeService.getHomeSummary(eq(5L), eq(3)))
+            when(homeService.getHomeSummary(eq(lastId), eq(3)))
                     .thenReturn(response);
 
-            mockMvc.perform(get("/api/home").param("lastId", "5"))
+            mockMvc.perform(get("/api/home").param("lastId", String.valueOf(lastId)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true));
         }
