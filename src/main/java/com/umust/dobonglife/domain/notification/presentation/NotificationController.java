@@ -10,9 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "알림 API", description = "알림 관련 API")
@@ -47,9 +44,9 @@ public class NotificationController {
     )
     // 새로운 알림 유무 확인
     @GetMapping("/new")
-    public ResponseEntity<Boolean> checkNewNotifications(@CurrentUserId Long userId) {
+    public BaseResponse<Boolean> checkNewNotifications(@CurrentUserId Long userId) {
         boolean hasNew = notificationService.hasNewNotifications(userId);
-        return ResponseEntity.ok(hasNew);
+        return BaseResponse.ok(hasNew);
     }
 
     @Operation(summary = "특정 알림 확인", description = "특정 알림을 읽음처리합니다.")
@@ -59,10 +56,10 @@ public class NotificationController {
     )
     // 특정 알림 읽음 처리
     @PatchMapping("/{notificationId}/read")
-    public ResponseEntity<Void> markAsRead(@CurrentUserId Long userId,
-                                           @PathVariable Long notificationId) {
+    public BaseResponse<Void> markAsRead(@CurrentUserId Long userId,
+                                         @PathVariable Long notificationId) {
         notificationService.markAsRead(notificationId, userId);
-        return ResponseEntity.noContent().build();
+        return BaseResponse.ok(null);
     }
 
     @Operation(summary = "알림 설정 유무", description = "푸시 알림 설정을 제어합니다.")
@@ -71,8 +68,8 @@ public class NotificationController {
             description = "요청에 성공하였습니다."
     )
     @PatchMapping("/settings/notification")
-    public ResponseEntity<Void> toggleNotification(@CurrentUserId Long userId, @RequestParam boolean enabled) {
+    public BaseResponse<Void> toggleNotification(@CurrentUserId Long userId, @RequestParam boolean enabled) {
         userService.updateNotificationSetting(userId, enabled);
-        return ResponseEntity.ok().build();
+        return BaseResponse.ok(null);
     }
 }

@@ -71,12 +71,15 @@ class AppPolicyControllerTest {
 
             mockMvc.perform(get("/api/policies"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.isReceivedAlarm").value(true))
-                    .andExpect(jsonPath("$.policies[0].type").value("TERMS"))
-                    .andExpect(jsonPath("$.policies[0].version").value("1.0"))
-                    .andExpect(jsonPath("$.policies[0].content").value("이용약관 내용입니다."))
-                    .andExpect(jsonPath("$.policies[1].type").value("PRIVACY"))
-                    .andExpect(jsonPath("$.policies[2].type").value("LOCATION"))
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
+                    .andExpect(jsonPath("$.data.isReceivedAlarm").value(true))
+                    .andExpect(jsonPath("$.data.policies[0].type").value("TERMS"))
+                    .andExpect(jsonPath("$.data.policies[0].version").value("1.0"))
+                    .andExpect(jsonPath("$.data.policies[0].content").value("이용약관 내용입니다."))
+                    .andExpect(jsonPath("$.data.policies[1].type").value("PRIVACY"))
+                    .andExpect(jsonPath("$.data.policies[2].type").value("LOCATION"))
                     .andDo(print())
                     .andDo(document("app-policies",
                             preprocessRequest(prettyPrint()),
@@ -87,11 +90,14 @@ class AppPolicyControllerTest {
                                             .summary("앱 정책 조회")
                                             .description("앱 정책 및 알림 설정을 조회합니다.")
                                             .responseFields(
-                                                    fieldWithPath("isReceivedAlarm").type(JsonFieldType.BOOLEAN).description("알림 수신 여부"),
-                                                    fieldWithPath("policies[]").type(JsonFieldType.ARRAY).description("정책 목록"),
-                                                    fieldWithPath("policies[].type").type(JsonFieldType.STRING).description("정책 유형 (TERMS, PRIVACY, LOCATION)"),
-                                                    fieldWithPath("policies[].version").type(JsonFieldType.STRING).description("정책 버전"),
-                                                    fieldWithPath("policies[].content").type(JsonFieldType.STRING).description("정책 내용")
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data.isReceivedAlarm").type(JsonFieldType.BOOLEAN).description("알림 수신 여부"),
+                                                    fieldWithPath("data.policies[]").type(JsonFieldType.ARRAY).description("정책 목록"),
+                                                    fieldWithPath("data.policies[].type").type(JsonFieldType.STRING).description("정책 유형 (TERMS, PRIVACY, LOCATION)"),
+                                                    fieldWithPath("data.policies[].version").type(JsonFieldType.STRING).description("정책 버전"),
+                                                    fieldWithPath("data.policies[].content").type(JsonFieldType.STRING).description("정책 내용")
                                             )
                                             .build()
                             )
@@ -112,9 +118,12 @@ class AppPolicyControllerTest {
 
             mockMvc.perform(get("/api/policies"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.isReceivedAlarm").value(false))
-                    .andExpect(jsonPath("$.policies").isArray())
-                    .andExpect(jsonPath("$.policies[0].type").value("TERMS"));
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
+                    .andExpect(jsonPath("$.data.isReceivedAlarm").value(false))
+                    .andExpect(jsonPath("$.data.policies").isArray())
+                    .andExpect(jsonPath("$.data.policies[0].type").value("TERMS"));
         }
 
         @Test
@@ -128,8 +137,11 @@ class AppPolicyControllerTest {
 
             mockMvc.perform(get("/api/policies"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.isReceivedAlarm").value(true))
-                    .andExpect(jsonPath("$.policies").isEmpty());
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
+                    .andExpect(jsonPath("$.data.isReceivedAlarm").value(true))
+                    .andExpect(jsonPath("$.data.policies").isEmpty());
         }
     }
 }

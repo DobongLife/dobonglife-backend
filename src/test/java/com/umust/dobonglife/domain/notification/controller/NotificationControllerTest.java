@@ -1,10 +1,12 @@
 package com.umust.dobonglife.domain.notification.controller;
 
 import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
+import com.umust.dobonglife.domain.notification.exception.NotificationException;
 import com.umust.dobonglife.domain.notification.presentation.dto.response.NotificationResponse;
 import com.umust.dobonglife.domain.notification.service.NotificationService;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.CursorResponse;
+import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.external.firebase.FirebaseConfig;
 import com.umust.dobonglife.global.support.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +21,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.restdocs.snippet.Attributes.key;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +29,7 @@ import java.util.List;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
@@ -81,6 +85,8 @@ class NotificationControllerTest {
             mockMvc.perform(get("/api/notifications"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
                     .andExpect(jsonPath("$.data.content[0].notificationId").value(1))
                     .andExpect(jsonPath("$.data.content[0].type").value("POINT"))
                     .andExpect(jsonPath("$.data.content[0].title").value("포인트 적립 안내"))
@@ -155,6 +161,36 @@ class NotificationControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content").isEmpty());
         }
+
+        @Test
+        @DisplayName("lastId 타입 불일치 시 실패")
+        @WithMockCustomUser
+        void lastId_타입_불일치_시_실패() throws Exception {
+            mockMvc.perform(get("/api/notifications")
+                            .param("lastId", "abc"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(100))
+                    .andExpect(jsonPath("$.message").value("잘못된 요청값입니다."))
+                    .andDo(print())
+                    .andDo(document("notification-list-error",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("알림 API")
+                                            .summary("알림 목록 조회 실패")
+                                            .description("잘못된 파라미터 타입으로 요청 시 에러 응답입니다.")
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("에러 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
+                                                    fieldWithPath("timestamp").type(JsonFieldType.STRING).description("에러 발생 시각")
+                                            )
+                                            .build()
+                            )
+                    ));
+        }
     }
 
     @Nested
@@ -170,7 +206,10 @@ class NotificationControllerTest {
 
             mockMvc.perform(get("/api/notifications/new"))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("true"))
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
+                    .andExpect(jsonPath("$.data").value(true))
                     .andDo(print())
                     .andDo(document("notification-check-new",
                             preprocessRequest(prettyPrint()),
@@ -179,7 +218,13 @@ class NotificationControllerTest {
                                     ResourceSnippetParameters.builder()
                                             .tag("알림 API")
                                             .summary("새 알림 확인")
-                                            .description("새로운 알림이 있으면 true가 반환됩니다.")
+                                            .description("새로운 알림이 있으면 data에 true가 반환됩니다.")
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data").type(JsonFieldType.BOOLEAN).description("새 알림 존재 여부")
+                                            )
                                             .build()
                             )
                     ));
@@ -194,7 +239,10 @@ class NotificationControllerTest {
 
             mockMvc.perform(get("/api/notifications/new"))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("false"));
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
+                    .andExpect(jsonPath("$.data").value(false));
         }
     }
 
@@ -209,7 +257,10 @@ class NotificationControllerTest {
             doNothing().when(notificationService).markAsRead(eq(1L), eq(1L));
 
             mockMvc.perform(patch("/api/notifications/{notificationId}/read", 1L))
-                    .andExpect(status().isNoContent())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
                     .andDo(print())
                     .andDo(document("notification-mark-read",
                             preprocessRequest(prettyPrint()),
@@ -221,6 +272,47 @@ class NotificationControllerTest {
                                             .description("알림을 읽음 처리합니다.")
                                             .pathParameters(
                                                     parameterWithName("notificationId").description("읽음 처리할 알림 ID")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터").optional()
+                                            )
+                                            .build()
+                            )
+                    ));
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 알림 읽음 처리 시 실패")
+        @WithMockCustomUser
+        void 존재하지_않는_알림_읽음_처리_시_실패() throws Exception {
+            doThrow(new NotificationException(ErrorCode.INVALID_NOTIFICATION_ID))
+                    .when(notificationService).markAsRead(eq(999L), eq(1L));
+
+            mockMvc.perform(patch("/api/notifications/{notificationId}/read", 999L))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.message").value("존재하지 않는 알림 ID입니다."))
+                    .andDo(print())
+                    .andDo(document("notification-mark-read-error",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("알림 API")
+                                            .summary("알림 읽음 처리 실패")
+                                            .description("존재하지 않는 알림 ID로 요청 시 에러 응답입니다.")
+                                            .pathParameters(
+                                                    parameterWithName("notificationId").description("읽음 처리할 알림 ID")
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("에러 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
+                                                    fieldWithPath("timestamp").type(JsonFieldType.STRING).description("에러 발생 시각")
                                             )
                                             .build()
                             )
@@ -240,6 +332,9 @@ class NotificationControllerTest {
 
             mockMvc.perform(patch("/api/notifications/settings/notification?enabled=true"))
                     .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."))
                     .andDo(print())
                     .andDo(document("notification-toggle-setting",
                             preprocessRequest(prettyPrint()),
@@ -250,7 +345,15 @@ class NotificationControllerTest {
                                             .summary("알림 설정 변경")
                                             .description("알림 수신 설정을 변경합니다.")
                                             .queryParameters(
-                                                    parameterWithName("enabled").description("알림 수신 여부 (true/false)")
+                                                    parameterWithName("enabled").description("알림 수신 여부 (true/false)").attributes(
+                                                            key("type").value("boolean")
+                                                    )
+                                            )
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터").optional()
                                             )
                                             .build()
                             )
@@ -264,7 +367,39 @@ class NotificationControllerTest {
             doNothing().when(userService).updateNotificationSetting(eq(1L), eq(false));
 
             mockMvc.perform(patch("/api/notifications/settings/notification?enabled=false"))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.success").value(true))
+                    .andExpect(jsonPath("$.status").value(200))
+                    .andExpect(jsonPath("$.message").value("요청에 성공하였습니다."));
+        }
+
+        @Test
+        @DisplayName("enabled 파라미터 누락 시 실패")
+        @WithMockCustomUser
+        void enabled_파라미터_누락_시_실패() throws Exception {
+            mockMvc.perform(patch("/api/notifications/settings/notification"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.success").value(false))
+                    .andExpect(jsonPath("$.status").value(100))
+                    .andExpect(jsonPath("$.message").value("잘못된 요청값입니다."))
+                    .andDo(print())
+                    .andDo(document("notification-toggle-setting-error",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            resource(
+                                    ResourceSnippetParameters.builder()
+                                            .tag("알림 API")
+                                            .summary("알림 설정 변경 실패")
+                                            .description("enabled 파라미터가 누락되었을 때 에러 응답입니다.")
+                                            .responseFields(
+                                                    fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                    fieldWithPath("status").type(JsonFieldType.NUMBER).description("에러 코드"),
+                                                    fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메시지"),
+                                                    fieldWithPath("timestamp").type(JsonFieldType.STRING).description("에러 발생 시각")
+                                            )
+                                            .build()
+                            )
+                    ));
         }
     }
 }
