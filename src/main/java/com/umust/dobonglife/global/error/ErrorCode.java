@@ -53,6 +53,7 @@ public enum ErrorCode{
     INVALID_GOOGLE_ID_TOKEN(620, HttpStatus.BAD_REQUEST.value(),"유효하지 않은 idToken값 입니다."),
     INVALID_KAKAO_ACCESS_TOKEN(620, HttpStatus.BAD_REQUEST.value(),"유효하지 않은 Kakao 엑세스 토큰값 입니다."),
     DUPLICATED_LOGIN(621,HttpStatus.UNAUTHORIZED.value(), "다른 기기에서 로그인되어 현재 로그인이 종료되었습니다."),
+    INVALID_APPLE_IDENTITY_TOKEN(622, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 Apple Identity Token 입니다."),
 
     // Course
     INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),
