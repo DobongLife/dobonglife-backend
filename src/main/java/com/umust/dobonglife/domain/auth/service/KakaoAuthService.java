@@ -29,6 +29,7 @@ public class KakaoAuthService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
 
     @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private String USER_INFO_URI;
@@ -53,6 +54,8 @@ public class KakaoAuthService {
 
         String access = jwtUtil.createAccessToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
         String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
+
+        jwtService.storeRefreshToken(refresh, user.getId());
 
         return TokenResponse.builder()
                 .accessToken(access)

@@ -58,6 +58,7 @@ public class AppleAuthService {
     private final RestTemplate restTemplate = createRestTemplate();
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
 
     @Value("${apple.client-id}")
     private String appleClientId;
@@ -102,6 +103,8 @@ public class AppleAuthService {
 
         String access = jwtUtil.createAccessToken(user.getId(), Provider.APPLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
         String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.APPLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
+
+        jwtService.storeRefreshToken(refresh, user.getId());
 
         return TokenResponse.builder()
                 .accessToken(access)
