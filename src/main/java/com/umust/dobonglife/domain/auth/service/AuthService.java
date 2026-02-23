@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.auth.service;
 
 import com.umust.dobonglife.domain.auth.domain.constant.Provider;
-import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
@@ -54,9 +53,11 @@ public class AuthService {
     @Transactional
     public void logout(HttpServletRequest request) {
         String accessToken = jwtUtil.extractAccessToken(request)
-                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+                .orElseThrow(() -> new BusinessException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
 
         log.info("LogOut Access Token: {}", accessToken);
+
+        jwtUtil.validateToken(accessToken);
 
         String refreshToken = jwtUtil.extractRefreshToken(request)
                 .orElseThrow(() -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
@@ -80,7 +81,9 @@ public class AuthService {
         revokeProviderAccount(userId);
 
         String accessToken = jwtUtil.extractAccessToken(request)
-                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+                .orElseThrow(() -> new BusinessException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+
+        String refreshToken = jwtUtil.extractRefreshToken(request).orElse(null);
 
         if (businessService.isBusiness(userId)) {
             Business business = businessService.getBusinessByUser(userId);
@@ -113,6 +116,9 @@ public class AuthService {
             @Override
             public void afterCommit() {
                 jwtService.invalidAccessToken(accessToken);
+                if (refreshToken != null) {
+                    jwtService.deleteRefreshToken(refreshToken);
+                }
             }
         });
     }

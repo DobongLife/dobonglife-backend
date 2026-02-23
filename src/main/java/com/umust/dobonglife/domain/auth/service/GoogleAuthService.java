@@ -20,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -43,6 +44,7 @@ public class GoogleAuthService {
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
+    @Transactional
     public TokenResponse login(GoogleLoginRequest request) {
         GoogleIdToken.Payload payload = verify(request.getIdToken());
 
@@ -55,7 +57,7 @@ public class GoogleAuthService {
         );
 
         if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
-            userService.updateFcmToken(user.getId(), request.getFcmToken());
+            user.setFcmToken(request.getFcmToken());
         }
 
         String access = jwtUtil.createAccessToken(user.getId(), Provider.GOOGLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
