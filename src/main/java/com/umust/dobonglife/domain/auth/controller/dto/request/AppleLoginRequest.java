@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 public class AppleLoginRequest {
     private String identityToken;
     private String fcmToken;
+    private String providerToken;
 }

@@ -57,8 +57,14 @@ jwt:
     expiration: 604800
     header: Authorization-refresh
 
+kakao:
+  admin-key: test-kakao-admin-key
+
 apple:
   client-id: com.umust.dobonglife.test
+  team-id: test-team-id
+  key-id: test-key-id
+  private-key-path: /tmp/test-apple-key.p8
 
 cloud:
   aws:

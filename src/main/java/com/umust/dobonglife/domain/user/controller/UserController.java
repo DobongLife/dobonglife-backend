@@ -52,7 +52,7 @@ public class UserController {
     )
     @PostMapping("/delete/account")
     public BaseResponse<Void> deleteAccount(HttpServletRequest request,
-                                            @CurrentUserId Long userId) {
+                                            @CurrentUserId Long userId){
         authService.deleteAccount(request, userId);
         return BaseResponse.ok(null);
     }

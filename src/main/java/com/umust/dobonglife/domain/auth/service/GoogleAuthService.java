@@ -15,16 +15,27 @@ import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import com.umust.dobonglife.global.error.ErrorCode;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GoogleAuthService {
 
+    private static final String GOOGLE_REVOKE_URL = "https://oauth2.googleapis.com/revoke";
+
+    private final RestTemplate restTemplate = new RestTemplate();
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
@@ -54,6 +65,26 @@ public class GoogleAuthService {
                 .refreshToken(refresh)
                 .role(Role.PREFIX + user.getRole().name())
                 .build();
+    }
+
+    public void revokeToken(String accessToken) {
+        if (accessToken == null || accessToken.isBlank()) {
+            log.warn("구글 토큰 해제 생략: accessToken이 없습니다");
+            return;
+        }
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("token", accessToken);
+
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+            restTemplate.postForEntity(GOOGLE_REVOKE_URL, entity, String.class);
+            log.info("구글 토큰 해제 성공");
+        } catch (Exception e) {
+            log.warn("구글 토큰 해제 실패: error={}", e.getMessage());
+        }
     }
 
     private GoogleIdToken.Payload verify(String idTokenString) {

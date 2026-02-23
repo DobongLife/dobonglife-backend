@@ -72,6 +72,9 @@ public class User extends BaseEntity {
     @Builder.Default
     private boolean isReceivedAlarm = true;
 
+    @Column(nullable = true)
+    private String providerToken;
+
     public void handleDeletion() {
         this.deleteCount++;
         if (this.deleteCount >= PENALTY_THRESHOLD) {
