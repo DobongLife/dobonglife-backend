@@ -159,6 +159,12 @@ public class UserService {
     }
 
     @Transactional
+    public void updateProviderToken(Long userId, String providerToken) {
+        User byId = findById(userId);
+        byId.setProviderToken(providerToken);
+    }
+
+    @Transactional
     public void updateFcmToken(Long userId, String fcmToken) {
         User byId = findById(userId);
         byId.setFcmToken(fcmToken);

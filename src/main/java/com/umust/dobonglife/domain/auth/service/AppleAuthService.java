@@ -55,7 +55,7 @@ public class AppleAuthService {
     private static final int READ_TIMEOUT_MS = 5000;
     private static final int SIZE_LIMIT_BYTES = 50 * 1024;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = createRestTemplate();
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
@@ -96,7 +96,7 @@ public class AppleAuthService {
         if (request.getProviderToken() != null && !request.getProviderToken().isBlank()) {
             String refreshToken = exchangeAuthorizationCodeForRefreshToken(request.getProviderToken());
             if (refreshToken != null) {
-                user.setProviderToken(refreshToken);
+                userService.updateProviderToken(user.getId(), refreshToken);
             }
         }
 
@@ -279,5 +279,12 @@ public class AppleAuthService {
         } finally {
             jwkLock.unlock();
         }
+    }
+
+    private static RestTemplate createRestTemplate() {
+        var factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(CONNECT_TIMEOUT_MS);
+        factory.setReadTimeout(READ_TIMEOUT_MS);
+        return new RestTemplate(factory);
     }
 }
