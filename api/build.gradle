@@ -1,0 +1,172 @@
+apply plugin: 'org.springframework.boot'
+apply plugin: 'org.asciidoctor.jvm.convert'
+apply plugin: 'com.epages.restdocs-api-spec'
+
+configurations {
+    asciidoctorExt
+}
+
+dependencies {
+    implementation project(':core')
+    implementation project(':infra')
+    implementation project(':domain-coupon')
+
+    // Spring Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
+    // Spring Rest Docs
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
+
+    // Test
+    testImplementation 'com.h2database:h2'
+    testRuntimeOnly 'com.h2database:h2'
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+    set('openapiOutDir', file("build/api-spec"))
+    set('openapiStaticDir', file("build/resources/main/static/docs"))
+}
+
+tasks.named('test') {
+    doFirst {
+        delete file("build/generated-snippets")
+    }
+    outputs.dir snippetsDir
+}
+
+openapi3 {
+    server = 'http://localhost:8080'
+    title = '도봉라이프 API (Rest Docs)'
+    description = '도봉구 스토리 관광 가이드'
+    version = '1.0.0'
+    format = 'json'
+}
+
+tasks.register("injectSecurityDefinition") {
+    dependsOn tasks.named("openapi3")
+    doLast {
+        File f = file("${openapiOutDir}/openapi3.json")
+        if (!f.exists()) {
+            println "openapi3.json not found"
+            return
+        }
+
+        def json = new groovy.json.JsonSlurper().parseText(f.text)
+
+        json.servers = [
+                [
+                        url        : "http://localhost:8080",
+                        description: "로컬 개발 서버"
+                ],
+                [
+                        url        : "https://api.dobonglife.co.kr",
+                        description: "운영 서버"
+                ]
+        ]
+
+        json.components = json.components ?: [:]
+        json.components.securitySchemes = (json.components.securitySchemes ?: [:]) + [
+                BearerAuth: [
+                        type        : "http",
+                        scheme      : "bearer",
+                        bearerFormat: "JWT"
+                ],
+                RefreshAuth: [
+                        type: "apiKey",
+                        in  : "header",
+                        name: "Authorization-refresh"
+                ]
+        ]
+
+        json.security = [[BearerAuth: []]]
+
+        def publicPaths = [
+                "/api/auth/signup",
+                "/api/auth/login",
+                "/api/users/send-email",
+                "/api/users/mail/check"
+        ]
+
+        publicPaths.each { p ->
+            def pathItem = json.paths?.get(p)
+            if (pathItem == null) return
+
+            ["post", "get"].each { method ->
+                def op = pathItem[method]
+                if (op != null) {
+                    op.security = []
+                }
+            }
+        }
+
+        def refreshOnlyPaths = [
+                "/api/auth/logout",
+                "/api/auth/reissue"
+        ]
+
+        refreshOnlyPaths.each { p ->
+            def pathItem = json.paths?.get(p)
+            if (pathItem == null) return
+
+            def op = pathItem["post"]
+            if (op == null) return
+
+            op.security = [[BearerAuth: [], RefreshAuth: []]]
+        }
+
+        f.text = groovy.json.JsonOutput.prettyPrint(
+                groovy.json.JsonOutput.toJson(json)
+        )
+
+        println "OpenAPI info / servers / security injected successfully"
+    }
+}
+
+tasks.register("copyOpenApiToStatic") {
+    dependsOn "injectSecurityDefinition"
+    doLast {
+        copy {
+            from openapiOutDir
+            include "openapi3.json"
+            into openapiStaticDir
+        }
+    }
+}
+
+tasks.named('asciidoctor') {
+    dependsOn test
+    configurations 'asciidoctorExt'
+    inputs.dir snippetsDir
+    outputDir file('build/docs/asciidoc')
+    onlyIf {
+        file(snippetsDir).exists() && file(snippetsDir).listFiles()?.length
+    }
+}
+
+// docs 파이프라인은 bootJar와 분리 — 명시적으로 실행: ./gradlew :api:copyOpenApiToStatic
+// bootJar 시 docs가 있으면 포함, 없으면 스킵
+tasks.named('bootJar') {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    from("${openapiOutDir}") {
+        include "openapi3.json"
+        into 'BOOT-INF/classes/static/docs'
+    }
+
+    from("${asciidoctor.outputDir}") {
+        into 'BOOT-INF/classes/static/docs'
+    }
+}
+
+bootJar {
+    enabled = true
+    // 메인 클래스가 아직 없을 때 빌드 실패 방지
+    mainClass = 'com.umust.dobonglife.DobonglifeApplication'
+}
+jar { enabled = false }
