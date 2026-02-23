@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.auth.service.AuthService;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.MailRequest;
+import com.umust.dobonglife.domain.user.controller.dto.request.DeleteAccountRequest;
 import com.umust.dobonglife.domain.user.controller.dto.request.PasswordUpdateRequest;
 import com.umust.dobonglife.domain.user.service.MailService;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
@@ -52,8 +53,10 @@ public class UserController {
     )
     @PostMapping("/delete/account")
     public BaseResponse<Void> deleteAccount(HttpServletRequest request,
-                                            @CurrentUserId Long userId) {
-        authService.deleteAccount(request, userId);
+                                            @CurrentUserId Long userId,
+                                            @RequestBody(required = false) DeleteAccountRequest deleteRequest) {
+        String providerToken = deleteRequest != null ? deleteRequest.getProviderToken() : null;
+        authService.deleteAccount(request, userId, providerToken);
         return BaseResponse.ok(null);
     }
 

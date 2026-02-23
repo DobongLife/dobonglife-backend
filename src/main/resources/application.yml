@@ -75,8 +75,14 @@ jwt:
     expiration: ${JWT_REFRESH_EXPIRED_IN}
     header: Authorization-refresh
 
+kakao:
+  admin-key: ${KAKAO_ADMIN_KEY}
+
 apple:
   client-id: ${APPLE_CLIENT_ID}
+  team-id: ${APPLE_TEAM_ID}
+  key-id: ${APPLE_KEY_ID}
+  private-key-path: ${APPLE_PRIVATE_KEY_PATH}
 
 cloud:
   aws:
