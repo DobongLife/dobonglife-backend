@@ -50,10 +50,9 @@ public class AppleAuthService {
 
         String sub = claims.getSubject();
         String email = (String) claims.getClaim("email");
-        String name = request.getName();
 
         User user = userService.findOrCreateOAuthUser(
-                Provider.APPLE, sub, email, name
+                Provider.APPLE, sub, email, email
         );
 
         if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {

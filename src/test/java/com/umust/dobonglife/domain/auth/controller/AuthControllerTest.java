@@ -185,8 +185,7 @@ class AuthControllerTest {
         String requestJson = """
                 {
                     "identityToken": "apple-identity-token",
-                    "fcmToken": "firebase-token",
-                    "name": "홍길동"
+                    "fcmToken": "firebase-token"
                 }
                 """;
 
@@ -207,8 +206,7 @@ class AuthControllerTest {
                                         .description("Apple Identity Token으로 로그인합니다.")
                                         .requestFields(
                                                 fieldWithPath("identityToken").type(JsonFieldType.STRING).description("Apple Identity Token"),
-                                                fieldWithPath("fcmToken").type(JsonFieldType.STRING).description("FCM 토큰"),
-                                                fieldWithPath("name").type(JsonFieldType.STRING).description("사용자 이름 (최초 로그인 시)")
+                                                fieldWithPath("fcmToken").type(JsonFieldType.STRING).description("FCM 토큰")
                                         )
                                         .responseFields(
                                                 fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
