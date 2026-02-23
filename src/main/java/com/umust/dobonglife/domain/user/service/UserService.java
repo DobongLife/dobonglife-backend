@@ -91,6 +91,12 @@ public class UserService {
                 .map(inactiveUser -> {
                     inactiveUser.setStatus(BaseStatus.ACTIVE);
                     inactiveUser.setEmail(email);
+                    inactiveUser.setBalance(0L);
+                    inactiveUser.setDeleteCount(0);
+                    inactiveUser.setBlocked(false);
+                    inactiveUser.setBlockedAt(null);
+                    inactiveUser.setFcmToken(null);
+                    inactiveUser.setReceivedAlarm(true);
                     return userRepository.save(inactiveUser);
                 })
                 .orElseGet(() -> createOAuthUserSafely(provider, providerId, email, name));
@@ -174,6 +180,7 @@ public class UserService {
     public void updateProviderToken(Long userId, String providerToken) {
         User byId = findById(userId);
         byId.setProviderToken(providerToken);
+        userRepository.saveAndFlush(byId);
     }
 
     @Transactional

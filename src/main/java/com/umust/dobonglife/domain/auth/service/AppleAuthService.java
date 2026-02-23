@@ -98,7 +98,11 @@ public class AppleAuthService {
             String refreshToken = exchangeAuthorizationCodeForRefreshToken(request.getProviderToken());
             if (refreshToken != null) {
                 userService.updateProviderToken(user.getId(), refreshToken);
+            } else {
+                log.error("[Apple Login] authorization_code → refresh_token 교환 실패로 providerToken 미저장: userId={}", user.getId());
             }
+        } else {
+            log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", user.getId());
         }
 
         String access = jwtUtil.createAccessToken(user.getId(), Provider.APPLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
