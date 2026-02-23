@@ -3,8 +3,6 @@ package com.umust.dobonglife.global.error.exception;
 import com.umust.dobonglife.global.common.response.BaseErrorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.util.stream.Collectors;
 
 import static com.umust.dobonglife.global.error.ErrorCode.*;
 @Slf4j
@@ -41,11 +41,15 @@ public class GlobalControllerAdvice {
     // 400: @Valid 검증 실패
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<BaseErrorResponse> handleValidation(MethodArgumentNotValidException e) {
-        log.warn("[Validation] {}", e.getMessage());
+        String detail = e.getBindingResult().getFieldErrors().stream()
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        log.warn("[Validation] {}", detail);
         return ResponseEntity
                 .status(BAD_REQUEST.getHttpStatus())
-                .body(new BaseErrorResponse(BAD_REQUEST));
+                .body(new BaseErrorResponse(BAD_REQUEST, detail));
     }
+
 
     // 400: 파라미터 누락
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -74,20 +78,10 @@ public class GlobalControllerAdvice {
                 .body(new BaseErrorResponse(BAD_REQUEST));
     }
 
-    // 400: 개발자가 던진 잘못된 인자
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<BaseErrorResponse> handleIllegalArgument(IllegalArgumentException e) {
-        log.warn("[IllegalArgument] {}", e.getMessage());
-        return ResponseEntity
-                .status(BAD_REQUEST.getHttpStatus())
-                .body(new BaseErrorResponse(BAD_REQUEST));
-    }
-
     // BusinessException: 의도된 도메인 에러
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<BaseErrorResponse> handleBusiness(BusinessException e) {
         ErrorCode code = e.getErrorCode();
-        // 비즈니스 예외는 보통 warn (서버 버그가 아니라 "정상적인 실패"일 수 있음)
         log.warn("[BusinessException] {} - {}", code.name(), code.getMessage());
         return ResponseEntity
                 .status(code.getHttpStatus())
