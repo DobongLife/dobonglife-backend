@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.service.AppleAuthService;
 import com.umust.dobonglife.domain.auth.service.AuthService;
 import com.umust.dobonglife.domain.auth.service.GoogleAuthService;
 import com.umust.dobonglife.domain.auth.service.JwtService;
@@ -51,6 +52,9 @@ class AuthControllerTest {
 
     @MockitoBean
     GoogleAuthService googleAuthService;
+
+    @MockitoBean
+    AppleAuthService appleAuthService;
 
     @MockitoBean
     AuthService authService;
@@ -151,6 +155,57 @@ class AuthControllerTest {
                                         .description("구글 ID Token으로 로그인합니다.")
                                         .requestFields(
                                                 fieldWithPath("idToken").type(JsonFieldType.STRING).description("구글 ID Token"),
+                                                fieldWithPath("fcmToken").type(JsonFieldType.STRING).description("FCM 토큰")
+                                        )
+                                        .responseFields(
+                                                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("Access Token"),
+                                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                                                fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 역할")
+                                        )
+                                        .build()
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("애플 로그인 - 성공")
+    @WithMockCustomUser
+    void appleLogin_success() throws Exception {
+        TokenResponse tokenResponse = TokenResponse.builder()
+                .accessToken("access-token-value")
+                .refreshToken("refresh-token-value")
+                .role("ROLE_MEMBER")
+                .build();
+
+        given(appleAuthService.login(any())).willReturn(tokenResponse);
+
+        String requestJson = """
+                {
+                    "identityToken": "apple-identity-token",
+                    "fcmToken": "firebase-token"
+                }
+                """;
+
+        mockMvc.perform(post("/api/auth/login/apple")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.accessToken").value("access-token-value"))
+                .andDo(print())
+                .andDo(document("auth-login-apple",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(
+                                ResourceSnippetParameters.builder()
+                                        .tag("인증 인가 API")
+                                        .summary("애플 로그인")
+                                        .description("Apple Identity Token으로 로그인합니다.")
+                                        .requestFields(
+                                                fieldWithPath("identityToken").type(JsonFieldType.STRING).description("Apple Identity Token"),
                                                 fieldWithPath("fcmToken").type(JsonFieldType.STRING).description("FCM 토큰")
                                         )
                                         .responseFields(

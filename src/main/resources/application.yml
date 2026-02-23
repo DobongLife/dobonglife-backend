@@ -75,6 +75,9 @@ jwt:
     expiration: ${JWT_REFRESH_EXPIRED_IN}
     header: Authorization-refresh
 
+apple:
+  client-id: ${APPLE_CLIENT_ID}
+
 cloud:
   aws:
     credentials:

@@ -57,6 +57,9 @@ jwt:
     expiration: 604800
     header: Authorization-refresh
 
+apple:
+  client-id: com.umust.dobonglife.test
+
 cloud:
   aws:
     credentials:

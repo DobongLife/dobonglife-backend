@@ -1,9 +1,11 @@
 package com.umust.dobonglife.domain.auth.controller;
 
+import com.umust.dobonglife.domain.auth.controller.dto.request.AppleLoginRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.request.GoogleLoginRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.request.KakaoLoginRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.request.RefreshTokenRequest;
 import com.umust.dobonglife.domain.auth.controller.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.service.AppleAuthService;
 import com.umust.dobonglife.domain.auth.service.AuthService;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.service.KakaoAuthService;
@@ -36,6 +38,7 @@ public class AuthController {
     private final JwtService jwtService;
     private final GoogleAuthService googleAuthService;
     private final KakaoAuthService kakaoAuthService;
+    private final AppleAuthService appleAuthService;
     private final AuthService authService;
 
     @Operation(summary = "카카오 로그인", description = "카카오 로그인을 합니다.")
@@ -56,6 +59,16 @@ public class AuthController {
     @PostMapping("/login/google")
     public BaseResponse<TokenResponse> loginGoogle(@RequestBody @Valid GoogleLoginRequest request) {
         return BaseResponse.ok(googleAuthService.login(request));
+    }
+
+    @Operation(summary = "애플 로그인", description = "애플 로그인을 합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "애플 소셜 로그인에 성공하였습니다."
+    )
+    @PostMapping("/login/apple")
+    public BaseResponse<TokenResponse> loginApple(@RequestBody @Valid AppleLoginRequest request) {
+        return BaseResponse.ok(appleAuthService.login(request));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")

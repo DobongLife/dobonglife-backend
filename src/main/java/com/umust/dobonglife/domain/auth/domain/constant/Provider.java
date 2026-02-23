@@ -9,7 +9,8 @@ public enum Provider {
     LOCAL("local"),
     NAVER("naver"),
     KAKAO("kakao"),
-    GOOGLE("google");
+    GOOGLE("google"),
+    APPLE("apple");
 
     private final String value;
 
