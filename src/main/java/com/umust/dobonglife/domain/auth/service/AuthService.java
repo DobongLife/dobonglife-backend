@@ -74,10 +74,10 @@ public class AuthService {
         jwtService.invalidAccessToken(accessToken);
     }
     @Transactional
-    public void deleteAccount(HttpServletRequest request, Long userId, String providerToken) {
+    public void deleteAccount(HttpServletRequest request, Long userId) {
         log.info("=== [회원탈퇴 시작] userId: {}", userId);
 
-        revokeProviderAccount(userId, providerToken);
+        revokeProviderAccount(userId);
 
         String accessToken = jwtUtil.extractAccessToken(request)
                 .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
@@ -117,7 +117,7 @@ public class AuthService {
         });
     }
 
-    private void revokeProviderAccount(Long userId, String providerToken) {
+    private void revokeProviderAccount(Long userId) {
         try {
             User user = userService.findById(userId);
             Provider provider = user.getProvider();
@@ -126,8 +126,7 @@ public class AuthService {
             }
             switch (provider) {
                 case KAKAO -> kakaoAuthService.unlinkUser(user.getProviderId());
-                case GOOGLE -> googleAuthService.revokeToken(providerToken);
-                case APPLE -> appleAuthService.revokeToken(providerToken);
+                case APPLE -> appleAuthService.revokeToken(user.getProviderToken());
                 default -> log.warn("지원하지 않는 소셜 프로바이더: {}", provider);
             }
         } catch (Exception e) {

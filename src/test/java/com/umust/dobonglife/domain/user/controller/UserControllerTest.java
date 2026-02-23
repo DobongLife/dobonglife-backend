@@ -312,7 +312,7 @@ class UserControllerTest {
     @DisplayName("회원탈퇴 - 성공")
     void 회원탈퇴_성공() throws Exception {
         // given
-        willDoNothing().given(authService).deleteAccount(any(), any(), any());
+        willDoNothing().given(authService).deleteAccount(any(), any());
 
         // when & then
         mockMvc.perform(post("/api/users/delete/account")

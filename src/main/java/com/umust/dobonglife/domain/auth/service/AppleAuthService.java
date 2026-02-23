@@ -93,6 +93,13 @@ public class AppleAuthService {
             userService.updateFcmToken(user.getId(), request.getFcmToken());
         }
 
+        if (request.getProviderToken() != null && !request.getProviderToken().isBlank()) {
+            String refreshToken = exchangeAuthorizationCodeForRefreshToken(request.getProviderToken());
+            if (refreshToken != null) {
+                user.setProviderToken(refreshToken);
+            }
+        }
+
         String access = jwtUtil.createAccessToken(user.getId(), Provider.APPLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
         String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.APPLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
 
@@ -103,49 +110,56 @@ public class AppleAuthService {
                 .build();
     }
 
-    public void revokeToken(String authorizationCode) {
-        if (authorizationCode == null || authorizationCode.isBlank()) {
-            log.warn("애플 토큰 해제 생략: authorizationCode가 없습니다");
+    public void revokeToken(String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            log.warn("애플 토큰 해제 생략: refreshToken이 없습니다");
             return;
         }
         try {
             String clientSecret = generateClientSecret();
 
-            // 1. authorization_code로 refresh_token 획득
-            HttpHeaders tokenHeaders = new HttpHeaders();
-            tokenHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            MultiValueMap<String, String> tokenBody = new LinkedMultiValueMap<>();
-            tokenBody.add("client_id", appleClientId);
-            tokenBody.add("client_secret", clientSecret);
-            tokenBody.add("code", authorizationCode);
-            tokenBody.add("grant_type", "authorization_code");
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("client_id", appleClientId);
+            body.add("client_secret", clientSecret);
+            body.add("token", refreshToken);
+            body.add("token_type_hint", "refresh_token");
 
-            HttpEntity<MultiValueMap<String, String>> tokenEntity = new HttpEntity<>(tokenBody, tokenHeaders);
-            var tokenResponse = restTemplate.postForEntity(APPLE_TOKEN_URL, tokenEntity, java.util.Map.class);
-
-            if (tokenResponse.getBody() == null || !tokenResponse.getBody().containsKey("refresh_token")) {
-                log.warn("애플 토큰 교환 실패: refresh_token을 받지 못했습니다");
-                return;
-            }
-
-            String refreshToken = (String) tokenResponse.getBody().get("refresh_token");
-
-            // 2. refresh_token으로 revoke
-            HttpHeaders revokeHeaders = new HttpHeaders();
-            revokeHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-            MultiValueMap<String, String> revokeBody = new LinkedMultiValueMap<>();
-            revokeBody.add("client_id", appleClientId);
-            revokeBody.add("client_secret", clientSecret);
-            revokeBody.add("token", refreshToken);
-            revokeBody.add("token_type_hint", "refresh_token");
-
-            HttpEntity<MultiValueMap<String, String>> revokeEntity = new HttpEntity<>(revokeBody, revokeHeaders);
-            restTemplate.postForEntity(APPLE_REVOKE_URL, revokeEntity, String.class);
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+            restTemplate.postForEntity(APPLE_REVOKE_URL, entity, String.class);
             log.info("애플 토큰 해제 성공");
         } catch (Exception e) {
             log.warn("애플 토큰 해제 실패: error={}", e.getMessage());
+        }
+    }
+
+    private String exchangeAuthorizationCodeForRefreshToken(String authorizationCode) {
+        try {
+            String clientSecret = generateClientSecret();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("client_id", appleClientId);
+            body.add("client_secret", clientSecret);
+            body.add("code", authorizationCode);
+            body.add("grant_type", "authorization_code");
+
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+            var response = restTemplate.postForEntity(APPLE_TOKEN_URL, entity, java.util.Map.class);
+
+            if (response.getBody() != null && response.getBody().containsKey("refresh_token")) {
+                log.info("애플 authorization_code → refresh_token 교환 성공");
+                return (String) response.getBody().get("refresh_token");
+            }
+            log.warn("애플 토큰 교환 실패: refresh_token을 받지 못했습니다");
+            return null;
+        } catch (Exception e) {
+            log.warn("애플 authorization_code 교환 실패: error={}", e.getMessage());
+            return null;
         }
     }
 
