@@ -22,4 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select u from User u where u.id = :userId")
     Optional<User> findByIdForUpdate(@Param("userId") Long userId);
+
+    @Query(value = "SELECT * FROM users WHERE provider = :provider AND provider_id = :providerId AND status = 'INACTIVE' ORDER BY updated_at DESC LIMIT 1", nativeQuery = true)
+    Optional<User> findInactiveByProviderAndProviderId(@Param("provider") String provider, @Param("providerId") String providerId);
 }

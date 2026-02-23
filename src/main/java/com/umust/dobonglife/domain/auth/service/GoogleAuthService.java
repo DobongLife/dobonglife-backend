@@ -38,6 +38,7 @@ public class GoogleAuthService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
@@ -59,6 +60,8 @@ public class GoogleAuthService {
 
         String access = jwtUtil.createAccessToken(user.getId(), Provider.GOOGLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
         String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.GOOGLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
+
+        jwtService.storeRefreshToken(refresh, user.getId());
 
         return TokenResponse.builder()
                 .accessToken(access)

@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.user.controller.dto.request.PasswordUpdateReq
 import com.umust.dobonglife.domain.user.controller.dto.request.SignupRequest;
 import com.umust.dobonglife.domain.user.controller.dto.response.MyPageResponse;
 import com.umust.dobonglife.domain.user.domain.constant.Role;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -81,7 +82,24 @@ public class UserService {
     @Transactional
     public User findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {
         return userRepository.findByProviderAndProviderId(provider, providerUserId)
-                .orElseGet(() -> createOAuthUserSafely(provider, providerUserId, email, name));
+                .orElseGet(() -> reactivateOrCreateOAuthUser(provider, providerUserId, email, name));
+    }
+
+    private User reactivateOrCreateOAuthUser(Provider provider, String providerId, String email, String name) {
+        // 탈퇴(soft-delete)된 유저가 재가입하는 경우 재활성화
+        return userRepository.findInactiveByProviderAndProviderId(provider.name(), providerId)
+                .map(inactiveUser -> {
+                    inactiveUser.setStatus(BaseStatus.ACTIVE);
+                    inactiveUser.setEmail(email);
+                    inactiveUser.setBalance(0L);
+                    inactiveUser.setDeleteCount(0);
+                    inactiveUser.setBlocked(false);
+                    inactiveUser.setBlockedAt(null);
+                    inactiveUser.setFcmToken(null);
+                    inactiveUser.setReceivedAlarm(true);
+                    return userRepository.save(inactiveUser);
+                })
+                .orElseGet(() -> createOAuthUserSafely(provider, providerId, email, name));
     }
 
     private User createOAuthUserSafely(Provider provider, String providerId, String email, String name) {
@@ -162,6 +180,7 @@ public class UserService {
     public void updateProviderToken(Long userId, String providerToken) {
         User byId = findById(userId);
         byId.setProviderToken(providerToken);
+        userRepository.saveAndFlush(byId);
     }
 
     @Transactional
