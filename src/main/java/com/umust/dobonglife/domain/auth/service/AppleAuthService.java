@@ -159,6 +159,8 @@ public class AppleAuthService {
             body.add("code", authorizationCode);
             body.add("grant_type", "authorization_code");
 
+            log.info("[Apple Token Exchange] client_id={}, code_length={}", appleClientId, authorizationCode.length());
+
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
             var response = restTemplate.postForEntity(APPLE_TOKEN_URL, entity, java.util.Map.class);
 
@@ -166,10 +168,13 @@ public class AppleAuthService {
                 log.info("애플 authorization_code → refresh_token 교환 성공");
                 return (String) response.getBody().get("refresh_token");
             }
-            log.warn("애플 토큰 교환 실패: refresh_token을 받지 못했습니다");
+            log.warn("애플 토큰 교환 실패: response_body={}", response.getBody());
+            return null;
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+            log.error("[Apple Token Exchange] HTTP {}  response={}", e.getStatusCode(), e.getResponseBodyAsString());
             return null;
         } catch (Exception e) {
-            log.warn("애플 authorization_code 교환 실패: error={}", e.getMessage());
+            log.error("[Apple Token Exchange] 예외 발생: class={}, message={}", e.getClass().getSimpleName(), e.getMessage());
             return null;
         }
     }
