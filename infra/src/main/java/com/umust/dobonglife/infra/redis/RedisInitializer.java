@@ -19,7 +19,7 @@ public class RedisInitializer {
     public void clearRedis() {
         redisTemplate.getConnectionFactory()
                 .getConnection()
-                .flushDb(); // 선택한 DB(예: database: 0)만 초기화
-        log.info("✅ Redis DB 초기화 완료");
+                .flushDb();
+        log.info("Redis DB 초기화 완료");
     }
 }

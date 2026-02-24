@@ -2,11 +2,15 @@ package com.umust.dobonglife.infra.redis;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import io.lettuce.core.api.StatefulConnection;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -25,13 +29,22 @@ public class RedisConfig {
         log.info("Redis Port: {}", port);
     }
 
-    // RedisProperties로 yaml에 저장한 host, post를 연결
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
+        RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration(host, port);
+
+        GenericObjectPoolConfig<StatefulConnection<?, ?>> poolConfig = new GenericObjectPoolConfig<>();
+        poolConfig.setMaxTotal(16);
+        poolConfig.setMaxIdle(8);
+        poolConfig.setMinIdle(4);
+
+        LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+                .poolConfig(poolConfig)
+                .build();
+
+        return new LettuceConnectionFactory(serverConfig, clientConfig);
     }
 
-    // serializer 설정으로 redis-cli를 통해 직접 데이터를 조회할 수 있도록 설정
     @Bean
     public RedisTemplate<String, String> redisTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();

@@ -63,6 +63,7 @@ public enum ErrorCode {
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),
     INVALID_IMAGE(HttpStatus.BAD_REQUEST, "유효하지 않은 이미지 파일입니다."),
     UNSUPPORTED_IMAGE_FORMAT(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "지원되지 않는 이미지 형식입니다."),
+    IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다."),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "저장된 이미지가 없습니다."),
 
     // Notification

@@ -60,7 +60,6 @@ subprojects {
 		useJUnitPlatform()
 	}
 }
-<<<<<<< HEAD
 
 tasks.register('updateGitHooks', Copy) {
 	from './scripts/pre-commit-msg'     // 복사할 파일 경로 (소스)
@@ -69,32 +68,3 @@ tasks.register('updateGitHooks', Copy) {
 }
 
 build.dependsOn updateGitHooks  // build 시 hook 추가를 자동 실행
-
-subprojects {
-	apply plugin: 'java-library'
-	apply plugin: 'io.spring.dependency-management'
-
-	group = 'com.umust'
-	version = '0.0.1-SNAPSHOT'
-
-	java {
-		toolchain {
-			languageVersion = JavaLanguageVersion.of(21)
-		}
-	}
-
-	dependencyManagement {
-		imports {
-			mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.7"
-		}
-	}
-
-	repositories {
-		mavenCentral()
-	}
-
-	dependencies {
-		compileOnly 'org.projectlombok:lombok'
-		annotationProcessor 'org.projectlombok:lombok'
-	}
-}

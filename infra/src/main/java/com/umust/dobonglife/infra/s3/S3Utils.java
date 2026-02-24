@@ -17,9 +17,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static java.util.Objects.isNull;
 
@@ -32,21 +35,20 @@ public class S3Utils {
 
     private final AmazonS3 amazonS3;
     private static final String s3FolderName = "images";
-    private static final List<String> FILE_EXTENSIONS = List.of(".jpg", ".jpeg", ".png", ".JPG",
-            ".JPEG", ".PNG", ".webp", ".WEBP", ".heic", ".heif", ".HEIF", ".HEIC");
+    private static final Set<String> FILE_EXTENSIONS = Set.of(
+            ".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif");
+    private static final Executor UPLOAD_EXECUTOR = Executors.newFixedThreadPool(5);
 
     public String uploadImage(MultipartFile multipartFile){
         ObjectMetadata objectMetadata = new ObjectMetadata();
 
         String fileName = createFileName(multipartFile.getOriginalFilename());
         log.info("uploadImage - fileName = {}", fileName);
-        // 파일명 충돌 방지, 파일 이름 유출 방지
 
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());
 
         try(InputStream inputStream = multipartFile.getInputStream()){
-            // S3에 파일 업로드 요청 생성
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucket,s3FolderName + "/" + fileName,
                     inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead);
@@ -61,30 +63,35 @@ public class S3Utils {
     }
 
     private String createFileName(String fileName) {
-        log.info("fileName = {}", fileName);
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
-    } // 무작위로 생성된 UUID와 주어진 파일 이름의 확장자를 결합
+    }
 
     private String getFileExtension(String fileName){
         if(isNull(fileName) || fileName.isBlank()){
             throw new BusinessException(ErrorCode.INVALID_IMAGE);
         }
 
-        String extension = fileName.substring(fileName.lastIndexOf("."));
+        int dotIndex = fileName.lastIndexOf(".");
+        if(dotIndex == -1){
+            throw new BusinessException(ErrorCode.UNSUPPORTED_IMAGE_FORMAT);
+        }
+
+        String extension = fileName.substring(dotIndex).toLowerCase();
         if(!FILE_EXTENSIONS.contains(extension)){
             throw new BusinessException(ErrorCode.UNSUPPORTED_IMAGE_FORMAT);
         }
 
         return extension;
-
     }
 
     public List<String> uploadImages(List<MultipartFile> images) {
-        List<String> imgUrls = new ArrayList<>();
-        for(MultipartFile img : images){
-            imgUrls.add(uploadImage(img));
-        }
-        return imgUrls;
+        List<CompletableFuture<String>> futures = images.stream()
+                .map(img -> CompletableFuture.supplyAsync(() -> uploadImage(img), UPLOAD_EXECUTOR))
+                .toList();
+
+        return futures.stream()
+                .map(CompletableFuture::join)
+                .toList();
     }
 
     public void deleteImage(String imgUrl){
@@ -94,11 +101,11 @@ public class S3Utils {
 
             String key = path;
             if (path.startsWith("/")) {
-                key = path.substring(2 + bucket.length()); // 맨 앞 / + bucket 이름 + / 제거
+                key = path.substring(2 + bucket.length());
             }
             amazonS3.deleteObject(bucket, key);
         }catch (SdkClientException e){
-            throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAILED);
+            throw new BusinessException(ErrorCode.IMAGE_DELETE_FAILED);
         } catch (MalformedURLException e) {
             throw new BusinessException(ErrorCode.IMAGE_NOT_FOUND);
         }

@@ -2,8 +2,6 @@ package com.umust.dobonglife.infra.firebase;
 
 import com.google.firebase.messaging.*;
 import com.umust.dobonglife.global.common.constant.NotificationType;
-import com.umust.dobonglife.global.error.exception.BusinessException;
-import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -14,22 +12,25 @@ import java.util.List;
 @Slf4j
 public class NotificationUtil {
 
+    @Async("notificationExecutor")
     public void subscribeTopic(String fcmToken, String topic) {
         try {
             FirebaseMessaging.getInstance().subscribeToTopic(List.of(fcmToken), topic);
         } catch (FirebaseMessagingException e) {
-            throw new BusinessException(ErrorCode.FCM_TOPIC_SUBSCRIBE_FAILED);
+            log.error("[FCM] 토픽 구독 실패 - Topic: {}, Error: {}", topic, e.getMessage());
         }
     }
 
+    @Async("notificationExecutor")
     public void unsubscribeTopic(String fcmToken, String topic) {
         try {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(List.of(fcmToken), topic);
         } catch (FirebaseMessagingException e) {
-            throw new BusinessException(ErrorCode.FCM_TOPIC_UNSUBSCRIBE_FAILED);
+            log.error("[FCM] 토픽 구독 취소 실패 - Topic: {}, Error: {}", topic, e.getMessage());
         }
     }
 
+    @Async("notificationExecutor")
     public void sendToTopic(NotificationRequest request) {
         Message message = Message.builder()
                 .setTopic(request.title())
@@ -41,7 +42,7 @@ public class NotificationUtil {
         try {
             FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
-            throw new BusinessException(ErrorCode.FCM_MESSAGE_SEND_FAILED);
+            log.error("[FCM] 토픽 메시지 전송 실패 - Topic: {}, Error: {}", request.title(), e.getMessage());
         }
     }
 
@@ -90,12 +91,11 @@ public class NotificationUtil {
                 .build();
 
         try {
-            log.info("[FCM_DEBUG] 전송 시도 - Token: {}, ID: {}, Type: {}", fcmToken, stringId, stringType);
+            log.info("[FCM] 전송 시도 - Token: {}, ID: {}, Type: {}", fcmToken, stringId, stringType);
             String response = FirebaseMessaging.getInstance().send(message);
-            log.info("[FCM_DEBUG] 전송 성공 - Response: {}", response);
+            log.info("[FCM] 전송 성공 - Response: {}", response);
         } catch (FirebaseMessagingException e) {
-            log.error("[FCM_DEBUG] 전송 실패 - Code: {}, Msg: {}", e.getMessagingErrorCode(), e.getMessage());
-            throw new BusinessException(ErrorCode.FCM_MESSAGE_SEND_FAILED);
+            log.error("[FCM] 전송 실패 - Code: {}, Msg: {}", e.getMessagingErrorCode(), e.getMessage());
         }
     }
 }
