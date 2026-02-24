@@ -4,11 +4,13 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.umust.dobonglife.domain.auth.controller.dto.request.AppleLoginRequest;
@@ -85,7 +87,7 @@ public class AppleAuthService {
         String email = (String) claims.getClaim("email");
 
         if (email == null || email.isBlank()) {
-            throw new BusinessException(ErrorCode.INVALID_APPLE_IDENTITY_TOKEN);
+            throw new BusinessException(ErrorCode.APPLE_TOKEN_EMAIL_MISSING);
         }
 
         User user = userService.findOrCreateOAuthUser(
@@ -210,14 +212,20 @@ public class AppleAuthService {
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            log.warn("Apple Identity Token 검증 실패, JWKS 강제 갱신 후 재시도", e);
+            log.warn("Apple Identity Token 검증 실패, JWKS 강제 갱신 후 재시도: {}", e.getMessage());
             try {
                 return processToken(identityToken, forceRefreshAppleJwkSet());
             } catch (BusinessException be) {
                 throw be;
+            } catch (BadJWTException retryEx) {
+                log.error("Apple Identity Token claims 검증 실패 (만료 등): {}", retryEx.getMessage());
+                throw new BusinessException(ErrorCode.APPLE_TOKEN_EXPIRED);
+            } catch (BadJOSEException retryEx) {
+                log.error("Apple Identity Token 서명 검증 실패: {}", retryEx.getMessage());
+                throw new BusinessException(ErrorCode.APPLE_TOKEN_SIGNATURE_INVALID);
             } catch (Exception retryEx) {
-                log.error("JWKS 갱신 후에도 Apple Identity Token 검증 실패", retryEx);
-                throw new BusinessException(ErrorCode.INVALID_APPLE_IDENTITY_TOKEN);
+                log.error("Apple Identity Token 검증 실패: {}", retryEx.getMessage());
+                throw new BusinessException(ErrorCode.APPLE_TOKEN_SIGNATURE_INVALID);
             }
         }
     }
@@ -233,11 +241,13 @@ public class AppleAuthService {
         JWTClaimsSet claims = jwtProcessor.process(identityToken, null);
 
         if (!APPLE_ISSUER.equals(claims.getIssuer())) {
-            throw new BusinessException(ErrorCode.INVALID_APPLE_IDENTITY_TOKEN);
+            log.error("Apple Identity Token issuer 불일치: expected={}, actual={}", APPLE_ISSUER, claims.getIssuer());
+            throw new BusinessException(ErrorCode.APPLE_TOKEN_ISSUER_MISMATCH);
         }
 
         if (claims.getAudience() == null || !claims.getAudience().contains(appleClientId)) {
-            throw new BusinessException(ErrorCode.INVALID_APPLE_IDENTITY_TOKEN);
+            log.error("Apple Identity Token audience 불일치: expected={}, actual={}", appleClientId, claims.getAudience());
+            throw new BusinessException(ErrorCode.APPLE_TOKEN_AUDIENCE_MISMATCH);
         }
 
         return claims;
@@ -262,7 +272,7 @@ public class AppleAuthService {
             if (cachedJwkSet != null) {
                 return cachedJwkSet;
             }
-            throw new BusinessException(ErrorCode.INVALID_APPLE_IDENTITY_TOKEN);
+            throw new BusinessException(ErrorCode.APPLE_JWKS_FETCH_FAILED);
         } finally {
             jwkLock.unlock();
         }
@@ -284,7 +294,7 @@ public class AppleAuthService {
             if (cachedJwkSet != null) {
                 return cachedJwkSet;
             }
-            throw new BusinessException(ErrorCode.INVALID_APPLE_IDENTITY_TOKEN);
+            throw new BusinessException(ErrorCode.APPLE_JWKS_FETCH_FAILED);
         } finally {
             jwkLock.unlock();
         }
