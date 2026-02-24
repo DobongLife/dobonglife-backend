@@ -27,6 +27,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -76,6 +77,7 @@ public class AppleAuthService {
     private volatile long cacheTimestamp;
     private final ReentrantLock jwkLock = new ReentrantLock();
 
+    @Transactional
     public TokenResponse login(AppleLoginRequest request) {
         JWTClaimsSet claims = verifyIdentityToken(request.getIdentityToken());
 
@@ -91,13 +93,13 @@ public class AppleAuthService {
         );
 
         if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
-            userService.updateFcmToken(user.getId(), request.getFcmToken());
+            user.setFcmToken(request.getFcmToken());
         }
 
         if (request.getProviderToken() != null && !request.getProviderToken().isBlank()) {
             String refreshToken = exchangeAuthorizationCodeForRefreshToken(request.getProviderToken());
             if (refreshToken != null) {
-                userService.updateProviderToken(user.getId(), refreshToken);
+                user.setProviderToken(refreshToken);
             } else {
                 log.error("[Apple Login] authorization_code → refresh_token 교환 실패로 providerToken 미저장: userId={}", user.getId());
             }

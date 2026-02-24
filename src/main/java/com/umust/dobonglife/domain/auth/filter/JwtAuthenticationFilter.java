@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 인증을 안해도 되니 토큰이 필요없는 URL들 (에러: 로그인이 필요합니다)
     public final static List<String> PASS_URIS = Arrays.asList(
             "/api/auth/login/**",
+            "/api/auth/logout",
             "/login/oauth2/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",

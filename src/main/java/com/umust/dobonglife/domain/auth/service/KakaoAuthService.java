@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -37,6 +38,7 @@ public class KakaoAuthService {
     @Value("${kakao.admin-key}")
     private String kakaoAdminKey;
 
+    @Transactional
     public TokenResponse login(KakaoLoginRequest request) {
         KakaoUserInfo userInfo = getUserInfo(request.getAccessToken());
 
@@ -49,7 +51,7 @@ public class KakaoAuthService {
         );
 
         if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
-            userService.updateFcmToken(user.getId(), request.getFcmToken());
+            user.setFcmToken(request.getFcmToken());
         }
 
         String access = jwtUtil.createAccessToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name(), user.getName());

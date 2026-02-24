@@ -54,12 +54,20 @@ public class JwtService {
         if (!"refresh".equals(jwtUtil.getTokenType(refreshToken))) {
             throw new CustomJwtException(ErrorCode.INVALID_REFRESH_TYPE);
         }
+        validateStoredRefreshToken(refreshToken);
         return reissueAndSendTokens(refreshToken, userId);
+    }
+
+    private void validateStoredRefreshToken(String refreshToken) {
+        String stored = redisService.getValues(REFRESH_TOKEN_KEY_PREFIX + refreshToken);
+        if ("false".equals(stored)) {
+            throw new CustomJwtException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        }
     }
 
     public void checkLogout(String accessToken) {
         String value = redisService.getValues(accessToken);
-        if (value.equals(LOGOUT_VALUE)) {
+        if (LOGOUT_VALUE.equals(value)) {
             throw new CustomAuthenticationException(ErrorCode.SECURITY_UNAUTHORIZED);
         }
     }
