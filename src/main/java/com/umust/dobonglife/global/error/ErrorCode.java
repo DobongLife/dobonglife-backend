@@ -59,6 +59,9 @@ public enum ErrorCode{
     APPLE_TOKEN_AUDIENCE_MISMATCH(625, HttpStatus.BAD_REQUEST.value(), "Apple Identity Token 대상(audience)이 일치하지 않습니다."),
     APPLE_TOKEN_EXPIRED(626, HttpStatus.BAD_REQUEST.value(), "Apple Identity Token이 만료되었습니다."),
     APPLE_TOKEN_EMAIL_MISSING(627, HttpStatus.BAD_REQUEST.value(), "Apple Identity Token에 이메일 정보가 없습니다."),
+    APPLE_TOKEN_EXCHANGE_INVALID_GRANT(628, HttpStatus.BAD_REQUEST.value(), "Apple 인증 코드가 만료되었거나 이미 사용되었습니다."),
+    APPLE_TOKEN_EXCHANGE_INVALID_CLIENT(629, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Apple 클라이언트 인증에 실패했습니다."),
+    APPLE_TOKEN_EXCHANGE_FAILED(630, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Apple 토큰 교환에 실패했습니다."),
 
     // Course
     INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),

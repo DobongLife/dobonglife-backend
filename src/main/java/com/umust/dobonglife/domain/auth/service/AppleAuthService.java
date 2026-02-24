@@ -100,11 +100,7 @@ public class AppleAuthService {
 
         if (request.getProviderToken() != null && !request.getProviderToken().isBlank()) {
             String refreshToken = exchangeAuthorizationCodeForRefreshToken(request.getProviderToken());
-            if (refreshToken != null) {
-                user.setProviderToken(refreshToken);
-            } else {
-                log.error("[Apple Login] authorization_code → refresh_token 교환 실패로 providerToken 미저장: userId={}", user.getId());
-            }
+            user.setProviderToken(refreshToken);
         } else {
             log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", user.getId());
         }
@@ -168,15 +164,31 @@ public class AppleAuthService {
                 log.info("애플 authorization_code → refresh_token 교환 성공");
                 return (String) response.getBody().get("refresh_token");
             }
-            log.warn("애플 토큰 교환 실패: response_body={}", response.getBody());
-            return null;
+            log.error("[Apple Token Exchange] refresh_token 없음: response_body={}", response.getBody());
+            throw new BusinessException(ErrorCode.APPLE_TOKEN_EXCHANGE_FAILED);
+        } catch (BusinessException e) {
+            throw e;
         } catch (org.springframework.web.client.HttpClientErrorException e) {
-            log.error("[Apple Token Exchange] HTTP {}  response={}", e.getStatusCode(), e.getResponseBodyAsString());
-            return null;
+            String responseBody = e.getResponseBodyAsString();
+            log.error("[Apple Token Exchange] HTTP {} response={}", e.getStatusCode(), responseBody);
+            throw new BusinessException(mapAppleTokenError(responseBody));
         } catch (Exception e) {
             log.error("[Apple Token Exchange] 예외 발생: class={}, message={}", e.getClass().getSimpleName(), e.getMessage());
-            return null;
+            throw new BusinessException(ErrorCode.APPLE_TOKEN_EXCHANGE_FAILED);
         }
+    }
+
+    private ErrorCode mapAppleTokenError(String responseBody) {
+        if (responseBody == null) {
+            return ErrorCode.APPLE_TOKEN_EXCHANGE_FAILED;
+        }
+        if (responseBody.contains("invalid_grant")) {
+            return ErrorCode.APPLE_TOKEN_EXCHANGE_INVALID_GRANT;
+        }
+        if (responseBody.contains("invalid_client")) {
+            return ErrorCode.APPLE_TOKEN_EXCHANGE_INVALID_CLIENT;
+        }
+        return ErrorCode.APPLE_TOKEN_EXCHANGE_FAILED;
     }
 
     private String generateClientSecret() throws Exception {
