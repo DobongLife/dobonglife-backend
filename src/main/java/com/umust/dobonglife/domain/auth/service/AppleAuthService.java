@@ -155,7 +155,8 @@ public class AppleAuthService {
             body.add("code", authorizationCode);
             body.add("grant_type", "authorization_code");
 
-            log.info("[Apple Token Exchange] client_id={}, code_length={}", appleClientId, authorizationCode.length());
+            log.info("[Apple Token Exchange] client_id={}, team_id={}, key_id={}, code_length={}, secret_length={}",
+                    appleClientId, appleTeamId, appleKeyId, authorizationCode.length(), clientSecret.length());
 
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
             var response = restTemplate.postForEntity(APPLE_TOKEN_URL, entity, java.util.Map.class);
