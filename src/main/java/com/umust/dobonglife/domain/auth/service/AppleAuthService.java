@@ -221,7 +221,9 @@ public class AppleAuthService {
         SignedJWT signedJWT = new SignedJWT(header, claims);
         signedJWT.sign(new ECDSASigner(privateKey));
 
-        return signedJWT.serialize();
+        String serialized = signedJWT.serialize();
+        log.info("[Apple ClientSecret] header={}, payload={}", signedJWT.getHeader().toJSONObject(), signedJWT.getJWTClaimsSet().toJSONObject());
+        return serialized;
     }
 
     private JWTClaimsSet verifyIdentityToken(String identityToken) {
