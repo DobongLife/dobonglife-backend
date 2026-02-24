@@ -1,1 +1,3 @@
 rootProject.name = 'dobonglife'
+include 'core'
+include 'infra'
