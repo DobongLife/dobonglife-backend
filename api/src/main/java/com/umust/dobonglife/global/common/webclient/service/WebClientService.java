@@ -1,8 +1,15 @@
 package com.umust.dobonglife.global.common.webclient.service;
 
+<<<<<<< Updated upstream:api/src/main/java/com/umust/dobonglife/global/common/webclient/service/WebClientService.java
 import com.umust.dobonglife.global.common.webclient.business.dto.response.GeoPointResponse;
+=======
+import com.umust.dobonglife.infra.webclient.business.dto.response.GeoPointResponse;
+import io.netty.channel.ChannelOption;
+import jakarta.annotation.PostConstruct;
+>>>>>>> Stashed changes:infra/src/main/java/com/umust/dobonglife/infra/webclient/service/WebClientService.java
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,8 +17,10 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.util.UriBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.*;
 
 @Slf4j
@@ -34,6 +43,33 @@ public class WebClientService {
     @Value("${naver.map.client-secret:}")
     private String naverMapClientSecret;
 
+<<<<<<< Updated upstream:api/src/main/java/com/umust/dobonglife/global/common/webclient/service/WebClientService.java
+=======
+    private WebClient openApiWebClient;
+    private WebClient naverMapWebClient;
+
+    private static final int CONNECT_TIMEOUT_MS = 5_000;
+    private static final Duration READ_TIMEOUT = Duration.ofSeconds(10);
+
+    @PostConstruct
+    void init() {
+        HttpClient httpClient = HttpClient.create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, CONNECT_TIMEOUT_MS)
+                .responseTimeout(READ_TIMEOUT);
+        ReactorClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+
+        this.openApiWebClient = WebClient.builder()
+                .baseUrl(openApiBaseUrl)
+                .clientConnector(connector)
+                .build();
+        this.naverMapWebClient = WebClient.builder()
+                .baseUrl(naverMapBaseUrl)
+                .clientConnector(connector)
+                .filter(logRequest())
+                .build();
+    }
+
+>>>>>>> Stashed changes:infra/src/main/java/com/umust/dobonglife/infra/webclient/service/WebClientService.java
     public Map getCompanyStatus(String bsnsLcns) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("b_no", Collections.singletonList(bsnsLcns));

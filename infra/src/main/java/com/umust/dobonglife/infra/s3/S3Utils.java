@@ -55,9 +55,15 @@ public class S3Utils {
 
             amazonS3.putObject(putObjectRequest);
         }catch (IOException e){
+<<<<<<< Updated upstream
             throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAILED);
         }catch (SdkClientException e){
             throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAILED);
+=======
+            throw new BusinessException(InfraErrorCode.IMAGE_UPLOAD_FAILED, e);
+        }catch (SdkClientException e){
+            throw new BusinessException(InfraErrorCode.IMAGE_UPLOAD_FAILED, e);
+>>>>>>> Stashed changes
         }
         return amazonS3.getUrl(bucket,s3FolderName + "/" + fileName).toString();
     }
@@ -119,9 +125,15 @@ public class S3Utils {
             }
             amazonS3.deleteObject(bucket, key);
         }catch (SdkClientException e){
+<<<<<<< Updated upstream
             throw new BusinessException(ErrorCode.IMAGE_DELETE_FAILED);
         } catch (MalformedURLException e) {
             throw new BusinessException(ErrorCode.IMAGE_NOT_FOUND);
+=======
+            throw new BusinessException(InfraErrorCode.IMAGE_DELETE_FAILED, e);
+        } catch (MalformedURLException e) {
+            throw new BusinessException(InfraErrorCode.IMAGE_NOT_FOUND, e);
+>>>>>>> Stashed changes
         }
     }
 
