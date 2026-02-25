@@ -1,10 +1,8 @@
-package com.umust.dobonglife.global.common.webclient.business.data;
+package com.umust.dobonglife.infra.webclient.business.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.Getter;
 
-@Getter
 @Data
 public class BusinessData {
 

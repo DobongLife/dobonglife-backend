@@ -15,7 +15,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.stream.Collectors;
 
-import static com.umust.dobonglife.global.error.ErrorCode.*;
+import static com.umust.dobonglife.global.error.CommonErrorCode.*;
 @Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {

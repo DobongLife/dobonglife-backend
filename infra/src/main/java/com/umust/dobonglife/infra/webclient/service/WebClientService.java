@@ -1,14 +1,15 @@
-package com.umust.dobonglife.global.common.webclient.service;
+package com.umust.dobonglife.infra.webclient.service;
 
-import com.umust.dobonglife.global.common.webclient.business.dto.response.GeoPointResponse;
+import com.umust.dobonglife.infra.webclient.business.dto.response.GeoPointResponse;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
@@ -18,15 +19,14 @@ import java.util.*;
 @Component
 public class WebClientService {
 
-    public static final String OPEN_API_SECRET_KEY = "hv5UBK8iLZSVADinVY4DMao1hpAK0razW7E8nDAcckfuzs2mg2tDHdCU6rLpsJrF+PilMuQ0K/Qfij8gD8UUVQ==";
-    public static final WebClient OPEN_API_WEBCLIENT = WebClient.builder()
-            .baseUrl("https://api.odcloud.kr/api/nts-businessman/v1/")
-            .build();
+    @Value("${open-api.secret-key}")
+    private String openApiSecretKey;
 
-    private static final WebClient NAVER_MAP_WEBCLIENT = WebClient.builder()
-            .baseUrl("https://naveropenapi.apigw.ntruss.com")
-            .filter(logRequest())
-            .build();
+    @Value("${open-api.base-url}")
+    private String openApiBaseUrl;
+
+    @Value("${naver.map.base-url}")
+    private String naverMapBaseUrl;
 
     @Value("${naver.map.client-id:}")
     private String naverMapClientId;
@@ -34,19 +34,32 @@ public class WebClientService {
     @Value("${naver.map.client-secret:}")
     private String naverMapClientSecret;
 
+    private WebClient openApiWebClient;
+    private WebClient naverMapWebClient;
+
+    @PostConstruct
+    void init() {
+        this.openApiWebClient = WebClient.builder()
+                .baseUrl(openApiBaseUrl)
+                .build();
+        this.naverMapWebClient = WebClient.builder()
+                .baseUrl(naverMapBaseUrl)
+                .filter(logRequest())
+                .build();
+    }
+
     public Map getCompanyStatus(String bsnsLcns) {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("b_no", Collections.singletonList(bsnsLcns));
         log.info("Request body: {}", requestBody);
-        return OPEN_API_WEBCLIENT.post()
+        return openApiWebClient.post()
                 .uri(this::generateBusinessStatusRequestURI)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Infuser " + OPEN_API_SECRET_KEY)
+                .header("Authorization", "Infuser " + openApiSecretKey)
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
-
     }
 
     public Map geocodeByNaver(String address) {
@@ -60,7 +73,7 @@ public class WebClientService {
 
         log.info("네이버 Geocoding 요청 address={}", address);
         try {
-            return NAVER_MAP_WEBCLIENT.get()
+            return naverMapWebClient.get()
                     .uri(uriBuilder -> generateNaverGeocodeURI(uriBuilder, address))
                     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                     .header("x-ncp-apigw-api-key-id", naverMapClientId)
@@ -75,7 +88,6 @@ public class WebClientService {
                     .bodyToMono(Map.class)
                     .block();
         } catch (WebClientResponseException e) {
-            // 여기로 오면 status + response body가 더 확실히 찍힘
             log.error("Naver Geocode WebClientResponseException status={}, body={}",
                     e.getStatusCode(), e.getResponseBodyAsString(), e);
             throw e;
@@ -83,7 +95,6 @@ public class WebClientService {
             log.error("Naver Geocode Unknown Exception", e);
             throw e;
         }
-
     }
 
     public Optional<GeoPointResponse> geocodePoint(String address) {
@@ -113,9 +124,9 @@ public class WebClientService {
     }
 
     private URI generateBusinessStatusRequestURI(UriBuilder uriBuilder) {
-        URI uri =  uriBuilder.path("/status")
+        URI uri = uriBuilder.path("/status")
                 .build();
-        log.info("📡 Open API 최종 요청 URI: {}", uri);
+        log.info("Open API 최종 요청 URI: {}", uri);
         return uri;
     }
 
@@ -124,14 +135,14 @@ public class WebClientService {
                 .path("/map-geocode/v2/geocode")
                 .queryParam("query", address)
                 .build();
-        log.info("📡 네이버 Geocode 최종 요청 URI: {}", uri);
+        log.info("네이버 Geocode 최종 요청 URI: {}", uri);
         return uri;
     }
 
     private static ExchangeFilterFunction logRequest() {
         return ExchangeFilterFunction.ofRequestProcessor(request -> {
-            log.info("➡️ REQUEST: {} {}", request.method(), request.url());
-            log.info("➡️ HEADERS: {}", request.headers().keySet());
+            log.info("REQUEST: {} {}", request.method(), request.url());
+            log.info("HEADERS: {}", request.headers().keySet());
             return Mono.just(request);
         });
     }

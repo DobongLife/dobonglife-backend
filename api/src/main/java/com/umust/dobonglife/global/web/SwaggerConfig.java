@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +16,12 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${swagger.server.local-url}")
+    private String localServerUrl;
+
+    @Value("${swagger.server.global-url}")
+    private String globalServerUrl;
 
     static {
         org.springdoc.core.utils.SpringDocUtils.getConfig().addAnnotationsToIgnore(
@@ -26,22 +33,22 @@ public class SwaggerConfig {
         List<Server> servers = new ArrayList<>();
 
         servers.add(new Server()
-                .url("http://localhost:8080")
+                .url(localServerUrl)
                 .description("로컬 개발 서버"));
 
         servers.add(new Server()
-                .url("https://api.dobonglife.co.kr")
+                .url(globalServerUrl)
                 .description("운영 서버"));
 
         Components components = new Components()
-                // ✅ Access Token (Authorization: Bearer <token>)
+
                 .addSecuritySchemes("BearerAuth",
                         new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
                                 .description("Access Token: Authorization 헤더에 Bearer {accessToken}"))
-                // ✅ Refresh Token (Authorization-refresh: Bearer <token>)
+
                 .addSecuritySchemes("RefreshAuth",
                         new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
