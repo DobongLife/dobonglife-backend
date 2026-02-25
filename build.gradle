@@ -62,7 +62,7 @@ subprojects {
 }
 
 tasks.register('updateGitHooks', Copy) {
-	from './scripts/pre-commit-msg'     // 복사할 파일 경로 (소스)
+	from './scripts/commit-msg'     // 복사할 파일 경로 (소스)
 	into '.git/hooks'               // 복사 대상 위치 (Git hook 디렉토리)
 	fileMode 0775                   // 복사된 파일에 실행 권한 부여 (chmod 775)
 }

@@ -14,6 +14,21 @@ dependencies {
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // WebFlux (WebClient)
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // Mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // CSV Import
+    implementation 'org.apache.commons:commons-csv:1.12.0'
+    implementation 'commons-io:commons-io:2.18.0'
+    implementation 'com.opencsv:opencsv:5.9'
+
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
@@ -21,6 +36,9 @@ dependencies {
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
+
+    // MySQL
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     // Test
     testImplementation 'com.h2database:h2'

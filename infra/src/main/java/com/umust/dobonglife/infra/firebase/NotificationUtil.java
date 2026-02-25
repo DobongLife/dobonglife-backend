@@ -32,8 +32,9 @@ public class NotificationUtil {
 
     @Async("notificationExecutor")
     public void sendToTopic(NotificationRequest request) {
+        String topic = (request.type() != null) ? request.type().name() : "NONE";
         Message message = Message.builder()
-                .setTopic(request.title())
+                .setTopic(topic)
                 .setNotification(Notification.builder()
                         .setTitle(request.title())
                         .setBody(request.body())
@@ -42,7 +43,7 @@ public class NotificationUtil {
         try {
             FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
-            log.error("[FCM] 토픽 메시지 전송 실패 - Topic: {}, Error: {}", request.title(), e.getMessage());
+            log.error("[FCM] 토픽 메시지 전송 실패 - Topic: {}, Error: {}", topic, e.getMessage());
         }
     }
 
@@ -91,7 +92,10 @@ public class NotificationUtil {
                 .build();
 
         try {
-            log.info("[FCM] 전송 시도 - Token: {}, ID: {}, Type: {}", fcmToken, stringId, stringType);
+            String maskedToken = (fcmToken != null && fcmToken.length() > 12)
+                    ? fcmToken.substring(0, 6) + "***" + fcmToken.substring(fcmToken.length() - 6)
+                    : "***";
+            log.info("[FCM] 전송 시도 - Token: {}, ID: {}, Type: {}", maskedToken, stringId, stringType);
             String response = FirebaseMessaging.getInstance().send(message);
             log.info("[FCM] 전송 성공 - Response: {}", response);
         } catch (FirebaseMessagingException e) {

@@ -90,7 +90,16 @@ public class S3Utils {
                 .toList();
 
         return futures.stream()
-                .map(CompletableFuture::join)
+                .map(future -> {
+                    try {
+                        return future.join();
+                    } catch (java.util.concurrent.CompletionException e) {
+                        if (e.getCause() instanceof BusinessException be) {
+                            throw be;
+                        }
+                        throw e;
+                    }
+                })
                 .toList();
     }
 
@@ -99,9 +108,14 @@ public class S3Utils {
             URL url = new URL(imgUrl);
             String path = url.getPath();
 
-            String key = path;
-            if (path.startsWith("/")) {
-                key = path.substring(2 + bucket.length());
+            String key;
+            String bucketPrefix = "/" + bucket + "/";
+            if (path.startsWith(bucketPrefix)) {
+                key = path.substring(bucketPrefix.length());
+            } else if (path.startsWith("/")) {
+                key = path.substring(1);
+            } else {
+                key = path;
             }
             amazonS3.deleteObject(bucket, key);
         }catch (SdkClientException e){

@@ -25,8 +25,8 @@ public class RedisConfig {
 
     @PostConstruct
     public void init() {
-        log.info("Redis Host: {}", host);
-        log.info("Redis Port: {}", port);
+        log.debug("Redis Host: {}", host);
+        log.debug("Redis Port: {}", port);
     }
 
     @Bean

@@ -4,6 +4,8 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -17,9 +19,10 @@ public class RedisInitializer {
 
     @PostConstruct
     public void clearRedis() {
-        redisTemplate.getConnectionFactory()
-                .getConnection()
-                .flushDb();
+        redisTemplate.execute((RedisCallback<Void>) connection -> {
+            connection.serverCommands().flushDb();
+            return null;
+        });
         log.info("Redis DB 초기화 완료");
     }
 }
