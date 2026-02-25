@@ -59,3 +59,7 @@ src/test/resources/application-test.yml
 /src/main/resources/static/docs/
 # Firebase Admin SDK Secret Key
 src/main/resources/firebase/firebase-adminsdk-account.json
+api/src/main/resources/firebase/firebase-adminsdk-account.json
+
+# Local profile (api module)
+api/src/main/resources/application-local.yml
