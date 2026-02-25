@@ -1,7 +1,7 @@
-package com.umust.dobonglife.global.common.webclient.business.parser;
+package com.umust.dobonglife.infra.webclient.business.parser;
 
-import com.umust.dobonglife.global.common.webclient.business.data.BusinessData;
-import com.umust.dobonglife.global.common.webclient.business.dto.response.BusinessStatusResponse;
+import com.umust.dobonglife.infra.webclient.business.data.BusinessData;
+import com.umust.dobonglife.infra.webclient.business.dto.response.BusinessStatusResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;

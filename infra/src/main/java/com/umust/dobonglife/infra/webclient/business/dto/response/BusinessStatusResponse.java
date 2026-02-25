@@ -1,7 +1,7 @@
-package com.umust.dobonglife.global.common.webclient.business.dto.response;
+package com.umust.dobonglife.infra.webclient.business.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.umust.dobonglife.global.common.webclient.business.data.BusinessData;
+import com.umust.dobonglife.infra.webclient.business.data.BusinessData;
 import lombok.*;
 
 import java.util.List;

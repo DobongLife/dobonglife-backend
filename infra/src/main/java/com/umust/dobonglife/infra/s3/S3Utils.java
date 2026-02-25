@@ -2,11 +2,10 @@ package com.umust.dobonglife.infra.s3;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.umust.dobonglife.global.error.exception.BusinessException;
-import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.infra.error.InfraErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,15 +48,14 @@ public class S3Utils {
         objectMetadata.setContentType(multipartFile.getContentType());
 
         try(InputStream inputStream = multipartFile.getInputStream()){
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket,s3FolderName + "/" + fileName,
-                    inputStream, objectMetadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, s3FolderName + "/" + fileName,
+                    inputStream, objectMetadata);
 
             amazonS3.putObject(putObjectRequest);
         }catch (IOException e){
-            throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAILED);
+            throw new BusinessException(InfraErrorCode.IMAGE_UPLOAD_FAILED);
         }catch (SdkClientException e){
-            throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAILED);
+            throw new BusinessException(InfraErrorCode.IMAGE_UPLOAD_FAILED);
         }
         return amazonS3.getUrl(bucket,s3FolderName + "/" + fileName).toString();
     }
@@ -68,17 +66,17 @@ public class S3Utils {
 
     private String getFileExtension(String fileName){
         if(isNull(fileName) || fileName.isBlank()){
-            throw new BusinessException(ErrorCode.INVALID_IMAGE);
+            throw new BusinessException(InfraErrorCode.INVALID_IMAGE);
         }
 
         int dotIndex = fileName.lastIndexOf(".");
         if(dotIndex == -1){
-            throw new BusinessException(ErrorCode.UNSUPPORTED_IMAGE_FORMAT);
+            throw new BusinessException(InfraErrorCode.UNSUPPORTED_IMAGE_FORMAT);
         }
 
         String extension = fileName.substring(dotIndex).toLowerCase();
         if(!FILE_EXTENSIONS.contains(extension)){
-            throw new BusinessException(ErrorCode.UNSUPPORTED_IMAGE_FORMAT);
+            throw new BusinessException(InfraErrorCode.UNSUPPORTED_IMAGE_FORMAT);
         }
 
         return extension;
@@ -119,9 +117,9 @@ public class S3Utils {
             }
             amazonS3.deleteObject(bucket, key);
         }catch (SdkClientException e){
-            throw new BusinessException(ErrorCode.IMAGE_DELETE_FAILED);
+            throw new BusinessException(InfraErrorCode.IMAGE_DELETE_FAILED);
         } catch (MalformedURLException e) {
-            throw new BusinessException(ErrorCode.IMAGE_NOT_FOUND);
+            throw new BusinessException(InfraErrorCode.IMAGE_NOT_FOUND);
         }
     }
 

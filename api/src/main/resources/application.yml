@@ -78,6 +78,22 @@ jwt:
 apple:
   client-id: ${APPLE_CLIENT_ID}
 
+swagger:
+  server:
+    local-url: ${SWAGGER_LOCAL_URL}
+    global-url: ${SWAGGER_GLOBAL_URL}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+open-api:
+  secret-key: ${OPEN_API_SECRET_KEY}
+  base-url: ${OPEN_API_BASE_URL}
+
+naver:
+  map:
+    base-url: ${NAVER_MAP_BASE_URL}
+
 cloud:
   aws:
     credentials:
