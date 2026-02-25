@@ -1,5 +1,6 @@
 rootProject.name = 'dobonglife'
 include 'core'
 include 'domain-coupon'
+include 'domain-user'
 include 'infra'
 include 'api'
