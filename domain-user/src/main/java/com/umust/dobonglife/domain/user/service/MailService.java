@@ -7,7 +7,7 @@ import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
-import com.umust.dobonglife.infra.redis.RedisService;
+import com.umust.dobonglife.domain.user.service.port.VerificationCodeStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
@@ -41,7 +41,7 @@ public class MailService {
 
     private final SpringTemplateEngine templateEngine;
 
-    private final RedisService redisService;
+    private final VerificationCodeStore verificationCodeStore;
     private final UserRepository userRepository;
 
     public void sendMail(MailRequest request) {
@@ -69,7 +69,7 @@ public class MailService {
         try {
             javaMailSender.send(mimeMessage);
             String key = prefix + request.getEmail();
-            redisService.setValues(key, authCode, Duration.ofMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
+            verificationCodeStore.store(key, authCode, Duration.ofMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
         } catch (MailException e) {  //JavaMailSender의 전송과정에서 오류 발생 시
             throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
         }
@@ -117,7 +117,7 @@ public class MailService {
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
 
-        redisService.setValues(
+        verificationCodeStore.store(
                 prefix + email,
                 "VERIFIED",
                 Duration.ofSeconds(VERIFIED_TTL_SECONDS)
@@ -154,12 +154,12 @@ public class MailService {
 
     public String getStoredSignUpCode(String email) {
         String key = EMAIL_KEY_PREFIX + email;
-        return redisService.getValues(key).orElse(null);
+        return verificationCodeStore.find(key).orElse(null);
     }
 
     public String getStoredPasswordCode(String email) {
         String key = PASSWORD_KEY_PREFIX + email;
-        return redisService.getValues(key).orElse(null);
+        return verificationCodeStore.find(key).orElse(null);
     }
 
     // thymeleaf를 통한 html 적용
