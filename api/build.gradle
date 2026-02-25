@@ -9,15 +9,28 @@ configurations {
 dependencies {
     implementation project(':core')
     implementation project(':infra')
-    implementation project(':domain-auth')
     implementation project(':domain-coupon')
 
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // JWT (JJWT)
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+    // Nimbus JOSE+JWT (Apple auth)
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.47'
+
+    // Google API Client (Google auth)
+    implementation 'com.google.api-client:google-api-client:2.7.2'
 
     // WebFlux (WebClient)
     implementation 'org.springframework.boot:spring-boot-starter-webflux'

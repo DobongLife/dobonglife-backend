@@ -5,8 +5,8 @@ import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort.AuthUserInfo;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class KakaoAuthService {
     private static final String KAKAO_UNLINK_URL = "https://kapi.kakao.com/v1/user/unlink";
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final AuthUserPort authUserPort;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
 
@@ -46,23 +46,23 @@ public class KakaoAuthService {
         String email = userInfo.kakaoAccount().email();
         String name = userInfo.kakaoAccount().profile().nickname();
 
-        AuthUserInfo user = authUserPort.findOrCreateOAuthUser(
+        User user = userService.findOrCreateOAuthUser(
                 Provider.KAKAO, providerId, email, name
         );
 
         if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
-            authUserPort.updateFcmToken(user.id(), request.getFcmToken());
+            user.setFcmToken(request.getFcmToken());
         }
 
-        String access = jwtUtil.createAccessToken(user.id(), Provider.KAKAO.getValue(), Role.PREFIX + user.role().name(), user.name());
-        String refresh = jwtUtil.createRefreshToken(user.id(), Provider.KAKAO.getValue(), Role.PREFIX + user.role().name(), user.name());
+        String access = jwtUtil.createAccessToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
+        String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.KAKAO.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
 
-        jwtService.storeRefreshToken(refresh, user.id());
+        jwtService.storeRefreshToken(refresh, user.getId());
 
         return TokenResponse.builder()
                 .accessToken(access)
                 .refreshToken(refresh)
-                .role(Role.PREFIX + user.role().name())
+                .role(Role.PREFIX + user.getRole().name())
                 .build();
     }
 

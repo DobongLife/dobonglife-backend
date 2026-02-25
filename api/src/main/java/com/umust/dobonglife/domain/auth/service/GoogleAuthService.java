@@ -9,8 +9,8 @@ import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort.AuthUserInfo;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class GoogleAuthService {
     private static final String GOOGLE_REVOKE_URL = "https://oauth2.googleapis.com/revoke";
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final AuthUserPort authUserPort;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
 
@@ -50,23 +50,23 @@ public class GoogleAuthService {
         String name = (String) payload.get("name");
         String providerId = payload.getSubject();
 
-        AuthUserInfo user = authUserPort.findOrCreateOAuthUser(
+        User user = userService.findOrCreateOAuthUser(
                 Provider.GOOGLE, providerId, email, name
         );
 
         if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
-            authUserPort.updateFcmToken(user.id(), request.getFcmToken());
+            user.setFcmToken(request.getFcmToken());
         }
 
-        String access = jwtUtil.createAccessToken(user.id(), Provider.GOOGLE.getValue(), Role.PREFIX + user.role().name(), user.name());
-        String refresh = jwtUtil.createRefreshToken(user.id(), Provider.GOOGLE.getValue(), Role.PREFIX + user.role().name(), user.name());
+        String access = jwtUtil.createAccessToken(user.getId(), Provider.GOOGLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
+        String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.GOOGLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
 
-        jwtService.storeRefreshToken(refresh, user.id());
+        jwtService.storeRefreshToken(refresh, user.getId());
 
         return TokenResponse.builder()
                 .accessToken(access)
                 .refreshToken(refresh)
-                .role(Role.PREFIX + user.role().name())
+                .role(Role.PREFIX + user.getRole().name())
                 .build();
     }
 

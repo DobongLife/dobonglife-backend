@@ -2,10 +2,10 @@ package com.umust.dobonglife.domain.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort;
 import com.umust.dobonglife.domain.auth.service.JwtService;
 import com.umust.dobonglife.domain.auth.utils.AuthenticationUtil;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +27,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
-    private final AuthUserPort authUserPort;
+    private final UserService userService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -41,7 +41,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // 폼 로그인만 적용 됨
         Object details = authentication.getDetails();
         if (details instanceof String fcmToken && !fcmToken.isBlank()) {
-            authUserPort.updateFcmToken(userId, fcmToken);
+            userService.updateFcmToken(userId, fcmToken);
         }
 
         String accessToken = jwtUtil.createAccessToken(userId, provider, role, userName);

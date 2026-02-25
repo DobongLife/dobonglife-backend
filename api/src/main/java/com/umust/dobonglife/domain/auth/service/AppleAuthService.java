@@ -18,8 +18,8 @@ import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort.AuthUserInfo;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +59,7 @@ public class AppleAuthService {
     private static final int SIZE_LIMIT_BYTES = 50 * 1024;
 
     private final RestTemplate restTemplate = createRestTemplate();
-    private final AuthUserPort authUserPort;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
 
@@ -90,30 +90,30 @@ public class AppleAuthService {
             throw new BusinessException(ErrorCode.APPLE_TOKEN_EMAIL_MISSING);
         }
 
-        AuthUserInfo user = authUserPort.findOrCreateOAuthUser(
+        User user = userService.findOrCreateOAuthUser(
                 Provider.APPLE, sub, email, email
         );
 
         if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
-            authUserPort.updateFcmToken(user.id(), request.getFcmToken());
+            user.setFcmToken(request.getFcmToken());
         }
 
         if (request.getProviderToken() != null && !request.getProviderToken().isBlank()) {
             String refreshToken = exchangeAuthorizationCodeForRefreshToken(request.getProviderToken());
-            authUserPort.updateProviderToken(user.id(), refreshToken);
+            user.setProviderToken(refreshToken);
         } else {
-            log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", user.id());
+            log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", user.getId());
         }
 
-        String access = jwtUtil.createAccessToken(user.id(), Provider.APPLE.getValue(), Role.PREFIX + user.role().name(), user.name());
-        String refresh = jwtUtil.createRefreshToken(user.id(), Provider.APPLE.getValue(), Role.PREFIX + user.role().name(), user.name());
+        String access = jwtUtil.createAccessToken(user.getId(), Provider.APPLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
+        String refresh = jwtUtil.createRefreshToken(user.getId(), Provider.APPLE.getValue(), Role.PREFIX + user.getRole().name(), user.getName());
 
-        jwtService.storeRefreshToken(refresh, user.id());
+        jwtService.storeRefreshToken(refresh, user.getId());
 
         return TokenResponse.builder()
                 .accessToken(access)
                 .refreshToken(refresh)
-                .role(Role.PREFIX + user.role().name())
+                .role(Role.PREFIX + user.getRole().name())
                 .build();
     }
 

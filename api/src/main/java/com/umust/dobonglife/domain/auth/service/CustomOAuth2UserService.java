@@ -6,8 +6,9 @@ import com.umust.dobonglife.domain.auth.dto.response.NaverResponse;
 import com.umust.dobonglife.domain.auth.dto.response.OAuth2Response;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort;
-import com.umust.dobonglife.domain.auth.port.AuthUserPort.AuthUserInfo;
+import com.umust.dobonglife.global.common.constant.Role;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -24,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final AuthUserPort authUserPort;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -47,17 +48,26 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Provider provider = oAuth2Response.getProvider();
         String providerId = oAuth2Response.getProvider().getValue() + "_" + oAuth2Response.getProviderId();
 
-        AuthUserInfo user = authUserPort.findByProviderId(providerId)
-                .orElseGet(() -> authUserPort.findOrCreateOAuthUser(
-                        provider, providerId, oAuth2Response.getEmail(), oAuth2Response.getName()
-                ));
+        User user = userRepository.findByProviderId(providerId)
+                .orElseGet(() -> createUser(oAuth2Response, provider, providerId));
 
         return UserPrincipal.builder()
-                .userId(user.id())
-                .userName(user.name())
-                .role(user.role())
+                .userId(user.getId())
+                .userName(user.getName())
+                .role(user.getRole())
                 .provider(provider)
-                .authorities(List.of(user.role().toAuthority()))
+                .authorities(List.of(user.getRole().toAuthority()))
                 .build();
+    }
+
+    private User createUser(OAuth2Response oAuth2Response, Provider provider, String providerId) {
+        User user = User.builder()
+                .email(oAuth2Response.getEmail())
+                .name(oAuth2Response.getName())
+                .role(Role.MEMBER)
+                .provider(provider)
+                .providerId(providerId)
+                .build();
+        return userRepository.save(user);
     }
 }
