@@ -1,10 +1,10 @@
 package com.umust.dobonglife.global.auth;
 
-import com.umust.dobonglife.domain.auth.domain.constant.Provider;
+import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
-import com.umust.dobonglife.domain.user.domain.constant.Role;
+import com.umust.dobonglife.global.common.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -22,6 +22,8 @@ public enum ErrorCode {
     USER_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다."),
     USER_MAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 이메일의 사용자를 찾을 수 없습니다."),
     INVALID_USER_ROLE(HttpStatus.BAD_REQUEST, "유효하지 않은 사용자 권한입니다."),
+    USER_ROLE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 Role의 요청값 입니다."),
+    USER_DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 등록된 이메일입니다."),
     USER_IS_SOCIAL_LOGGED(HttpStatus.BAD_REQUEST, "소셜 로그인 사용자는 비밀번호 변경이 불가능합니다."),
 
     // Place
@@ -58,6 +60,16 @@ public enum ErrorCode {
     INVALID_KAKAO_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 Kakao 엑세스 토큰값 입니다."),
     DUPLICATED_LOGIN(HttpStatus.UNAUTHORIZED, "다른 기기에서 로그인되어 현재 로그인이 종료되었습니다."),
     INVALID_APPLE_IDENTITY_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 Apple Identity Token 입니다."),
+    APPLE_JWKS_FETCH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Apple 공개키(JWKS) 조회에 실패했습니다."),
+    APPLE_TOKEN_SIGNATURE_INVALID(HttpStatus.BAD_REQUEST, "Apple Identity Token 서명 검증에 실패했습니다."),
+    APPLE_TOKEN_ISSUER_MISMATCH(HttpStatus.BAD_REQUEST, "Apple Identity Token 발급자(issuer)가 유효하지 않습니다."),
+    APPLE_TOKEN_AUDIENCE_MISMATCH(HttpStatus.BAD_REQUEST, "Apple Identity Token 대상(audience)이 일치하지 않습니다."),
+    APPLE_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "Apple Identity Token이 만료되었습니다."),
+    APPLE_TOKEN_EMAIL_MISSING(HttpStatus.BAD_REQUEST, "Apple Identity Token에 이메일 정보가 없습니다."),
+    APPLE_TOKEN_EXCHANGE_INVALID_GRANT(HttpStatus.BAD_REQUEST, "Apple 인증 코드가 만료되었거나 이미 사용되었습니다."),
+    APPLE_TOKEN_EXCHANGE_INVALID_CLIENT(HttpStatus.INTERNAL_SERVER_ERROR, "Apple 클라이언트 인증에 실패했습니다."),
+    APPLE_TOKEN_EXCHANGE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Apple 토큰 교환에 실패했습니다."),
+    ILLEGAL_ARGUMENT(HttpStatus.BAD_REQUEST, "잘못된 요청값입니다."),
 
     // Img
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),

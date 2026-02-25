@@ -1,6 +1,6 @@
 package com.umust.dobonglife.global.common;
 
-import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.infra.s3.S3Utils;
 import lombok.RequiredArgsConstructor;
