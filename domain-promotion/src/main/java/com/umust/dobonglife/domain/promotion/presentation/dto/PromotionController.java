@@ -29,7 +29,7 @@ public class PromotionController {
     }
 
     @GetMapping("/promotion/ad")
-    public ResponseEntity<BaseResponse<CursorResponse<PromotionAdSummary>>> getBanners(
+    public ResponseEntity<BaseResponse<CursorResponse<PromotionAdSummary>>> getAdPromotions(
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.PROMOTION_AD) int size) {
         return ResponseEntity.ok(BaseResponse.ok(promotionService.getAdPromotions(lastId, size)));

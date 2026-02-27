@@ -11,6 +11,7 @@ public enum PromotionErrorCode implements ErrorCode {
 
     // 조회
     PROMOTION_NOT_FOUND(HttpStatus.NOT_FOUND, "프로모션을 찾을 수 없습니다."),
+    PRESET_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 카테고리의 프리셋을 찾을 수 없습니다."),
 
     // 권한
     NOT_PROMOTION_OWNER(HttpStatus.FORBIDDEN, "해당 프로모션에 대한 권한이 없습니다."),

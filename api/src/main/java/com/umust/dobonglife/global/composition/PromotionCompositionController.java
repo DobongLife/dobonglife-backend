@@ -1,7 +1,10 @@
 package com.umust.dobonglife.global.composition;
 
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
+import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionUpdateRequest;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -38,5 +41,19 @@ public class PromotionCompositionController {
             Long userId) {
         return ResponseEntity.ok(BaseResponse.ok(
                 promotionFacade.registerPromotion(request, userId, imageFiles)));
+    }
+
+    @PatchMapping("/{promotionId}")
+    public ResponseEntity<BaseResponse<PromotionUpdateResponse>> updatePromotion(
+            @PathVariable Long promotionId,
+            @RequestBody @Valid PromotionUpdateRequest request,
+            @CurrentUserId Long userId) {
+        return ResponseEntity.ok(BaseResponse.ok(
+                promotionFacade.modifyPromotion(request, promotionId, userId)));
+    }
+
+    @GetMapping("/preset")
+    public ResponseEntity<BaseResponse<PromotionPresetResponse>> getPreset(@CurrentUserId Long userId) {
+        return ResponseEntity.ok(BaseResponse.ok(promotionFacade.getPreset(userId)));
     }
 }

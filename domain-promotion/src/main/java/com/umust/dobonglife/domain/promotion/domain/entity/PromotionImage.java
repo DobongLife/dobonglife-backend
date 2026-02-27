@@ -20,7 +20,7 @@ public class PromotionImage {
     @Column(name = "promotion_image_id")
     private Long id;
 
-    @Column(length = 255, nullable = false)
+    @Column(length = 255)
     private String imageUrl;
 
     private Short sortOrder;

@@ -5,8 +5,11 @@ import com.umust.dobonglife.domain.promotion.application.dto.PromotionSummary;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.domain.promotion.domain.repository.PromotionRepository;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
+import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionUpdateRequest;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
+import com.umust.dobonglife.domain.promotion.exception.PromotionErrorCode;
+import com.umust.dobonglife.domain.promotion.exception.PromotionException;
 import com.umust.dobonglife.global.common.image.ImageUploader;
 import com.umust.dobonglife.global.common.transaction.TransactionHelper;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +72,18 @@ public class PromotionService {
             TransactionHelper.onRollback(() -> imageUploader.deleteImages(imageUrls));
         }
         return imageUrls;
+    }
+
+    @Transactional
+    public Promotion updatePromotion(PromotionUpdateRequest request, Long promotionId, Long userId) {
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+
+        if (!promotion.getBusinessId().equals(userId)) {
+            throw new PromotionException(PromotionErrorCode.NOT_PROMOTION_OWNER);
+        }
+
+        promotion.update(request.title(), request.description(), request.totalQuantity());
+        return promotion;
     }
 }
