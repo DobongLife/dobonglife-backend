@@ -1,11 +1,9 @@
 package com.umust.dobonglife.domain.promotion.application;
 
+import com.umust.dobonglife.domain.promotion.application.dto.PromotionAdSummary;
+import com.umust.dobonglife.domain.promotion.application.dto.PromotionSummary;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.domain.promotion.domain.repository.PromotionRepository;
-import com.umust.dobonglife.domain.promotion.exception.PromotionErrorCode;
-import com.umust.dobonglife.domain.promotion.exception.PromotionException;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionBannerItem;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionItem;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +19,15 @@ public class PromotionService {
 
     private final PromotionRepository promotionRepository;
 
-    public CursorResponse<PromotionItem> getPromotions(Long lastId, int size) {
+    public CursorResponse<PromotionSummary> getPromotions(Long lastId, int size) {
         Slice<Promotion> promotions = promotionRepository.findPromotionNoOffset(
                 lastId, PageRequest.of(0, size));
-        return CursorUtils.toCursorResponse(promotions, PromotionItem::from);
+        return CursorUtils.toCursorResponse(promotions, PromotionSummary::from);
+    }
+
+    public CursorResponse<PromotionAdSummary> getBanners(Long lastId, int size) {
+        Slice<Promotion> promotions = promotionRepository.findBannerNoOffset(
+                lastId, PageRequest.of(0, size));
+        return CursorUtils.toCursorResponse(promotions, PromotionAdSummary::from);
     }
 }

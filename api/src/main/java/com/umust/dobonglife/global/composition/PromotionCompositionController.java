@@ -1,7 +1,7 @@
 package com.umust.dobonglife.global.composition;
 
-import com.umust.dobonglife.domain.user.application.dto.request.UserIsBlockedRequest;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.composition.dto.response.PromotionWithBlockedResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +19,10 @@ public class PromotionCompositionController {
 
     @GetMapping
     public BaseResponse<PromotionWithBlockedResponse> getPromotionsWithBlocked(
-            @CurrentUserId UserIsBlockedRequest request,
+            @CurrentUserId Long userId,
             @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = PageSizeType.PROMOTION) int size) {
         return BaseResponse.ok(
-                promotionFacade.getPromotionsWithBlocked(
-                        request, lastId, size));
+                promotionFacade.getPromotionsWithBlocked(userId, lastId, size));
     }
 }

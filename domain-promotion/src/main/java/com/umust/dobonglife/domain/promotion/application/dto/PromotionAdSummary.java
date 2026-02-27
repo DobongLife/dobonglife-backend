@@ -1,9 +1,9 @@
-package com.umust.dobonglife.domain.promotion.presentation.dto.response;
+package com.umust.dobonglife.domain.promotion.application.dto;
 
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.global.common.Identifiable;
 
-public record PromotionBannerItem(
+public record PromotionAdSummary(
         Long promotionId,
         String category,
         String title,
@@ -11,8 +11,8 @@ public record PromotionBannerItem(
         String thumbnailUrl
 ) implements Identifiable {
 
-    public static PromotionBannerItem from(Promotion promotion) {
-        return new PromotionBannerItem(
+    public static PromotionAdSummary from(Promotion promotion) {
+        return new PromotionAdSummary(
                 promotion.getId(),
                 promotion.getCategory().name(),
                 promotion.getTitle(),
@@ -22,7 +22,7 @@ public record PromotionBannerItem(
     }
 
     @Override
-    public Long getId() {
+    public Long getId () {
         return promotionId;
     }
 }

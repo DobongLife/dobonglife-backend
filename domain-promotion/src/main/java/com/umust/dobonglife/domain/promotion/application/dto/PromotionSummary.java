@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.promotion.presentation.dto.response;
+package com.umust.dobonglife.domain.promotion.application.dto;
 
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.global.common.Identifiable;
@@ -6,23 +6,21 @@ import com.umust.dobonglife.global.common.Identifiable;
 import java.time.LocalDate;
 import java.util.List;
 
-public record PromotionItem(
-        Long promotionId,
-        String category,
-        String title,
-        String description,
-        String thumbnailUrl,
-        List<String> imageUrls,
-        String discountType,
-        Long discountValue,
-        Long point,
-        Long minPrice,
-        Long maxPrice,
-        LocalDate endDate
-) implements Identifiable {
+public record PromotionSummary(Long promotionId,
+                              String category,
+                              String title,
+                              String description,
+                              String thumbnailUrl,
+                              List<String> imageUrls,
+                              String discountType,
+                              Long discountValue,
+                              Long point,
+                              Long minPrice,
+                              Long maxPrice,
+                              LocalDate endDate) implements Identifiable {
 
-    public static PromotionItem from(Promotion promotion) {
-        return new PromotionItem(
+    public static PromotionSummary from(Promotion promotion) {
+        return new PromotionSummary(
                 promotion.getId(),
                 promotion.getCategory().name(),
                 promotion.getTitle(),

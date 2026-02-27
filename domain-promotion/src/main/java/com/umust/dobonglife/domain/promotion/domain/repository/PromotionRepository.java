@@ -17,4 +17,12 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
         ORDER BY p.id DESC
     """)
     Slice<Promotion> findPromotionNoOffset(@Param("lastId") Long lastId, Pageable pageable);
+
+    @Query("""
+        SELECT p FROM Promotion p
+        WHERE p.priority IS NOT NULL
+        AND (:lastId IS NULL OR p.id < :lastId)
+        ORDER BY p.priority ASC, p.id DESC
+    """)
+    Slice<Promotion> findBannerNoOffset(@Param("lastId") Long lastId, Pageable pageable);
 }
