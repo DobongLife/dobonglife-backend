@@ -12,6 +12,7 @@ dependencies {
     implementation project(':domain-coupon')
     implementation project(':domain-promotion')
     implementation project(':domain-business')
+    implementation project(':domain-user')
 
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
