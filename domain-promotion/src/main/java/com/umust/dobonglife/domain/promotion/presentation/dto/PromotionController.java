@@ -32,6 +32,6 @@ public class PromotionController {
     public ResponseEntity<BaseResponse<CursorResponse<PromotionAdSummary>>> getBanners(
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.PROMOTION_AD) int size) {
-        return ResponseEntity.ok(BaseResponse.ok(promotionService.getBanners(lastId, size)));
+        return ResponseEntity.ok(BaseResponse.ok(promotionService.getAdPromotions(lastId, size)));
     }
 }

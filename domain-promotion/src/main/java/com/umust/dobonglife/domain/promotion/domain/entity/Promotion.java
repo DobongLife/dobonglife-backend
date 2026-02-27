@@ -15,6 +15,7 @@ import org.hibernate.annotations.BatchSize;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -74,6 +75,7 @@ public class Promotion extends BaseEntity {
     @BatchSize(size = 50)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "promotion_id", nullable = false)
+    @OrderBy("sortOrder ASC")
     private List<PromotionImage> images = new ArrayList<>();
 
     @Builder
@@ -94,7 +96,6 @@ public class Promotion extends BaseEntity {
             Long point,
             Long totalQuantity
     ) {
-        validateCode(code);
         validateDiscount(discountType, discountValue);
         validatePrice(minPrice, maxPrice);
         validatePeriod(startDate, endDate);
@@ -102,7 +103,7 @@ public class Promotion extends BaseEntity {
         this.businessId = businessId;
         this.category = category;
         this.priority = priority;
-        this.code = code;
+        this.code = UUID.randomUUID().toString().substring(0, 6).toUpperCase();;
         this.title = title;
         this.description = description;
         this.startDate = startDate;
@@ -115,12 +116,6 @@ public class Promotion extends BaseEntity {
         this.point = point;
         this.totalQuantity = totalQuantity;
         this.issuedCount = 0L;
-    }
-
-    private void validateCode(String code) {
-        if (code == null || code.length() != 6) {
-            throw new PromotionException(PromotionErrorCode.INVALID_COUPON_CODE);
-        }
     }
 
     private void validateDiscount(DiscountType type, Long value) {
@@ -150,12 +145,13 @@ public class Promotion extends BaseEntity {
         }
     }
 
-    public void changeThumbnail(PromotionImage thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public void addImage(PromotionImage image) {
-        this.images.add(image);
+    public void attachImages(List<String> imageUrls) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            return;
+        }
+        List<PromotionImage> promotionImages = PromotionImage.ofUrls(imageUrls);
+        this.thumbnail = promotionImages.get(0);
+        this.images.addAll(promotionImages);
     }
 
     public void update(String title, String description, Long totalQuantity) {

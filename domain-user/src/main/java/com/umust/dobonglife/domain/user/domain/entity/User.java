@@ -1,18 +1,20 @@
 package com.umust.dobonglife.domain.user.domain.entity;
 
 import com.umust.dobonglife.domain.user.domain.vo.Provider;
+import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +41,7 @@ public class User {
     private boolean isBlocked;
 
     @Column(nullable = true)
-    private LocalTime blockedAt;
+    private LocalDateTime blockedAt;
 
     @Column(length = 255, nullable = true)
     private String fcmToken;
