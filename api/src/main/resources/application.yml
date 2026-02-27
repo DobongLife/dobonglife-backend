@@ -78,8 +78,6 @@ jwt:
 apple:
   client-id: ${APPLE_CLIENT_ID}
 
-<<<<<<< Updated upstream
-=======
 swagger:
   server:
     local-url: ${SWAGGER_LOCAL_URL:http://localhost:8080}
@@ -96,7 +94,6 @@ naver:
   map:
     base-url: ${NAVER_MAP_BASE_URL:https://naveropenapi.apigw.ntruss.com}
 
->>>>>>> Stashed changes
 cloud:
   aws:
     credentials:

@@ -10,6 +10,8 @@ dependencies {
     implementation project(':core')
     implementation project(':infra')
     implementation project(':domain-coupon')
+    implementation project(':domain-promotion')
+    implementation project(':domain-business')
 
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -17,9 +19,6 @@ dependencies {
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-
-    // WebFlux (WebClient)
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     // Mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
