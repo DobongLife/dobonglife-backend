@@ -88,6 +88,14 @@ public class PromotionService {
     }
 
     @Transactional(readOnly = true)
+    public List<Promotion> getPromotionsByIds(List<Long> promotionIds) {
+        if (promotionIds == null || promotionIds.isEmpty()) {
+            return List.of();
+        }
+        return promotionRepository.findAllById(promotionIds);
+    }
+
+    @Transactional(readOnly = true)
     public Promotion getActivePromotion(Long promotionId) {
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));

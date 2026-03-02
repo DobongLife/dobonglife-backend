@@ -15,4 +15,14 @@ public class UserPortAdapter implements UserPort {
     public void validateCouponExchange(Long userId) {
         userService.validateCouponExchange(userId);
     }
+
+    @Override
+    public boolean isUserBlocked(Long userId) {
+        return userService.isUserBlocked(userId);
+    }
+
+    @Override
+    public String getFcmToken(Long userId) {
+        return userService.getFcmToken(userId);
+    }
 }

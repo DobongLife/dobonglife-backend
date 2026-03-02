@@ -21,4 +21,10 @@ public class CursorUtils {
 
         return new CursorResponse<>(content, lastId, slice.hasNext());
     }
+
+    public static <A extends Identifiable, B extends Identifiable> CursorResponse<B> convert(
+            CursorResponse<A> source, Function<A, B> mapper) {
+        List<B> content = source.getContent().stream().map(mapper).toList();
+        return new CursorResponse<>(content, source.getLastId(), source.isHasNext());
+    }
 }

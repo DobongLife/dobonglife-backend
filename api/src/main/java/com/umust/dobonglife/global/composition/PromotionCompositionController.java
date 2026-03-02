@@ -5,7 +5,10 @@ import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionUpdateRequest;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.*;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
+import com.umust.dobonglife.global.composition.dto.response.PromotionWithBlockedResponse;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -20,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/composition/promotions")
+@RequestMapping("/api/composition/promotion")
 public class PromotionCompositionController {
 
     private final PromotionFacade promotionFacade;

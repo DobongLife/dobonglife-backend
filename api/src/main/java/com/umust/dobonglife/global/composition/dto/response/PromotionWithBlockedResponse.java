@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.promotion.presentation.dto.response;
+package com.umust.dobonglife.global.composition.dto.response;
 
 import com.umust.dobonglife.domain.promotion.application.dto.PromotionSummary;
 import com.umust.dobonglife.global.common.response.CursorResponse;
