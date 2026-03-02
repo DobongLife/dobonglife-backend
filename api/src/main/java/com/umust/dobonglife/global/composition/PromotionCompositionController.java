@@ -47,7 +47,7 @@ public class PromotionCompositionController {
                 promotionFacade.registerPromotion(request, userId, imageFiles)));
     }
 
-    @PatchMapping("/{promotionId}")
+    @PatchMapping("/update/{promotionId}")
     public ResponseEntity<BaseResponse<PromotionUpdateResponse>> updatePromotion(
             @PathVariable Long promotionId,
             @RequestBody @Valid PromotionUpdateRequest request,

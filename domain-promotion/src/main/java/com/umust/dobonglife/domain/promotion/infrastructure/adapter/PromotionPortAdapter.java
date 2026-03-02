@@ -41,6 +41,11 @@ public class PromotionPortAdapter implements PromotionPort {
         promotionService.restoreStock(promotionId);
     }
 
+    @Override
+    public void validateCode(Long promotionId, String code) {
+        promotionService.validateCode(promotionId, code);
+    }
+
     private PromotionInfo toPromotionInfo(Promotion promotion) {
         String thumbnailUrl = promotion.getThumbnail() != null
                 ? promotion.getThumbnail().getImageUrl() : null;

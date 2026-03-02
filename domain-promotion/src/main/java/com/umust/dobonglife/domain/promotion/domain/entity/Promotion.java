@@ -182,4 +182,9 @@ public class Promotion extends BaseEntity {
             this.issuedCount--;
         }
     }
+
+    public void validateCode(String code) {
+        if(!this.code.equals(code))
+            throw new PromotionException(PromotionErrorCode.INVALID_COUPON_CODE);
+    }
 }

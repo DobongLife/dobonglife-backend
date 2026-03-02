@@ -14,4 +14,6 @@ public interface PromotionPort {
     void tryIssueCoupon(Long sagaId, Long promotionId);
 
     void restoreStock(Long sagaId, Long promotionId);
+
+    void validateCode(Long promotionId, String code);
 }

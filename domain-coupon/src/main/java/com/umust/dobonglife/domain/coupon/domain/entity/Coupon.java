@@ -1,6 +1,8 @@
 package com.umust.dobonglife.domain.coupon.domain.entity;
 
 import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
+import com.umust.dobonglife.domain.coupon.exception.CouponErrorCode;
+import com.umust.dobonglife.domain.coupon.exception.CouponException;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,5 +41,12 @@ public class Coupon extends BaseEntity {
         this.couponStatus = couponStatus;
         this.issueStartDate = issueStartDate;
         this.issueEndDate = issueEndDate;
+    }
+
+    public void used() {
+        if (couponStatus != CouponStatus.AVAILABLE) {
+            throw new CouponException(CouponErrorCode.COUPON_CANNOT_USE);
+        }
+        couponStatus = CouponStatus.USED;
     }
 }

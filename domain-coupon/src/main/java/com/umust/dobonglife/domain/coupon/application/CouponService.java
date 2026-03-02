@@ -5,6 +5,8 @@ import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.repository.CouponRepository;
 import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
 import com.umust.dobonglife.domain.coupon.application.dto.MyCouponStatus;
+import com.umust.dobonglife.domain.coupon.exception.CouponErrorCode;
+import com.umust.dobonglife.domain.coupon.exception.CouponException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +33,19 @@ public class CouponService {
         Long used = couponRepository.countByUserIdAndCouponStatus(userId, CouponStatus.USED);
         Long expired = couponRepository.countByUserIdAndCouponStatus(userId, CouponStatus.EXPIRED);
         return MyCouponStatus.of(available, used, expired);
+    }
+
+    @Transactional
+    public void useCoupon(Long couponId, Long userId) {
+        Coupon coupon = findById(couponId);
+        if (!coupon.getUserId().equals(userId)) {
+            throw new CouponException(CouponErrorCode.INVALID_COUPON_ID);
+        }
+        coupon.used();
+        couponRepository.save(coupon);
+    }
+
+    private Coupon findById(Long couponId) {
+        return couponRepository.findById(couponId).orElseThrow(() -> new CouponException(CouponErrorCode.INVALID_COUPON_ID));
     }
 }

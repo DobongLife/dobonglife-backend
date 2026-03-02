@@ -6,6 +6,8 @@ import com.umust.dobonglife.domain.coupon.application.dto.MyCouponStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import com.umust.dobonglife.global.composition.dto.CouponSummary;
+import com.umust.dobonglife.global.composition.dto.request.CouponUseRequest;
+import com.umust.dobonglife.global.composition.dto.response.CouponUsedResponse;
 import com.umust.dobonglife.global.composition.dto.response.MyCouponGetResponse;
 import com.umust.dobonglife.global.port.PromotionPort;
 import com.umust.dobonglife.global.port.dto.PromotionInfo;
@@ -39,5 +41,15 @@ public class CouponFacade {
         MyCouponStatus status = couponService.getMyCouponStatus(userId);
 
         return new MyCouponGetResponse(status, myCouponList);
+    }
+
+    public CouponUsedResponse useCoupon(CouponUseRequest request, Long couponId, Long userId) {
+        Long promotionId = request.promotionId();
+        String code = request.code();
+
+        promotionPort.validateCode(promotionId, code);
+        couponService.useCoupon(couponId, userId);
+
+        return CouponUsedResponse.of(couponId);
     }
 }

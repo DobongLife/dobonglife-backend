@@ -76,8 +76,7 @@ public class PromotionService {
 
     @Transactional
     public Promotion updatePromotion(PromotionUpdateRequest request, Long promotionId, Long userId) {
-        Promotion promotion = promotionRepository.findById(promotionId)
-                .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+        Promotion promotion = findById(promotionId);
 
         if (!promotion.getBusinessId().equals(userId)) {
             throw new PromotionException(PromotionErrorCode.NOT_PROMOTION_OWNER);
@@ -97,8 +96,7 @@ public class PromotionService {
 
     @Transactional(readOnly = true)
     public Promotion getActivePromotion(Long promotionId) {
-        Promotion promotion = promotionRepository.findById(promotionId)
-                .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+        Promotion promotion = findById(promotionId);
         promotion.validateActive();
         return promotion;
     }
@@ -115,5 +113,17 @@ public class PromotionService {
         Promotion promotion = promotionRepository.findByIdForUpdate(promotionId)
                 .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
         promotion.restoreStock();
+    }
+
+    @Transactional(readOnly = true)
+    public void validateCode(Long promotionId, String code) {
+        Promotion promotion = findById(promotionId);
+        promotion.validateCode(code);
+    }
+
+    private Promotion findById(Long promotionId) {
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+        return promotion;
     }
 }
