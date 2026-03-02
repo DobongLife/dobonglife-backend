@@ -86,4 +86,26 @@ public class PromotionService {
         promotion.update(request.title(), request.description(), request.totalQuantity());
         return promotion;
     }
+
+    @Transactional(readOnly = true)
+    public Promotion getActivePromotion(Long promotionId) {
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+        promotion.validateActive();
+        return promotion;
+    }
+
+    @Transactional
+    public void deductStock(Long promotionId) {
+        Promotion promotion = promotionRepository.findByIdForUpdate(promotionId)
+                .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+        promotion.deductStock();
+    }
+
+    @Transactional
+    public void restoreStock(Long promotionId) {
+        Promotion promotion = promotionRepository.findByIdForUpdate(promotionId)
+                .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
+        promotion.restoreStock();
+    }
 }

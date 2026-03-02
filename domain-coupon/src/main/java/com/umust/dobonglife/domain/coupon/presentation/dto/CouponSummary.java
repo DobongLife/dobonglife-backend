@@ -1,33 +1,31 @@
-package com.umust.dobonglife.domain.coupon.controller.dto.response;
+package com.umust.dobonglife.domain.coupon.presentation.dto;
 
-import com.umust.dobonglife.domain.coupon.domain.constant.CouponStatus;
-import com.umust.dobonglife.domain.coupon.domain.constant.DiscountType;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
+import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
 import com.umust.dobonglife.global.common.Identifiable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public record CouponItem(
-        Long couponId,
-        Long placeId,
-        String placeName,
-        String operatingHour,
-        Long promotionId,
-        String category,
-        String title,
-        String description,
-        List<String> imgUrls,
-        DiscountType discountType,
-        BigDecimal discountValue,
-        Long minPrice,
-        Long maxPrice,
-        LocalDate endDate,
-        CouponStatus couponStatus
+public record CouponSummary(Long couponId,
+                            Long placeId,
+                            String placeName,
+                            String operatingHour,
+                            Long promotionId,
+                            String category,
+                            String title,
+                            String description,
+                            List<String> imgUrls,
+                            String discountType,
+                            Long discountValue,
+                            Long minPrice,
+                            Long maxPrice,
+                            LocalDate endDate,
+                            CouponStatus couponStatus
 )implements Identifiable {
-    public static CouponItem from(Coupon coupon) {
-        return new CouponItem(
+    public static CouponSummary from(CouponInfo coupon, PromotionInfo promotion) {
+        return new CouponSummary(
                 coupon.getId(),
                 coupon.getPromotion().getPlace().getId(),
                 coupon.getPromotion().getPlace().getName(),

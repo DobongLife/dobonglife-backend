@@ -24,17 +24,19 @@ public class Coupon extends BaseEntity {
 
     private Long promotionId;
 
-    private CouponStatus status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "coupon_status", length = 20)
+    private CouponStatus couponStatus;
 
     private LocalDate issueStartDate;
 
     private LocalDate issueEndDate;
 
     @Builder
-    public Coupon(Long userId, Long promotionId, CouponStatus status, LocalDate issueStartDate, LocalDate issueEndDate) {
+    public Coupon(Long userId, Long promotionId, CouponStatus couponStatus, LocalDate issueStartDate, LocalDate issueEndDate) {
         this.userId = userId;
         this.promotionId = promotionId;
-        this.status = status;
+        this.couponStatus = couponStatus;
         this.issueStartDate = issueStartDate;
         this.issueEndDate = issueEndDate;
     }

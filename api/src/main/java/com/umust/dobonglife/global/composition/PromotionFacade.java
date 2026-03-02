@@ -8,16 +8,12 @@ import com.umust.dobonglife.domain.promotion.domain.entity.Preset;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionUpdateRequest;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.*;
 import com.umust.dobonglife.domain.user.application.UserService;
 import com.umust.dobonglife.global.common.constant.Category;
 import com.umust.dobonglife.global.common.response.CursorResponse;
-import com.umust.dobonglife.global.composition.dto.response.PromotionWithBlockedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

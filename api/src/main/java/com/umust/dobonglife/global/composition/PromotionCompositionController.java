@@ -1,14 +1,14 @@
 package com.umust.dobonglife.global.composition;
 
+import com.umust.dobonglife.domain.coupon.application.ExchangeOrchestrator;
+import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
+import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionUpdateRequest;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.*;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
-import com.umust.dobonglife.global.composition.dto.response.PromotionWithBlockedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -24,6 +24,7 @@ import java.util.List;
 public class PromotionCompositionController {
 
     private final PromotionFacade promotionFacade;
+    private final ExchangeOrchestrator exchangeOrchestrator;
 
     @GetMapping
     public BaseResponse<PromotionWithBlockedResponse> getPromotionsWithBlocked(
@@ -55,5 +56,14 @@ public class PromotionCompositionController {
     @GetMapping("/preset")
     public ResponseEntity<BaseResponse<PromotionPresetResponse>> getPreset(@CurrentUserId Long userId) {
         return ResponseEntity.ok(BaseResponse.ok(promotionFacade.getPreset(userId)));
+    }
+
+    @PostMapping("/{promotionId}/exchange")
+    public ResponseEntity<BaseResponse<ExchangeResponse>> exchangeCoupon(
+            @PathVariable Long promotionId,
+            @CurrentUserId Long userId) {
+        ExchangeRequest request = new ExchangeRequest(userId, promotionId);
+        ExchangeResponse response = exchangeOrchestrator.execute(request);
+        return ResponseEntity.ok(BaseResponse.ok(response));
     }
 }

@@ -162,4 +162,24 @@ public class Promotion extends BaseEntity {
         this.description = description;
         this.totalQuantity = totalQuantity;
     }
+
+    public void validateActive() {
+        LocalDate today = LocalDate.now();
+        if (today.isBefore(this.startDate) || today.isAfter(this.endDate)) {
+            throw new PromotionException(PromotionErrorCode.PROMOTION_PERIOD_EXPIRED);
+        }
+    }
+
+    public void deductStock() {
+        if (this.issuedCount >= this.totalQuantity) {
+            throw new PromotionException(PromotionErrorCode.COUPON_SOLD_OUT);
+        }
+        this.issuedCount++;
+    }
+
+    public void restoreStock() {
+        if (this.issuedCount > 0) {
+            this.issuedCount--;
+        }
+    }
 }
