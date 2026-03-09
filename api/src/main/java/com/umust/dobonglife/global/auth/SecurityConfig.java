@@ -1,10 +1,8 @@
 package com.umust.dobonglife.global.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.infrastructure.security.filter.JwtExceptionHandlerFilter;
 import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomAccessDeniedHandler;
 import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomAuthenticationEntryPoint;
-import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomJsonAuthenticationFailureHandler;
 import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomSessionExpiredStrategy;
 import com.umust.dobonglife.domain.auth.infrastructure.security.filter.CustomLoginFilter;
 import com.umust.dobonglife.domain.auth.infrastructure.security.filter.JwtAuthenticationFilter;
@@ -15,8 +13,6 @@ import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
@@ -33,13 +29,10 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-    private final CustomJsonAuthenticationFailureHandler customJsonAuthenticationFailureHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final JwtExceptionHandlerFilter jwtExceptionHandlerFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final ObjectMapper objectMapper;
-    private final AuthenticationConfiguration configuration;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSessionExpiredStrategy customSessionExpiredStrategy;
 
@@ -126,21 +119,6 @@ public class SecurityConfig {
                 );
 
         return http.build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
-        return configuration.getAuthenticationManager();
-    }
-
-    @Bean
-    public CustomLoginFilter customLoginFilter() throws Exception {
-        return new CustomLoginFilter(
-                authenticationManager(),
-                objectMapper,
-                customAuthenticationSuccessHandler,
-                customJsonAuthenticationFailureHandler
-        );
     }
 
     @Bean
