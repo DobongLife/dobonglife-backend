@@ -1,6 +1,6 @@
 package com.umust.dobonglife.infra.redis;
 
-import com.umust.dobonglife.domain.user.service.port.VerificationCodeStore;
+import com.umust.dobonglife.domain.user.application.port.VerificationCodeStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

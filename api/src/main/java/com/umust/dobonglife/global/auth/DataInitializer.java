@@ -1,12 +1,10 @@
 package com.umust.dobonglife.global.auth;
 
 import com.umust.dobonglife.global.common.constant.Provider;
-import com.umust.dobonglife.domain.auth.domain.entity.UserPrincipal;
-import com.umust.dobonglife.domain.point.domain.entity.Point;
-import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
+import com.umust.dobonglife.domain.auth.domain.UserPrincipal;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.domain.user.domain.entity.User;
-import com.umust.dobonglife.domain.user.domain.repository.UserRepository;
+import com.umust.dobonglife.domain.user.domain.User;
+import com.umust.dobonglife.domain.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +27,6 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
-    private final PointRepository pointRepository;
     private final PasswordEncoder passwordEncoder;
     private static final List<GrantedAuthority> MASTER_AUTHORITIES = List.of(
             new SimpleGrantedAuthority("ROLE_ADMIN")
@@ -65,24 +62,7 @@ public class DataInitializer implements CommandLineRunner {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            Point signupPoint = Point.builder()
-                    .user(masterUser)
-                    .amount(1_000L)
-                    .title("회원가입 보너스")
-                    .afterBalance(1_000L)
-                    .isUsed(false)
-                    .build();
-
-            Point eventPoint = Point.builder()
-                    .user(masterUser)
-                    .amount(500L)
-                    .title("이벤트 참여 보상")
-                    .afterBalance(1_500L)
-                    .isUsed(false)
-                    .build();
-
-            pointRepository.saveAll(List.of(signupPoint, eventPoint));
-
+            // TODO: Point 초기화는 domain-point 모듈 마이그레이션 후 복원
             log.info("master 사용자 계정 생성 및 임시 인증 정보 설정 완료.");
         }
     }

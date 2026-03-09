@@ -1,11 +1,15 @@
 package com.umust.dobonglife.global.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.exception.handler.*;
-import com.umust.dobonglife.domain.auth.filter.CustomLoginFilter;
-import com.umust.dobonglife.domain.auth.filter.JwtAuthenticationFilter;
-import com.umust.dobonglife.domain.auth.handler.CustomAuthenticationSuccessHandler;
-import com.umust.dobonglife.domain.auth.service.CustomOAuth2UserService;
+import com.umust.dobonglife.domain.auth.infrastructure.security.filter.JwtExceptionHandlerFilter;
+import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomAccessDeniedHandler;
+import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomAuthenticationEntryPoint;
+import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomJsonAuthenticationFailureHandler;
+import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomSessionExpiredStrategy;
+import com.umust.dobonglife.domain.auth.infrastructure.security.filter.CustomLoginFilter;
+import com.umust.dobonglife.domain.auth.infrastructure.security.filter.JwtAuthenticationFilter;
+import com.umust.dobonglife.domain.auth.infrastructure.security.handler.CustomAuthenticationSuccessHandler;
+import com.umust.dobonglife.domain.auth.infrastructure.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;

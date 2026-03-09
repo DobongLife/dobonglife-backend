@@ -1,10 +1,10 @@
 package com.umust.dobonglife.domain.user.controller;
 
-import com.umust.dobonglife.domain.auth.service.AuthService;
+import com.umust.dobonglife.domain.auth.application.service.AuthService;
 import com.umust.dobonglife.domain.user.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.domain.user.dto.request.MailRequest;
 import com.umust.dobonglife.domain.user.dto.request.PasswordUpdateRequest;
-import com.umust.dobonglife.domain.user.service.MailService;
+import com.umust.dobonglife.domain.user.application.service.MailService;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
-import com.umust.dobonglife.domain.user.service.UserService;
+import com.umust.dobonglife.domain.user.application.service.UserService;
 import com.umust.dobonglife.domain.user.dto.request.SignupRequest;
 
 @Tag(name = "사용자 API", description = "사용자 관련 API")
