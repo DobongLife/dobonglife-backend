@@ -83,7 +83,6 @@ public class Promotion extends BaseEntity {
             Long businessId,
             Category category,
             Integer priority,
-            String code,
             String title,
             String description,
             LocalDate startDate,
