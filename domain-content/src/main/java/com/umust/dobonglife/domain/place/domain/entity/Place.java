@@ -30,9 +30,9 @@ public class Place extends BaseEntity {
     private Category category;
     private Double latitude;
     private Double longitude;
-    @Column(precision = 2, scale = 1)
+    @Column(columnDefinition = "DECIMAL(2,1)")
     private Double averageRating;
-    @Column(precision = 10, scale = 2)
+    @Column(columnDefinition = "DECIMAL(10,2)")
     private Double ratingSum;
     private Long reviewCount;
 
