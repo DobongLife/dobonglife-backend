@@ -20,7 +20,6 @@ import static com.umust.dobonglife.global.error.CommonErrorCode.*;
 @RestControllerAdvice
 public class GlobalControllerAdvice {
 
-    // 404: 존재하지 않는 API (설정이 있어야 NoHandlerFoundException이 발생할 수 있음)
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<BaseErrorResponse> handleNoHandlerFound(NoHandlerFoundException e) {
         log.warn("[NoHandlerFound] {}", e.getRequestURL());
@@ -29,7 +28,6 @@ public class GlobalControllerAdvice {
                 .body(new BaseErrorResponse(API_NOT_FOUND));
     }
 
-    // 405: 메서드 미지원
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<BaseErrorResponse> handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
         log.warn("[MethodNotAllowed] {}", e.getMessage());
@@ -38,7 +36,6 @@ public class GlobalControllerAdvice {
                 .body(new BaseErrorResponse(METHOD_NOT_ALLOWED));
     }
 
-    // 400: @Valid 검증 실패
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<BaseErrorResponse> handleValidation(MethodArgumentNotValidException e) {
         String detail = e.getBindingResult().getFieldErrors().stream()
@@ -50,8 +47,6 @@ public class GlobalControllerAdvice {
                 .body(new BaseErrorResponse(BAD_REQUEST, detail));
     }
 
-
-    // 400: 파라미터 누락
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<BaseErrorResponse> handleMissingParam(MissingServletRequestParameterException e) {
         log.warn("[MissingParam] {}", e.getMessage());
@@ -60,7 +55,6 @@ public class GlobalControllerAdvice {
                 .body(new BaseErrorResponse(BAD_REQUEST));
     }
 
-    // 400: 타입 미스매치
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<BaseErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         log.warn("[TypeMismatch] {}", e.getMessage());
@@ -69,7 +63,6 @@ public class GlobalControllerAdvice {
                 .body(new BaseErrorResponse(BAD_REQUEST));
     }
 
-    // 400: JSON 파싱 실패 등 (request body 읽기 실패)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<BaseErrorResponse> handleNotReadable(HttpMessageNotReadableException e) {
         log.warn("[NotReadable] {}", e.getMessage());
@@ -78,7 +71,6 @@ public class GlobalControllerAdvice {
                 .body(new BaseErrorResponse(BAD_REQUEST));
     }
 
-    // BusinessException: 의도된 도메인 에러
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<BaseErrorResponse> handleBusiness(BusinessException e) {
         ErrorCode code = e.getErrorCode();
@@ -88,7 +80,6 @@ public class GlobalControllerAdvice {
                 .body(new BaseErrorResponse(code));
     }
 
-    // 나머지 전부: 500
     @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseErrorResponse> handleException(Exception e) {
         log.error("[UnhandledException]", e);

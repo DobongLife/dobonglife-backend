@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.review.controller.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.course.controller.dto.response.CourseSummaryResponse;
 import com.umust.dobonglife.domain.place.controller.dto.response.PlaceSummaryResponse;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
@@ -32,7 +31,6 @@ public record PlaceReviewSummaryResponse(Long reviewId,
         );
     }
 
-    @JsonIgnore
     @Override
     public Long getId() {
         return reviewId;

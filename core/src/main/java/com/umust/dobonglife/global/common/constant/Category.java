@@ -1,11 +1,11 @@
-package com.umust.dobonglife.global.common.model.constant;
+package com.umust.dobonglife.global.common.constant;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
-public enum Category { // TODO: 추후에 캐시로 올릴 예정 (현재: 빠른 개발을 위함)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public enum Category {
     RESTAURANT("음식점", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/3ea2e5af-e34e-46f3-943c-08b6c132253a.png"),
     CAFE("카페", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/5c0f273b-947d-41b7-9563-fc8816771f51.png"),
     SHOPPING("쇼핑", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/dd594b1b-de45-460a-b72c-2e2a78ffecce.png"),
@@ -17,13 +17,4 @@ public enum Category { // TODO: 추후에 캐시로 올릴 예정 (현재: 빠�
 
     private final String description;
     private final String imageUrl;
-
-    public static Category toEnum(String value) {
-        for (Category category : Category.values()) {
-            if (category.name().equalsIgnoreCase(value)) {
-                return category;
-            }
-        }
-        throw new IllegalArgumentException("존재하지 않는 enum입니다: " + value);
-    }
 }

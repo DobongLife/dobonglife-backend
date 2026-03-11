@@ -41,14 +41,12 @@ public class SwaggerConfig {
                 .description("운영 서버"));
 
         Components components = new Components()
-
                 .addSecuritySchemes("BearerAuth",
                         new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
                                 .description("Access Token: Authorization 헤더에 Bearer {accessToken}"))
-
                 .addSecuritySchemes("RefreshAuth",
                         new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
@@ -62,7 +60,6 @@ public class SwaggerConfig {
                 .servers(servers)
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
     }
-
 
     private Info apiInfo() {
         return new Info()

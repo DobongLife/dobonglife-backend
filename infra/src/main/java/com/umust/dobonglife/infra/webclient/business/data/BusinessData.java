@@ -7,13 +7,13 @@ import lombok.Data;
 public class BusinessData {
 
     @JsonProperty("b_no")
-    private String businessNumber;  // 사업자번호
+    private String businessNumber;
 
     @JsonProperty("b_stt")
-    private String businessStatus;  // 예: "계속사업자"
+    private String businessStatus;
 
     @JsonProperty("b_stt_cd")
-    private String businessStatusCode;  // 예: "01" ← 우리가 사용할 값
+    private String businessStatusCode;
 
     @JsonProperty("tax_type")
     private String taxType;

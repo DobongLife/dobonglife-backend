@@ -20,7 +20,6 @@ public class BusinessStatusParser {
         if (response == null) {
             throw new IllegalStateException("응답이 null입니다.");
         }
-
         return objectMapper.convertValue(response, BusinessStatusResponse.class);
     }
 
@@ -32,19 +31,15 @@ public class BusinessStatusParser {
         return dto.getData();
     }
 
-    /** 편의 메서드 — 첫 번째 사업자의 상태 코드(b_stt_cd)만 추출 */
     public String extractStatusCode(Map<String, Object> response) {
         List<BusinessData> dataList = parseData(response);
-
         if (dataList.isEmpty()) {
             throw new IllegalStateException("data 필드가 비어있습니다.");
         }
-
         String code = dataList.get(0).getBusinessStatusCode();
         if (code == null || code.isBlank()) {
             throw new IllegalStateException("b_stt_cd 값을 찾을 수 없습니다.");
         }
-
         return code;
     }
 }

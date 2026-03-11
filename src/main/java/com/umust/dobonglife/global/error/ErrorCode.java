@@ -53,7 +53,15 @@ public enum ErrorCode{
     INVALID_GOOGLE_ID_TOKEN(620, HttpStatus.BAD_REQUEST.value(),"유효하지 않은 idToken값 입니다."),
     INVALID_KAKAO_ACCESS_TOKEN(620, HttpStatus.BAD_REQUEST.value(),"유효하지 않은 Kakao 엑세스 토큰값 입니다."),
     DUPLICATED_LOGIN(621,HttpStatus.UNAUTHORIZED.value(), "다른 기기에서 로그인되어 현재 로그인이 종료되었습니다."),
-    INVALID_APPLE_IDENTITY_TOKEN(622, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 Apple Identity Token 입니다."),
+    APPLE_JWKS_FETCH_FAILED(622, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Apple 공개키(JWKS) 조회에 실패했습니다."),
+    APPLE_TOKEN_SIGNATURE_INVALID(623, HttpStatus.BAD_REQUEST.value(), "Apple Identity Token 서명 검증에 실패했습니다."),
+    APPLE_TOKEN_ISSUER_MISMATCH(624, HttpStatus.BAD_REQUEST.value(), "Apple Identity Token 발급자(issuer)가 유효하지 않습니다."),
+    APPLE_TOKEN_AUDIENCE_MISMATCH(625, HttpStatus.BAD_REQUEST.value(), "Apple Identity Token 대상(audience)이 일치하지 않습니다."),
+    APPLE_TOKEN_EXPIRED(626, HttpStatus.BAD_REQUEST.value(), "Apple Identity Token이 만료되었습니다."),
+    APPLE_TOKEN_EMAIL_MISSING(627, HttpStatus.BAD_REQUEST.value(), "Apple Identity Token에 이메일 정보가 없습니다."),
+    APPLE_TOKEN_EXCHANGE_INVALID_GRANT(628, HttpStatus.BAD_REQUEST.value(), "Apple 인증 코드가 만료되었거나 이미 사용되었습니다."),
+    APPLE_TOKEN_EXCHANGE_INVALID_CLIENT(629, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Apple 클라이언트 인증에 실패했습니다."),
+    APPLE_TOKEN_EXCHANGE_FAILED(630, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Apple 토큰 교환에 실패했습니다."),
 
     // Course
     INVALID_COURSE_ID(404, HttpStatus.NOT_FOUND.value(), "코스 아이디가 유효하지 않습니다"),

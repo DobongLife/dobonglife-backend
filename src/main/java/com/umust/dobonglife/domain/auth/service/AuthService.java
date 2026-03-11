@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.auth.service;
 
-import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
+import com.umust.dobonglife.domain.auth.domain.constant.Provider;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.utils.JwtUtil;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
@@ -13,6 +13,7 @@ import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.service.PlaceService;
 import com.umust.dobonglife.domain.point.service.PointService;
 import com.umust.dobonglife.domain.review.service.ReviewService;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.service.UserService;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -45,13 +46,18 @@ public class AuthService {
     private final PlaceService placeService;
     private final CourseService courseService;
     private final JwtUtil jwtUtil;
+    private final KakaoAuthService kakaoAuthService;
+    private final GoogleAuthService googleAuthService;
+    private final AppleAuthService appleAuthService;
 
     @Transactional
     public void logout(HttpServletRequest request) {
         String accessToken = jwtUtil.extractAccessToken(request)
-                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+                .orElseThrow(() -> new BusinessException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
 
         log.info("LogOut Access Token: {}", accessToken);
+
+        jwtUtil.validateToken(accessToken);
 
         String refreshToken = jwtUtil.extractRefreshToken(request)
                 .orElseThrow(() -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
@@ -72,8 +78,12 @@ public class AuthService {
     public void deleteAccount(HttpServletRequest request, Long userId) {
         log.info("=== [회원탈퇴 시작] userId: {}", userId);
 
+        revokeProviderAccount(userId);
+
         String accessToken = jwtUtil.extractAccessToken(request)
-                .orElseThrow(() -> new CustomAuthenticationException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+                .orElseThrow(() -> new BusinessException(ErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+
+        String refreshToken = jwtUtil.extractRefreshToken(request).orElse(null);
 
         if (businessService.isBusiness(userId)) {
             Business business = businessService.getBusinessByUser(userId);
@@ -106,8 +116,28 @@ public class AuthService {
             @Override
             public void afterCommit() {
                 jwtService.invalidAccessToken(accessToken);
+                if (refreshToken != null) {
+                    jwtService.deleteRefreshToken(refreshToken);
+                }
             }
         });
+    }
+
+    private void revokeProviderAccount(Long userId) {
+        try {
+            User user = userService.findById(userId);
+            Provider provider = user.getProvider();
+            if (provider == null || provider == Provider.LOCAL) {
+                return;
+            }
+            switch (provider) {
+                case KAKAO -> kakaoAuthService.unlinkUser(user.getProviderId());
+                case APPLE -> appleAuthService.revokeToken(user.getProviderToken());
+                default -> log.warn("지원하지 않는 소셜 프로바이더: {}", provider);
+            }
+        } catch (Exception e) {
+            log.warn("소셜 프로바이더 연결 해제 실패 (계정 삭제는 계속 진행): userId={}, error={}", userId, e.getMessage());
+        }
     }
 
 //    @Transactional
