@@ -15,10 +15,6 @@ import org.hibernate.annotations.BatchSize;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Getter
-@Table(name = "reviews")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseEntity {
 
     @Id
@@ -30,7 +26,7 @@ public class Review extends BaseEntity {
     private Long targetId;
 
     @Enumerated(EnumType.STRING)
-    private TargetType type;
+    private TargetType targetType;
     @Column(columnDefinition = "DECIMAL(2,1)")
     private Double rating;
     @Column(length = 255)
@@ -49,10 +45,10 @@ public class Review extends BaseEntity {
     private List<ReviewImage> images = new ArrayList<>();
 
     @Builder
-    private Review(Long userId, Long targetId, TargetType type, Double rating, String content) {
+    private Review(Long userId, Long targetId, TargetType targetType, Double rating, String content) {
         this.userId = userId;
         this.targetId = targetId;
-        this.type = type;
+        this.targetType = targetType;
         this.rating = rating;
         this.content = content;
         this.reviewStatus = ReviewStatus.POSTED;
