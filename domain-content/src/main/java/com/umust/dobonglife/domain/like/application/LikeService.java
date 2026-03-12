@@ -1,9 +1,13 @@
 package com.umust.dobonglife.domain.like.application;
 
+import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
 import com.umust.dobonglife.domain.like.domain.entity.Like;
 import com.umust.dobonglife.domain.like.domain.repository.LikeRepository;
 import com.umust.dobonglife.global.common.constant.TargetType;
+import com.umust.dobonglife.global.common.response.CursorResponse;
+import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,5 +27,11 @@ public class LikeService {
                     likeRepository.save(Like.of(userId, targetType, targetId));
                     return true;
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public CursorResponse<MyLikedPlaceResponse> getMyLikedPlaces(Long userId, Long lastId, int size) {
+        Slice<MyLikedPlaceResponse> result = likeRepository.findMyLikedPlaces(userId, lastId, size);
+        return CursorUtils.toCursorResponse(result, response -> response);
     }
 }

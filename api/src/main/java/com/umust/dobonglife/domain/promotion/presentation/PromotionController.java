@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.promotion.presentation.dto;
+package com.umust.dobonglife.domain.promotion.presentation;
 
 import com.umust.dobonglife.domain.promotion.application.PromotionService;
 import com.umust.dobonglife.domain.promotion.application.dto.PromotionAdSummary;
