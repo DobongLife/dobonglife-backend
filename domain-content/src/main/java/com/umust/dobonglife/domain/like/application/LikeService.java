@@ -34,4 +34,9 @@ public class LikeService {
         Slice<MyLikedPlaceResponse> result = likeRepository.findMyLikedPlaces(userId, lastId, size);
         return CursorUtils.toCursorResponse(result, response -> response);
     }
+
+    @Transactional(readOnly = true)
+    public boolean isLiked(Long userId, TargetType targetType, Long targetId) {
+        return likeRepository.existsByUserIdAndTargetTypeAndTargetId(userId, targetType, targetId);
+    }
 }
