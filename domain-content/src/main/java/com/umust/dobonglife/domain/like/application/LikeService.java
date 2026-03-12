@@ -11,6 +11,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -38,5 +40,10 @@ public class LikeService {
     @Transactional(readOnly = true)
     public boolean isLiked(Long userId, TargetType targetType, Long targetId) {
         return likeRepository.existsByUserIdAndTargetTypeAndTargetId(userId, targetType, targetId);
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Long> getLikedTargetIds(Long userId, TargetType targetType) {
+        return likeRepository.findTargetIdsByUserIdAndTargetType(userId, targetType);
     }
 }

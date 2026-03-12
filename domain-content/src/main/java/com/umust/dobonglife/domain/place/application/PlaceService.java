@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.umust.dobonglife.global.common.model.BaseStatus;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -27,5 +29,9 @@ public class PlaceService {
     public Map<Long, Place> getPlacesInBatch(List<Long> placeIds) {
         return placeRepository.findAllByIdIn(placeIds).stream()
                 .collect(Collectors.toMap(Place::getId, Function.identity()));
+    }
+
+    public List<Place> getAllActivePlaces() {
+        return placeRepository.findAllByStatus(BaseStatus.ACTIVE);
     }
 }
