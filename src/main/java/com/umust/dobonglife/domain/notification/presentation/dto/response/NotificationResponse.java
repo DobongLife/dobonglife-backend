@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.notification.presentation.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.notification.domain.constant.NotificationType;
 import com.umust.dobonglife.domain.notification.domain.entity.Notification;
 import com.umust.dobonglife.global.common.Identifiable;
@@ -51,7 +50,6 @@ public record NotificationResponse(
         return "방금 전";
     }
 
-    @JsonIgnore
     @Override
     public Long getId() {
         return notificationId;

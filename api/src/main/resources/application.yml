@@ -78,6 +78,22 @@ jwt:
 apple:
   client-id: ${APPLE_CLIENT_ID}
 
+swagger:
+  server:
+    local-url: ${SWAGGER_LOCAL_URL:http://localhost:8080}
+    global-url: ${SWAGGER_GLOBAL_URL:https://api.dobonglife.co.kr}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
+
+open-api:
+  secret-key: ${OPEN_API_SECRET_KEY}
+  base-url: ${OPEN_API_BASE_URL:https://api.odcloud.kr/api/nts-businessman/v1/}
+
+naver:
+  map:
+    base-url: ${NAVER_MAP_BASE_URL:https://naveropenapi.apigw.ntruss.com}
+
 cloud:
   aws:
     credentials:

@@ -49,7 +49,7 @@ public class PromotionController {
     )
     @PostMapping("/{promotionId}")
     public BaseResponse<UsedCouponResponse> changePointToCoupon(@CurrentUserId Long userId,
-                                                                @PathVariable(name = "promotionId") Long promotionId){
+                                                                @PathVariable(name = "promotionId") Long promotionId) {
         UsedCouponResponse response = promotionService.changePointToCoupon(userId, promotionId);
         return BaseResponse.ok(response);
     }
