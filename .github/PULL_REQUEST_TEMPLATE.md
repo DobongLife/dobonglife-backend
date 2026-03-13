@@ -1,5 +1,5 @@
 ## Related issue 🛠
-- closed #이슈넘버
+Closes #이슈번호
 
 ## Work Description 📝
 - 작업 내용
