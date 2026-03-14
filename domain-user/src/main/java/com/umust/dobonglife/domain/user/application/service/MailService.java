@@ -1,13 +1,13 @@
 package com.umust.dobonglife.domain.user.application.service;
 
+import com.umust.dobonglife.domain.user.infrastructure.UserJpaRepository;
+import com.umust.dobonglife.domain.user.application.port.in.CheckAuthCodeUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.SendMailUseCase;
+import com.umust.dobonglife.domain.user.application.port.out.MailSender;
+import com.umust.dobonglife.domain.user.application.port.out.VerificationCodeStore;
 import com.umust.dobonglife.global.common.constant.Provider;
-import com.umust.dobonglife.domain.user.dto.request.MailCodeCheckRequest;
-import com.umust.dobonglife.domain.user.dto.request.MailRequest;
-import com.umust.dobonglife.domain.user.application.port.MailSender;
-import com.umust.dobonglife.domain.user.domain.UserRepository;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
-import com.umust.dobonglife.domain.user.application.port.VerificationCodeStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,57 +17,52 @@ import java.security.SecureRandom;
 import java.time.Duration;
 
 @Slf4j
-@Transactional
 @Service
 @RequiredArgsConstructor
-public class MailService {
+@Transactional
+public class MailService implements SendMailUseCase, CheckAuthCodeUseCase {
 
     private static final long VERIFICATION_CODE_EXPIRY_MINUTES = 5;
-
-    private static final long VERIFIED_TTL_SECONDS = 1800; // 30분
-
+    private static final long VERIFIED_TTL_SECONDS = 1800;
     private static final String EMAIL_KEY_PREFIX = "auth:email:";
-
     private static final String PASSWORD_KEY_PREFIX = "auth:password:";
 
     private final MailSender mailSender;
     private final VerificationCodeStore verificationCodeStore;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
 
-    public void sendMail(MailRequest request) {
-        log.info("email={}, isForSignUp={}", request.getEmail(), request.isForSignUp());
+    // ── SendMailUseCase ──
 
-        // 이미 존재하는 이메일이면, 메일 전송 취소
-        if(request.isForSignUp()) {
-            if(userRepository.existsByEmail(request.getEmail())) {
-              throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
+    @Override
+    public void sendMail(String email, boolean forSignUp) {
+        log.info("email={}, isForSignUp={}", email, forSignUp);
+
+        if (forSignUp) {
+            if (userJpaRepository.existsByEmail(email)) {
+                throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
             }
         }
 
-        // 비밀번호 변경 시, 존재하지 않는 email이면 에러 처리
-        if (!request.isForSignUp()){
-            userRepository.findByEmailAndProvider(request.getEmail(), Provider.LOCAL)
+        if (!forSignUp) {
+            userJpaRepository.findByEmailAndProvider(email, Provider.LOCAL)
                     .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
         }
 
         String authCode = createCode();
         String htmlContent = mailSender.renderTemplate("AuthCode-email.html", "code", authCode);
+        String prefix = forSignUp ? EMAIL_KEY_PREFIX : PASSWORD_KEY_PREFIX;
 
-        String prefix;
-        if(request.isForSignUp()) prefix = EMAIL_KEY_PREFIX;
-        else prefix = PASSWORD_KEY_PREFIX;
-
-        mailSender.send(request.getEmail(), "[도봉라이프] 이메일 인증을 위한 인증 코드 발송", htmlContent);
-        String key = prefix + request.getEmail();
-        verificationCodeStore.store(key, authCode, Duration.ofMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
+        mailSender.send(email, "[도봉라이프] 이메일 인증을 위한 인증 코드 발송", htmlContent);
+        verificationCodeStore.store(prefix + email, authCode, Duration.ofMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
     }
 
-    public void checkAuthCode(MailCodeCheckRequest request) {
+    // ── CheckAuthCodeUseCase ──
 
-        String email = request.getEmail();
+    @Override
+    public void checkAuthCode(String email, String authCode, boolean forSignUp) {
         String storedCode;
         String prefix;
-        if(request.isForSignUp()){
+        if (forSignUp) {
             storedCode = getStoredSignUpCode(email);
             prefix = EMAIL_KEY_PREFIX;
         } else {
@@ -80,22 +75,19 @@ public class MailService {
         }
 
         if ("VERIFIED".equals(storedCode)) {
-            return; // 이미 인증이 완료된 이메일
+            return;
         }
 
-        if (!request.getAuthCode().equals(storedCode)) {
-            log.info("Request Code: {}", request.getAuthCode());
+        if (!authCode.equals(storedCode)) {
+            log.info("Request Code: {}", authCode);
             log.info("Stored code: {}", storedCode);
             throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
         }
 
-        verificationCodeStore.store(
-                prefix + email,
-                "VERIFIED",
-                Duration.ofSeconds(VERIFIED_TTL_SECONDS)
-        );
+        verificationCodeStore.store(prefix + email, "VERIFIED", Duration.ofSeconds(VERIFIED_TTL_SECONDS));
     }
 
+    @Override
     public void checkPasswordAuthCode(String email, String authCode) {
         String storedCode = getStoredPasswordCode(email);
 
@@ -112,26 +104,22 @@ public class MailService {
         }
     }
 
-    // 숫자 6자리로 인증 번호 구현하는 메서드
-    public String createCode() {
+    @Override
+    public String getStoredSignUpCode(String email) {
+        return verificationCodeStore.find(EMAIL_KEY_PREFIX + email).orElse(null);
+    }
+
+    @Override
+    public String getStoredPasswordCode(String email) {
+        return verificationCodeStore.find(PASSWORD_KEY_PREFIX + email).orElse(null);
+    }
+
+    private String createCode() {
         SecureRandom random = new SecureRandom();
         StringBuilder key = new StringBuilder();
-
         for (int i = 0; i < 6; i++) {
             key.append(random.nextInt(10));
         }
-
         return key.toString();
     }
-
-    public String getStoredSignUpCode(String email) {
-        String key = EMAIL_KEY_PREFIX + email;
-        return verificationCodeStore.find(key).orElse(null);
-    }
-
-    public String getStoredPasswordCode(String email) {
-        String key = PASSWORD_KEY_PREFIX + email;
-        return verificationCodeStore.find(key).orElse(null);
-    }
-
 }

@@ -3,8 +3,10 @@ package com.umust.dobonglife.domain.auth.application.service;
 import com.umust.dobonglife.domain.auth.application.port.AccountCleanupPort;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.infrastructure.jwt.JwtTokenProvider;
-import com.umust.dobonglife.domain.user.application.service.UserService;
-import com.umust.dobonglife.domain.user.domain.User;
+import com.umust.dobonglife.domain.user.application.port.in.DeleteAccountUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
@@ -22,7 +24,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class AuthService {
 
     private final JwtService jwtService;
-    private final UserService userService;
+    private final ManageUserUseCase manageUserUseCase;
+    private final DeleteAccountUseCase deleteAccountUseCase;
+    private final GetUserUseCase getUserUseCase;
     private final JwtTokenProvider jwtUtil;
     private final KakaoAuthService kakaoAuthService;
     private final GoogleAuthService googleAuthService;
@@ -48,7 +52,7 @@ public class AuthService {
 
         Long userId = jwtUtil.getUserId(accessToken);
 
-        userService.inValidFcmToken(userId);
+        manageUserUseCase.inValidFcmToken(userId);
 
         jwtService.deleteRefreshToken(refreshToken);
         jwtService.invalidAccessToken(accessToken);
@@ -70,7 +74,7 @@ public class AuthService {
         }
 
         accountCleanupPort.cleanupUserData(userId);
-        userService.deleteAccount(userId);
+        deleteAccountUseCase.deleteAccount(userId);
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -85,7 +89,7 @@ public class AuthService {
 
     private void revokeProviderAccount(Long userId) {
         try {
-            User user = userService.findById(userId);
+            User user = getUserUseCase.findById(userId);
             Provider provider = user.getProvider();
             if (provider == null || provider == Provider.LOCAL) {
                 return;

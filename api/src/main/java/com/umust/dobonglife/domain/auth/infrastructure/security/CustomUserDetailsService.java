@@ -2,7 +2,7 @@ package com.umust.dobonglife.domain.auth.infrastructure.security;
 
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.domain.UserPrincipal;
-import com.umust.dobonglife.domain.user.domain.User;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.UserRepository;
 import com.umust.dobonglife.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;

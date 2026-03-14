@@ -1,14 +1,13 @@
-package com.umust.dobonglife.global.composition;
+package com.umust.dobonglife.application.coupon;
 
+import com.umust.dobonglife.application.coupon.dto.CouponSummary;
+import com.umust.dobonglife.application.coupon.dto.CouponUsedResponse;
+import com.umust.dobonglife.application.coupon.dto.MyCouponGetResponse;
 import com.umust.dobonglife.domain.coupon.application.CouponService;
 import com.umust.dobonglife.domain.coupon.application.dto.CouponDetail;
 import com.umust.dobonglife.domain.coupon.application.dto.MyCouponStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
-import com.umust.dobonglife.global.composition.dto.CouponSummary;
-import com.umust.dobonglife.global.composition.dto.request.CouponUseRequest;
-import com.umust.dobonglife.global.composition.dto.response.CouponUsedResponse;
-import com.umust.dobonglife.global.composition.dto.response.MyCouponGetResponse;
 import com.umust.dobonglife.global.port.PromotionPort;
 import com.umust.dobonglife.global.port.dto.PromotionInfo;
 import lombok.RequiredArgsConstructor;
@@ -33,23 +32,17 @@ public class CouponFacade {
                 .toList();
         Map<Long, PromotionInfo> promotionMap = promotionPort.getPromotionsByIds(promotionIds);
 
-        // 데이터 조합
         CursorResponse<CouponSummary> myCouponList = CursorUtils.convert(
                 couponPage, coupon -> CouponSummary.of(coupon, promotionMap.get(coupon.promotionId())));
 
-        // 쿠폰 상태별 개수
         MyCouponStatus status = couponService.getMyCouponStatus(userId);
 
         return new MyCouponGetResponse(status, myCouponList);
     }
 
-    public CouponUsedResponse useCoupon(CouponUseRequest request, Long couponId, Long userId) {
-        Long promotionId = request.promotionId();
-        String code = request.code();
-
+    public CouponUsedResponse useCoupon(Long promotionId, String code, Long couponId, Long userId) {
         promotionPort.validateCode(promotionId, code);
         couponService.useCoupon(couponId, userId);
-
         return CouponUsedResponse.of(couponId);
     }
 }

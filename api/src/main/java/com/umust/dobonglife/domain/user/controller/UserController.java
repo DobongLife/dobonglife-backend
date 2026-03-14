@@ -4,7 +4,10 @@ import com.umust.dobonglife.domain.auth.application.service.AuthService;
 import com.umust.dobonglife.domain.user.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.domain.user.dto.request.MailRequest;
 import com.umust.dobonglife.domain.user.dto.request.PasswordUpdateRequest;
-import com.umust.dobonglife.domain.user.application.service.MailService;
+import com.umust.dobonglife.domain.user.application.port.in.CheckAuthCodeUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.SendMailUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.SignUpUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.UpdatePasswordUseCase;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,11 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
-import com.umust.dobonglife.domain.user.application.service.UserService;
 import com.umust.dobonglife.domain.user.dto.request.SignupRequest;
 
 @Tag(name = "사용자 API", description = "사용자 관련 API")
@@ -28,8 +27,10 @@ import com.umust.dobonglife.domain.user.dto.request.SignupRequest;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
-    private final MailService mailService;
+    private final SignUpUseCase signUpUseCase;
+    private final UpdatePasswordUseCase updatePasswordUseCase;
+    private final SendMailUseCase sendMailUseCase;
+    private final CheckAuthCodeUseCase checkAuthCodeUseCase;
     private final AuthService authService;
 
     @Operation(summary = "회원 가입", description = "회원 가입을 합니다." +
@@ -40,7 +41,7 @@ public class UserController {
     )
     @PostMapping("/signup")
     public BaseResponse<Void> signUp(@Valid @RequestBody SignupRequest request) {
-        userService.signUp(request);
+        signUpUseCase.signUp(request.getEmail(), request.getName(), request.getPassword());
         return BaseResponse.ok(null);
     }
 
@@ -62,7 +63,7 @@ public class UserController {
     )
     @PostMapping("/mail/send")
     public BaseResponse<Void> sendAuthCodeMail(@Valid @RequestBody MailRequest request) {
-        mailService.sendMail(request);
+        sendMailUseCase.sendMail(request.getEmail(), request.isForSignUp());
         return BaseResponse.ok(null);
     }
 
@@ -72,7 +73,7 @@ public class UserController {
     )
     @PostMapping("/mail/check")
     public BaseResponse<Void> checkAuthCode(@Valid @RequestBody MailCodeCheckRequest request) {
-        mailService.checkAuthCode(request);
+        checkAuthCodeUseCase.checkAuthCode(request.getEmail(), request.getAuthCode(), request.isForSignUp());
         return BaseResponse.ok(null);
     }
 
@@ -82,7 +83,7 @@ public class UserController {
     )
     @PatchMapping("/password")
     public BaseResponse<Void> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
-        userService.updateMyPassword(request);
+        updatePasswordUseCase.updateMyPassword(request.getEmail(), request.getAuthCode(), request.getNewPassword());
         return BaseResponse.ok(null);
     }
 }

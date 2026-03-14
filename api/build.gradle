@@ -9,6 +9,7 @@ configurations {
 dependencies {
     implementation project(':core')
     implementation project(':infra')
+    implementation project(':application')
     implementation project(':domain-coupon')
     implementation project(':domain-promotion')
     implementation project(':domain-business')

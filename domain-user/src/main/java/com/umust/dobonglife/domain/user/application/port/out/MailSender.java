@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.user.application.port;
+package com.umust.dobonglife.domain.user.application.port.out;
 
 public interface MailSender {
 

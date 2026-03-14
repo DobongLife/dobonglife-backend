@@ -9,8 +9,8 @@ import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.infrastructure.jwt.JwtTokenProvider;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.domain.user.domain.User;
-import com.umust.dobonglife.domain.user.application.service.UserService;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.application.port.in.OAuthUserUseCase;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class GoogleAuthService {
     private static final String GOOGLE_REVOKE_URL = "https://oauth2.googleapis.com/revoke";
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final UserService userService;
+    private final OAuthUserUseCase oAuthUserUseCase;
     private final JwtTokenProvider jwtUtil;
     private final JwtService jwtService;
 
@@ -50,7 +50,7 @@ public class GoogleAuthService {
         String name = (String) payload.get("name");
         String providerId = payload.getSubject();
 
-        User user = userService.findOrCreateOAuthUser(
+        User user = oAuthUserUseCase.findOrCreateOAuthUser(
                 Provider.GOOGLE, providerId, email, name
         );
 

@@ -3,7 +3,7 @@ package com.umust.dobonglife.global.auth;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.domain.UserPrincipal;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.domain.user.domain.User;
+import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

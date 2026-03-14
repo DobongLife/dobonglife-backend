@@ -1,15 +1,15 @@
-package com.umust.dobonglife.domain.coupon.application;
+package com.umust.dobonglife.application.coupon;
 
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import com.umust.dobonglife.domain.coupon.domain.entity.ExchangeSaga;
 import com.umust.dobonglife.domain.coupon.domain.repository.ExchangeSagaRepository;
 import com.umust.dobonglife.domain.coupon.domain.vo.SagaStatus;
+import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.global.common.event.CouponIssuedEvent;
 import com.umust.dobonglife.global.port.CouponPort;
 import com.umust.dobonglife.global.port.PointPort;
 import com.umust.dobonglife.global.port.PromotionPort;
-import com.umust.dobonglife.global.port.UserPort;
 import com.umust.dobonglife.global.port.dto.PromotionInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 public class ExchangeOrchestrator {
 
     private final ExchangeSagaRepository sagaRepository;
-    private final UserPort userPort;
+    private final ManageUserUseCase manageUserUseCase;
     private final PointPort pointPort;
     private final PromotionPort promotionPort;
     private final CouponPort couponPort;
@@ -35,7 +35,7 @@ public class ExchangeOrchestrator {
         PromotionInfo promotion;
 
         try {
-            userPort.validateCouponExchange(request.userId());
+            manageUserUseCase.canExchangeCoupon(request.userId());
             saga.markUserValidated();
 
             promotion = promotionPort.getActivePromotion(request.promotionId());
@@ -69,11 +69,9 @@ public class ExchangeOrchestrator {
     private void compensate(ExchangeSaga saga) {
         SagaStatus status = saga.getSagaStatus();
 
-        // 재고가 차감된 이후라면 재고 복원
         if (status == SagaStatus.STOCK_DEDUCTED || status == SagaStatus.COUPON_ISSUED) {
             compensateStock(saga);
         }
-        // 포인트가 차감된 이후라면 포인트 환불
         if (status == SagaStatus.POINT_DEDUCTED || status == SagaStatus.STOCK_DEDUCTED || status == SagaStatus.COUPON_ISSUED) {
             compensatePoint(saga);
         }

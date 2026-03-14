@@ -5,8 +5,8 @@ import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.infrastructure.jwt.JwtTokenProvider;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.domain.user.domain.User;
-import com.umust.dobonglife.domain.user.application.service.UserService;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.application.port.in.OAuthUserUseCase;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class KakaoAuthService {
     private static final String KAKAO_UNLINK_URL = "https://kapi.kakao.com/v1/user/unlink";
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final UserService userService;
+    private final OAuthUserUseCase oAuthUserUseCase;
     private final JwtTokenProvider jwtUtil;
     private final JwtService jwtService;
 
@@ -46,7 +46,7 @@ public class KakaoAuthService {
         String email = userInfo.kakaoAccount().email();
         String name = userInfo.kakaoAccount().profile().nickname();
 
-        User user = userService.findOrCreateOAuthUser(
+        User user = oAuthUserUseCase.findOrCreateOAuthUser(
                 Provider.KAKAO, providerId, email, name
         );
 

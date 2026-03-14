@@ -18,8 +18,8 @@ import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.infrastructure.jwt.JwtTokenProvider;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.domain.user.domain.User;
-import com.umust.dobonglife.domain.user.application.service.UserService;
+import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.domain.user.application.port.in.OAuthUserUseCase;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +59,7 @@ public class AppleAuthService {
     private static final int SIZE_LIMIT_BYTES = 50 * 1024;
 
     private final RestTemplate restTemplate = createRestTemplate();
-    private final UserService userService;
+    private final OAuthUserUseCase oAuthUserUseCase;
     private final JwtTokenProvider jwtUtil;
     private final JwtService jwtService;
 
@@ -90,7 +90,7 @@ public class AppleAuthService {
             throw new BusinessException(ErrorCode.APPLE_TOKEN_EMAIL_MISSING);
         }
 
-        User user = userService.findOrCreateOAuthUser(
+        User user = oAuthUserUseCase.findOrCreateOAuthUser(
                 Provider.APPLE, sub, email, email
         );
 
