@@ -1,11 +1,12 @@
 package com.umust.dobonglife.domain.user.application.service;
 
-import com.umust.dobonglife.domain.user.infrastructure.UserJpaRepository;
 import com.umust.dobonglife.domain.user.application.port.in.CheckAuthCodeUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.SendMailUseCase;
+import com.umust.dobonglife.domain.user.application.port.out.LoadUserPort;
 import com.umust.dobonglife.domain.user.application.port.out.MailSender;
 import com.umust.dobonglife.domain.user.application.port.out.VerificationCodeStore;
-import com.umust.dobonglife.global.common.constant.Provider;
+import com.umust.dobonglife.domain.user.exception.UserErrorCode;
+import com.umust.dobonglife.domain.user.exception.UserException;
 import com.umust.dobonglife.global.error.ErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class MailService implements SendMailUseCase, CheckAuthCodeUseCase {
 
     private final MailSender mailSender;
     private final VerificationCodeStore verificationCodeStore;
-    private final UserJpaRepository userJpaRepository;
+    private final LoadUserPort loadUserPort;
 
     // ── SendMailUseCase ──
 
@@ -38,14 +39,13 @@ public class MailService implements SendMailUseCase, CheckAuthCodeUseCase {
         log.info("email={}, isForSignUp={}", email, forSignUp);
 
         if (forSignUp) {
-            if (userJpaRepository.existsByEmail(email)) {
-                throw new BusinessException(ErrorCode.USER_DUPLICATE_EMAIL);
+            if (loadUserPort.existsByEmail(email)) {
+                throw new UserException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
             }
         }
 
         if (!forSignUp) {
-            userJpaRepository.findByEmailAndProvider(email, Provider.LOCAL)
-                    .orElseThrow(() -> new BusinessException(ErrorCode.USER_MAIL_NOT_FOUND));
+            loadUserPort.loadLocalUser(email);
         }
 
         String authCode = createCode();

@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.user.infrastructure;
+package com.umust.dobonglife.domain.user.infrastructure.jpa;
 
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.constant.Provider;
