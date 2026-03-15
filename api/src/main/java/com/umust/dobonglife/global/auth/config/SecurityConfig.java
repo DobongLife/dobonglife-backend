@@ -6,8 +6,6 @@ import com.umust.dobonglife.global.auth.security.handler.CustomAuthenticationEnt
 import com.umust.dobonglife.global.auth.security.handler.CustomSessionExpiredStrategy;
 import com.umust.dobonglife.global.auth.security.filter.CustomLoginFilter;
 import com.umust.dobonglife.global.auth.security.filter.JwtAuthenticationFilter;
-import com.umust.dobonglife.global.auth.security.handler.CustomAuthenticationSuccessHandler;
-import com.umust.dobonglife.domain.auth.infrastructure.security.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -87,14 +85,18 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        // 로그인/헬스체크/정적리소스 등 필요하면 여기서 permitAll 추가
                         .requestMatchers(
                                 "/",
                                 "/error",
                                 "/favicon.ico",
                                 "/actuator/health",
-                                "/api/auth/**",
-                                "/api/users/**"
+                                "/api/auth/login/**",
+                                "/login/oauth2/**",
+                                "/api/users/signup",
+                                "/api/users/mail/send",
+                                "/api/users/mail/check",
+                                "/api/users/password",
+                                "/api/home/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
