@@ -1,6 +1,6 @@
 package com.umust.dobonglife.presentation.auth.dto.response;
 
-import com.umust.dobonglife.domain.auth.domain.AuthTokens;
+import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
 import lombok.Builder;
 import lombok.Getter;
 

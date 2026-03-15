@@ -1,7 +1,7 @@
 package com.umust.dobonglife.global.auth.security.filter;
 
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.common.error.exception.BusinessException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.umust.dobonglife.global.auth.security.AuthErrorResponseUtil.setErrorResponse;
+import static com.umust.dobonglife.global.auth.security.util.AuthErrorResponseUtil.setErrorResponse;
 
 @Slf4j
 @Component

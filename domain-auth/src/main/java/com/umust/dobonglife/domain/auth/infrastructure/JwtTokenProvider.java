@@ -1,7 +1,7 @@
-package com.umust.dobonglife.domain.auth.infrastructure.jwt;
+package com.umust.dobonglife.domain.auth.infrastructure;
 
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
-import com.umust.dobonglife.global.error.DomainErrorCode;
+import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -102,17 +102,17 @@ public class JwtTokenProvider {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (ExpiredJwtException e) {
-            throw new CustomJwtException(DomainErrorCode.EXPIRED_ACCESS_TOKEN);
+            throw new CustomJwtException(AuthErrorCode.EXPIRED_ACCESS_TOKEN);
         } catch (UnsupportedJwtException e) {
-            throw new CustomJwtException(DomainErrorCode.UNSUPPORTED_TOKEN_TYPE);
+            throw new CustomJwtException(AuthErrorCode.UNSUPPORTED_TOKEN_TYPE);
         } catch (MalformedJwtException e) {
-            throw new CustomJwtException(DomainErrorCode.MALFORMED_TOKEN_TYPE);
+            throw new CustomJwtException(AuthErrorCode.MALFORMED_TOKEN_TYPE);
         } catch (SignatureException e) {
-            throw new CustomJwtException(DomainErrorCode.INVALID_SIGNATURE_JWT);
+            throw new CustomJwtException(AuthErrorCode.INVALID_SIGNATURE_JWT);
         } catch (IllegalArgumentException e) {
-            throw new CustomJwtException(DomainErrorCode.EMPTY_AUTHORIZATION_HEADER);
+            throw new CustomJwtException(AuthErrorCode.EMPTY_AUTHORIZATION_HEADER);
         } catch (Exception e) {
-            throw new CustomJwtException(DomainErrorCode.SECURITY_INVALID_TOKEN);
+            throw new CustomJwtException(AuthErrorCode.SECURITY_INVALID_TOKEN);
         }
     }
 

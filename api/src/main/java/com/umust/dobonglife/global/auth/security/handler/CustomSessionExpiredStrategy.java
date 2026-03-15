@@ -1,7 +1,7 @@
 package com.umust.dobonglife.global.auth.security.handler;
 
-import com.umust.dobonglife.global.error.DomainErrorCode;
-import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
+import com.umust.dobonglife.global.common.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.umust.dobonglife.global.auth.security.AuthErrorResponseUtil.setErrorResponse;
+import static com.umust.dobonglife.global.auth.security.util.AuthErrorResponseUtil.setErrorResponse;
 
 @Slf4j
 @Component
@@ -27,7 +27,7 @@ public class CustomSessionExpiredStrategy implements SessionInformationExpiredSt
             return;
         }
 
-        ErrorCode code = DomainErrorCode.DUPLICATED_LOGIN;
+        ErrorCode code = AuthErrorCode.DUPLICATED_LOGIN;
         try {
             setErrorResponse(response, code);
             log.info("로그인이 차단 되었습니다. uri={}", request.getRequestURI());

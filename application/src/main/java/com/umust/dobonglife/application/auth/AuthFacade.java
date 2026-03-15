@@ -6,11 +6,13 @@ import com.umust.dobonglife.domain.auth.application.port.in.InvalidateTokenUseCa
 import com.umust.dobonglife.domain.auth.application.port.in.LogoutUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.ReissueTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.RevokeSocialAccountUseCase;
-import com.umust.dobonglife.domain.auth.domain.AuthTokens;
+import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
+import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
 import com.umust.dobonglife.domain.user.application.port.in.DeleteAccountUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.global.common.constant.Provider;
+import com.umust.dobonglife.global.common.error.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +42,8 @@ public class AuthFacade {
     public void logout(HttpServletRequest request) {
         String accessToken = extractTokenUseCase.extractAccessToken(request);
         String refreshToken = extractTokenUseCase.extractRefreshToken(request)
-                .orElseThrow(() -> new com.umust.dobonglife.global.error.exception.BusinessException(
-                        com.umust.dobonglife.global.error.DomainErrorCode.REFRESH_TOKEN_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(
+                        AuthErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
         Long userId = extractTokenUseCase.getUserId(accessToken);
 

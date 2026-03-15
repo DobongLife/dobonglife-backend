@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.auth.domain;
+package com.umust.dobonglife.global.auth.security.principal;
 
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;

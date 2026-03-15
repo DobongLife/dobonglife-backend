@@ -1,10 +1,10 @@
-package com.umust.dobonglife.global.auth.security;
+package com.umust.dobonglife.global.auth.security.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.umust.dobonglife.global.common.response.BaseErrorResponse;
-import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.common.error.ErrorCode;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;

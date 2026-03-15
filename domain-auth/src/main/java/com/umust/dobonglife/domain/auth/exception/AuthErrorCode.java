@@ -1,12 +1,13 @@
-package com.umust.dobonglife.global.error;
+package com.umust.dobonglife.domain.auth.exception;
 
+import com.umust.dobonglife.global.common.error.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum DomainErrorCode implements ErrorCode {
+public enum AuthErrorCode implements ErrorCode {
 
     // Auth
     SECURITY_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증 정보가 유효하지 않습니다."),

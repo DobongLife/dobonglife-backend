@@ -1,8 +1,8 @@
 package com.umust.dobonglife.global.auth.security.handler;
 
-import com.umust.dobonglife.global.error.CommonErrorCode;
-import com.umust.dobonglife.global.error.DomainErrorCode;
-import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.common.error.CommonErrorCode;
+import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
+import com.umust.dobonglife.global.common.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.umust.dobonglife.global.auth.security.AuthErrorResponseUtil.setErrorResponse;
+import static com.umust.dobonglife.global.auth.security.util.AuthErrorResponseUtil.setErrorResponse;
 
 @Slf4j
 @Component
@@ -34,11 +34,11 @@ public class CustomJsonAuthenticationFailureHandler implements AuthenticationFai
     private ErrorCode mapToErrorCode(AuthenticationException ex) {
 
         if (ex instanceof UsernameNotFoundException) {
-            return DomainErrorCode.SECURITY_UNAUTHORIZED;
+            return AuthErrorCode.SECURITY_UNAUTHORIZED;
         }
 
         if (ex instanceof BadCredentialsException) {
-            return DomainErrorCode.INVALID_EMAIL_OR_PASSWORD;
+            return AuthErrorCode.INVALID_EMAIL_OR_PASSWORD;
         }
 
         if (ex instanceof AuthenticationServiceException) {

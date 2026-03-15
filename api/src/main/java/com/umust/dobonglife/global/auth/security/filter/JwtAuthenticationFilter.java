@@ -1,9 +1,8 @@
 package com.umust.dobonglife.global.auth.security.filter;
 
 import com.umust.dobonglife.domain.auth.application.port.in.AuthenticateAccessTokenUseCase;
-import com.umust.dobonglife.domain.auth.domain.AuthenticatedUser;
-import com.umust.dobonglife.domain.auth.domain.UserPrincipal;
-import com.umust.dobonglife.global.auth.security.handler.CustomAuthenticationEntryPoint;
+import com.umust.dobonglife.domain.auth.application.dto.AuthenticatedUser;
+import com.umust.dobonglife.global.auth.security.principal.UserPrincipal;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +15,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.security.core.AuthenticationException;
 
 import java.io.IOException;
 import java.util.List;

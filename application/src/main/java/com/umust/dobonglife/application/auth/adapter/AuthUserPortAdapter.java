@@ -1,7 +1,7 @@
 package com.umust.dobonglife.application.auth.adapter;
 
 import com.umust.dobonglife.domain.auth.application.port.out.AuthUserPort;
-import com.umust.dobonglife.domain.auth.domain.AuthUserInfo;
+import com.umust.dobonglife.domain.auth.application.dto.AuthUserInfo;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.OAuthUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.out.LoadUserPort;

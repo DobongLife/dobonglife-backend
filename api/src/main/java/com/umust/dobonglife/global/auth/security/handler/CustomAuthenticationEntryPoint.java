@@ -1,8 +1,8 @@
 package com.umust.dobonglife.global.auth.security.handler;
 
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
-import com.umust.dobonglife.global.error.DomainErrorCode;
-import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
+import com.umust.dobonglife.global.common.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.umust.dobonglife.global.auth.security.AuthErrorResponseUtil.setErrorResponse;
+import static com.umust.dobonglife.global.auth.security.util.AuthErrorResponseUtil.setErrorResponse;
 
 @Slf4j
 @Component
@@ -22,7 +22,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException{
         log.info("=== AuthenticationEntryPoint 진입 ===");
 
-        ErrorCode code = DomainErrorCode.SECURITY_UNAUTHORIZED;
+        ErrorCode code = AuthErrorCode.SECURITY_UNAUTHORIZED;
 
         if (authException instanceof CustomAuthenticationException e) {
             code = e.getErrorCode();

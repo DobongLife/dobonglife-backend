@@ -1,7 +1,7 @@
 package com.umust.dobonglife.global.common.constant;
 
-import com.umust.dobonglife.global.error.CommonErrorCode;
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.common.error.CommonErrorCode;
+import com.umust.dobonglife.global.common.error.exception.BusinessException;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

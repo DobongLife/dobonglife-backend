@@ -1,7 +1,8 @@
 package com.umust.dobonglife.global.error;
 
+import com.umust.dobonglife.global.common.error.ErrorCode;
 import com.umust.dobonglife.global.common.response.BaseErrorResponse;
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.common.error.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -15,7 +16,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.stream.Collectors;
 
-import static com.umust.dobonglife.global.error.CommonErrorCode.*;
+import static com.umust.dobonglife.global.common.error.CommonErrorCode.*;
 
 @Slf4j
 @RestControllerAdvice

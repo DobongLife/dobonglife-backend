@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.auth.application.service.dto;
+package com.umust.dobonglife.domain.auth.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

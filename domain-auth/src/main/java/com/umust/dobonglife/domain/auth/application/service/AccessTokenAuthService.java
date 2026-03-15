@@ -1,13 +1,12 @@
 package com.umust.dobonglife.domain.auth.application.service;
 
 import com.umust.dobonglife.domain.auth.application.port.in.AuthenticateAccessTokenUseCase;
-import com.umust.dobonglife.domain.auth.domain.AuthenticatedUser;
-import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
+import com.umust.dobonglife.domain.auth.application.dto.AuthenticatedUser;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
-import com.umust.dobonglife.domain.auth.infrastructure.jwt.JwtTokenProvider;
+import com.umust.dobonglife.domain.auth.infrastructure.JwtTokenProvider;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;
-import com.umust.dobonglife.global.error.DomainErrorCode;
+import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class AccessTokenAuthService implements AuthenticateAccessTokenUseCase {
         jwtTokenProvider.validateToken(accessToken);
 
         if (!"access".equals(jwtTokenProvider.getTokenType(accessToken))) {
-            throw new CustomJwtException(DomainErrorCode.INVALID_TOKEN_TYPE);
+            throw new CustomJwtException(AuthErrorCode.INVALID_TOKEN_TYPE);
         }
 
         jwtService.checkLogout(accessToken);

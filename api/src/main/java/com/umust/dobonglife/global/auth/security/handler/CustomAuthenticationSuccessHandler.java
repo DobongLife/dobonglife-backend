@@ -2,9 +2,9 @@ package com.umust.dobonglife.global.auth.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.domain.auth.application.port.in.HandleLoginSuccessUseCase;
-import com.umust.dobonglife.domain.auth.domain.LoginSuccessCommand;
-import com.umust.dobonglife.domain.auth.domain.UserPrincipal;
-import com.umust.dobonglife.domain.auth.domain.AuthTokens;
+import com.umust.dobonglife.domain.auth.application.dto.LoginSuccessCommand;
+import com.umust.dobonglife.global.auth.security.principal.UserPrincipal;
+import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
 import com.umust.dobonglife.presentation.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;

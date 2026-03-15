@@ -4,9 +4,9 @@ import com.umust.dobonglife.domain.auth.application.port.in.ExtractTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.InvalidateTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.LogoutUseCase;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
-import com.umust.dobonglife.domain.auth.infrastructure.jwt.JwtTokenProvider;
-import com.umust.dobonglife.global.error.DomainErrorCode;
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.domain.auth.infrastructure.JwtTokenProvider;
+import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
+import com.umust.dobonglife.global.common.error.exception.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +21,14 @@ public class AuthCommandService implements LogoutUseCase, ExtractTokenUseCase, I
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtService jwtService;
+    private final TokenIssuanceHelper tokenIssuanceHelper;
 
     // ── ExtractTokenUseCase ──
 
     @Override
     public String extractAccessToken(HttpServletRequest request) {
         return jwtTokenProvider.extractAccessToken(request)
-                .orElseThrow(() -> new BusinessException(DomainErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
+                .orElseThrow(() -> new BusinessException(AuthErrorCode.SECURITY_INVALID_ACCESS_TOKEN));
     }
 
     @Override
@@ -53,10 +54,10 @@ public class AuthCommandService implements LogoutUseCase, ExtractTokenUseCase, I
         jwtTokenProvider.validateToken(refreshToken);
 
         if (!"refresh".equals(jwtTokenProvider.getTokenType(refreshToken))) {
-            throw new CustomJwtException(DomainErrorCode.INVALID_REFRESH_TYPE);
+            throw new CustomJwtException(AuthErrorCode.INVALID_REFRESH_TYPE);
         }
 
-        jwtService.deleteRefreshToken(refreshToken);
+        tokenIssuanceHelper.deleteRefreshToken(refreshToken);
         jwtService.invalidAccessToken(accessToken);
     }
 
@@ -69,6 +70,6 @@ public class AuthCommandService implements LogoutUseCase, ExtractTokenUseCase, I
 
     @Override
     public void deleteRefreshToken(String refreshToken) {
-        jwtService.deleteRefreshToken(refreshToken);
+        tokenIssuanceHelper.deleteRefreshToken(refreshToken);
     }
 }

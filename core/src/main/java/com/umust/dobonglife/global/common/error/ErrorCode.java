@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.error;
+package com.umust.dobonglife.global.common.error;
 
 public interface ErrorCode {
 
