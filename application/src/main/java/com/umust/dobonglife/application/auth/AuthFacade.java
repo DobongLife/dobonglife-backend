@@ -6,7 +6,7 @@ import com.umust.dobonglife.domain.auth.application.port.in.InvalidateTokenUseCa
 import com.umust.dobonglife.domain.auth.application.port.in.LogoutUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.ReissueTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.RevokeSocialAccountUseCase;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.domain.AuthTokens;
 import com.umust.dobonglife.domain.user.application.port.in.DeleteAccountUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
@@ -77,7 +77,7 @@ public class AuthFacade {
         });
     }
 
-    public TokenResponse reissueTokens(HttpServletRequest request, Long userId) {
+    public AuthTokens reissueTokens(HttpServletRequest request, Long userId) {
         return reissueTokenUseCase.reissueTokens(request, userId);
     }
 }

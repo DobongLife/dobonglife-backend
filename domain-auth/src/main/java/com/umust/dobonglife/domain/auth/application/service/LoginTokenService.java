@@ -1,7 +1,7 @@
 package com.umust.dobonglife.domain.auth.application.service;
 
 import com.umust.dobonglife.domain.auth.application.port.in.IssueLoginTokenUseCase;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.domain.AuthTokens;
 import com.umust.dobonglife.domain.auth.infrastructure.jwt.JwtTokenProvider;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;
@@ -16,7 +16,7 @@ public class LoginTokenService implements IssueLoginTokenUseCase {
     private final JwtService jwtService;
 
     @Override
-    public TokenResponse issueLoginToken(Long userId, Provider provider, Role role, String name) {
+    public AuthTokens issueLoginToken(Long userId, Provider provider, Role role, String name) {
         String roleString = Role.PREFIX + role.name();
 
         String access = jwtTokenProvider.createAccessToken(userId, provider.getValue(), roleString, name);
@@ -24,10 +24,6 @@ public class LoginTokenService implements IssueLoginTokenUseCase {
 
         jwtService.storeRefreshToken(refresh, userId);
 
-        return TokenResponse.builder()
-                .accessToken(access)
-                .refreshToken(refresh)
-                .role(roleString)
-                .build();
+        return new AuthTokens(access, refresh, roleString);
     }
 }

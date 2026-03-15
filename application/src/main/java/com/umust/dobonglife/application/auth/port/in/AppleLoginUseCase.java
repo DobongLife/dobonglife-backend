@@ -1,8 +1,7 @@
 package com.umust.dobonglife.application.auth.port.in;
 
-import com.umust.dobonglife.domain.auth.dto.request.AppleLoginRequest;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.domain.AuthTokens;
 
 public interface AppleLoginUseCase {
-    TokenResponse login(AppleLoginRequest request);
+    AuthTokens login(String identityToken, String fcmToken, String providerToken);
 }

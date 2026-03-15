@@ -1,7 +1,8 @@
 package com.umust.dobonglife.domain.auth.application.service;
 
+import com.umust.dobonglife.domain.auth.application.port.in.ReissueTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.out.TokenStore;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.domain.AuthTokens;
 import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.infrastructure.jwt.JwtTokenProvider;
@@ -17,7 +18,7 @@ import java.time.Duration;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JwtService implements com.umust.dobonglife.domain.auth.application.port.in.ReissueTokenUseCase {
+public class JwtService implements ReissueTokenUseCase {
 
     @Value("${jwt.access.expiration}")
     private Long ACCESS_TOKEN_EXPIRED_IN;
@@ -32,7 +33,7 @@ public class JwtService implements com.umust.dobonglife.domain.auth.application.
     private final JwtTokenProvider jwtUtil;
 
     @Override
-    public TokenResponse reissueTokens(jakarta.servlet.http.HttpServletRequest request, Long userId) {
+    public AuthTokens reissueTokens(jakarta.servlet.http.HttpServletRequest request, Long userId) {
         String refreshToken = jwtUtil.extractRefreshToken(request)
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.REFRESH_TOKEN_NOT_FOUND));
         jwtUtil.validateToken(refreshToken);
@@ -72,16 +73,13 @@ public class JwtService implements com.umust.dobonglife.domain.auth.application.
         tokenStore.store(accessToken, LOGOUT_VALUE, Duration.ofMillis(ACCESS_TOKEN_EXPIRED_IN));
     }
 
-    private TokenResponse reissueAndSendTokens(String refreshToken, Long userId) {
+    private AuthTokens reissueAndSendTokens(String refreshToken, Long userId) {
         String reissuedAccessToken = jwtUtil.createAccessToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
         String reissuedRefreshToken = jwtUtil.createRefreshToken(jwtUtil.getUserId(refreshToken), jwtUtil.getProvider(refreshToken), jwtUtil.getRole(refreshToken), jwtUtil.getName(refreshToken));
 
         storeRefreshToken(reissuedRefreshToken, userId);
         deleteRefreshToken(refreshToken);
 
-        return TokenResponse.builder()
-                .accessToken(reissuedAccessToken)
-                .refreshToken(reissuedRefreshToken)
-                .build();
+        return new AuthTokens(reissuedAccessToken, reissuedRefreshToken, null);
     }
 }

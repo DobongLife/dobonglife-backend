@@ -1,8 +1,7 @@
 package com.umust.dobonglife.application.auth.port.in;
 
-import com.umust.dobonglife.domain.auth.dto.request.GoogleLoginRequest;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.domain.AuthTokens;
 
 public interface GoogleLoginUseCase {
-    TokenResponse login(GoogleLoginRequest request);
+    AuthTokens login(String idToken, String fcmToken);
 }

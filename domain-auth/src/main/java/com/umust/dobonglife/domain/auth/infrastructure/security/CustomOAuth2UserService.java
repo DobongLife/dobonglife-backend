@@ -2,10 +2,10 @@ package com.umust.dobonglife.domain.auth.infrastructure.security;
 
 import com.umust.dobonglife.domain.auth.application.port.out.AuthUserPort;
 import com.umust.dobonglife.domain.auth.domain.AuthUserInfo;
-import com.umust.dobonglife.domain.auth.dto.response.GoogleResponse;
-import com.umust.dobonglife.domain.auth.dto.response.KakaoResponse;
-import com.umust.dobonglife.domain.auth.dto.response.NaverResponse;
-import com.umust.dobonglife.domain.auth.dto.response.OAuth2Response;
+import com.umust.dobonglife.domain.auth.domain.oauth2.GoogleResponse;
+import com.umust.dobonglife.domain.auth.domain.oauth2.KakaoResponse;
+import com.umust.dobonglife.domain.auth.domain.oauth2.NaverResponse;
+import com.umust.dobonglife.domain.auth.domain.oauth2.OAuth2Response;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.domain.UserPrincipal;
 import lombok.RequiredArgsConstructor;

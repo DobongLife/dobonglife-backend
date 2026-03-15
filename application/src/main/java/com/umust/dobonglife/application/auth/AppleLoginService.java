@@ -3,9 +3,8 @@ package com.umust.dobonglife.application.auth;
 import com.umust.dobonglife.application.auth.port.in.AppleLoginUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.IssueLoginTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.VerifyAppleTokenUseCase;
+import com.umust.dobonglife.domain.auth.domain.AuthTokens;
 import com.umust.dobonglife.domain.auth.domain.SocialUserInfo;
-import com.umust.dobonglife.domain.auth.dto.request.AppleLoginRequest;
-import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.OAuthUserUseCase;
 import com.umust.dobonglife.domain.user.domain.entity.User;
@@ -27,31 +26,24 @@ public class AppleLoginService implements AppleLoginUseCase {
 
     @Override
     @Transactional
-    public TokenResponse login(AppleLoginRequest request) {
-        SocialUserInfo socialUser = verifyAppleTokenUseCase.verify(request.getIdentityToken());
+    public AuthTokens login(String identityToken, String fcmToken, String providerToken) {
+        SocialUserInfo socialUser = verifyAppleTokenUseCase.verify(identityToken);
 
         User user = oAuthUserUseCase.findOrCreateOAuthUser(
                 Provider.APPLE, socialUser.providerId(), socialUser.email(), socialUser.email()
         );
 
-        updateFcmTokenIfPresent(user.getId(), request.getFcmToken());
-        exchangeProviderTokenIfPresent(user.getId(), request.getProviderToken());
-
-        return issueLoginTokenUseCase.issueLoginToken(user.getId(), Provider.APPLE, user.getRole(), user.getName());
-    }
-
-    private void updateFcmTokenIfPresent(Long userId, String fcmToken) {
         if (fcmToken != null && !fcmToken.isBlank()) {
-            manageUserUseCase.updateFcmToken(userId, fcmToken);
+            manageUserUseCase.updateFcmToken(user.getId(), fcmToken);
         }
-    }
 
-    private void exchangeProviderTokenIfPresent(Long userId, String providerToken) {
         if (providerToken != null && !providerToken.isBlank()) {
             String refreshToken = verifyAppleTokenUseCase.exchangeAuthorizationCode(providerToken);
-            manageUserUseCase.updateProviderToken(userId, refreshToken);
+            manageUserUseCase.updateProviderToken(user.getId(), refreshToken);
         } else {
-            log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", userId);
+            log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", user.getId());
         }
+
+        return issueLoginTokenUseCase.issueLoginToken(user.getId(), Provider.APPLE, user.getRole(), user.getName());
     }
 }
