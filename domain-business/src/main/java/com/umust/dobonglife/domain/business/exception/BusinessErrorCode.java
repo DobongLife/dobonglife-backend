@@ -21,4 +21,10 @@ public enum BusinessErrorCode implements ErrorCode {
 
     private final HttpStatus httpStatus;
     private final String message;
+
+    @Override
+    public int getStatus() { return httpStatus.value(); }
+
+    @Override
+    public String getCode() { return name(); }
 }

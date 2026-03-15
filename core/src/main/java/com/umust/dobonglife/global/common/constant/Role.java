@@ -1,6 +1,6 @@
 package com.umust.dobonglife.global.common.constant;
 
-import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.CommonErrorCode;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,7 +40,7 @@ public enum Role {
 
     public static Role fromValue(String value) {
         if (value == null || value.isBlank()) {
-            throw new BusinessException(ErrorCode.USER_ROLE_BAD_REQUEST);
+            throw new BusinessException(CommonErrorCode.BAD_REQUEST);
         }
 
         for (Role role : Role.values()) {
@@ -49,6 +49,6 @@ public enum Role {
             }
         }
 
-        throw new BusinessException(ErrorCode.USER_ROLE_BAD_REQUEST);
+        throw new BusinessException(CommonErrorCode.BAD_REQUEST);
     }
 }

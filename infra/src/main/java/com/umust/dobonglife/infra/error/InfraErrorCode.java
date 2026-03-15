@@ -20,8 +20,17 @@ public enum InfraErrorCode implements ErrorCode {
     FIREBASE_INITIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Firebase 초기화에 실패했습니다."),
     FCM_MESSAGE_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FCM 메시지 전송을 실패했습니다."),
     FCM_TOPIC_SUBSCRIBE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FCM 토픽 구독을 실패했습니다."),
-    FCM_TOPIC_UNSUBSCRIBE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FCM 토픽 구독 취소를 실패했습니다.");
+    FCM_TOPIC_UNSUBSCRIBE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FCM 토픽 구독 취소를 실패했습니다."),
+
+    // Mail
+    MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "메일 전송에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
+
+    @Override
+    public int getStatus() { return httpStatus.value(); }
+
+    @Override
+    public String getCode() { return name(); }
 }

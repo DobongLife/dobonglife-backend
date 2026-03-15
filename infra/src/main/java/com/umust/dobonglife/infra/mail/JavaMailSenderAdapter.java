@@ -1,8 +1,8 @@
 package com.umust.dobonglife.infra.mail;
 
 import com.umust.dobonglife.domain.user.application.port.out.MailSender;
-import com.umust.dobonglife.global.error.ErrorCode;
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.infra.error.InfraErrorCode;
+import com.umust.dobonglife.infra.error.InfraException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class JavaMailSenderAdapter implements MailSender {
             helper.setText(htmlContent, true);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException | MailException e) {
-            throw new BusinessException(ErrorCode.MAIL_SEND_FAILED);
+            throw new InfraException(InfraErrorCode.MAIL_SEND_FAILED);
         }
     }
 

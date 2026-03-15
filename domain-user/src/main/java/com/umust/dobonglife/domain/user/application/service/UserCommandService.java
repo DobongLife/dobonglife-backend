@@ -9,8 +9,6 @@ import com.umust.dobonglife.domain.user.exception.UserException;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;
 import com.umust.dobonglife.global.common.model.BaseStatus;
-import com.umust.dobonglife.global.error.ErrorCode;
-import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,7 +37,7 @@ public class UserCommandService implements SignUpUseCase, DeleteAccountUseCase,
             throw new UserException(UserErrorCode.USER_EMAIL_ALREADY_EXISTS);
         }
         if (!"VERIFIED".equals(checkAuthCodeUseCase.getStoredSignUpCode(email))) {
-            throw new BusinessException(ErrorCode.AUTH_CODE_UNAUTHORIZED);
+            throw new UserException(UserErrorCode.AUTH_CODE_UNAUTHORIZED);
         }
         User user = User.builder()
                 .email(email)
@@ -131,7 +129,7 @@ public class UserCommandService implements SignUpUseCase, DeleteAccountUseCase,
     public void canExchangeCoupon(Long userId) {
         User user = loadUserPort.loadUser(userId);
         if (!user.canExchangeCoupon()) {
-            throw new BusinessException(ErrorCode.COUPON_EXCHANGE_RESTRICTED);
+            throw new UserException(UserErrorCode.COUPON_EXCHANGE_RESTRICTED);
         }
     }
 

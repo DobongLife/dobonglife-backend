@@ -1,14 +1,14 @@
 package com.umust.dobonglife.domain.auth.presentation;
 
+import com.umust.dobonglife.application.auth.AppleLoginService;
+import com.umust.dobonglife.application.auth.AuthFacade;
+import com.umust.dobonglife.application.auth.GoogleLoginService;
+import com.umust.dobonglife.application.auth.KakaoLoginService;
+import com.umust.dobonglife.domain.auth.application.service.JwtService;
 import com.umust.dobonglife.domain.auth.dto.request.AppleLoginRequest;
 import com.umust.dobonglife.domain.auth.dto.request.GoogleLoginRequest;
 import com.umust.dobonglife.domain.auth.dto.request.KakaoLoginRequest;
 import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
-import com.umust.dobonglife.domain.auth.application.service.AppleAuthService;
-import com.umust.dobonglife.domain.auth.application.service.AuthService;
-import com.umust.dobonglife.domain.auth.application.service.JwtService;
-import com.umust.dobonglife.domain.auth.application.service.KakaoAuthService;
-import com.umust.dobonglife.domain.auth.application.service.GoogleAuthService;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final JwtService jwtService;
-    private final GoogleAuthService googleAuthService;
-    private final KakaoAuthService kakaoAuthService;
-    private final AppleAuthService appleAuthService;
-    private final AuthService authService;
+    private final KakaoLoginService kakaoLoginService;
+    private final GoogleLoginService googleLoginService;
+    private final AppleLoginService appleLoginService;
+    private final AuthFacade authFacade;
 
     @Operation(summary = "카카오 로그인", description = "카카오 로그인을 합니다.")
     @ApiResponse(
@@ -44,7 +44,7 @@ public class AuthController {
     )
     @PostMapping("/login/kakao")
     public BaseResponse<TokenResponse> loginKakao(@RequestBody @Valid KakaoLoginRequest request) {
-        return BaseResponse.ok(kakaoAuthService.login(request));
+        return BaseResponse.ok(kakaoLoginService.login(request));
     }
 
     @Operation(summary = "구글 로그인", description = "구글 로그인을 합니다.")
@@ -54,7 +54,7 @@ public class AuthController {
     )
     @PostMapping("/login/google")
     public BaseResponse<TokenResponse> loginGoogle(@RequestBody @Valid GoogleLoginRequest request) {
-        return BaseResponse.ok(googleAuthService.login(request));
+        return BaseResponse.ok(googleLoginService.login(request));
     }
 
     @Operation(summary = "애플 로그인", description = "애플 로그인을 합니다.")
@@ -64,7 +64,7 @@ public class AuthController {
     )
     @PostMapping("/login/apple")
     public BaseResponse<TokenResponse> loginApple(@RequestBody @Valid AppleLoginRequest request) {
-        return BaseResponse.ok(appleAuthService.login(request));
+        return BaseResponse.ok(appleLoginService.login(request));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
@@ -74,7 +74,7 @@ public class AuthController {
     )
     @PostMapping("/logout")
     public BaseResponse<Void> logout(HttpServletRequest request) {
-        authService.logout(request);
+        authFacade.logout(request);
         return BaseResponse.ok(null);
     }
 

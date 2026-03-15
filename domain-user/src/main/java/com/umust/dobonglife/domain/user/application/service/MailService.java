@@ -7,8 +7,6 @@ import com.umust.dobonglife.domain.user.application.port.out.MailSender;
 import com.umust.dobonglife.domain.user.application.port.out.VerificationCodeStore;
 import com.umust.dobonglife.domain.user.exception.UserErrorCode;
 import com.umust.dobonglife.domain.user.exception.UserException;
-import com.umust.dobonglife.global.error.ErrorCode;
-import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,7 +69,7 @@ public class MailService implements SendMailUseCase, CheckAuthCodeUseCase {
         }
 
         if (storedCode == null || storedCode.isBlank()) {
-            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+            throw new UserException(UserErrorCode.INVALID_EMAIL_CODE);
         }
 
         if ("VERIFIED".equals(storedCode)) {
@@ -81,7 +79,7 @@ public class MailService implements SendMailUseCase, CheckAuthCodeUseCase {
         if (!authCode.equals(storedCode)) {
             log.info("Request Code: {}", authCode);
             log.info("Stored code: {}", storedCode);
-            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+            throw new UserException(UserErrorCode.INVALID_EMAIL_CODE);
         }
 
         verificationCodeStore.store(prefix + email, "VERIFIED", Duration.ofSeconds(VERIFIED_TTL_SECONDS));
@@ -92,7 +90,7 @@ public class MailService implements SendMailUseCase, CheckAuthCodeUseCase {
         String storedCode = getStoredPasswordCode(email);
 
         if (storedCode == null || storedCode.isBlank()) {
-            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+            throw new UserException(UserErrorCode.INVALID_EMAIL_CODE);
         }
 
         if ("VERIFIED".equals(storedCode)) {
@@ -100,7 +98,7 @@ public class MailService implements SendMailUseCase, CheckAuthCodeUseCase {
         }
 
         if (!authCode.equals(storedCode)) {
-            throw new BusinessException(ErrorCode.INVALID_EMAIL_CODE);
+            throw new UserException(UserErrorCode.INVALID_EMAIL_CODE);
         }
     }
 

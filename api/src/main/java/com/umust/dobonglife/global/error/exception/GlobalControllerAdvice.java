@@ -2,6 +2,7 @@ package com.umust.dobonglife.global.error.exception;
 
 import com.umust.dobonglife.global.common.response.BaseErrorResponse;
 import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.util.stream.Collectors;
 
 import static com.umust.dobonglife.global.error.CommonErrorCode.*;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {
@@ -24,7 +26,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<BaseErrorResponse> handleNoHandlerFound(NoHandlerFoundException e) {
         log.warn("[NoHandlerFound] {}", e.getRequestURL());
         return ResponseEntity
-                .status(API_NOT_FOUND.getHttpStatus())
+                .status(API_NOT_FOUND.getStatus())
                 .body(new BaseErrorResponse(API_NOT_FOUND));
     }
 
@@ -32,7 +34,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<BaseErrorResponse> handleMethodNotAllowed(HttpRequestMethodNotSupportedException e) {
         log.warn("[MethodNotAllowed] {}", e.getMessage());
         return ResponseEntity
-                .status(METHOD_NOT_ALLOWED.getHttpStatus())
+                .status(METHOD_NOT_ALLOWED.getStatus())
                 .body(new BaseErrorResponse(METHOD_NOT_ALLOWED));
     }
 
@@ -43,7 +45,7 @@ public class GlobalControllerAdvice {
                 .collect(Collectors.joining(", "));
         log.warn("[Validation] {}", detail);
         return ResponseEntity
-                .status(BAD_REQUEST.getHttpStatus())
+                .status(BAD_REQUEST.getStatus())
                 .body(new BaseErrorResponse(BAD_REQUEST, detail));
     }
 
@@ -51,7 +53,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<BaseErrorResponse> handleMissingParam(MissingServletRequestParameterException e) {
         log.warn("[MissingParam] {}", e.getMessage());
         return ResponseEntity
-                .status(BAD_REQUEST.getHttpStatus())
+                .status(BAD_REQUEST.getStatus())
                 .body(new BaseErrorResponse(BAD_REQUEST));
     }
 
@@ -59,7 +61,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<BaseErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         log.warn("[TypeMismatch] {}", e.getMessage());
         return ResponseEntity
-                .status(BAD_REQUEST.getHttpStatus())
+                .status(BAD_REQUEST.getStatus())
                 .body(new BaseErrorResponse(BAD_REQUEST));
     }
 
@@ -67,16 +69,16 @@ public class GlobalControllerAdvice {
     public ResponseEntity<BaseErrorResponse> handleNotReadable(HttpMessageNotReadableException e) {
         log.warn("[NotReadable] {}", e.getMessage());
         return ResponseEntity
-                .status(BAD_REQUEST.getHttpStatus())
+                .status(BAD_REQUEST.getStatus())
                 .body(new BaseErrorResponse(BAD_REQUEST));
     }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<BaseErrorResponse> handleBusiness(BusinessException e) {
         ErrorCode code = e.getErrorCode();
-        log.warn("[BusinessException] {} - {}", code.name(), code.getMessage());
+        log.warn("[BusinessException] {} - {}", code.getCode(), code.getMessage());
         return ResponseEntity
-                .status(code.getHttpStatus())
+                .status(code.getStatus())
                 .body(new BaseErrorResponse(code));
     }
 
@@ -84,7 +86,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<BaseErrorResponse> handleException(Exception e) {
         log.error("[UnhandledException]", e);
         return ResponseEntity
-                .status(INTERNAL_SERVER_ERROR.getHttpStatus())
+                .status(INTERNAL_SERVER_ERROR.getStatus())
                 .body(new BaseErrorResponse(INTERNAL_SERVER_ERROR));
     }
 }

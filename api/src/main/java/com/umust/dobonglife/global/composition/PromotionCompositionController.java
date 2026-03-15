@@ -10,7 +10,7 @@ import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionU
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
-import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.validation.Valid;

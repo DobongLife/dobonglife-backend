@@ -4,7 +4,8 @@ import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.domain.auth.domain.UserPrincipal;
 import com.umust.dobonglife.global.common.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
-import com.umust.dobonglife.domain.user.domain.UserRepository;
+import com.umust.dobonglife.domain.user.application.port.out.SaveUserPort;
+import com.umust.dobonglife.domain.user.infrastructure.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +27,8 @@ import java.util.List;
 @Profile("local-db")
 public class DataInitializer implements CommandLineRunner {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
+    private final SaveUserPort saveUserPort;
     private final PasswordEncoder passwordEncoder;
     private static final List<GrantedAuthority> MASTER_AUTHORITIES = List.of(
             new SimpleGrantedAuthority("ROLE_ADMIN")
@@ -35,7 +37,7 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        if (userRepository.count() == 0) {
+        if (userJpaRepository.count() == 0) {
             User masterUser = User.builder()
                     .name("master")
                     .email("master@gmail.com")
@@ -44,7 +46,7 @@ public class DataInitializer implements CommandLineRunner {
                     .provider(Provider.LOCAL)
                     .balance(500L)
                     .build();
-            userRepository.save(masterUser);
+            saveUserPort.save(masterUser);
 
             UserPrincipal principal = UserPrincipal.builder()
                     .userId(masterUser.getId())

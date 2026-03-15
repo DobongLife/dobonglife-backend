@@ -4,7 +4,7 @@ import com.umust.dobonglife.application.coupon.CouponFacade;
 import com.umust.dobonglife.application.coupon.dto.CouponUsedResponse;
 import com.umust.dobonglife.application.coupon.dto.MyCouponGetResponse;
 import com.umust.dobonglife.global.composition.dto.request.CouponUseRequest;
-import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;

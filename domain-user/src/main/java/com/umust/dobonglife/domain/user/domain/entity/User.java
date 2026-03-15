@@ -4,8 +4,8 @@ import com.umust.dobonglife.domain.user.domain.policy.UserPolicy;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;
 import com.umust.dobonglife.global.common.model.BaseEntity;
-import com.umust.dobonglife.global.error.ErrorCode;
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.domain.user.exception.UserErrorCode;
+import com.umust.dobonglife.domain.user.exception.UserException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -108,17 +108,17 @@ public class User extends BaseEntity {
 
     public void earnPoint(long amount) {
         if (amount < 0) {
-            throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
+            throw new UserException(UserErrorCode.POINT_CANNOT_NEGATIVE);
         }
         this.balance += amount;
     }
 
     public void usePoint(long amount) {
         if (amount < 0) {
-            throw new BusinessException(ErrorCode.POINT_CANNOT_NEGATIVE);
+            throw new UserException(UserErrorCode.POINT_CANNOT_NEGATIVE);
         }
         if (this.balance < amount) {
-            throw new BusinessException(ErrorCode.INVALID_POINT);
+            throw new UserException(UserErrorCode.INVALID_POINT);
         }
         this.balance -= amount;
     }

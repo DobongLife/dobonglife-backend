@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':core')
+    implementation project(':domain-auth')
     implementation project(':domain-user')
     implementation project(':domain-coupon')
     implementation project(':domain-promotion')
