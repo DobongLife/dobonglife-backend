@@ -1,14 +1,14 @@
 package com.umust.dobonglife.domain.auth.presentation;
 
-import com.umust.dobonglife.application.auth.AppleLoginService;
 import com.umust.dobonglife.application.auth.AuthFacade;
-import com.umust.dobonglife.application.auth.GoogleLoginService;
-import com.umust.dobonglife.application.auth.KakaoLoginService;
-import com.umust.dobonglife.domain.auth.application.service.JwtService;
+import com.umust.dobonglife.application.auth.port.in.AppleLoginUseCase;
+import com.umust.dobonglife.application.auth.port.in.GoogleLoginUseCase;
+import com.umust.dobonglife.application.auth.port.in.KakaoLoginUseCase;
 import com.umust.dobonglife.domain.auth.dto.request.AppleLoginRequest;
 import com.umust.dobonglife.domain.auth.dto.request.GoogleLoginRequest;
 import com.umust.dobonglife.domain.auth.dto.request.KakaoLoginRequest;
 import com.umust.dobonglife.domain.auth.dto.response.TokenResponse;
+import com.umust.dobonglife.domain.auth.application.port.in.ExtractTokenUseCase;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,47 +31,34 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AuthController {
 
-    private final JwtService jwtService;
-    private final KakaoLoginService kakaoLoginService;
-    private final GoogleLoginService googleLoginService;
-    private final AppleLoginService appleLoginService;
+    private final KakaoLoginUseCase kakaoLoginUseCase;
+    private final GoogleLoginUseCase googleLoginUseCase;
+    private final AppleLoginUseCase appleLoginUseCase;
     private final AuthFacade authFacade;
 
     @Operation(summary = "카카오 로그인", description = "카카오 로그인을 합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "카카오 소셜 로그인에 성공하였습니다."
-    )
+    @ApiResponse(responseCode = "200", description = "카카오 소셜 로그인에 성공하였습니다.")
     @PostMapping("/login/kakao")
     public BaseResponse<TokenResponse> loginKakao(@RequestBody @Valid KakaoLoginRequest request) {
-        return BaseResponse.ok(kakaoLoginService.login(request));
+        return BaseResponse.ok(kakaoLoginUseCase.login(request));
     }
 
     @Operation(summary = "구글 로그인", description = "구글 로그인을 합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "구글 소셜 로그인에 성공하였습니다."
-    )
+    @ApiResponse(responseCode = "200", description = "구글 소셜 로그인에 성공하였습니다.")
     @PostMapping("/login/google")
     public BaseResponse<TokenResponse> loginGoogle(@RequestBody @Valid GoogleLoginRequest request) {
-        return BaseResponse.ok(googleLoginService.login(request));
+        return BaseResponse.ok(googleLoginUseCase.login(request));
     }
 
     @Operation(summary = "애플 로그인", description = "애플 로그인을 합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "애플 소셜 로그인에 성공하였습니다."
-    )
+    @ApiResponse(responseCode = "200", description = "애플 소셜 로그인에 성공하였습니다.")
     @PostMapping("/login/apple")
     public BaseResponse<TokenResponse> loginApple(@RequestBody @Valid AppleLoginRequest request) {
-        return BaseResponse.ok(appleLoginService.login(request));
+        return BaseResponse.ok(appleLoginUseCase.login(request));
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "로그아웃에 성공하였습니다."
-    )
+    @ApiResponse(responseCode = "200", description = "로그아웃에 성공하였습니다.")
     @PostMapping("/logout")
     public BaseResponse<Void> logout(HttpServletRequest request) {
         authFacade.logout(request);
@@ -84,23 +71,16 @@ public class AuthController {
             responseCode = "200",
             description = "엑세스 토큰 재발급 성공하였습니다.",
             headers = {
-            @Header(
-                    name = "Authorization",
-                    description = "재발급된 Access Token (Bearer {accessToken})",
-                    schema = @Schema(type = "string")
-            ),
-            @Header(
-                    name = "Authorization-refresh",
-                    description = "재발급된 Refresh Token (Bearer {refreshToken})",
-                    schema = @Schema(type = "string")
-            )
-    }
-    )
+            @Header(name = "Authorization", description = "재발급된 Access Token (Bearer {accessToken})",
+                    schema = @Schema(type = "string")),
+            @Header(name = "Authorization-refresh", description = "재발급된 Refresh Token (Bearer {refreshToken})",
+                    schema = @Schema(type = "string"))
+    })
     @SecurityRequirement(name = "RefreshAuth")
     @PostMapping("/reissue")
     public BaseResponse<TokenResponse> reissueTokens(HttpServletRequest request,
                                                      @CurrentUserId Long userId) {
-        TokenResponse response = jwtService.reissueTokens(request, userId);
+        TokenResponse response = authFacade.reissueTokens(request, userId);
         return BaseResponse.ok(response);
     }
 }

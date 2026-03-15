@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.umust.dobonglife.domain.auth.application.port.in.VerifyGoogleTokenUseCase;
 import com.umust.dobonglife.domain.auth.domain.SocialUserInfo;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GoogleAuthService {
+public class GoogleAuthService implements VerifyGoogleTokenUseCase {
 
     private static final String GOOGLE_REVOKE_URL = "https://oauth2.googleapis.com/revoke";
 
@@ -32,6 +33,7 @@ public class GoogleAuthService {
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
+    @Override
     public SocialUserInfo verify(String idTokenString) {
         GoogleIdToken.Payload payload = verifyIdToken(idTokenString);
         return new SocialUserInfo(

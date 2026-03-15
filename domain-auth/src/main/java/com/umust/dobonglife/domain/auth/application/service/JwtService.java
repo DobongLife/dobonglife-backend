@@ -17,7 +17,7 @@ import java.time.Duration;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JwtService {
+public class JwtService implements com.umust.dobonglife.domain.auth.application.port.in.ReissueTokenUseCase {
 
     @Value("${jwt.access.expiration}")
     private Long ACCESS_TOKEN_EXPIRED_IN;
@@ -31,6 +31,7 @@ public class JwtService {
     private final TokenStore tokenStore;
     private final JwtTokenProvider jwtUtil;
 
+    @Override
     public TokenResponse reissueTokens(jakarta.servlet.http.HttpServletRequest request, Long userId) {
         String refreshToken = jwtUtil.extractRefreshToken(request)
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.REFRESH_TOKEN_NOT_FOUND));

@@ -13,6 +13,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import com.umust.dobonglife.domain.auth.application.port.in.VerifyAppleTokenUseCase;
 import com.umust.dobonglife.domain.auth.domain.SocialUserInfo;
 import com.umust.dobonglife.global.error.DomainErrorCode;
 import com.umust.dobonglife.global.error.ErrorCode;
@@ -41,7 +42,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AppleAuthService {
+public class AppleAuthService implements VerifyAppleTokenUseCase {
 
     private static final String APPLE_JWKS_URL = "https://appleid.apple.com/auth/keys";
     private static final String APPLE_ISSUER = "https://appleid.apple.com";
@@ -70,6 +71,7 @@ public class AppleAuthService {
     private volatile long cacheTimestamp;
     private final ReentrantLock jwkLock = new ReentrantLock();
 
+    @Override
     public SocialUserInfo verify(String identityToken) {
         JWTClaimsSet claims = verifyIdentityToken(identityToken);
         String sub = claims.getSubject();
@@ -82,6 +84,7 @@ public class AppleAuthService {
         return new SocialUserInfo(sub, email, email);
     }
 
+    @Override
     public String exchangeAuthorizationCode(String authorizationCode) {
         return exchangeAuthorizationCodeForRefreshToken(authorizationCode);
     }

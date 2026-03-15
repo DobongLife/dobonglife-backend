@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.auth.application.service;
 
+import com.umust.dobonglife.domain.auth.application.port.in.VerifyKakaoTokenUseCase;
 import com.umust.dobonglife.domain.auth.domain.SocialUserInfo;
 import com.umust.dobonglife.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import com.umust.dobonglife.domain.auth.application.service.dto.KakaoUserInfo;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KakaoAuthService {
+public class KakaoAuthService implements VerifyKakaoTokenUseCase {
 
     private static final String KAKAO_UNLINK_URL = "https://kapi.kakao.com/v1/user/unlink";
 
@@ -28,6 +29,7 @@ public class KakaoAuthService {
     @Value("${kakao.admin-key}")
     private String kakaoAdminKey;
 
+    @Override
     public SocialUserInfo verify(String accessToken) {
         KakaoUserInfo userInfo = getUserInfo(accessToken);
         return new SocialUserInfo(
