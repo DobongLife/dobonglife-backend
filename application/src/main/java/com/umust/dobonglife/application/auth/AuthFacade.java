@@ -1,6 +1,6 @@
 package com.umust.dobonglife.application.auth;
 
-import com.umust.dobonglife.application.auth.port.AccountCleanupPort;
+// import com.umust.dobonglife.application.auth.port.AccountCleanupPort;
 import com.umust.dobonglife.domain.auth.application.port.in.ExtractTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.InvalidateTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.LogoutUseCase;
@@ -36,7 +36,7 @@ public class AuthFacade {
     private final DeleteAccountUseCase deleteAccountUseCase;
     private final GetUserUseCase getUserUseCase;
 
-    private final AccountCleanupPort accountCleanupPort;
+    // private final AccountCleanupPort accountCleanupPort;
 
     @Transactional
     public void logout(HttpServletRequest request) {
@@ -62,10 +62,11 @@ public class AuthFacade {
         String accessToken = extractTokenUseCase.extractAccessToken(request);
         String refreshToken = extractTokenUseCase.extractRefreshToken(request).orElse(null);
 
-        if (accountCleanupPort.isBusiness(userId)) {
-            accountCleanupPort.cleanupBusinessData(userId);
-        }
-        accountCleanupPort.cleanupUserData(userId);
+        // TODO: 각 도메인 모듈에 cleanup use case 추가 후 활성화
+        // if (accountCleanupPort.isBusiness(userId)) {
+        //     accountCleanupPort.cleanupBusinessData(userId);
+        // }
+        // accountCleanupPort.cleanupUserData(userId);
         deleteAccountUseCase.deleteAccount(userId);
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {

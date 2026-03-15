@@ -1,7 +1,8 @@
-package com.umust.dobonglife.global.auth.security.principal;
+package com.umust.dobonglife.global.auth.service;
 
 import com.umust.dobonglife.domain.auth.application.port.out.AuthUserPort;
 import com.umust.dobonglife.domain.auth.application.dto.AuthUserInfo;
+import com.umust.dobonglife.global.auth.security.principal.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
