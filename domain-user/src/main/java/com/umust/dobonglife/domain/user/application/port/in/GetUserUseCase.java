@@ -1,9 +1,11 @@
 package com.umust.dobonglife.domain.user.application.port.in;
 
 import com.umust.dobonglife.domain.user.domain.entity.User;
+import com.umust.dobonglife.global.common.constant.Provider;
 
 public interface GetUserUseCase {
-    User findById(Long userId);
+    String getProviderId(Long userId);
+    Provider getProvider(Long userId);
     boolean isBlockedUser(Long userId);
     String getFcmToken(Long userId);
 }

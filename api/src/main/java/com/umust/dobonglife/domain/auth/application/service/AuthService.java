@@ -89,14 +89,14 @@ public class AuthService {
 
     private void revokeProviderAccount(Long userId) {
         try {
-            User user = getUserUseCase.findById(userId);
-            Provider provider = user.getProvider();
+            String providerId = getUserUseCase.getProviderId(userId);
+            Provider provider = getUserUseCase.getProvider(userId);
             if (provider == null || provider == Provider.LOCAL) {
                 return;
             }
             switch (provider) {
-                case KAKAO -> kakaoAuthService.unlinkUser(user.getProviderId());
-                case APPLE -> appleAuthService.revokeToken(user.getProviderToken());
+                case KAKAO -> kakaoAuthService.unlinkUser(providerId);
+                case APPLE -> appleAuthService.revokeToken(providerId);
                 default -> log.warn("지원하지 않는 소셜 프로바이더: {}", provider);
             }
         } catch (Exception e) {
