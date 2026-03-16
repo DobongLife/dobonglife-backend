@@ -4,6 +4,7 @@ import com.umust.dobonglife.application.auth.AuthFacade;
 import com.umust.dobonglife.application.auth.port.in.AppleLoginUseCase;
 import com.umust.dobonglife.application.auth.port.in.GoogleLoginUseCase;
 import com.umust.dobonglife.application.auth.port.in.KakaoLoginUseCase;
+import com.umust.dobonglife.global.auth.security.TokenExtractor;
 import com.umust.dobonglife.presentation.auth.dto.request.AppleLoginRequest;
 import com.umust.dobonglife.presentation.auth.dto.request.GoogleLoginRequest;
 import com.umust.dobonglife.presentation.auth.dto.request.KakaoLoginRequest;
@@ -34,6 +35,7 @@ public class AuthController {
     private final GoogleLoginUseCase googleLoginUseCase;
     private final AppleLoginUseCase appleLoginUseCase;
     private final AuthFacade authFacade;
+    private final TokenExtractor tokenExtractor;
 
     @Operation(summary = "카카오 로그인", description = "카카오 로그인을 합니다.")
     @ApiResponse(responseCode = "200", description = "카카오 소셜 로그인에 성공하였습니다.")
@@ -65,8 +67,10 @@ public class AuthController {
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
     @ApiResponse(responseCode = "200", description = "로그아웃에 성공하였습니다.")
     @PostMapping("/logout")
-    public BaseResponse<Void> logout(HttpServletRequest request) {
-        authFacade.logout(request);
+    public BaseResponse<Void> logout(HttpServletRequest request, @CurrentUserId Long userId) {
+        String accessToken = tokenExtractor.extractAccessToken(request);
+        String refreshToken = tokenExtractor.extractRefreshToken(request);
+        authFacade.logout(accessToken, refreshToken, userId);
         return BaseResponse.ok(null);
     }
 
@@ -85,6 +89,7 @@ public class AuthController {
     @PostMapping("/reissue")
     public BaseResponse<TokenResponse> reissueTokens(HttpServletRequest request,
                                                      @CurrentUserId Long userId) {
-        return BaseResponse.ok(TokenResponse.from(authFacade.reissueTokens(request, userId)));
+        String refreshToken = tokenExtractor.extractRefreshToken(request);
+        return BaseResponse.ok(TokenResponse.from(authFacade.reissueTokens(refreshToken)));
     }
 }

@@ -2,6 +2,7 @@ package com.umust.dobonglife.global.auth.security.filter;
 
 import com.umust.dobonglife.domain.auth.application.port.in.AuthenticateAccessTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.dto.AuthenticatedUser;
+import com.umust.dobonglife.global.auth.security.TokenExtractor;
 import com.umust.dobonglife.global.auth.security.principal.UserPrincipal;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,13 +26,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final TokenExtractor tokenExtractor;
     private final AuthenticateAccessTokenUseCase authenticateAccessTokenUseCase;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        Optional<String> accessTokenOptional = authenticateAccessTokenUseCase.extractAccessToken(request);
+        Optional<String> accessTokenOptional = tokenExtractor.extractAccessTokenOptional(request);
 
         if (accessTokenOptional.isEmpty()) {
             filterChain.doFilter(request, response);

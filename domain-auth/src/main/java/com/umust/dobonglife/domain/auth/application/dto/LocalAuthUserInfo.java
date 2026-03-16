@@ -3,7 +3,7 @@ package com.umust.dobonglife.domain.auth.application.dto;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;
 
-public record AuthUserInfo(
+public record LocalAuthUserInfo(
         Long userId,
         String email,
         String password,

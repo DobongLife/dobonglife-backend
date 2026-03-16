@@ -1,6 +1,7 @@
 package com.umust.dobonglife.presentation.user.controller;
 
 import com.umust.dobonglife.application.auth.AuthFacade;
+import com.umust.dobonglife.global.auth.security.TokenExtractor;
 import com.umust.dobonglife.presentation.user.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.presentation.user.dto.request.MailRequest;
 import com.umust.dobonglife.presentation.user.dto.request.PasswordUpdateRequest;
@@ -32,6 +33,7 @@ public class UserController {
     private final SendMailUseCase sendMailUseCase;
     private final CheckAuthCodeUseCase checkAuthCodeUseCase;
     private final AuthFacade authFacade;
+    private final TokenExtractor tokenExtractor;
 
     @Operation(summary = "회원 가입", description = "회원 가입을 합니다." +
             " role은 MEMBER, MANAGER, ADMIN 3개 입니다.")
@@ -53,7 +55,9 @@ public class UserController {
     @PostMapping("/delete/account")
     public BaseResponse<Void> deleteAccount(HttpServletRequest request,
                                             @CurrentUserId Long userId){
-        authFacade.deleteAccount(request, userId);
+        String accessToken = tokenExtractor.extractAccessToken(request);
+        String refreshToken = tokenExtractor.extractRefreshTokenOptional(request).orElse(null);
+        authFacade.deleteAccount(accessToken, refreshToken, userId);
         return BaseResponse.ok(null);
     }
 

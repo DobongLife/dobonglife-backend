@@ -1,13 +1,13 @@
 package com.umust.dobonglife.application.auth;
 
 import com.umust.dobonglife.application.auth.port.in.AppleLoginUseCase;
-import com.umust.dobonglife.domain.auth.application.port.in.IssueLoginTokenUseCase;
-import com.umust.dobonglife.domain.auth.application.port.in.VerifyAppleTokenUseCase;
+import com.umust.dobonglife.domain.auth.application.port.in.IssueTokenUseCase;
+import com.umust.dobonglife.domain.auth.application.port.out.AppleOAuthPort;
 import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
 import com.umust.dobonglife.domain.auth.application.dto.SocialUserInfo;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
+import com.umust.dobonglife.domain.user.application.dto.OAuthLoginUser;
 import com.umust.dobonglife.domain.user.application.port.in.OAuthUserUseCase;
-import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.constant.Provider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,33 +17,33 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AppleLoginService implements AppleLoginUseCase {
+public class AppleLoginApplicationService implements AppleLoginUseCase {
 
-    private final VerifyAppleTokenUseCase verifyAppleTokenUseCase;
+    private final AppleOAuthPort appleOAuthPort;
     private final OAuthUserUseCase oAuthUserUseCase;
     private final ManageUserUseCase manageUserUseCase;
-    private final IssueLoginTokenUseCase issueLoginTokenUseCase;
+    private final IssueTokenUseCase issueTokenUseCase;
 
     @Override
     @Transactional
     public AuthTokens login(String identityToken, String fcmToken, String providerToken) {
-        SocialUserInfo socialUser = verifyAppleTokenUseCase.verify(identityToken);
+        SocialUserInfo socialUser = appleOAuthPort.verify(identityToken);
 
-        User user = oAuthUserUseCase.findOrCreateOAuthUser(
+        OAuthLoginUser user = oAuthUserUseCase.findOrCreateOAuthUser(
                 Provider.APPLE, socialUser.providerId(), socialUser.email(), socialUser.email()
         );
 
         if (fcmToken != null && !fcmToken.isBlank()) {
-            manageUserUseCase.updateFcmToken(user.getId(), fcmToken);
+            manageUserUseCase.updateFcmToken(user.id(), fcmToken);
         }
 
         if (providerToken != null && !providerToken.isBlank()) {
-            String refreshToken = verifyAppleTokenUseCase.exchangeAuthorizationCode(providerToken);
-            manageUserUseCase.updateProviderToken(user.getId(), refreshToken);
+            String refreshToken = appleOAuthPort.exchangeAuthorizationCode(providerToken);
+            manageUserUseCase.updateProviderToken(user.id(), refreshToken);
         } else {
-            log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", user.getId());
+            log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", user.id());
         }
 
-        return issueLoginTokenUseCase.issueLoginToken(user.getId(), Provider.APPLE, user.getRole(), user.getName());
+        return issueTokenUseCase.issueLoginToken(user.id(), Provider.APPLE, user.role(), user.name());
     }
 }

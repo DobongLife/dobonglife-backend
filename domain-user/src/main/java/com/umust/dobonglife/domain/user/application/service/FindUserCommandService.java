@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.user.application.service;
 
+import com.umust.dobonglife.domain.user.application.dto.OAuthLoginUser;
 import com.umust.dobonglife.domain.user.application.port.in.*;
 import com.umust.dobonglife.domain.user.application.port.out.LoadUserPort;
 import com.umust.dobonglife.domain.user.application.port.out.SaveUserPort;
@@ -81,9 +82,10 @@ public class UserCommandService implements SignUpUseCase, DeleteAccountUseCase,
     // ── OAuthUserUseCase ──
 
     @Override
-    public User findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {
-        return loadUserPort.findByProviderAndProviderId(provider, providerUserId)
+    public OAuthLoginUser findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {
+        User user = loadUserPort.findByProviderAndProviderId(provider, providerUserId)
                 .orElseGet(() -> reactivateOrCreateOAuthUser(provider, providerUserId, email, name));
+        return new OAuthLoginUser(user.getId(), user.getName(), user.getRole());
     }
 
     private User reactivateOrCreateOAuthUser(Provider provider, String providerId, String email, String name) {

@@ -4,7 +4,6 @@ import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -25,14 +23,6 @@ public class JwtTokenProvider {
 
     @Value("${jwt.refresh.expiration}")
     private Long REFRESH_TOKEN_EXPIRED_IN;
-
-    @Value("${jwt.access.header}")
-    private String ACCESS_HEADER;
-
-    @Value("${jwt.refresh.header}")
-    private String REFRESH_HEADER;
-
-    public final String BEARER_PREFIX = "Bearer ";
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
@@ -118,17 +108,5 @@ public class JwtTokenProvider {
 
     public String getUserNameFromToken(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
-    }
-
-    public Optional<String> extractAccessToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(ACCESS_HEADER))
-                .filter(accessToken -> accessToken.startsWith(BEARER_PREFIX))
-                .map(accessToken -> accessToken.replace(BEARER_PREFIX, ""));
-    }
-
-    public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(REFRESH_HEADER))
-                .filter(refreshToken -> refreshToken.startsWith(BEARER_PREFIX))
-                .map(refreshToken -> refreshToken.replace(BEARER_PREFIX, ""));
     }
 }

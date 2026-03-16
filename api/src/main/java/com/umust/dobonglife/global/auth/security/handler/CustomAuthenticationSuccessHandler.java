@@ -1,7 +1,7 @@
 package com.umust.dobonglife.global.auth.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umust.dobonglife.domain.auth.application.port.in.HandleLoginSuccessUseCase;
+import com.umust.dobonglife.domain.auth.application.port.in.IssueTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.dto.LoginSuccessCommand;
 import com.umust.dobonglife.global.auth.security.principal.UserPrincipal;
 import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
@@ -23,7 +23,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final HandleLoginSuccessUseCase handleLoginSuccessUseCase;
+    private final IssueTokenUseCase issueTokenUseCase;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -50,7 +50,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 fcmToken
         );
 
-        AuthTokens authTokens = handleLoginSuccessUseCase.handle(command);
+        AuthTokens authTokens = issueTokenUseCase.handleLoginSuccess(command);
         writeResponse(response, BaseResponse.ok(TokenResponse.from(authTokens)));
     }
 
