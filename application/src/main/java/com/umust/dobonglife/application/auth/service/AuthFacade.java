@@ -1,4 +1,4 @@
-package com.umust.dobonglife.application.auth;
+package com.umust.dobonglife.application.auth.service;
 
 import com.umust.dobonglife.domain.auth.application.port.in.AuthTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.RevokeSocialAccountUseCase;

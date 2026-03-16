@@ -1,6 +1,6 @@
 package com.umust.dobonglife.presentation.user.controller;
 
-import com.umust.dobonglife.application.auth.AuthFacade;
+import com.umust.dobonglife.application.auth.service.AuthFacade;
 import com.umust.dobonglife.auth.security.extractor.TokenExtractor;
 import com.umust.dobonglife.presentation.user.dto.request.MailCodeCheckRequest;
 import com.umust.dobonglife.presentation.user.dto.request.MailRequest;

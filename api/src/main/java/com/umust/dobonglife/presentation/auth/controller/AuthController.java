@@ -1,6 +1,6 @@
 package com.umust.dobonglife.presentation.auth.controller;
 
-import com.umust.dobonglife.application.auth.AuthFacade;
+import com.umust.dobonglife.application.auth.service.AuthFacade;
 import com.umust.dobonglife.application.auth.port.in.AppleLoginUseCase;
 import com.umust.dobonglife.application.auth.port.in.GoogleLoginUseCase;
 import com.umust.dobonglife.application.auth.port.in.KakaoLoginUseCase;

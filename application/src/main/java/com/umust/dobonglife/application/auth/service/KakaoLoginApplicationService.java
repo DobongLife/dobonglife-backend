@@ -1,8 +1,8 @@
-package com.umust.dobonglife.application.auth;
+package com.umust.dobonglife.application.auth.service;
 
-import com.umust.dobonglife.application.auth.port.in.GoogleLoginUseCase;
+import com.umust.dobonglife.application.auth.port.in.KakaoLoginUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.LoginSuccessUseCase;
-import com.umust.dobonglife.domain.auth.application.port.out.GoogleOAuthPort;
+import com.umust.dobonglife.domain.auth.application.port.out.KakaoOAuthPort;
 import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
 import com.umust.dobonglife.domain.auth.application.dto.SocialAuthUserInfo;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
@@ -15,26 +15,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class GoogleLoginApplicationService implements GoogleLoginUseCase {
+public class KakaoLoginApplicationService implements KakaoLoginUseCase {
 
-    private final GoogleOAuthPort googleOAuthPort;
+    private final KakaoOAuthPort kakaoOAuthPort;
     private final OAuthFindUserUseCase oAuthFindUserUseCase;
     private final ManageUserUseCase manageUserUseCase;
     private final LoginSuccessUseCase loginSuccessUseCase;
 
     @Override
     @Transactional
-    public AuthTokens login(String idToken, String fcmToken) {
-        SocialAuthUserInfo socialUser = googleOAuthPort.verify(idToken);
+    public AuthTokens login(String accessToken, String fcmToken) {
+        SocialAuthUserInfo socialUser = kakaoOAuthPort.verify(accessToken);
 
         OAuthLoginUser user = oAuthFindUserUseCase.findOrCreateOAuthUser(
-                Provider.GOOGLE, socialUser.providerId(), socialUser.email(), socialUser.name()
+                Provider.KAKAO, socialUser.providerId(), socialUser.email(), socialUser.name()
         );
 
         if (fcmToken != null && !fcmToken.isBlank()) {
             manageUserUseCase.updateFcmToken(user.id(), fcmToken);
         }
 
-        return loginSuccessUseCase.issueLoginToken(user.id(), Provider.GOOGLE, user.role(), user.name());
+        return loginSuccessUseCase.issueLoginToken(user.id(), Provider.KAKAO, user.role(), user.name());
     }
 }
