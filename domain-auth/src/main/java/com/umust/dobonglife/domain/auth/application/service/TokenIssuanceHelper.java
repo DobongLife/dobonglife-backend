@@ -17,11 +17,12 @@ public class TokenIssuanceHelper {
 
     private static final String REFRESH_TOKEN_KEY_PREFIX = "auth:refresh:";
 
+    @Value("${jwt.refresh.expiration}")
+    private Long refreshTokenExpiredIn;
+
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenStore tokenStore;
 
-    @Value("${jwt.refresh.expiration}")
-    private Long refreshTokenExpiredIn;
 
     public AuthTokens issueAndStore(Long userId, String provider, String role, String name) {
         String access = jwtTokenProvider.createAccessToken(userId, provider, role, name);

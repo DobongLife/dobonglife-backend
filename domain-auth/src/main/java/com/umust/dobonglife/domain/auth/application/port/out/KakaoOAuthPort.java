@@ -1,8 +1,8 @@
 package com.umust.dobonglife.domain.auth.application.port.out;
 
-import com.umust.dobonglife.domain.auth.application.dto.SocialUserInfo;
+import com.umust.dobonglife.domain.auth.application.dto.SocialAuthUserInfo;
 
 public interface KakaoOAuthPort {
-    SocialUserInfo verify(String accessToken);
+    SocialAuthUserInfo verify(String accessToken);
     void unlinkUser(String providerId);
 }

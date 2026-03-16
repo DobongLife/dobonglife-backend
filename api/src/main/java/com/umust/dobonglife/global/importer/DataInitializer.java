@@ -1,7 +1,7 @@
 package com.umust.dobonglife.global.importer;
 
 import com.umust.dobonglife.global.common.constant.Provider;
-import com.umust.dobonglife.global.auth.security.principal.UserPrincipal;
+import com.umust.dobonglife.auth.security.principal.UserPrincipal;
 import com.umust.dobonglife.global.common.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.domain.user.application.port.out.SaveUserPort;

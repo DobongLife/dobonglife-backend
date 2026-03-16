@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.user.application.service;
 
+import com.umust.dobonglife.domain.user.application.dto.LocalLoginUser;
 import com.umust.dobonglife.domain.user.application.dto.OAuthLoginUser;
 import com.umust.dobonglife.domain.user.application.port.in.*;
 import com.umust.dobonglife.domain.user.application.port.out.LoadUserPort;
@@ -22,8 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserCommandService implements SignUpUseCase, DeleteAccountUseCase,
-        UpdatePasswordUseCase, OAuthUserUseCase, ManageUserUseCase {
+public class FindUserCommandService implements SignUpUseCase, DeleteAccountUseCase,
+        UpdatePasswordUseCase, OAuthFindUserUseCase, ManageUserUseCase {
 
     private final LoadUserPort loadUserPort;
     private final SaveUserPort saveUserPort;
@@ -79,7 +80,7 @@ public class UserCommandService implements SignUpUseCase, DeleteAccountUseCase,
         user.setPassword(passwordEncoder.encode(newPassword));
     }
 
-    // ── OAuthUserUseCase ──
+    // ── OAuthFindUserUseCase ──
 
     @Override
     public OAuthLoginUser findOrCreateOAuthUser(Provider provider, String providerUserId, String email, String name) {

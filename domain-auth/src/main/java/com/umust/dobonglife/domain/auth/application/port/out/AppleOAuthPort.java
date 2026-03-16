@@ -1,9 +1,9 @@
 package com.umust.dobonglife.domain.auth.application.port.out;
 
-import com.umust.dobonglife.domain.auth.application.dto.SocialUserInfo;
+import com.umust.dobonglife.domain.auth.application.dto.SocialAuthUserInfo;
 
 public interface AppleOAuthPort {
-    SocialUserInfo verify(String identityToken);
+    SocialAuthUserInfo verify(String identityToken);
     String exchangeAuthorizationCode(String authorizationCode);
     void revokeToken(String refreshToken);
 }

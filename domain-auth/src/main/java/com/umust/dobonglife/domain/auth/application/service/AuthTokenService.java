@@ -6,7 +6,7 @@ import com.umust.dobonglife.domain.auth.application.port.out.TokenStore;
 import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
 import com.umust.dobonglife.domain.auth.application.dto.AuthenticatedUser;
 import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
-import com.umust.dobonglife.domain.auth.exception.CustomAuthenticationException;
+import com.umust.dobonglife.domain.auth.exception.AuthException;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.infrastructure.JwtTokenProvider;
 import com.umust.dobonglife.global.common.constant.Provider;
@@ -101,7 +101,7 @@ public class AuthTokenService implements AuthTokenUseCase, AuthenticateAccessTok
     private void checkLogout(String accessToken) {
         String value = tokenStore.find(accessToken).orElse(null);
         if (LOGOUT_VALUE.equals(value)) {
-            throw new CustomAuthenticationException(AuthErrorCode.SECURITY_UNAUTHORIZED);
+            throw new AuthException(AuthErrorCode.SECURITY_UNAUTHORIZED);
         }
     }
 }

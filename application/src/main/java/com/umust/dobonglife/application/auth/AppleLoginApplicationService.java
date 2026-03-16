@@ -1,13 +1,13 @@
 package com.umust.dobonglife.application.auth;
 
 import com.umust.dobonglife.application.auth.port.in.AppleLoginUseCase;
-import com.umust.dobonglife.domain.auth.application.port.in.IssueTokenUseCase;
+import com.umust.dobonglife.domain.auth.application.port.in.LoginSuccessUseCase;
 import com.umust.dobonglife.domain.auth.application.port.out.AppleOAuthPort;
 import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
-import com.umust.dobonglife.domain.auth.application.dto.SocialUserInfo;
+import com.umust.dobonglife.domain.auth.application.dto.SocialAuthUserInfo;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.domain.user.application.dto.OAuthLoginUser;
-import com.umust.dobonglife.domain.user.application.port.in.OAuthUserUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.OAuthFindUserUseCase;
 import com.umust.dobonglife.global.common.constant.Provider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +20,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class AppleLoginApplicationService implements AppleLoginUseCase {
 
     private final AppleOAuthPort appleOAuthPort;
-    private final OAuthUserUseCase oAuthUserUseCase;
+    private final OAuthFindUserUseCase oAuthFindUserUseCase;
     private final ManageUserUseCase manageUserUseCase;
-    private final IssueTokenUseCase issueTokenUseCase;
+    private final LoginSuccessUseCase loginSuccessUseCase;
 
     @Override
     @Transactional
     public AuthTokens login(String identityToken, String fcmToken, String providerToken) {
-        SocialUserInfo socialUser = appleOAuthPort.verify(identityToken);
+        SocialAuthUserInfo socialUser = appleOAuthPort.verify(identityToken);
 
-        OAuthLoginUser user = oAuthUserUseCase.findOrCreateOAuthUser(
+        OAuthLoginUser user = oAuthFindUserUseCase.findOrCreateOAuthUser(
                 Provider.APPLE, socialUser.providerId(), socialUser.email(), socialUser.email()
         );
 
@@ -44,6 +44,6 @@ public class AppleLoginApplicationService implements AppleLoginUseCase {
             log.warn("[Apple Login] providerToken(authorizationCode)이 요청에 없음: userId={}", user.id());
         }
 
-        return issueTokenUseCase.issueLoginToken(user.id(), Provider.APPLE, user.role(), user.name());
+        return loginSuccessUseCase.issueLoginToken(user.id(), Provider.APPLE, user.role(), user.name());
     }
 }

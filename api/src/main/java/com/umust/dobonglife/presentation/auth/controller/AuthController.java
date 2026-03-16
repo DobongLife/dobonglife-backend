@@ -4,7 +4,7 @@ import com.umust.dobonglife.application.auth.AuthFacade;
 import com.umust.dobonglife.application.auth.port.in.AppleLoginUseCase;
 import com.umust.dobonglife.application.auth.port.in.GoogleLoginUseCase;
 import com.umust.dobonglife.application.auth.port.in.KakaoLoginUseCase;
-import com.umust.dobonglife.global.auth.security.TokenExtractor;
+import com.umust.dobonglife.auth.security.extractor.TokenExtractor;
 import com.umust.dobonglife.presentation.auth.dto.request.AppleLoginRequest;
 import com.umust.dobonglife.presentation.auth.dto.request.GoogleLoginRequest;
 import com.umust.dobonglife.presentation.auth.dto.request.KakaoLoginRequest;

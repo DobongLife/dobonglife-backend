@@ -1,6 +1,8 @@
 package com.umust.dobonglife.domain.user.application.service;
 
+import com.umust.dobonglife.domain.user.application.dto.LocalLoginUser;
 import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.LoadLocalAuthUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.out.LoadUserPort;
 import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.constant.Provider;
@@ -11,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserQueryService implements GetUserUseCase {
+public class UserQueryService implements GetUserUseCase, LoadLocalAuthUserUseCase {
 
     private final LoadUserPort loadUserPort;
 
@@ -29,5 +31,18 @@ public class UserQueryService implements GetUserUseCase {
     @Override
     public String getFcmToken(Long userId) {
         return loadUserPort.loadUser(userId).getFcmToken();
+    }
+
+    @Override
+    public LocalLoginUser loadLocalUserByEmail(String email) {
+        User user = loadUserPort.loadLocalUser(email);
+
+        return new LocalLoginUser(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getProvider(),
+                user.getRole()
+        );
     }
 }

@@ -105,8 +105,4 @@ public class JwtTokenProvider {
             throw new CustomJwtException(AuthErrorCode.SECURITY_INVALID_TOKEN);
         }
     }
-
-    public String getUserNameFromToken(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
-    }
 }
