@@ -9,6 +9,7 @@ import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.exception.CourseErrorCode;
 import com.umust.dobonglife.domain.course.exception.CourseException;
 import com.umust.dobonglife.domain.like.application.LikeService;
+import com.umust.dobonglife.domain.place.domain.vo.Theme;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -32,9 +33,9 @@ public class CourseService {
                 .orElseThrow(() -> new CourseException(CourseErrorCode.COURSE_NOT_FOUND));
     }
 
-    public CursorResponse<CourseSummaryResponse> getAllCourses(Long userId, Long lastId, int size) {
+    public CursorResponse<CourseSummaryResponse> getAllCourses(Long userId, Theme theme, Long lastId, int size) {
         CursorResponse<CourseSummaryResponse> response = CursorUtils.toCursorResponse(
-                courseRepository.findAllCourses(lastId, size), c -> c);
+                courseRepository.findAllCourses(theme, lastId, size), c -> c);
 
         Set<Long> likedCourseIds = likeService.getLikedTargetIds(userId, TargetType.COURSE);
 

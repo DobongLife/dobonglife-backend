@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.course.application.dto.CourseRegisterResponse
 import com.umust.dobonglife.domain.course.application.dto.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.application.dto.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.application.dto.UpdateCourseRequest;
+import com.umust.dobonglife.domain.place.domain.vo.Theme;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -41,9 +42,10 @@ public class CourseController {
     @GetMapping
     public BaseResponse<CursorResponse<CourseSummaryResponse>> getAllCourses(
             @CurrentUserId Long userId,
+            @RequestParam(required = false) Theme theme,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.COURSE) int size) {
-        return BaseResponse.ok(courseService.getAllCourses(userId, lastId, size));
+        return BaseResponse.ok(courseService.getAllCourses(userId, theme, lastId, size));
     }
 
     @GetMapping("/{courseId}")
