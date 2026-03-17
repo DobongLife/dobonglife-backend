@@ -1,5 +1,6 @@
 package com.umust.dobonglife.domain.like.application;
 
+import com.umust.dobonglife.domain.like.application.dto.MyLikedCourseResponse;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
 import com.umust.dobonglife.domain.like.domain.entity.Like;
 import com.umust.dobonglife.domain.like.domain.repository.LikeRepository;
@@ -34,6 +35,12 @@ public class LikeService {
     @Transactional(readOnly = true)
     public CursorResponse<MyLikedPlaceResponse> getMyLikedPlaces(Long userId, Long lastId, int size) {
         Slice<MyLikedPlaceResponse> result = likeRepository.findMyLikedPlaces(userId, lastId, size);
+        return CursorUtils.toCursorResponse(result, response -> response);
+    }
+
+    @Transactional(readOnly = true)
+    public CursorResponse<MyLikedCourseResponse> getMyLikedCourses(Long userId, Long lastId, int size) {
+        Slice<MyLikedCourseResponse> result = likeRepository.findMyLikedCourses(userId, lastId, size);
         return CursorUtils.toCursorResponse(result, response -> response);
     }
 

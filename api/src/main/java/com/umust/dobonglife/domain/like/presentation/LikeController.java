@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.like.presentation;
 
 import com.umust.dobonglife.domain.like.application.LikeService;
+import com.umust.dobonglife.domain.like.application.dto.MyLikedCourseResponse;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
@@ -31,6 +32,22 @@ public class LikeController {
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.PLACE) int size) {
         CursorResponse<MyLikedPlaceResponse> response = likeService.getMyLikedPlaces(userId, lastId, size);
+        return ResponseEntity.ok(BaseResponse.ok(response));
+    }
+
+    @PostMapping("/course/{courseId}")
+    public ResponseEntity<BaseResponse<Void>> likeCourse(@CurrentUserId Long userId,
+                                                         @PathVariable Long courseId) {
+        likeService.toggleLike(userId, TargetType.COURSE, courseId);
+        return ResponseEntity.ok(BaseResponse.ok(null));
+    }
+
+    @GetMapping("/course/my")
+    public ResponseEntity<BaseResponse<CursorResponse<MyLikedCourseResponse>>> getMyLikedCourses(
+            @CurrentUserId Long userId,
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = PageSizeType.COURSE) int size) {
+        CursorResponse<MyLikedCourseResponse> response = likeService.getMyLikedCourses(userId, lastId, size);
         return ResponseEntity.ok(BaseResponse.ok(response));
     }
 }
