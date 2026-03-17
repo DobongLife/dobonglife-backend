@@ -22,7 +22,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
 
     public Place getPlace(Long placeId) {
-        return placeRepository.findById(placeId)
+        return placeRepository.findByIdAndStatus(placeId, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new PlaceException(PlaceErrorCode.PLACE_NOT_FOUND));
     }
 
