@@ -57,6 +57,14 @@ public class CourseController {
         return BaseResponse.ok(courseService.getAllCourses(userId, theme, lastId, size));
     }
 
+    @DeleteMapping("/{courseId}")
+    public BaseResponse<Void> deleteCourse(
+            @CurrentUserId Long userId,
+            @PathVariable Long courseId) {
+        courseService.deleteCourse(userId, courseId);
+        return BaseResponse.ok(null);
+    }
+
     @GetMapping("/{courseId}")
     public BaseResponse<CourseDetailResponse> getCourseDetail(
             @PathVariable Long courseId,

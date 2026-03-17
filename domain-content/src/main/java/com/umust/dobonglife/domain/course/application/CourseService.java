@@ -82,4 +82,15 @@ public class CourseService {
 
         return CourseRegisterResponse.from(course.getId());
     }
+
+    @Transactional
+    public void deleteCourse(Long userId, Long courseId) {
+        Course course = getCourse(courseId);
+
+        if (!course.isOwner(userId)) {
+            throw new CourseException(CourseErrorCode.NOT_OWNER);
+        }
+
+        course.deactivate();
+    }
 }
