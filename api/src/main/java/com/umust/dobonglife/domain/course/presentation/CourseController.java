@@ -3,11 +3,15 @@ package com.umust.dobonglife.domain.course.presentation;
 import com.umust.dobonglife.domain.course.application.CourseDetailService;
 import com.umust.dobonglife.domain.course.application.CourseService;
 import com.umust.dobonglife.domain.course.application.dto.CourseDetailResponse;
+import com.umust.dobonglife.domain.course.application.dto.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.application.dto.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.application.dto.CreateCourseRequest;
+import com.umust.dobonglife.domain.course.application.dto.UpdateCourseRequest;
 import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +22,21 @@ public class CourseController {
 
     private final CourseService courseService;
     private final CourseDetailService courseDetailService;
+
+    @PostMapping
+    public BaseResponse<CourseRegisterResponse> createCourse(
+            @CurrentUserId Long userId,
+            @RequestBody @Valid CreateCourseRequest request) {
+        return BaseResponse.ok(courseService.createCourse(userId, request));
+    }
+
+    @PatchMapping("/{courseId}")
+    public BaseResponse<CourseRegisterResponse> updateCourse(
+            @CurrentUserId Long userId,
+            @PathVariable Long courseId,
+            @RequestBody @Valid UpdateCourseRequest request) {
+        return BaseResponse.ok(courseService.updateCourse(userId, courseId, request));
+    }
 
     @GetMapping
     public BaseResponse<CursorResponse<CourseSummaryResponse>> getAllCourses(

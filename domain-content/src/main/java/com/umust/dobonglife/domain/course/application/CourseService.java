@@ -1,6 +1,9 @@
 package com.umust.dobonglife.domain.course.application;
 
+import com.umust.dobonglife.domain.course.application.dto.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.application.dto.CourseSummaryResponse;
+import com.umust.dobonglife.domain.course.application.dto.CreateCourseRequest;
+import com.umust.dobonglife.domain.course.application.dto.UpdateCourseRequest;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.exception.CourseErrorCode;
@@ -11,7 +14,6 @@ import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,5 +39,36 @@ public class CourseService {
         Set<Long> likedCourseIds = likeService.getLikedTargetIds(userId, TargetType.COURSE);
 
         return CursorUtils.convert(response, c -> c.withLiked(likedCourseIds.contains(c.courseId())));
+    }
+
+    @Transactional
+    public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request) {
+        Course course = request.toEntity(userId);
+        courseRepository.save(course);
+        return CourseRegisterResponse.from(course.getId());
+    }
+
+    @Transactional
+    public CourseRegisterResponse updateCourse(Long userId, Long courseId, UpdateCourseRequest request) {
+        Course course = getCourse(courseId);
+
+        if (!course.isOwner(userId)) {
+            throw new CourseException(CourseErrorCode.NOT_OWNER);
+        }
+
+        course.update(
+                request.title(),
+                request.subTitle(),
+                request.level(),
+                request.duration(),
+                request.content(),
+                request.newImageUrls(),
+                request.deleteImageUrls(),
+                request.toCourseThemes(),
+                request.toCoursePlans(),
+                request.toCourseTags()
+        );
+
+        return CourseRegisterResponse.from(course.getId());
     }
 }

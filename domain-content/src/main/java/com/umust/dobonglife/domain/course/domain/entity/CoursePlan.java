@@ -23,4 +23,13 @@ public class CoursePlan {
     private String title;
     @Column(length = 100)
     private String content;
+
+    public static CoursePlan of(Long placeId, Short sortOrder, String title, String content) {
+        CoursePlan plan = new CoursePlan();
+        plan.placeId = placeId;
+        plan.sortOrder = sortOrder;
+        plan.title = title;
+        plan.content = content;
+        return plan;
+    }
 }
