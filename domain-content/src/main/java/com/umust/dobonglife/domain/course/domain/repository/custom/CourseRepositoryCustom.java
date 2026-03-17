@@ -7,4 +7,6 @@ import org.springframework.data.domain.Slice;
 public interface CourseRepositoryCustom {
 
     Slice<CourseSummaryResponse> findAllCourses(Theme theme, Long lastId, int size);
+
+    Slice<CourseSummaryResponse> findMyCourses(Long userId, Long lastId, int size);
 }

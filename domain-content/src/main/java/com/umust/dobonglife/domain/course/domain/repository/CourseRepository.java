@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, Long>, CourseRepositoryCustom {
 
     Optional<Course> findByIdAndStatus(Long id, BaseStatus status);
+
+    long countByUserIdAndStatus(Long userId, BaseStatus status);
 }

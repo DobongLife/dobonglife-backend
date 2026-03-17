@@ -3,6 +3,7 @@ package com.umust.dobonglife.domain.course.application;
 import com.umust.dobonglife.domain.course.application.dto.CourseRegisterResponse;
 import com.umust.dobonglife.domain.course.application.dto.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.application.dto.CreateCourseRequest;
+import com.umust.dobonglife.domain.course.application.dto.MyCourseResponse;
 import com.umust.dobonglife.domain.course.application.dto.UpdateCourseRequest;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
@@ -40,6 +41,15 @@ public class CourseService {
         Set<Long> likedCourseIds = likeService.getLikedTargetIds(userId, TargetType.COURSE);
 
         return CursorUtils.convert(response, c -> c.withLiked(likedCourseIds.contains(c.courseId())));
+    }
+
+    public MyCourseResponse getMyCourses(Long userId, Long lastId, int size) {
+        long totalCount = courseRepository.countByUserIdAndStatus(userId, BaseStatus.ACTIVE);
+
+        CursorResponse<CourseSummaryResponse> courses = CursorUtils.toCursorResponse(
+                courseRepository.findMyCourses(userId, lastId, size), c -> c);
+
+        return MyCourseResponse.of(totalCount, courses);
     }
 
     @Transactional
