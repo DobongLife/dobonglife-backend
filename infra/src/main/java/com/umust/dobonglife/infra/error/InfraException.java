@@ -1,6 +1,6 @@
 package com.umust.dobonglife.infra.error;
 
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.common.error.exception.BusinessException;
 
 public class InfraException extends BusinessException {
 

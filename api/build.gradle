@@ -9,10 +9,12 @@ configurations {
 dependencies {
     implementation project(':core')
     implementation project(':infra')
+    implementation project(':application')
     implementation project(':domain-coupon')
     implementation project(':domain-promotion')
     implementation project(':domain-business')
     implementation project(':domain-user')
+    implementation project(':domain-auth')
     implementation project(':domain-point')
 
     // Spring Web
