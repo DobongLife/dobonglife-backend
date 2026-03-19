@@ -25,7 +25,7 @@ public class CourseDetailService {
 
         boolean isLiked = likeService.isLiked(userId, TargetType.COURSE, courseId);
 
-        CursorResponse<ReviewSummaryResponse> reviews = reviewService.getCourseReviews(courseId, lastId, size);
+        CursorResponse<ReviewSummaryResponse> reviews = reviewService.getReviews(TargetType.COURSE, courseId, lastId, size);
 
         return CourseDetailResponse.of(course, isLiked, reviews);
     }

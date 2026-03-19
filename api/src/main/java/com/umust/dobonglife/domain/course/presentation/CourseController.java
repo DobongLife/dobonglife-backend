@@ -70,7 +70,7 @@ public class CourseController {
             @PathVariable Long courseId,
             @CurrentUserId Long userId,
             @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "2") int size) {
+            @RequestParam(defaultValue = PageSizeType.REVIEW_PREVIEW) int size) {
         return BaseResponse.ok(courseDetailService.getCourseDetail(courseId, userId, lastId, size));
     }
 }

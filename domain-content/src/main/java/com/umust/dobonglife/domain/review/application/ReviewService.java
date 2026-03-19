@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
 import com.umust.dobonglife.domain.review.exception.ReviewErrorCode;
 import com.umust.dobonglife.domain.review.exception.ReviewException;
+import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -49,13 +50,8 @@ public class ReviewService {
         return ReviewRegisterResponse.from(review);
     }
 
-    public CursorResponse<ReviewSummaryResponse> getPlaceReviews(Long placeId, Long lastId, int size) {
-        Slice<ReviewSummaryResponse> slice = reviewRepository.findReviewsByPlaceId(placeId, lastId, size);
-        return CursorUtils.toCursorResponse(slice, r -> r);
-    }
-
-    public CursorResponse<ReviewSummaryResponse> getCourseReviews(Long courseId, Long lastId, int size) {
-        Slice<ReviewSummaryResponse> slice = reviewRepository.findReviewsByCourseId(courseId, lastId, size);
+    public CursorResponse<ReviewSummaryResponse> getReviews(TargetType targetType, Long targetId, Long lastId, int size) {
+        Slice<ReviewSummaryResponse> slice = reviewRepository.findReviews(targetType, targetId, lastId, size);
         return CursorUtils.toCursorResponse(slice, r -> r);
     }
 }

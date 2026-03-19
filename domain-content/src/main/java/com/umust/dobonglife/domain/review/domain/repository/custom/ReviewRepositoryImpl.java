@@ -21,7 +21,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<ReviewSummaryResponse> findReviewsByPlaceId(Long placeId, Long lastId, int size) {
+    public Slice<ReviewSummaryResponse> findReviews(TargetType targetType, Long targetId, Long lastId, int size) {
         List<ReviewSummaryResponse> content = queryFactory
                 .select(Projections.constructor(ReviewSummaryResponse.class,
                         review.id,
@@ -33,38 +33,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 ))
                 .from(review)
                 .where(
-                        review.targetId.eq(placeId),
-                        review.targetType.eq(TargetType.PLACE),
-                        review.reviewStatus.eq(ReviewStatus.POSTED),
-                        lastIdCondition(lastId)
-                )
-                .orderBy(review.id.desc())
-                .limit(size + 1)
-                .fetch();
-
-        boolean hasNext = content.size() > size;
-        if (hasNext) {
-            content = content.subList(0, size);
-        }
-
-        return new SliceImpl<>(content, PageRequest.of(0, size), hasNext);
-    }
-
-    @Override
-    public Slice<ReviewSummaryResponse> findReviewsByCourseId(Long courseId, Long lastId, int size) {
-        List<ReviewSummaryResponse> content = queryFactory
-                .select(Projections.constructor(ReviewSummaryResponse.class,
-                        review.id,
-                        review.userId,
-                        review.rating,
-                        review.content,
-                        review.thumbnailUrl,
-                        review.createdAt
-                ))
-                .from(review)
-                .where(
-                        review.targetId.eq(courseId),
-                        review.targetType.eq(TargetType.COURSE),
+                        review.targetId.eq(targetId),
+                        review.targetType.eq(targetType),
                         review.reviewStatus.eq(ReviewStatus.POSTED),
                         lastIdCondition(lastId)
                 )

@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.place.application.PlaceReviewService;
 import com.umust.dobonglife.domain.place.application.dto.PlaceDetailResponse;
 import com.umust.dobonglife.domain.place.application.dto.PlaceSummaryResponse;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
+import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.composition.PlaceListFacade;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class PlaceController {
             @PathVariable Long placeId,
             @CurrentUserId Long userId,
             @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "2") int size) {
+            @RequestParam(defaultValue = PageSizeType.REVIEW_PREVIEW) int size) {
         return BaseResponse.ok(placeReviewService.getPlaceDetail(placeId, userId, lastId, size));
     }
 }
