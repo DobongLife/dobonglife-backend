@@ -55,6 +55,9 @@ public class S3Utils implements ImageUploader {
     private static final int MAX_PRESIGNED_URLS = 10;
 
     public PresignedUrlResult generatePresignedUrl(String extension) {
+        if (extension == null || extension.isBlank()) {
+            throw new InfraException(InfraErrorCode.INVALID_IMAGE);
+        }
         String ext = extension.toLowerCase();
         if (!FILE_EXTENSIONS.contains(ext)) {
             throw new InfraException(InfraErrorCode.UNSUPPORTED_IMAGE_FORMAT);
