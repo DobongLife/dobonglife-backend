@@ -10,12 +10,10 @@ dependencies {
     implementation project(':core')
     implementation project(':infra')
     implementation project(':application')
-    implementation project(':domain-coupon')
-    implementation project(':domain-promotion')
-    implementation project(':domain-business')
-    implementation project(':domain-user')
+    implementation project(':domain-commerce')
+    implementation project(':domain-content')
     implementation project(':domain-auth')
-    implementation project(':domain-point')
+    runtimeOnly project(':domain-user')
 
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'

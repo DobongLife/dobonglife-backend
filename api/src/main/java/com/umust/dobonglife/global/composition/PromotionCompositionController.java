@@ -1,8 +1,6 @@
 package com.umust.dobonglife.global.composition;
 
 import com.umust.dobonglife.application.coupon.ExchangeOrchestrator;
-import com.umust.dobonglife.application.promotion.PromotionFacade;
-import com.umust.dobonglife.application.promotion.dto.PromotionWithBlockedResponse;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
@@ -10,6 +8,8 @@ import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionU
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
+import com.umust.dobonglife.application.promotion.PromotionFacade;
+import com.umust.dobonglife.application.promotion.dto.PromotionWithBlockedResponse;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -31,12 +31,12 @@ public class PromotionCompositionController {
     private final ExchangeOrchestrator exchangeOrchestrator;
 
     @GetMapping
-    public BaseResponse<PromotionWithBlockedResponse> getPromotionsWithBlocked(
+    public ResponseEntity<BaseResponse<PromotionWithBlockedResponse>> getPromotionsWithBlocked(
             @CurrentUserId Long userId,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.PROMOTION) int size) {
-        return BaseResponse.ok(
-                promotionFacade.getPromotionsWithBlocked(userId, lastId, size));
+        return ResponseEntity.ok(BaseResponse.ok(
+                promotionFacade.getPromotionsWithBlocked(userId, lastId, size)));
     }
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
