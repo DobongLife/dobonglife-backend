@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.point.exception;
 
-import com.umust.dobonglife.global.error.ErrorCode;
+import com.umust.dobonglife.global.common.error.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -16,4 +16,10 @@ public enum PointErrorCode implements ErrorCode {
 
     private final HttpStatus httpStatus;
     private final String message;
+
+    @Override
+    public int getStatus() { return httpStatus.value(); }
+
+    @Override
+    public String getCode() { return name(); }
 }

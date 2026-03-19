@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.business.exception;
 
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.common.error.exception.BusinessException;
 
 public class BusinessDomainException extends BusinessException {
 

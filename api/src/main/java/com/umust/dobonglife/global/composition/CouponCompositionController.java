@@ -1,9 +1,10 @@
 package com.umust.dobonglife.global.composition;
 
+import com.umust.dobonglife.application.coupon.CouponFacade;
+import com.umust.dobonglife.application.coupon.dto.CouponUsedResponse;
+import com.umust.dobonglife.application.coupon.dto.MyCouponGetResponse;
 import com.umust.dobonglife.global.composition.dto.request.CouponUseRequest;
-import com.umust.dobonglife.global.composition.dto.response.CouponUsedResponse;
-import com.umust.dobonglife.global.composition.dto.response.MyCouponGetResponse;
-import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class CouponCompositionController {
     public ResponseEntity<BaseResponse<CouponUsedResponse>> useCoupon(@CurrentUserId Long userId,
                                                                       @PathVariable Long couponId,
                                                                       @RequestBody CouponUseRequest request){
-        return ResponseEntity.ok(BaseResponse.ok(couponFacade.useCoupon(request, couponId, userId)));
-
+        return ResponseEntity.ok(BaseResponse.ok(
+                couponFacade.useCoupon(request.promotionId(), request.code(), couponId, userId)));
     }
 }

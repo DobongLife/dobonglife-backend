@@ -1,5 +1,6 @@
-package com.umust.dobonglife.global.composition;
+package com.umust.dobonglife.application.promotion;
 
+import com.umust.dobonglife.application.promotion.dto.PromotionWithBlockedResponse;
 import com.umust.dobonglife.domain.promotion.application.PresetService;
 import com.umust.dobonglife.domain.promotion.application.PromotionService;
 import com.umust.dobonglife.domain.promotion.application.dto.PromotionSummary;
@@ -10,10 +11,9 @@ import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionU
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
-import com.umust.dobonglife.global.composition.dto.response.PromotionWithBlockedResponse;
+import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
 import com.umust.dobonglife.global.common.constant.Category;
 import com.umust.dobonglife.global.port.BusinessPort;
-import com.umust.dobonglife.global.port.UserPort;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,11 +27,11 @@ public class PromotionFacade {
 
     private final PromotionService promotionService;
     private final PresetService presetService;
-    private final UserPort userPort;
+    private final GetUserUseCase getUserUseCase;
     private final BusinessPort businessPort;
 
     public PromotionWithBlockedResponse getPromotionsWithBlocked(Long userId, Long lastId, int size) {
-        boolean blocked = userPort.isUserBlocked(userId);
+        boolean blocked = getUserUseCase.isBlockedUser(userId);
         CursorResponse<PromotionSummary> promotions = promotionService.getPromotions(lastId, size);
         return PromotionWithBlockedResponse.of(blocked, promotions);
     }
