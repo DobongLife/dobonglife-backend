@@ -9,7 +9,7 @@ import com.umust.dobonglife.domain.course.application.dto.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.application.dto.MyCourseResponse;
 import com.umust.dobonglife.domain.course.application.dto.UpdateCourseRequest;
 import com.umust.dobonglife.domain.place.domain.vo.Theme;
-import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
