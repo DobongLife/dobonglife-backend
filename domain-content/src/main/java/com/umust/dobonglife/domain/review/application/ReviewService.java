@@ -20,4 +20,9 @@ public class ReviewService {
         Slice<ReviewSummaryResponse> slice = reviewRepository.findReviewsByPlaceId(placeId, lastId, size);
         return CursorUtils.toCursorResponse(slice, r -> r);
     }
+
+    public CursorResponse<ReviewSummaryResponse> getCourseReviews(Long courseId, Long lastId, int size) {
+        Slice<ReviewSummaryResponse> slice = reviewRepository.findReviewsByCourseId(courseId, lastId, size);
+        return CursorUtils.toCursorResponse(slice, r -> r);
+    }
 }

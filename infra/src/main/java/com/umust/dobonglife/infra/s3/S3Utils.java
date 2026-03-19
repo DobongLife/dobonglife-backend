@@ -1,7 +1,9 @@
 package com.umust.dobonglife.infra.s3;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.umust.dobonglife.global.common.image.ImageUploader;
@@ -20,6 +22,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -46,6 +49,47 @@ public class S3Utils implements ImageUploader {
     void shutdown() {
         UPLOAD_EXECUTOR.shutdown();
     }
+
+    private static final long PRESIGNED_URL_EXPIRATION_MS = 10 * 60 * 1000;
+
+    private static final int MAX_PRESIGNED_URLS = 10;
+
+    public PresignedUrlResult generatePresignedUrl(String extension) {
+        if (extension == null || extension.isBlank()) {
+            throw new InfraException(InfraErrorCode.INVALID_IMAGE);
+        }
+        String ext = extension.toLowerCase();
+        if (!FILE_EXTENSIONS.contains(ext)) {
+            throw new InfraException(InfraErrorCode.UNSUPPORTED_IMAGE_FORMAT);
+        }
+        String fileName = UUID.randomUUID() + ext;
+        String key = s3FolderName + "/" + fileName;
+
+        Date expiration = new Date(System.currentTimeMillis() + PRESIGNED_URL_EXPIRATION_MS);
+
+        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucket, key)
+                .withMethod(HttpMethod.PUT)
+                .withExpiration(expiration);
+
+        String presignedUrl = amazonS3.generatePresignedUrl(request).toString();
+        String imageUrl = amazonS3.getUrl(bucket, key).toString();
+
+        return new PresignedUrlResult(presignedUrl, imageUrl);
+    }
+
+    public List<PresignedUrlResult> generatePresignedUrls(List<String> extensions) {
+        if (extensions == null || extensions.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (extensions.size() > MAX_PRESIGNED_URLS) {
+            throw new InfraException(InfraErrorCode.IMAGE_UPLOAD_LIMIT_EXCEEDED);
+        }
+        return extensions.stream()
+                .map(this::generatePresignedUrl)
+                .toList();
+    }
+
+    public record PresignedUrlResult(String presignedUrl, String imageUrl) {}
 
     public String uploadImage(MultipartFile multipartFile){
         ObjectMetadata objectMetadata = new ObjectMetadata();

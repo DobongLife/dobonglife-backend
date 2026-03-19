@@ -50,6 +50,36 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         return new SliceImpl<>(content, PageRequest.of(0, size), hasNext);
     }
 
+    @Override
+    public Slice<ReviewSummaryResponse> findReviewsByCourseId(Long courseId, Long lastId, int size) {
+        List<ReviewSummaryResponse> content = queryFactory
+                .select(Projections.constructor(ReviewSummaryResponse.class,
+                        review.id,
+                        review.userId,
+                        review.rating,
+                        review.content,
+                        review.thumbnailUrl,
+                        review.createdAt
+                ))
+                .from(review)
+                .where(
+                        review.targetId.eq(courseId),
+                        review.targetType.eq(TargetType.COURSE),
+                        review.reviewStatus.eq(ReviewStatus.POSTED),
+                        lastIdCondition(lastId)
+                )
+                .orderBy(review.id.desc())
+                .limit(size + 1)
+                .fetch();
+
+        boolean hasNext = content.size() > size;
+        if (hasNext) {
+            content = content.subList(0, size);
+        }
+
+        return new SliceImpl<>(content, PageRequest.of(0, size), hasNext);
+    }
+
     private BooleanExpression lastIdCondition(Long lastId) {
         return lastId != null ? review.id.lt(lastId) : null;
     }

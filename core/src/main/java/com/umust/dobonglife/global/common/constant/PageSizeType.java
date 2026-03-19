@@ -5,4 +5,5 @@ public final class PageSizeType {
     public static final String PROMOTION_AD = "5";
     public static final String COUPON = "2";
     public static final String PLACE = "3";
+    public static final String COURSE = "3";
 }
