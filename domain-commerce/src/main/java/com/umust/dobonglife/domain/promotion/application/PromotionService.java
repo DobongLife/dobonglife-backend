@@ -91,7 +91,7 @@ public class PromotionService {
         if (promotionIds == null || promotionIds.isEmpty()) {
             return List.of();
         }
-        return promotionRepository.findAllById(promotionIds);
+        return promotionRepository.findAllByIdIn(promotionIds);
     }
 
     @Transactional(readOnly = true)
