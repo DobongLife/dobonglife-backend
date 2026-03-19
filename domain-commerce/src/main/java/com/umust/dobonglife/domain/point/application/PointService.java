@@ -17,6 +17,13 @@ public class PointService {
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
 
+    @Transactional(readOnly = true)
+    public Long getUserPoint(Long userId) {
+        return pointRepository.findByUserId(userId)
+                .map(Point::getBalance)
+                .orElse(0L);
+    }
+
     @Transactional
     public void deduct(Long userId, Long amount) {
         Point point = pointRepository.findByUserIdForUpdate(userId)
