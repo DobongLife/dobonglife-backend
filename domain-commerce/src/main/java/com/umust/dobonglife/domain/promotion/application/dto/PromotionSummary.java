@@ -25,7 +25,7 @@ public record PromotionSummary(Long promotionId,
                 promotion.getCategory().name(),
                 promotion.getTitle(),
                 promotion.getDescription(),
-                promotion.getThumbnail() != null ? promotion.getThumbnail().getImageUrl() : null,
+                promotion.getThumbnailUrl(),
                 promotion.getImages().stream()
                         .map(img -> img.getImageUrl())
                         .toList(),

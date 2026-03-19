@@ -17,7 +17,7 @@ public record PromotionAdSummary(
                 promotion.getCategory().name(),
                 promotion.getTitle(),
                 promotion.getDescription(),
-                promotion.getThumbnail() != null ? promotion.getThumbnail().getImageUrl() : null
+                promotion.getThumbnailUrl()
         );
     }
 

@@ -22,7 +22,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     @Query("SELECT p FROM Promotion p WHERE p.id = :id")
     Optional<Promotion> findByIdForUpdate(@Param("id") Long id);
 
-    @EntityGraph(attributePaths = {"thumbnail"})
     @Query("""
         SELECT p FROM Promotion p
         WHERE (:lastId IS NULL OR p.id < :lastId)
@@ -30,7 +29,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     """)
     Slice<Promotion> findPromotionNoOffset(@Param("lastId") Long lastId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"thumbnail"})
     @Query("""
         SELECT p FROM Promotion p
         WHERE p.priority IS NOT NULL
