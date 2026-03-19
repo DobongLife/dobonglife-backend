@@ -1,66 +1,62 @@
 package com.umust.dobonglife.domain.review.presentation;
 
-import com.umust.dobonglife.domain.review.application.ReviewService;
-import com.umust.dobonglife.domain.review.application.dto.CreateReviewRequest;
-import com.umust.dobonglife.domain.review.application.dto.MyReviewResponse;
-import com.umust.dobonglife.domain.review.application.dto.ReviewRegisterResponse;
-import com.umust.dobonglife.domain.review.application.dto.ReviewSummaryResponse;
-import com.umust.dobonglife.domain.review.application.dto.UpdateReviewRequest;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
-import jakarta.validation.Valid;
+import com.umust.dobonglife.global.port.content.ReviewPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/review")
 @RequiredArgsConstructor
 public class ReviewController {
 
-    private final ReviewService reviewService;
+    private final ReviewPort reviewPort;
 
     @PostMapping
-    public ResponseEntity<BaseResponse<ReviewRegisterResponse>> registerReview(
+    public ResponseEntity<BaseResponse<Map<String, Object>>> registerReview(
             @CurrentUserId Long userId,
-            @RequestBody @Valid CreateReviewRequest request) {
-        return ResponseEntity.ok(BaseResponse.ok(reviewService.createReview(userId, request)));
+            @RequestBody Map<String, Object> request) {
+        return ResponseEntity.ok(BaseResponse.ok(reviewPort.createReview(userId, request)));
     }
 
     @PatchMapping("/{reviewId}")
-    public ResponseEntity<BaseResponse<ReviewRegisterResponse>> updateReview(
+    public ResponseEntity<BaseResponse<Map<String, Object>>> updateReview(
             @CurrentUserId Long userId,
             @PathVariable Long reviewId,
-            @RequestBody @Valid UpdateReviewRequest request) {
-        return ResponseEntity.ok(BaseResponse.ok(reviewService.updateReview(reviewId, userId, request)));
+            @RequestBody Map<String, Object> request) {
+        return ResponseEntity.ok(BaseResponse.ok(reviewPort.updateReview(reviewId, userId, request)));
     }
 
     @GetMapping("/{targetType}/{targetId}")
-    public ResponseEntity<BaseResponse<CursorResponse<ReviewSummaryResponse>>> getReviews(
+    public ResponseEntity<BaseResponse<CursorResponse<Map<String, Object>>>> getReviews(
             @PathVariable TargetType targetType,
             @PathVariable Long targetId,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.REVIEW) int size) {
-        return ResponseEntity.ok(BaseResponse.ok(reviewService.getReviews(targetType, targetId, lastId, size)));
+        return ResponseEntity.ok(BaseResponse.ok(reviewPort.getReviews(targetType, targetId, lastId, size)));
     }
 
     @GetMapping("/my/{targetType}")
-    public ResponseEntity<BaseResponse<CursorResponse<MyReviewResponse>>> getMyReviews(
+    public ResponseEntity<BaseResponse<CursorResponse<Map<String, Object>>>> getMyReviews(
             @CurrentUserId Long userId,
             @PathVariable TargetType targetType,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.REVIEW) int size) {
-        return ResponseEntity.ok(BaseResponse.ok(reviewService.getMyReviews(userId, targetType, lastId, size)));
+        return ResponseEntity.ok(BaseResponse.ok(reviewPort.getMyReviews(userId, targetType, lastId, size)));
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<BaseResponse<Void>> deleteReview(
             @CurrentUserId Long userId,
             @PathVariable Long reviewId) {
-        reviewService.deleteReview(reviewId, userId);
+        reviewPort.deleteReview(reviewId, userId);
         return ResponseEntity.ok(BaseResponse.ok(null));
     }
 }

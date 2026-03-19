@@ -1,53 +1,51 @@
 package com.umust.dobonglife.domain.like.presentation;
 
-import com.umust.dobonglife.domain.like.application.LikeService;
-import com.umust.dobonglife.domain.like.application.dto.MyLikedCourseResponse;
-import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
+import com.umust.dobonglife.global.port.content.LikePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/like")
 @RequiredArgsConstructor
 public class LikeController {
 
-    private final LikeService likeService;
+    private final LikePort likePort;
 
     @PostMapping("/place/{placeId}")
     public ResponseEntity<BaseResponse<Boolean>> likePlace(@CurrentUserId Long userId,
                                                            @PathVariable Long placeId) {
-        boolean liked = likeService.toggleLike(userId, TargetType.PLACE, placeId);
+        boolean liked = likePort.toggleLike(userId, TargetType.PLACE, placeId);
         return ResponseEntity.ok(BaseResponse.ok(liked));
     }
 
     @GetMapping("/place/my")
-    public ResponseEntity<BaseResponse<CursorResponse<MyLikedPlaceResponse>>> getMyLikedPlaces(
+    public ResponseEntity<BaseResponse<CursorResponse<Map<String, Object>>>> getMyLikedPlaces(
             @CurrentUserId Long userId,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.PLACE) int size) {
-        CursorResponse<MyLikedPlaceResponse> response = likeService.getMyLikedPlaces(userId, lastId, size);
-        return ResponseEntity.ok(BaseResponse.ok(response));
+        return ResponseEntity.ok(BaseResponse.ok(likePort.getMyLikedPlaces(userId, lastId, size)));
     }
 
     @PostMapping("/course/{courseId}")
     public ResponseEntity<BaseResponse<Boolean>> likeCourse(@CurrentUserId Long userId,
                                                             @PathVariable Long courseId) {
-        boolean liked = likeService.toggleLike(userId, TargetType.COURSE, courseId);
+        boolean liked = likePort.toggleLike(userId, TargetType.COURSE, courseId);
         return ResponseEntity.ok(BaseResponse.ok(liked));
     }
 
     @GetMapping("/course/my")
-    public ResponseEntity<BaseResponse<CursorResponse<MyLikedCourseResponse>>> getMyLikedCourses(
+    public ResponseEntity<BaseResponse<CursorResponse<Map<String, Object>>>> getMyLikedCourses(
             @CurrentUserId Long userId,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.COURSE) int size) {
-        CursorResponse<MyLikedCourseResponse> response = likeService.getMyLikedCourses(userId, lastId, size);
-        return ResponseEntity.ok(BaseResponse.ok(response));
+        return ResponseEntity.ok(BaseResponse.ok(likePort.getMyLikedCourses(userId, lastId, size)));
     }
 }

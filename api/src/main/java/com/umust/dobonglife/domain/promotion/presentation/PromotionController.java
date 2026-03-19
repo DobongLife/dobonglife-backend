@@ -1,37 +1,33 @@
 package com.umust.dobonglife.domain.promotion.presentation;
 
-import com.umust.dobonglife.domain.promotion.application.PromotionService;
-import com.umust.dobonglife.domain.promotion.application.dto.PromotionAdSummary;
-import com.umust.dobonglife.domain.promotion.application.dto.PromotionSummary;
+import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
+import com.umust.dobonglife.global.port.commerce.PromotionPort;
+import com.umust.dobonglife.global.port.dto.commerce.PromotionAdInfo;
+import com.umust.dobonglife.global.port.dto.commerce.PromotionSummaryInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.umust.dobonglife.global.common.constant.PageSizeType;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/promotion")
 public class PromotionController {
 
-    private final PromotionService promotionService;
+    private final PromotionPort promotionPort;
 
     @GetMapping
-    public ResponseEntity<BaseResponse<CursorResponse<PromotionSummary>>> getPromotions(
+    public ResponseEntity<BaseResponse<CursorResponse<PromotionSummaryInfo>>> getPromotions(
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.PROMOTION) int size) {
-        return ResponseEntity.ok(BaseResponse.ok(promotionService.getPromotions(lastId, size)));
+        return ResponseEntity.ok(BaseResponse.ok(promotionPort.getPromotions(lastId, size)));
     }
 
-    @GetMapping("/promotion/ad")
-    public ResponseEntity<BaseResponse<CursorResponse<PromotionAdSummary>>> getAdPromotions(
+    @GetMapping("/ad")
+    public ResponseEntity<BaseResponse<CursorResponse<PromotionAdInfo>>> getAdPromotions(
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.PROMOTION_AD) int size) {
-        return ResponseEntity.ok(BaseResponse.ok(promotionService.getAdPromotions(lastId, size)));
+        return ResponseEntity.ok(BaseResponse.ok(promotionPort.getAdPromotions(lastId, size)));
     }
 }

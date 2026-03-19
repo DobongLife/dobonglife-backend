@@ -1,26 +1,19 @@
 package com.umust.dobonglife.global.composition;
 
-import com.umust.dobonglife.application.coupon.ExchangeOrchestrator;
-import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
-import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
-import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
-import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionUpdateRequest;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
-import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
-import com.umust.dobonglife.application.promotion.PromotionFacade;
-import com.umust.dobonglife.application.promotion.dto.PromotionWithBlockedResponse;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
-import jakarta.validation.Valid;
+import com.umust.dobonglife.global.composition.dto.response.PromotionWithBlockedResponse;
+import com.umust.dobonglife.global.port.commerce.ExchangePort;
+import com.umust.dobonglife.global.port.dto.commerce.PromotionPresetInfo;
+import com.umust.dobonglife.global.port.dto.commerce.PromotionRegisterInfo;
+import com.umust.dobonglife.global.port.dto.commerce.PromotionUpdateInfo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +21,7 @@ import java.util.List;
 public class PromotionCompositionController {
 
     private final PromotionFacade promotionFacade;
-    private final ExchangeOrchestrator exchangeOrchestrator;
+    private final ExchangePort exchangePort;
 
     @GetMapping
     public ResponseEntity<BaseResponse<PromotionWithBlockedResponse>> getPromotionsWithBlocked(
@@ -39,35 +32,37 @@ public class PromotionCompositionController {
                 promotionFacade.getPromotionsWithBlocked(userId, lastId, size)));
     }
 
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BaseResponse<PromotionRegisterResponse>> registerPromotion(
-            @RequestPart @Valid PromotionRegisterRequest request,
-            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
-            Long userId) {
+    @PostMapping("/register")
+    public ResponseEntity<BaseResponse<PromotionRegisterInfo>> registerPromotion(
+            @RequestBody Map<String, Object> request,
+            @CurrentUserId Long userId) {
+        List<String> imageUrls = request.containsKey("imageUrls") ? (List<String>) request.get("imageUrls") : List.of();
         return ResponseEntity.ok(BaseResponse.ok(
-                promotionFacade.registerPromotion(request, userId, imageFiles)));
+                promotionFacade.registerPromotion(request, userId, imageUrls)));
     }
 
     @PatchMapping("/update/{promotionId}")
-    public ResponseEntity<BaseResponse<PromotionUpdateResponse>> updatePromotion(
+    public ResponseEntity<BaseResponse<PromotionUpdateInfo>> updatePromotion(
             @PathVariable Long promotionId,
-            @RequestBody @Valid PromotionUpdateRequest request,
+            @RequestBody Map<String, Object> request,
             @CurrentUserId Long userId) {
         return ResponseEntity.ok(BaseResponse.ok(
-                promotionFacade.modifyPromotion(request, promotionId, userId)));
+                promotionFacade.modifyPromotion(
+                        (String) request.get("title"),
+                        (String) request.get("description"),
+                        Long.valueOf(request.get("totalQuantity").toString()),
+                        promotionId, userId)));
     }
 
     @GetMapping("/preset")
-    public ResponseEntity<BaseResponse<PromotionPresetResponse>> getPreset(@CurrentUserId Long userId) {
+    public ResponseEntity<BaseResponse<PromotionPresetInfo>> getPreset(@CurrentUserId Long userId) {
         return ResponseEntity.ok(BaseResponse.ok(promotionFacade.getPreset(userId)));
     }
 
     @PostMapping("/{promotionId}/exchange")
-    public ResponseEntity<BaseResponse<ExchangeResponse>> exchangeCoupon(
+    public ResponseEntity<BaseResponse<Map<String, Object>>> exchangeCoupon(
             @PathVariable Long promotionId,
             @CurrentUserId Long userId) {
-        ExchangeRequest request = new ExchangeRequest(userId, promotionId);
-        ExchangeResponse response = exchangeOrchestrator.execute(request);
-        return ResponseEntity.ok(BaseResponse.ok(response));
+        return ResponseEntity.ok(BaseResponse.ok(exchangePort.exchange(userId, promotionId)));
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ContentPlaceClient implements PlacePort {
@@ -22,6 +23,20 @@ public class ContentPlaceClient implements PlacePort {
     public List<PlaceSummaryInfo> getAllActivePlaces(Long userId) {
         return restClient.get()
                 .uri("/internal/place/active?userId={userId}", userId)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
+    }
+
+    @Override
+    public Map<String, Object> getPlaceDetail(Long placeId, Long userId, Long lastId, int size) {
+        return restClient.get()
+                .uri(uriBuilder -> {
+                    uriBuilder.path("/internal/place/{placeId}/detail")
+                            .queryParam("userId", userId)
+                            .queryParam("size", size);
+                    if (lastId != null) uriBuilder.queryParam("lastId", lastId);
+                    return uriBuilder.build(placeId);
+                })
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
     }
