@@ -1,6 +1,6 @@
 package com.umust.dobonglife.global.composition;
 
-import com.umust.dobonglife.domain.coupon.application.ExchangeOrchestrator;
+import com.umust.dobonglife.application.coupon.ExchangeOrchestrator;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
@@ -8,9 +8,9 @@ import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionU
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
-import com.umust.dobonglife.global.common.model.BaseEntity;
-import com.umust.dobonglife.global.composition.dto.response.PromotionWithBlockedResponse;
-import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.application.promotion.PromotionFacade;
+import com.umust.dobonglife.application.promotion.dto.PromotionWithBlockedResponse;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import jakarta.validation.Valid;

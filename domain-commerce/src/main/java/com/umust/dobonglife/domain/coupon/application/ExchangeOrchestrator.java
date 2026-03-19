@@ -5,20 +5,11 @@ import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import com.umust.dobonglife.domain.coupon.domain.entity.ExchangeSaga;
 import com.umust.dobonglife.domain.coupon.domain.repository.ExchangeSagaRepository;
 import com.umust.dobonglife.domain.coupon.domain.vo.SagaStatus;
-<<<<<<<< HEAD:domain-commerce/src/main/java/com/umust/dobonglife/domain/coupon/application/ExchangeOrchestrator.java
 import com.umust.dobonglife.domain.point.application.PointService;
 import com.umust.dobonglife.domain.promotion.application.PromotionService;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
-import com.umust.dobonglife.global.common.event.CouponIssuedEvent;
-import com.umust.dobonglife.global.port.UserPort;
-========
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.global.common.event.CouponIssuedEvent;
-import com.umust.dobonglife.global.port.CouponPort;
-import com.umust.dobonglife.global.port.PointPort;
-import com.umust.dobonglife.global.port.PromotionPort;
-import com.umust.dobonglife.global.port.dto.PromotionInfo;
->>>>>>>> refactor/ddd-restructure:application/src/main/java/com/umust/dobonglife/application/coupon/ExchangeOrchestrator.java
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -30,17 +21,10 @@ import org.springframework.stereotype.Service;
 public class ExchangeOrchestrator {
 
     private final ExchangeSagaRepository sagaRepository;
-<<<<<<<< HEAD:domain-commerce/src/main/java/com/umust/dobonglife/domain/coupon/application/ExchangeOrchestrator.java
-    private final UserPort userPort;
+    private final ManageUserUseCase manageUserUseCase;
     private final PointService pointService;
     private final PromotionService promotionService;
     private final CouponService couponService;
-========
-    private final ManageUserUseCase manageUserUseCase;
-    private final PointPort pointPort;
-    private final PromotionPort promotionPort;
-    private final CouponPort couponPort;
->>>>>>>> refactor/ddd-restructure:application/src/main/java/com/umust/dobonglife/application/coupon/ExchangeOrchestrator.java
     private final ApplicationEventPublisher eventPublisher;
 
     public ExchangeResponse execute(ExchangeRequest request) {

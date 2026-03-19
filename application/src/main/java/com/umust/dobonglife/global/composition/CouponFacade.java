@@ -10,15 +10,6 @@ import com.umust.dobonglife.domain.promotion.application.PromotionService;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
-<<<<<<<< HEAD:application/src/main/java/com/umust/dobonglife/global/composition/CouponFacade.java
-import com.umust.dobonglife.global.composition.dto.CouponSummary;
-import com.umust.dobonglife.global.composition.dto.request.CouponUseRequest;
-import com.umust.dobonglife.global.composition.dto.response.CouponUsedResponse;
-import com.umust.dobonglife.global.composition.dto.response.MyCouponGetResponse;
-========
-import com.umust.dobonglife.global.port.PromotionPort;
-import com.umust.dobonglife.global.port.dto.PromotionInfo;
->>>>>>>> refactor/ddd-restructure:application/src/main/java/com/umust/dobonglife/application/coupon/CouponFacade.java
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -53,16 +44,8 @@ public class CouponFacade {
         return new MyCouponGetResponse(status, myCouponList);
     }
 
-<<<<<<<< HEAD:application/src/main/java/com/umust/dobonglife/global/composition/CouponFacade.java
-    public CouponUsedResponse useCoupon(CouponUseRequest request, Long couponId, Long userId) {
-        Long promotionId = request.promotionId();
-        String code = request.code();
-
-        promotionService.validateCode(promotionId, code);
-========
     public CouponUsedResponse useCoupon(Long promotionId, String code, Long couponId, Long userId) {
-        promotionPort.validateCode(promotionId, code);
->>>>>>>> refactor/ddd-restructure:application/src/main/java/com/umust/dobonglife/application/coupon/CouponFacade.java
+        promotionService.validateCode(promotionId, code);
         couponService.useCoupon(couponId, userId);
         return CouponUsedResponse.of(couponId);
     }
