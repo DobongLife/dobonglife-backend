@@ -50,9 +50,9 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                         like.userId.eq(userId),
                         like.targetType.eq(TargetType.PLACE),
                         place.status.eq(BaseStatus.ACTIVE),
-                        lastIdCondition(lastId)
+                        placeCursorCondition(lastId)
                 )
-                .orderBy(like.id.desc())
+                .orderBy(place.id.desc())
                 .limit(size + 1)
                 .fetch();
 
@@ -121,9 +121,9 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                         like.userId.eq(userId),
                         like.targetType.eq(TargetType.COURSE),
                         course.status.eq(BaseStatus.ACTIVE),
-                        lastIdCondition(lastId)
+                        courseCursorCondition(lastId)
                 )
-                .orderBy(like.id.desc())
+                .orderBy(course.id.desc())
                 .limit(size + 1)
                 .fetch();
 
@@ -170,7 +170,11 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                 ));
     }
 
-    private BooleanExpression lastIdCondition(Long lastId) {
-        return lastId != null ? like.id.lt(lastId) : null;
+    private BooleanExpression placeCursorCondition(Long lastId) {
+        return lastId != null ? place.id.lt(lastId) : null;
+    }
+
+    private BooleanExpression courseCursorCondition(Long lastId) {
+        return lastId != null ? course.id.lt(lastId) : null;
     }
 }
