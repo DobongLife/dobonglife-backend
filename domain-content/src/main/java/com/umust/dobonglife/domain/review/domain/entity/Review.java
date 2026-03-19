@@ -38,9 +38,7 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReviewStatus reviewStatus;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "thumbnail_id")
-    private ReviewImage thumbnail;
+    private String thumbnailUrl;
 
     @BatchSize(size = 50)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -66,9 +64,8 @@ public class Review extends BaseEntity {
 
     public void attachImages(List<String> imageUrls) {
         if (imageUrls == null || imageUrls.isEmpty()) return;
-        List<ReviewImage> reviewImages = ReviewImage.ofUrls(imageUrls);
-        this.thumbnail = reviewImages.get(0);
-        this.images.addAll(reviewImages);
+        this.thumbnailUrl = imageUrls.get(0);
+        this.images.addAll(ReviewImage.ofUrls(imageUrls));
     }
 
     public void delete() {

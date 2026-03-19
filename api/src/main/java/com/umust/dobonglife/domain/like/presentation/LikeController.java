@@ -3,7 +3,7 @@ package com.umust.dobonglife.domain.like.presentation;
 import com.umust.dobonglife.domain.like.application.LikeService;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedCourseResponse;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
-import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
@@ -20,10 +20,10 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping("/place/{placeId}")
-    public ResponseEntity<BaseResponse<Void>> likePlace(@CurrentUserId Long userId,
-                                                        @PathVariable Long placeId) {
-        likeService.toggleLike(userId, TargetType.PLACE, placeId);
-        return ResponseEntity.ok(BaseResponse.ok(null));
+    public ResponseEntity<BaseResponse<Boolean>> likePlace(@CurrentUserId Long userId,
+                                                           @PathVariable Long placeId) {
+        boolean liked = likeService.toggleLike(userId, TargetType.PLACE, placeId);
+        return ResponseEntity.ok(BaseResponse.ok(liked));
     }
 
     @GetMapping("/place/my")

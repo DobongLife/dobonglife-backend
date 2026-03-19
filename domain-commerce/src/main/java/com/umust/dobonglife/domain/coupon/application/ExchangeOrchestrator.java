@@ -1,4 +1,4 @@
-package com.umust.dobonglife.domain.coupon.application;
+package com.umust.dobonglife.application.coupon;
 
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
@@ -8,8 +8,8 @@ import com.umust.dobonglife.domain.coupon.domain.vo.SagaStatus;
 import com.umust.dobonglife.domain.point.application.PointService;
 import com.umust.dobonglife.domain.promotion.application.PromotionService;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
+import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.global.common.event.CouponIssuedEvent;
-import com.umust.dobonglife.global.port.UserPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class ExchangeOrchestrator {
 
     private final ExchangeSagaRepository sagaRepository;
-    private final UserPort userPort;
+    private final ManageUserUseCase manageUserUseCase;
     private final PointService pointService;
     private final PromotionService promotionService;
     private final CouponService couponService;
@@ -33,7 +33,7 @@ public class ExchangeOrchestrator {
         sagaRepository.save(saga);
 
         try {
-            userPort.validateCouponExchange(request.userId());
+            manageUserUseCase.canExchangeCoupon(request.userId());
             saga.markUserValidated();
 
             Promotion promotion = promotionService.getActivePromotion(request.promotionId());
@@ -67,11 +67,9 @@ public class ExchangeOrchestrator {
     private void compensate(ExchangeSaga saga) {
         SagaStatus status = saga.getSagaStatus();
 
-        // 재고가 차감된 이후라면 재고 복원
         if (status == SagaStatus.STOCK_DEDUCTED || status == SagaStatus.COUPON_ISSUED) {
             compensateStock(saga);
         }
-        // 포인트가 차감된 이후라면 포인트 환불
         if (status == SagaStatus.POINT_DEDUCTED || status == SagaStatus.STOCK_DEDUCTED || status == SagaStatus.COUPON_ISSUED) {
             compensatePoint(saga);
         }

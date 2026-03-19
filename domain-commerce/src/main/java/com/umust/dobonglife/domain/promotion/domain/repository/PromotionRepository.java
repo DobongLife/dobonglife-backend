@@ -10,15 +10,18 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
+
+    @EntityGraph(attributePaths = {"images"})
+    List<Promotion> findAllByIdIn(List<Long> ids);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM Promotion p WHERE p.id = :id")
     Optional<Promotion> findByIdForUpdate(@Param("id") Long id);
 
-    @EntityGraph(attributePaths = {"thumbnail"})
     @Query("""
         SELECT p FROM Promotion p
         WHERE (:lastId IS NULL OR p.id < :lastId)
@@ -26,7 +29,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     """)
     Slice<Promotion> findPromotionNoOffset(@Param("lastId") Long lastId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"thumbnail"})
     @Query("""
         SELECT p FROM Promotion p
         WHERE p.priority IS NOT NULL

@@ -3,7 +3,7 @@ package com.umust.dobonglife.domain.place.presentation;
 import com.umust.dobonglife.domain.place.application.PlaceReviewService;
 import com.umust.dobonglife.domain.place.application.dto.PlaceDetailResponse;
 import com.umust.dobonglife.domain.place.application.dto.PlaceSummaryResponse;
-import com.umust.dobonglife.global.auth.resolver.CurrentUserId;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.response.BaseResponse;
 import com.umust.dobonglife.global.composition.PlaceListFacade;
 import lombok.RequiredArgsConstructor;

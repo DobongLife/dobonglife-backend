@@ -68,9 +68,7 @@ public class Promotion extends BaseEntity {
 
     private Long issuedCount;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "thumbnail_id")
-    private PromotionImage thumbnail;
+    private String thumbnailUrl;
 
     @BatchSize(size = 50)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -148,9 +146,8 @@ public class Promotion extends BaseEntity {
         if (imageUrls == null || imageUrls.isEmpty()) {
             return;
         }
-        List<PromotionImage> promotionImages = PromotionImage.ofUrls(imageUrls);
-        this.thumbnail = promotionImages.get(0);
-        this.images.addAll(promotionImages);
+        this.thumbnailUrl = imageUrls.get(0);
+        this.images.addAll(PromotionImage.ofUrls(imageUrls));
     }
 
     public void update(String title, String description, Long totalQuantity) {

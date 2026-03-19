@@ -25,7 +25,7 @@ public record PlaceSummaryResponse(
                 place.getId(),
                 place.getName(),
                 place.getCategory().name(),
-                place.getThumbnail() != null ? place.getThumbnail().getImageUrl() : null,
+                place.getThumbnailUrl(),
                 place.getAverageRating(),
                 place.getReviewCount(),
                 false,

@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.user.exception;
 
-import com.umust.dobonglife.global.error.exception.BusinessException;
+import com.umust.dobonglife.global.common.error.exception.BusinessException;
 
 public class UserException extends BusinessException {
 

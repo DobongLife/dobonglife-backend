@@ -1,4 +1,4 @@
-package com.umust.dobonglife.global.composition.dto;
+package com.umust.dobonglife.application.coupon.dto;
 
 import com.umust.dobonglife.domain.coupon.application.dto.CouponDetail;
 import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;

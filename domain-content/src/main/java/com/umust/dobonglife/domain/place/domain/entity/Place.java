@@ -39,9 +39,7 @@ public class Place extends BaseEntity {
     @Column(length = 30)
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "thumbnail_id")
-    private PlaceImage thumbnail;
+    private String thumbnailUrl;
 
     @BatchSize(size = 50)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -78,9 +76,8 @@ public class Place extends BaseEntity {
         if (imageUrls == null || imageUrls.isEmpty()) {
             throw new PlaceException(PlaceErrorCode.PLACE_IMAGE_REQUIRED);
         }
-        List<PlaceImage> placeImages = PlaceImage.ofUrls(imageUrls);
-        this.thumbnail = placeImages.get(0);
-        this.images.addAll(placeImages);
+        this.thumbnailUrl = imageUrls.get(0);
+        this.images.addAll(PlaceImage.ofUrls(imageUrls));
     }
 
     public void attachDetail(PlaceDetail detail) {
