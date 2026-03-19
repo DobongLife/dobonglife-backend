@@ -7,6 +7,7 @@ import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,12 @@ public class LikeService {
                     return false;
                 })
                 .orElseGet(() -> {
-                    likeRepository.save(Like.of(userId, targetType, targetId));
-                    return true;
+                    try {
+                        likeRepository.save(Like.of(userId, targetType, targetId));
+                        return true;
+                    } catch (DataIntegrityViolationException e) {
+                        return true;
+                    }
                 });
     }
 
