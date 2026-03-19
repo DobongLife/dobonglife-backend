@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedCourseResponse;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
 import com.umust.dobonglife.global.common.constant.TargetType;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -34,7 +35,7 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                         place.id,
                         place.name,
                         place.category.stringValue(),
-                        place.thumbnail.imageUrl,
+                        place.thumbnailUrl,
                         place.averageRating,
                         place.reviewCount,
                         Expressions.constant(true),
@@ -45,10 +46,10 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                 ))
                 .from(like)
                 .join(place).on(like.targetId.eq(place.id))
-                .leftJoin(place.thumbnail)
                 .where(
                         like.userId.eq(userId),
                         like.targetType.eq(TargetType.PLACE),
+                        place.status.eq(BaseStatus.ACTIVE),
                         lastIdCondition(lastId)
                 )
                 .orderBy(like.id.desc())
@@ -107,7 +108,7 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                         course.subTitle,
                         course.level.stringValue(),
                         course.duration,
-                        course.thumbnail.imageUrl,
+                        course.thumbnailUrl,
                         course.averageRating,
                         course.reviewCount,
                         Expressions.constant(true),
@@ -116,10 +117,10 @@ public class LikeRepositoryImpl implements LikeRepositoryCustom {
                 ))
                 .from(like)
                 .join(course).on(like.targetId.eq(course.id))
-                .leftJoin(course.thumbnail)
                 .where(
                         like.userId.eq(userId),
                         like.targetType.eq(TargetType.COURSE),
+                        course.status.eq(BaseStatus.ACTIVE),
                         lastIdCondition(lastId)
                 )
                 .orderBy(like.id.desc())
