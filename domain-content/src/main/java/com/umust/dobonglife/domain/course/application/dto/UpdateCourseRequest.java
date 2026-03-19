@@ -32,12 +32,12 @@ public record UpdateCourseRequest(
         List<String> deleteImageUrls,
 
         @NotNull @Size(min = 1)
-        List<Theme> themes,
+        List<@NotNull Theme> themes,
 
         @Valid @NotNull @Size(min = 1)
         List<CreateCourseRequest.CoursePlanRequest> plans,
 
-        List<@Size(max = 20) String> tags
+        List<@NotBlank @Size(max = 20) String> tags
 ) {
 
     public List<CourseTheme> toCourseThemes() {

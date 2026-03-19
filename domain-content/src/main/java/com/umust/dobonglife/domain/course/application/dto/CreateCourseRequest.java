@@ -28,12 +28,12 @@ public record CreateCourseRequest(
         List<String> imageUrls,
 
         @NotNull @Size(min = 1)
-        List<Theme> themes,
+        List<@NotNull Theme> themes,
 
         @Valid @NotNull @Size(min = 1)
         List<CoursePlanRequest> plans,
 
-        List<@Size(max = 20) String> tags
+        List<@NotBlank @Size(max = 20) String> tags
 ) {
 
     public Course toEntity(Long userId) {
