@@ -15,6 +15,7 @@ public enum InfraErrorCode implements ErrorCode {
     UNSUPPORTED_IMAGE_FORMAT(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "지원되지 않는 이미지 형식입니다."),
     IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 삭제에 실패했습니다."),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "저장된 이미지가 없습니다."),
+    IMAGE_UPLOAD_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "이미지 업로드 개수를 초과했습니다."),
 
     // Firebase
     FIREBASE_INITIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Firebase 초기화에 실패했습니다."),

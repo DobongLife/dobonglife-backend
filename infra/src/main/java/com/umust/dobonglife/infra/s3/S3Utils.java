@@ -52,8 +52,14 @@ public class S3Utils implements ImageUploader {
 
     private static final long PRESIGNED_URL_EXPIRATION_MS = 10 * 60 * 1000;
 
+    private static final int MAX_PRESIGNED_URLS = 10;
+
     public PresignedUrlResult generatePresignedUrl(String extension) {
-        String fileName = UUID.randomUUID() + extension;
+        String ext = extension.toLowerCase();
+        if (!FILE_EXTENSIONS.contains(ext)) {
+            throw new InfraException(InfraErrorCode.UNSUPPORTED_IMAGE_FORMAT);
+        }
+        String fileName = UUID.randomUUID() + ext;
         String key = s3FolderName + "/" + fileName;
 
         Date expiration = new Date(System.currentTimeMillis() + PRESIGNED_URL_EXPIRATION_MS);
@@ -69,6 +75,12 @@ public class S3Utils implements ImageUploader {
     }
 
     public List<PresignedUrlResult> generatePresignedUrls(List<String> extensions) {
+        if (extensions == null || extensions.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (extensions.size() > MAX_PRESIGNED_URLS) {
+            throw new InfraException(InfraErrorCode.IMAGE_UPLOAD_LIMIT_EXCEEDED);
+        }
         return extensions.stream()
                 .map(this::generatePresignedUrl)
                 .toList();
