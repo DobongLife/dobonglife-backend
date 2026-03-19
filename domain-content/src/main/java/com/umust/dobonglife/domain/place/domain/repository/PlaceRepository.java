@@ -31,12 +31,12 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Modifying
     @Query("""
         UPDATE Place p SET
-            p.reviewCount = CASE WHEN p.reviewCount > 0 THEN p.reviewCount - 1 ELSE 0 END,
-            p.ratingSum = CASE WHEN p.ratingSum >= :rating THEN p.ratingSum - :rating ELSE 0 END,
+            p.reviewCount = p.reviewCount - 1,
+            p.ratingSum = p.ratingSum - :rating,
             p.averageRating = CASE WHEN p.reviewCount > 1
                 THEN ROUND((p.ratingSum - :rating) / (p.reviewCount - 1), 1)
                 ELSE 0.0 END
-        WHERE p.id = :placeId
+        WHERE p.id = :placeId AND p.reviewCount > 0
     """)
     void removeReview(@Param("placeId") Long placeId, @Param("rating") Double rating);
 }

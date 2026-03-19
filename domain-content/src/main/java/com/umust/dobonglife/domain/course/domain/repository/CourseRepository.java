@@ -29,12 +29,12 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseRep
     @Modifying
     @Query("""
         UPDATE Course c SET
-            c.reviewCount = CASE WHEN c.reviewCount > 0 THEN c.reviewCount - 1 ELSE 0 END,
-            c.ratingSum = CASE WHEN c.ratingSum >= :rating THEN c.ratingSum - :rating ELSE 0 END,
+            c.reviewCount = c.reviewCount - 1,
+            c.ratingSum = c.ratingSum - :rating,
             c.averageRating = CASE WHEN c.reviewCount > 1
                 THEN ROUND((c.ratingSum - :rating) / (c.reviewCount - 1), 1)
                 ELSE 0.0 END
-        WHERE c.id = :courseId
+        WHERE c.id = :courseId AND c.reviewCount > 0
     """)
     void removeReview(@Param("courseId") Long courseId, @Param("rating") Double rating);
 }
