@@ -1,6 +1,5 @@
 package com.umust.dobonglife.global.client.content;
 
-import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.port.content.CoursePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -59,7 +58,7 @@ public class ContentCourseClient implements CoursePort {
     }
 
     @Override
-    public CursorResponse<Map<String, Object>> getAllCourses(Long userId, String theme, Long lastId, int size) {
+    public Map<String, Object> getAllCourses(Long userId, String theme, Long lastId, int size) {
         return restClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/internal/course")

@@ -1,7 +1,6 @@
 package com.umust.dobonglife.global.client.content;
 
 import com.umust.dobonglife.global.common.constant.TargetType;
-import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.port.content.LikePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,7 +28,7 @@ public class ContentLikeClient implements LikePort {
     }
 
     @Override
-    public CursorResponse<Map<String, Object>> getMyLikedPlaces(Long userId, Long lastId, int size) {
+    public Map<String, Object> getMyLikedPlaces(Long userId, Long lastId, int size) {
         return restClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/internal/like/place/my")
@@ -43,7 +42,7 @@ public class ContentLikeClient implements LikePort {
     }
 
     @Override
-    public CursorResponse<Map<String, Object>> getMyLikedCourses(Long userId, Long lastId, int size) {
+    public Map<String, Object> getMyLikedCourses(Long userId, Long lastId, int size) {
         return restClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/internal/like/course/my")

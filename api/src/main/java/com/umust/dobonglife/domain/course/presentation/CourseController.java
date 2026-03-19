@@ -3,7 +3,6 @@ package com.umust.dobonglife.domain.course.presentation;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
-import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.port.content.CoursePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +40,7 @@ public class CourseController {
     }
 
     @GetMapping
-    public BaseResponse<CursorResponse<Map<String, Object>>> getAllCourses(
+    public BaseResponse<Map<String, Object>> getAllCourses(
             @CurrentUserId Long userId,
             @RequestParam(required = false) String theme,
             @RequestParam(required = false) Long lastId,

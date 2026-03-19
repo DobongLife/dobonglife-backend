@@ -4,7 +4,6 @@ import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
-import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.port.content.LikePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,7 @@ public class LikeController {
     }
 
     @GetMapping("/place/my")
-    public ResponseEntity<BaseResponse<CursorResponse<Map<String, Object>>>> getMyLikedPlaces(
+    public ResponseEntity<BaseResponse<Map<String, Object>>> getMyLikedPlaces(
             @CurrentUserId Long userId,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.PLACE) int size) {
@@ -42,7 +41,7 @@ public class LikeController {
     }
 
     @GetMapping("/course/my")
-    public ResponseEntity<BaseResponse<CursorResponse<Map<String, Object>>>> getMyLikedCourses(
+    public ResponseEntity<BaseResponse<Map<String, Object>>> getMyLikedCourses(
             @CurrentUserId Long userId,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.COURSE) int size) {

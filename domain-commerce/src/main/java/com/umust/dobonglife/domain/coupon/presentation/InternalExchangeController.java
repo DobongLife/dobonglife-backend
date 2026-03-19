@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.coupon.presentation;
 
-import com.umust.dobonglife.domain.coupon.application.ExchangeOrchestrator;
+import com.umust.dobonglife.application.coupon.ExchangeOrchestrator;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import lombok.RequiredArgsConstructor;

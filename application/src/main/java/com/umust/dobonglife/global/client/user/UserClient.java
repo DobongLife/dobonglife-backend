@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.client.user;
 
+import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.port.user.UserPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,23 @@ public class UserClient implements UserPort {
     public String getFcmToken(Long userId) {
         return restClient.get()
                 .uri("/internal/user/{userId}/fcm-token", userId)
+                .retrieve()
+                .body(String.class);
+    }
+
+    @Override
+    public Provider getProvider(Long userId) {
+        String provider = restClient.get()
+                .uri("/internal/user/{userId}/provider", userId)
+                .retrieve()
+                .body(String.class);
+        return Provider.valueOf(provider);
+    }
+
+    @Override
+    public String getProviderId(Long userId) {
+        return restClient.get()
+                .uri("/internal/user/{userId}/provider-id", userId)
                 .retrieve()
                 .body(String.class);
     }

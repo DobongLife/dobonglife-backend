@@ -24,7 +24,7 @@ public class AuthFacade {
 
     private final ManageUserUseCase manageUserUseCase;
     private final DeleteAccountUseCase deleteAccountUseCase;
-    private final GetUserUseCase getUserUseCase;
+    private final UserPort userPort;
 
     @Transactional
     public void logout(String accessToken, String refreshToken, Long userId) {
@@ -36,8 +36,8 @@ public class AuthFacade {
     public void deleteAccount(String accessToken, String refreshToken, Long userId) {
         log.info("=== [회원탈퇴 시작] userId: {}", userId);
 
-        Provider provider = getUserUseCase.getProvider(userId);
-        String providerId = getUserUseCase.getProviderId(userId);
+        Provider provider = userPort.getProvider(userId);
+        String providerId = userPort.getProviderId(userId);
         revokeSocialAccountUseCase.revoke(provider, providerId);
 
         // TODO: 각 도메인 모듈에 cleanup use case 추가 후 활성화

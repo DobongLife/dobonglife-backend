@@ -1,7 +1,6 @@
 package com.umust.dobonglife.global.client.content;
 
 import com.umust.dobonglife.global.common.constant.TargetType;
-import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.port.content.ReviewPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -46,7 +45,7 @@ public class ContentReviewClient implements ReviewPort {
     }
 
     @Override
-    public CursorResponse<Map<String, Object>> getReviews(TargetType targetType, Long targetId, Long lastId, int size) {
+    public Map<String, Object> getReviews(TargetType targetType, Long targetId, Long lastId, int size) {
         return restClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/internal/review/{targetType}/{targetId}")
@@ -59,7 +58,7 @@ public class ContentReviewClient implements ReviewPort {
     }
 
     @Override
-    public CursorResponse<Map<String, Object>> getMyReviews(Long userId, TargetType targetType, Long lastId, int size) {
+    public Map<String, Object> getMyReviews(Long userId, TargetType targetType, Long lastId, int size) {
         return restClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/internal/review/my/{targetType}")

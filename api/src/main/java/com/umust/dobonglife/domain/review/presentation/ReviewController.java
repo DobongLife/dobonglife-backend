@@ -4,7 +4,6 @@ import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
-import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.port.content.ReviewPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +34,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{targetType}/{targetId}")
-    public ResponseEntity<BaseResponse<CursorResponse<Map<String, Object>>>> getReviews(
+    public ResponseEntity<BaseResponse<Map<String, Object>>> getReviews(
             @PathVariable TargetType targetType,
             @PathVariable Long targetId,
             @RequestParam(required = false) Long lastId,
@@ -44,7 +43,7 @@ public class ReviewController {
     }
 
     @GetMapping("/my/{targetType}")
-    public ResponseEntity<BaseResponse<CursorResponse<Map<String, Object>>>> getMyReviews(
+    public ResponseEntity<BaseResponse<Map<String, Object>>> getMyReviews(
             @CurrentUserId Long userId,
             @PathVariable TargetType targetType,
             @RequestParam(required = false) Long lastId,

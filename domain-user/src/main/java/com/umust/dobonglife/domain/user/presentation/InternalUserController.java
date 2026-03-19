@@ -21,4 +21,14 @@ public class InternalUserController {
     public String getFcmToken(@PathVariable Long userId) {
         return getUserUseCase.getFcmToken(userId);
     }
+
+    @GetMapping("/{userId}/provider")
+    public String getProvider(@PathVariable Long userId) {
+        return getUserUseCase.getProvider(userId).name();
+    }
+
+    @GetMapping("/{userId}/provider-id")
+    public String getProviderId(@PathVariable Long userId) {
+        return getUserUseCase.getProviderId(userId);
+    }
 }

@@ -63,14 +63,13 @@ public class InternalPromotionController {
     }
 
     @PostMapping("/register")
-    public PromotionRegisterInfo registerPromotion(@RequestBody Map<String, Object> body) {
-        Long userId = Long.valueOf(body.get("userId").toString());
-        List<String> imageUrls = body.containsKey("imageUrls") ? (List<String>) body.get("imageUrls") : List.of();
-
-        PromotionRegisterRequest request = new PromotionRegisterRequest(body);
+    public PromotionRegisterInfo registerPromotion(
+            @RequestBody PromotionRegisterRequest request,
+            @RequestParam Long userId,
+            @RequestParam(required = false) List<String> imageUrls) {
         Promotion promotion = promotionService.createPromotion(request, userId, null);
 
-        if (!imageUrls.isEmpty()) {
+        if (imageUrls != null && !imageUrls.isEmpty()) {
             promotion.attachImages(imageUrls);
         }
 
