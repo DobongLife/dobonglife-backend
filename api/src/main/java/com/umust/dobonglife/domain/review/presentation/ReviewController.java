@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.review.presentation;
 
 import com.umust.dobonglife.domain.review.application.ReviewService;
 import com.umust.dobonglife.domain.review.application.dto.CreateReviewRequest;
+import com.umust.dobonglife.domain.review.application.dto.MyReviewResponse;
 import com.umust.dobonglife.domain.review.application.dto.ReviewRegisterResponse;
 import com.umust.dobonglife.domain.review.application.dto.ReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.application.dto.UpdateReviewRequest;
@@ -44,5 +45,22 @@ public class ReviewController {
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = PageSizeType.REVIEW) int size) {
         return ResponseEntity.ok(BaseResponse.ok(reviewService.getReviews(targetType, targetId, lastId, size)));
+    }
+
+    @GetMapping("/my/{targetType}")
+    public ResponseEntity<BaseResponse<CursorResponse<MyReviewResponse>>> getMyReviews(
+            @CurrentUserId Long userId,
+            @PathVariable TargetType targetType,
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = PageSizeType.REVIEW) int size) {
+        return ResponseEntity.ok(BaseResponse.ok(reviewService.getMyReviews(userId, targetType, lastId, size)));
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<BaseResponse<Void>> deleteReview(
+            @CurrentUserId Long userId,
+            @PathVariable Long reviewId) {
+        reviewService.deleteReview(reviewId, userId);
+        return ResponseEntity.ok(BaseResponse.ok(null));
     }
 }

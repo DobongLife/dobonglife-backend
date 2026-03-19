@@ -20,7 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +95,20 @@ public class CourseService {
         }
 
         course.deactivate();
+    }
+
+    public Map<Long, Course> getCoursesInBatch(List<Long> courseIds) {
+        return courseRepository.findAllById(courseIds).stream()
+                .collect(Collectors.toMap(Course::getId, Function.identity()));
+    }
+
+    @Transactional
+    public void addReview(Long courseId, Double rating) {
+        courseRepository.addReview(courseId, rating);
+    }
+
+    @Transactional
+    public void removeReview(Long courseId, Double rating) {
+        courseRepository.removeReview(courseId, rating);
     }
 }

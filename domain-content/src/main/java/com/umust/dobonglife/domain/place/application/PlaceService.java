@@ -34,4 +34,14 @@ public class PlaceService {
     public List<Place> getAllActivePlaces() {
         return placeRepository.findAllByStatus(BaseStatus.ACTIVE);
     }
+
+    @Transactional
+    public void addReview(Long placeId, Double rating) {
+        placeRepository.addReview(placeId, rating);
+    }
+
+    @Transactional
+    public void removeReview(Long placeId, Double rating) {
+        placeRepository.removeReview(placeId, rating);
+    }
 }
