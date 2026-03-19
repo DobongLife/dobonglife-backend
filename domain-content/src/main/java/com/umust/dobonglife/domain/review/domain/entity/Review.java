@@ -68,6 +68,14 @@ public class Review extends BaseEntity {
         this.images.addAll(ReviewImage.ofUrls(imageUrls));
     }
 
+    public void update(Double rating, String content, List<String> imageUrls) {
+        this.rating = rating;
+        this.content = content;
+        this.images.clear();
+        this.thumbnailUrl = null;
+        attachImages(imageUrls);
+    }
+
     public void delete() {
         this.reviewStatus = ReviewStatus.DELETED;
     }
