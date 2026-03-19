@@ -36,10 +36,10 @@ public class LikeController {
     }
 
     @PostMapping("/course/{courseId}")
-    public ResponseEntity<BaseResponse<Void>> likeCourse(@CurrentUserId Long userId,
-                                                         @PathVariable Long courseId) {
-        likeService.toggleLike(userId, TargetType.COURSE, courseId);
-        return ResponseEntity.ok(BaseResponse.ok(null));
+    public ResponseEntity<BaseResponse<Boolean>> likeCourse(@CurrentUserId Long userId,
+                                                            @PathVariable Long courseId) {
+        boolean liked = likeService.toggleLike(userId, TargetType.COURSE, courseId);
+        return ResponseEntity.ok(BaseResponse.ok(liked));
     }
 
     @GetMapping("/course/my")

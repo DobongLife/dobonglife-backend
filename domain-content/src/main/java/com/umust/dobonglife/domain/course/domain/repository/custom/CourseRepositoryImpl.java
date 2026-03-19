@@ -32,13 +32,12 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                         course.subTitle,
                         course.level.stringValue(),
                         course.duration,
-                        course.thumbnail.imageUrl,
+                        course.thumbnailUrl,
                         course.averageRating,
                         course.reviewCount,
                         Expressions.constant(false)
                 ))
-                .from(course)
-                .leftJoin(course.thumbnail);
+                .from(course);
 
         if (theme != null) {
             query.join(course.themes, courseTheme)
@@ -71,13 +70,12 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                         course.subTitle,
                         course.level.stringValue(),
                         course.duration,
-                        course.thumbnail.imageUrl,
+                        course.thumbnailUrl,
                         course.averageRating,
                         course.reviewCount,
                         Expressions.constant(false)
                 ))
                 .from(course)
-                .leftJoin(course.thumbnail)
                 .where(
                         course.userId.eq(userId),
                         course.status.eq(BaseStatus.ACTIVE),

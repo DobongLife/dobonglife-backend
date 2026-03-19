@@ -58,11 +58,10 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                         review.userId,
                         review.rating,
                         review.content,
-                        review.thumbnail.imageUrl,
+                        review.thumbnailUrl,
                         review.createdAt
                 ))
                 .from(review)
-                .leftJoin(review.thumbnail)
                 .where(
                         review.targetId.eq(courseId),
                         review.targetType.eq(TargetType.COURSE),

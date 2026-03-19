@@ -37,9 +37,7 @@ public class Course extends BaseEntity {
     private Double ratingSum;
     private Long reviewCount;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "thumbnail_id")
-    private CourseImage thumbnail;
+    private String thumbnailUrl;
 
     @BatchSize(size = 50)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -83,8 +81,8 @@ public class Course extends BaseEntity {
         course.reviewCount = 0L;
 
         List<CourseImage> courseImages = CourseImage.ofUrls(imageUrls);
-        if (!courseImages.isEmpty()) {
-            course.thumbnail = courseImages.get(0);
+        if (!imageUrls.isEmpty()) {
+            course.thumbnailUrl = imageUrls.get(0);
         }
         course.images.addAll(courseImages);
         course.themes.addAll(themes);
@@ -112,7 +110,7 @@ public class Course extends BaseEntity {
                 this.images.add(CourseImage.builder().imageUrl(url).sortOrder(nextOrder++).build());
             }
         }
-        this.thumbnail = this.images.isEmpty() ? null : this.images.get(0);
+        this.thumbnailUrl = this.images.isEmpty() ? null : this.images.get(0).getImageUrl();
 
         this.themes.clear();
         this.themes.addAll(newThemes);
