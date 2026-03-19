@@ -1,6 +1,6 @@
 package com.umust.dobonglife.auth.security.extractor;
 
-import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
+import com.umust.dobonglife.global.port.auth.exception.AuthErrorCode;
 import com.umust.dobonglife.auth.security.exception.CustomAuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;

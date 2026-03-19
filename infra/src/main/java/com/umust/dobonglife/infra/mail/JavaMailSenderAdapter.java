@@ -1,6 +1,6 @@
 package com.umust.dobonglife.infra.mail;
 
-import com.umust.dobonglife.domain.user.application.port.out.MailSender;
+import com.umust.dobonglife.global.port.user.out.MailSender;
 import com.umust.dobonglife.infra.error.InfraErrorCode;
 import com.umust.dobonglife.infra.error.InfraException;
 import jakarta.mail.MessagingException;

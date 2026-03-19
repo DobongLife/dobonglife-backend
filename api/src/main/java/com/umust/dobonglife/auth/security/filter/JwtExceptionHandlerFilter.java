@@ -1,6 +1,6 @@
 package com.umust.dobonglife.auth.security.filter;
 
-import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
+import com.umust.dobonglife.global.port.auth.exception.CustomJwtException;
 import com.umust.dobonglife.global.common.error.exception.BusinessException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

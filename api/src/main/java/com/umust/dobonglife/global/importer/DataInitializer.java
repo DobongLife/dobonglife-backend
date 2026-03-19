@@ -4,7 +4,7 @@ import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.auth.security.principal.UserPrincipal;
 import com.umust.dobonglife.global.common.constant.Role;
 import com.umust.dobonglife.domain.user.domain.entity.User;
-import com.umust.dobonglife.domain.user.application.port.out.SaveUserPort;
+import com.umust.dobonglife.global.port.user.out.SaveUserPort;
 import com.umust.dobonglife.domain.user.infrastructure.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

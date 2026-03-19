@@ -1,11 +1,11 @@
 package com.umust.dobonglife.application.auth.service;
 
-import com.umust.dobonglife.domain.auth.application.port.in.AuthTokenUseCase;
-import com.umust.dobonglife.domain.auth.application.port.in.RevokeSocialAccountUseCase;
-import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
-import com.umust.dobonglife.domain.user.application.port.in.DeleteAccountUseCase;
-import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
-import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
+import com.umust.dobonglife.global.port.auth.in.AuthTokenUseCase;
+import com.umust.dobonglife.global.port.auth.in.RevokeSocialAccountUseCase;
+import com.umust.dobonglife.global.port.auth.dto.AuthTokens;
+import com.umust.dobonglife.global.port.user.in.DeleteAccountUseCase;
+import com.umust.dobonglife.global.port.user.UserPort;
+import com.umust.dobonglife.global.port.user.in.ManageUserUseCase;
 import com.umust.dobonglife.global.common.constant.Provider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

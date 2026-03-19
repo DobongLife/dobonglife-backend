@@ -1,7 +1,7 @@
 package com.umust.dobonglife.auth.security.handler;
 
 import com.umust.dobonglife.global.common.error.CommonErrorCode;
-import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
+import com.umust.dobonglife.global.port.auth.exception.AuthErrorCode;
 import com.umust.dobonglife.global.common.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

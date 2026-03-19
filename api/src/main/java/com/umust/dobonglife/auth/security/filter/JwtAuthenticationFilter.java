@@ -1,7 +1,7 @@
 package com.umust.dobonglife.auth.security.filter;
 
-import com.umust.dobonglife.domain.auth.application.port.in.AuthenticateAccessTokenUseCase;
-import com.umust.dobonglife.domain.auth.application.dto.AuthenticatedUser;
+import com.umust.dobonglife.global.port.auth.in.AuthenticateAccessTokenUseCase;
+import com.umust.dobonglife.global.port.auth.dto.AuthenticatedUser;
 import com.umust.dobonglife.auth.security.extractor.TokenExtractor;
 import com.umust.dobonglife.auth.security.principal.UserPrincipal;
 import jakarta.servlet.FilterChain;
