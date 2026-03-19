@@ -1,11 +1,11 @@
 package com.umust.dobonglife.global.composition;
 
-import com.umust.dobonglife.domain.banner.application.BannerService;
-import com.umust.dobonglife.domain.banner.application.dto.BannerResponse;
-import com.umust.dobonglife.domain.promotion.application.PromotionService;
-import com.umust.dobonglife.domain.promotion.application.dto.PromotionSummary;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.composition.dto.response.HomeResponse;
+import com.umust.dobonglife.global.port.content.BannerPort;
+import com.umust.dobonglife.global.port.commerce.PromotionPort;
+import com.umust.dobonglife.global.port.dto.content.BannerInfo;
+import com.umust.dobonglife.global.port.dto.commerce.PromotionSummaryInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,12 +15,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeFacade {
 
-    private final BannerService bannerService;
-    private final PromotionService promotionService;
+    private final BannerPort bannerPort;
+    private final PromotionPort promotionPort;
 
     public HomeResponse getHome(Long lastId, int size) {
-        List<BannerResponse> banners = bannerService.getActiveBanners();
-        CursorResponse<PromotionSummary> promotions = promotionService.getPromotions(lastId, size);
+        List<BannerInfo> banners = bannerPort.getActiveBanners();
+        CursorResponse<PromotionSummaryInfo> promotions = promotionPort.getPromotions(lastId, size);
 
         return new HomeResponse(banners, promotions);
     }

@@ -1,0 +1,32 @@
+package com.umust.dobonglife.global.client.user;
+
+import com.umust.dobonglife.global.port.user.UserPort;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+@Component
+public class UserClient implements UserPort {
+
+    private final RestClient restClient;
+
+    public UserClient(@Value("${service.user.url}") String baseUrl) {
+        this.restClient = RestClient.builder().baseUrl(baseUrl).build();
+    }
+
+    @Override
+    public boolean isBlockedUser(Long userId) {
+        return Boolean.TRUE.equals(restClient.get()
+                .uri("/internal/user/{userId}/blocked", userId)
+                .retrieve()
+                .body(Boolean.class));
+    }
+
+    @Override
+    public String getFcmToken(Long userId) {
+        return restClient.get()
+                .uri("/internal/user/{userId}/fcm-token", userId)
+                .retrieve()
+                .body(String.class);
+    }
+}
