@@ -11,6 +11,7 @@ import com.umust.dobonglife.domain.place.exception.PlaceException;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.infra.redis.RedisService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -66,7 +68,9 @@ public class PlaceListFacade {
         try {
             return objectMapper.readValue(json, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
-            throw new PlaceException(PlaceErrorCode.PLACE_CACHE_ERROR);
+            log.warn("장소 캐시 역직렬화 실패, 캐시를 삭제하고 DB에서 재로드합니다.", e);
+            redisService.delete(PLACE_CACHE_KEY);
+            return loadAndCache();
         }
     }
 }
