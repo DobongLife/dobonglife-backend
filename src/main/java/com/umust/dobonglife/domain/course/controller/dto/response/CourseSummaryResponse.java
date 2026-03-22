@@ -1,5 +1,4 @@
 package com.umust.dobonglife.domain.course.controller.dto.response;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.course.domain.constant.CourseLevel;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
 import com.umust.dobonglife.global.common.Identifiable;
@@ -31,7 +30,6 @@ public record CourseSummaryResponse(
         );
     }
 
-    @JsonIgnore
     @Override
     public Long getId() {
         return courseId;

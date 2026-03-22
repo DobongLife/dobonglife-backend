@@ -1,0 +1,21 @@
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION:ap-northeast-2}
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+
+firebase:
+  adminsdk:
+    account:
+      path: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:}
+      enabled: ${FIREBASE_ENABLED:true}

@@ -48,7 +48,7 @@ src/main/resources/application-local.yml
 src/test/resources/application-test.yml
 
 ### Claude ###
-.claude/settings.local.json
+.claude/
 
 # 테스트가 생성하는 스니펫
 /build/generated-snippets/
@@ -59,3 +59,7 @@ src/test/resources/application-test.yml
 /src/main/resources/static/docs/
 # Firebase Admin SDK Secret Key
 src/main/resources/firebase/firebase-adminsdk-account.json
+api/src/main/resources/firebase/firebase-adminsdk-account.json
+
+# Local profile (api module)
+api/src/main/resources/application-local.yml
