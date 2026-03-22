@@ -6,7 +6,6 @@ import com.umust.dobonglife.domain.schedule.application.dto.ScheduleDetail;
 import com.umust.dobonglife.domain.schedule.application.port.in.ScheduleQueryUseCase;
 import com.umust.dobonglife.domain.schedule.application.port.out.LoadSchedulePort;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
-import com.umust.dobonglife.domain.user.application.port.out.LoadUserPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +20,9 @@ import java.util.*;
 public class ScheduleQueryService implements ScheduleQueryUseCase {
 
     private final LoadSchedulePort loadSchedulePort;
-    private final LoadUserPort loadUserPort;
 
     @Override
     public MonthlyScheduleResult getMonthlyScheduleList(Long userId, int year, int month) {
-        loadUserPort.loadUser(userId);
 
         LocalDate monthStart = LocalDate.of(year, month, 1);
         LocalDate monthEnd = monthStart.plusMonths(1).minusDays(1);

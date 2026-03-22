@@ -1,7 +1,7 @@
 package com.umust.dobonglife.domain.schedule.infrastructure.jpa.custom;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.umust.dobonglife.domain.schedule.domain.entity.QSchedule;
+
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +20,7 @@ public class ScheduleQueryRepositoryImpl implements ScheduleQueryRepository {
         return queryFactory
                 .selectFrom(schedule)
                 .where(
-                        schedule.user.id.eq(userId),
+                        schedule.userId.eq(userId),
                         schedule.startTime.lt(endExclusive),
                         schedule.endTime.goe(startInclusive)
                 )

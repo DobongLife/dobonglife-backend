@@ -1,7 +1,6 @@
 package com.umust.dobonglife.domain.schedule.domain.entity;
 
 import com.umust.dobonglife.domain.schedule.domain.constant.Color;
-import com.umust.dobonglife.domain.user.domain.entity.User;
 import com.umust.dobonglife.global.common.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,8 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Schedule extends BaseEntity {
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,9 +45,8 @@ public class Schedule extends BaseEntity {
     @Column(name = "color", nullable = false)
     private Color color;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     public void update(String title, LocalDateTime startTime, LocalDateTime endTime,
                        String memo, Boolean isAllDay, Color color, String placeName) {

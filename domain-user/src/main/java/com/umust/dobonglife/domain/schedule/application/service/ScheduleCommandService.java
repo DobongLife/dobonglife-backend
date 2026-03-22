@@ -7,8 +7,6 @@ import com.umust.dobonglife.domain.schedule.domain.constant.Color;
 import com.umust.dobonglife.domain.schedule.domain.entity.Schedule;
 import com.umust.dobonglife.domain.schedule.exception.ScheduleErrorCode;
 import com.umust.dobonglife.domain.schedule.exception.ScheduleException;
-import com.umust.dobonglife.domain.user.application.port.out.LoadUserPort;
-import com.umust.dobonglife.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +20,11 @@ public class ScheduleCommandService implements ScheduleCommandUseCase {
 
     private final LoadSchedulePort loadSchedulePort;
     private final SaveSchedulePort saveSchedulePort;
-    private final LoadUserPort loadUserPort;
 
     @Override
     public void registerSchedule(String title, LocalDateTime startTime, LocalDateTime endTime,
                                  String memo, String placeName, Boolean isEvent, Boolean isAllDay,
                                  String color, Long userId) {
-        User user = loadUserPort.loadUser(userId);
         validateScheduleTime(startTime, endTime);
 
         Schedule schedule = Schedule.builder()
@@ -36,7 +32,7 @@ public class ScheduleCommandService implements ScheduleCommandUseCase {
                 .startTime(startTime)
                 .endTime(endTime)
                 .memo(memo)
-                .user(user)
+                .userId(userId)
                 .placeName(placeName)
                 .isAllDay(isAllDay)
                 .isEvent(isEvent)
@@ -50,7 +46,6 @@ public class ScheduleCommandService implements ScheduleCommandUseCase {
     public void updateSchedule(Long scheduleId, String title, LocalDateTime startTime, LocalDateTime endTime,
                                String memo, String placeName, Boolean isEvent, Boolean isAllDay,
                                String color, Long userId) {
-        loadUserPort.loadUser(userId);
         Schedule schedule = loadSchedulePort.loadByIdAndUserId(scheduleId, userId);
 
         schedule.update(title, startTime, endTime, memo, isAllDay, Color.toEnum(color), placeName);
@@ -58,7 +53,6 @@ public class ScheduleCommandService implements ScheduleCommandUseCase {
 
     @Override
     public void deleteSchedule(Long scheduleId, Long userId) {
-        loadUserPort.loadUser(userId);
         Schedule schedule = loadSchedulePort.loadByIdAndUserId(scheduleId, userId);
 
         saveSchedulePort.delete(schedule);
