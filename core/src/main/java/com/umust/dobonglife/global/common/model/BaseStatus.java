@@ -6,5 +6,6 @@ import lombok.Getter;
 public enum BaseStatus {
 
     ACTIVE,        // 유효한 데이터
-    INACTIVE      // 유효하지 않은 데이터 ( 삭제된 데이터 )
+    INACTIVE,      // 유효하지 않은 데이터 ( 삭제된 데이터 )
+    PENDING        // 처리중인 데이터
 }

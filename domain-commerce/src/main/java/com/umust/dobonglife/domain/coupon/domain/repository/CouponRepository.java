@@ -21,4 +21,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
                                        Pageable pageable);
 
     long countByUserIdAndCouponStatus(Long userId, CouponStatus couponStatus);
+
+    void deleteAllByUserId(Long userId);
 }

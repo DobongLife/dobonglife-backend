@@ -29,6 +29,11 @@ public class UserQueryService implements GetUserUseCase, LoadLocalAuthUserUseCas
     }
 
     @Override
+    public boolean isInactiveUser(Long userId) {
+        return loadUserPort.existsInactiveById(userId);
+    }
+
+    @Override
     public String getFcmToken(Long userId) {
         return loadUserPort.loadUser(userId).getFcmToken();
     }

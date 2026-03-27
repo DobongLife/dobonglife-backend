@@ -16,4 +16,6 @@ public interface LoadUserPort {
     Optional<User> findInactiveByProviderAndProviderId(String provider, String providerId);
 
     boolean existsByEmail(String email);
+
+    boolean existsInactiveById(Long userId);
 }

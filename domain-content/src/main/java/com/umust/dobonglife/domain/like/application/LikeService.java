@@ -2,6 +2,8 @@ package com.umust.dobonglife.domain.like.application;
 
 import com.umust.dobonglife.domain.like.application.dto.MyLikedCourseResponse;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
+import com.umust.dobonglife.domain.like.application.port.in.LikeCleanupUseCase;
+import com.umust.dobonglife.domain.like.application.port.in.LikeRestoreUseCase;
 import com.umust.dobonglife.domain.like.domain.entity.Like;
 import com.umust.dobonglife.domain.like.domain.repository.LikeRepository;
 import com.umust.dobonglife.global.common.constant.TargetType;
@@ -18,7 +20,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class LikeService {
+public class LikeService implements LikeCleanupUseCase, LikeRestoreUseCase {
     private final LikeRepository likeRepository;
 
     public boolean toggleLike(Long userId, TargetType targetType, Long targetId) {
@@ -57,5 +59,15 @@ public class LikeService {
     @Transactional(readOnly = true)
     public Set<Long> getLikedTargetIds(Long userId, TargetType targetType) {
         return likeRepository.findTargetIdsByUserIdAndTargetType(userId, targetType);
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        likeRepository.deleteAllByUserId(userId);
+    }
+
+    @Override
+    public void restoreByUserId(Long userId) {
+        // 좋아요는 hard-delete → 트랜잭션 롤백으로 복구
     }
 }

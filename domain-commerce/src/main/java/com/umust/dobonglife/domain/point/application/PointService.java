@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.point.application;
 
+import com.umust.dobonglife.domain.point.application.port.in.PointCleanupUseCase;
+import com.umust.dobonglife.domain.point.application.port.in.PointRestoreUseCase;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.point.domain.entity.PointHistory;
 import com.umust.dobonglife.domain.point.domain.repository.PointHistoryRepository;
@@ -12,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class PointService {
+public class PointService implements PointCleanupUseCase, PointRestoreUseCase {
 
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
@@ -35,5 +37,20 @@ public class PointService {
 
         pointHistoryRepository.save(
                 PointHistory.ofRefund(point.getId(), amount, point.getBalance(), "쿠폰 교환 취소"));
+    }
+
+    @Override
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        pointRepository.findByUserId(userId).ifPresent(point -> {
+            pointHistoryRepository.deleteAllByPointId(point.getId());
+            pointRepository.deleteByUserId(userId);
+        });
+    }
+
+    @Override
+    @Transactional
+    public void restoreByUserId(Long userId) {
+        // 포인트는 hard-delete → 트랜잭션 롤백으로 복구
     }
 }

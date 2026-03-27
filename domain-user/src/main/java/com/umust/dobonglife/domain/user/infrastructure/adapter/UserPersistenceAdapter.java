@@ -60,6 +60,11 @@ public class UserPersistenceAdapter implements LoadUserPort, SaveUserPort {
     }
 
     @Override
+    public boolean existsInactiveById(Long userId) {
+        return userJpaRepository.existsInactiveById(userId);
+    }
+
+    @Override
     public void delete(User user) {
         userJpaRepository.delete(user);
     }

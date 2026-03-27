@@ -18,4 +18,6 @@ public interface LikeRepository extends JpaRepository<Like, Long>, LikeRepositor
 
     @Query("SELECT l.targetId FROM Like l WHERE l.userId = :userId AND l.targetType = :targetType")
     Set<Long> findTargetIdsByUserIdAndTargetType(@Param("userId") Long userId, @Param("targetType") TargetType targetType);
+
+    void deleteAllByUserId(Long userId);
 }

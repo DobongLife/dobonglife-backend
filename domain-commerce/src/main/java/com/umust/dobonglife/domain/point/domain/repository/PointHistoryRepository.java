@@ -4,4 +4,6 @@ import com.umust.dobonglife.domain.point.domain.entity.PointHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PointHistoryRepository extends JpaRepository<PointHistory, Long> {
+
+    void deleteAllByPointId(Long pointId);
 }

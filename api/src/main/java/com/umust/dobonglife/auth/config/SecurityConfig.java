@@ -91,6 +91,7 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/actuator/health",
                                 "/api/auth/login/**",
+                                "/api/auth/reissue",
                                 "/login/oauth2/**",
                                 "/api/users/signup",
                                 "/api/users/mail/send",
