@@ -19,6 +19,6 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT * FROM users WHERE provider = :provider AND provider_id = :providerId AND status = 'INACTIVE' ORDER BY updated_at DESC LIMIT 1", nativeQuery = true)
     Optional<User> findInactiveByProviderAndProviderId(@Param("provider") String provider, @Param("providerId") String providerId);
 
-    @Query(value = "SELECT COUNT(*) > 0 FROM users WHERE user_id = :userId AND status = 'INACTIVE'", nativeQuery = true)
-    boolean existsInactiveById(@Param("userId") Long userId);
+    @Query(value = "SELECT COUNT(*) > 0 FROM users WHERE user_id = :userId AND status != 'ACTIVE'", nativeQuery = true)
+    boolean existsNotActiveById(@Param("userId") Long userId);
 }

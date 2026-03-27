@@ -33,7 +33,7 @@ public class AuthFacade {
     public AuthTokens reissueTokens(String refreshToken) {
         Long userId = authTokenUseCase.extractUserId(refreshToken);
 
-        if (getUserUseCase.isInactiveUser(userId)) {
+        if (getUserUseCase.isNotActiveUser(userId)) {
             throw new UserException(UserErrorCode.USER_ALREADY_WITHDRAWN);
         }
 

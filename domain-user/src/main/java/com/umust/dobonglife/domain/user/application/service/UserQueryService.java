@@ -29,8 +29,8 @@ public class UserQueryService implements GetUserUseCase, LoadLocalAuthUserUseCas
     }
 
     @Override
-    public boolean isInactiveUser(Long userId) {
-        return loadUserPort.existsInactiveById(userId);
+    public boolean isNotActiveUser(Long userId) {
+        return loadUserPort.existsNotActiveById(userId);
     }
 
     @Override

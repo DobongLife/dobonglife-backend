@@ -48,7 +48,7 @@ public class WithdrawOrchestrator {
         revokeSocialAccount(userId);
 
         try {
-            // ACTIVE → PENDING
+            // ACTIVE -> PENDING
             deleteAccountUseCase.markPending(userId);
             pendingMarked = true;
 
@@ -65,7 +65,7 @@ public class WithdrawOrchestrator {
             pointCleanupUseCase.deleteByUserId(userId);
             pointCleaned = true;
 
-            // PENDING → INACTIVE
+            // PENDING -> INACTIVE
             deleteAccountUseCase.deleteAccount(userId);
 
         } catch (Exception e) {

@@ -17,5 +17,5 @@ public interface LoadUserPort {
 
     boolean existsByEmail(String email);
 
-    boolean existsInactiveById(Long userId);
+    boolean existsNotActiveById(Long userId);
 }
