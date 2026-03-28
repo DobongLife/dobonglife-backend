@@ -1,5 +1,6 @@
 package com.umust.dobonglife.application.coupon;
 
+import com.umust.dobonglife.domain.coupon.application.CouponService;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import com.umust.dobonglife.domain.coupon.domain.entity.ExchangeSaga;
@@ -8,7 +9,7 @@ import com.umust.dobonglife.domain.coupon.domain.vo.SagaStatus;
 import com.umust.dobonglife.domain.point.application.PointService;
 import com.umust.dobonglife.domain.promotion.application.PromotionService;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
-import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
+import com.umust.dobonglife.global.port.UserPort;
 import com.umust.dobonglife.global.common.event.CouponIssuedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 public class ExchangeOrchestrator {
 
     private final ExchangeSagaRepository sagaRepository;
-    private final ManageUserUseCase manageUserUseCase;
+    private final UserPort userPort;
     private final PointService pointService;
     private final PromotionService promotionService;
     private final CouponService couponService;
@@ -33,7 +34,7 @@ public class ExchangeOrchestrator {
         sagaRepository.save(saga);
 
         try {
-            manageUserUseCase.canExchangeCoupon(request.userId());
+            userPort.canExchangeCoupon(request.userId());
             saga.markUserValidated();
 
             Promotion promotion = promotionService.getActivePromotion(request.promotionId());

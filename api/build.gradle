@@ -13,7 +13,7 @@ dependencies {
     implementation project(':domain-commerce')
     implementation project(':domain-content')
     implementation project(':domain-auth')
-    runtimeOnly project(':domain-user')
+    implementation project(':domain-user')
 
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
