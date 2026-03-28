@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.place.controller.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.global.common.Identifiable;
 import com.umust.dobonglife.global.common.model.BaseStatus;
@@ -46,7 +45,6 @@ public class PlaceSummaryResponse implements Identifiable {
                 .build();
     }
 
-    @JsonIgnore
     @Override
     public Long getId() {
         return placeId;
