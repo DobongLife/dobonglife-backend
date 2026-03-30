@@ -89,6 +89,6 @@ public class AuthController {
     @PostMapping("/reissue")
     public BaseResponse<TokenResponse> reissueTokens(HttpServletRequest request) {
         String refreshToken = tokenExtractor.extractRefreshToken(request);
-        return BaseResponse.ok(TokenResponse.from(authFacade.reissueTokens(refreshToken));
+        return BaseResponse.ok(TokenResponse.from(authFacade.reissueTokens(refreshToken)));
     }
 }

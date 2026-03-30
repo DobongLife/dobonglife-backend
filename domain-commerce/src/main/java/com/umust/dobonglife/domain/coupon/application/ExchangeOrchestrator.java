@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.coupon.domain.vo.SagaStatus;
 import com.umust.dobonglife.domain.point.application.PointService;
 import com.umust.dobonglife.domain.promotion.application.PromotionService;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
+import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.global.common.event.CouponIssuedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

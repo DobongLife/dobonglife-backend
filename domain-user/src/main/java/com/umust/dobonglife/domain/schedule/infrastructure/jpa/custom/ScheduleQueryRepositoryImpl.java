@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.umust.dobonglife.domain.schedule.domain.entity.QSchedule;
+
 @RequiredArgsConstructor
 public class ScheduleQueryRepositoryImpl implements ScheduleQueryRepository {
 
