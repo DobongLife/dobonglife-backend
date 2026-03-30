@@ -23,7 +23,7 @@ public class WithdrawOrchestrator {
         revokeSocialAccount(userId);
 
         try {
-            // 1단계: ACTIVE → PENDING
+            // 1단계: ACTIVE -> PENDING
             withdrawRestClient.markPending(userId);
             pendingMarked = true;
 
@@ -39,7 +39,7 @@ public class WithdrawOrchestrator {
             withdrawRestClient.cleanupPoints(userId);
             pointCleaned = true;
 
-            // 2단계: 사용자 삭제 (PENDING → INACTIVE)
+            // 사용자 삭제 (PENDING -> INACTIVE)
             withdrawRestClient.deleteAccount(userId);
 
         } catch (Exception e) {
@@ -47,10 +47,10 @@ public class WithdrawOrchestrator {
             throw e;
         }
 
-        // 3단계: PENDING 데이터 최종 정리 (best-effort)
+        // PENDING 데이터 최종 정리
         finalize(userId);
 
-        // 4단계: 토큰 무효화
+        // 토큰 무효화
         withdrawRestClient.invalidateToken(accessToken, refreshToken);
     }
 
