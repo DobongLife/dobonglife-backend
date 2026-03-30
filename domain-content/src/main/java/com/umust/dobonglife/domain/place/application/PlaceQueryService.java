@@ -1,9 +1,7 @@
 package com.umust.dobonglife.domain.place.application;
 
 import com.umust.dobonglife.domain.place.application.port.in.GetPlaceUseCase;
-import com.umust.dobonglife.domain.place.application.port.in.ManagePlaceUseCase;
 import com.umust.dobonglife.domain.place.application.port.out.LoadPlacePort;
-import com.umust.dobonglife.domain.place.application.port.out.SavePlacePort;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.exception.PlaceErrorCode;
 import com.umust.dobonglife.domain.place.exception.PlaceException;
@@ -19,10 +17,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PlaceService implements GetPlaceUseCase, ManagePlaceUseCase {
+public class PlaceQueryService implements GetPlaceUseCase {
 
     private final LoadPlacePort loadPlacePort;
-    private final SavePlacePort savePlacePort;
 
     @Override
     public Place getPlace(Long placeId) {
@@ -39,17 +36,5 @@ public class PlaceService implements GetPlaceUseCase, ManagePlaceUseCase {
     @Override
     public List<Place> getAllActivePlaces() {
         return loadPlacePort.findAllActive();
-    }
-
-    @Override
-    @Transactional
-    public void addReview(Long placeId, Double rating) {
-        savePlacePort.addReview(placeId, rating);
-    }
-
-    @Override
-    @Transactional
-    public void removeReview(Long placeId, Double rating) {
-        savePlacePort.removeReview(placeId, rating);
     }
 }

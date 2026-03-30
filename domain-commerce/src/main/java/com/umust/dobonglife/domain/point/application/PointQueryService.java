@@ -3,13 +3,9 @@ package com.umust.dobonglife.domain.point.application;
 import com.umust.dobonglife.domain.point.application.dto.MyPointResponse;
 import com.umust.dobonglife.domain.point.application.dto.PointHistoryResponse;
 import com.umust.dobonglife.domain.point.application.port.in.GetPointUseCase;
-import com.umust.dobonglife.domain.point.application.port.in.ManagePointUseCase;
 import com.umust.dobonglife.domain.point.application.port.out.LoadPointPort;
-import com.umust.dobonglife.domain.point.application.port.out.SavePointPort;
 import com.umust.dobonglife.domain.point.domain.entity.Point;
 import com.umust.dobonglife.domain.point.domain.entity.PointHistory;
-import com.umust.dobonglife.domain.point.exception.PointErrorCode;
-import com.umust.dobonglife.domain.point.exception.PointException;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +17,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PointService implements GetPointUseCase, ManagePointUseCase {
+@Transactional(readOnly = true)
+public class PointQueryService implements GetPointUseCase {
 
     private final LoadPointPort loadPointPort;
-    private final SavePointPort savePointPort;
 
     @Override
-    @Transactional(readOnly = true)
     public Long getUserPoint(Long userId) {
         return loadPointPort.findByUserId(userId)
                 .map(Point::getBalance)
@@ -35,18 +30,6 @@ public class PointService implements GetPointUseCase, ManagePointUseCase {
     }
 
     @Override
-    @Transactional
-    public void deduct(Long userId, Long amount) {
-        Point point = loadPointPort.findByUserIdForUpdate(userId)
-                .orElseThrow(() -> new PointException(PointErrorCode.POINT_NOT_FOUND));
-        point.deduct(amount);
-
-        savePointPort.saveHistory(
-                PointHistory.ofDeduction(point.getId(), amount, point.getBalance(), "쿠폰 교환"));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public MyPointResponse getMyPointHistory(Long userId, Long lastId, int size, String order) {
         Long totalPoint = getUserPoint(userId);
 
@@ -66,16 +49,5 @@ public class PointService implements GetPointUseCase, ManagePointUseCase {
         CursorResponse<PointHistoryResponse> cursorResponse = CursorUtils.toCursorResponse(content, size);
 
         return new MyPointResponse(totalPoint, cursorResponse);
-    }
-
-    @Override
-    @Transactional
-    public void refund(Long userId, Long amount) {
-        Point point = loadPointPort.findByUserIdForUpdate(userId)
-                .orElseThrow(() -> new PointException(PointErrorCode.POINT_NOT_FOUND));
-        point.refund(amount);
-
-        savePointPort.saveHistory(
-                PointHistory.ofRefund(point.getId(), amount, point.getBalance(), "쿠폰 교환 취소"));
     }
 }
