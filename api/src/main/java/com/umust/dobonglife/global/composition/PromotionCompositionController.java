@@ -1,6 +1,7 @@
 package com.umust.dobonglife.global.composition;
 
-import com.umust.dobonglife.application.coupon.ExchangeOrchestrator;
+
+import com.umust.dobonglife.domain.coupon.application.ExchangeOrchestrator;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
