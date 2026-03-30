@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.like.presentation;
 
-import com.umust.dobonglife.domain.like.application.LikeService;
+import com.umust.dobonglife.domain.like.application.port.in.GetLikeUseCase;
+import com.umust.dobonglife.domain.like.application.port.in.ToggleLikeUseCase;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedCourseResponse;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
 import com.umust.dobonglife.global.common.constant.TargetType;
@@ -13,14 +14,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class InternalLikeController {
 
-    private final LikeService likeService;
+    private final ToggleLikeUseCase toggleLikeUseCase;
+    private final GetLikeUseCase getLikeUseCase;
 
     @PostMapping("/{targetType}/{targetId}")
     public boolean toggleLike(
             @RequestParam Long userId,
             @PathVariable TargetType targetType,
             @PathVariable Long targetId) {
-        return likeService.toggleLike(userId, targetType, targetId);
+        return toggleLikeUseCase.toggleLike(userId, targetType, targetId);
     }
 
     @GetMapping("/place/my")
@@ -28,7 +30,7 @@ public class InternalLikeController {
             @RequestParam Long userId,
             @RequestParam(required = false) Long lastId,
             @RequestParam int size) {
-        return likeService.getMyLikedPlaces(userId, lastId, size);
+        return getLikeUseCase.getMyLikedPlaces(userId, lastId, size);
     }
 
     @GetMapping("/course/my")
@@ -36,6 +38,6 @@ public class InternalLikeController {
             @RequestParam Long userId,
             @RequestParam(required = false) Long lastId,
             @RequestParam int size) {
-        return likeService.getMyLikedCourses(userId, lastId, size);
+        return getLikeUseCase.getMyLikedCourses(userId, lastId, size);
     }
 }

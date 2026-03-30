@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.point.presentation;
 
-import com.umust.dobonglife.domain.point.application.PointService;
+import com.umust.dobonglife.domain.point.application.port.in.GetPointUseCase;
 import com.umust.dobonglife.domain.point.application.dto.MyPointResponse;
 import com.umust.dobonglife.domain.point.application.dto.PointHistoryResponse;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -16,11 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InternalPointController {
 
-    private final PointService pointService;
+    private final GetPointUseCase getPointUseCase;
 
     @GetMapping("/balance/{userId}")
     public Long getUserPoint(@PathVariable Long userId) {
-        return pointService.getUserPoint(userId);
+        return getPointUseCase.getUserPoint(userId);
     }
 
     @GetMapping("/my")
@@ -29,7 +29,7 @@ public class InternalPointController {
             @RequestParam(required = false) Long lastId,
             @RequestParam int size,
             @RequestParam(defaultValue = "DESC") String order) {
-        MyPointResponse response = pointService.getMyPointHistory(userId, lastId, size, order);
+        MyPointResponse response = getPointUseCase.getMyPointHistory(userId, lastId, size, order);
 
         List<PointHistoryInfo> content = response.pointHistory().getContent().stream()
                 .map(h -> new PointHistoryInfo(

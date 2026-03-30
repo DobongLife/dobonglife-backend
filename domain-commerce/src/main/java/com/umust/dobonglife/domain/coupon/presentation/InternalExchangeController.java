@@ -1,6 +1,6 @@
 package com.umust.dobonglife.domain.coupon.presentation;
 
-import com.umust.dobonglife.application.coupon.ExchangeOrchestrator;
+import com.umust.dobonglife.domain.coupon.application.port.in.ExchangeUseCase;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,14 +13,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InternalExchangeController {
 
-    private final ExchangeOrchestrator exchangeOrchestrator;
+    private final ExchangeUseCase exchangeUseCase;
 
     @PostMapping
     public Map<String, Object> exchange(
             @RequestParam Long userId,
             @RequestParam Long promotionId) {
         ExchangeRequest request = new ExchangeRequest(userId, promotionId);
-        ExchangeResponse response = exchangeOrchestrator.execute(request);
+        ExchangeResponse response = exchangeUseCase.execute(request);
         return Map.of(
                 "sagaId", response.sagaId(),
                 "status", response.status()

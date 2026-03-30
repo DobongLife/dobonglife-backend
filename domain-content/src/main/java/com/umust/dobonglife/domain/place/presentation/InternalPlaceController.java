@@ -1,7 +1,7 @@
 package com.umust.dobonglife.domain.place.presentation;
 
-import com.umust.dobonglife.domain.like.application.LikeService;
-import com.umust.dobonglife.domain.place.application.PlaceService;
+import com.umust.dobonglife.domain.like.application.port.in.GetLikeUseCase;
+import com.umust.dobonglife.domain.place.application.port.in.GetPlaceUseCase;
 import com.umust.dobonglife.domain.place.application.dto.PlaceSummaryResponse;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.port.dto.content.PlaceSummaryInfo;
@@ -16,16 +16,16 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class InternalPlaceController {
 
-    private final PlaceService placeService;
-    private final LikeService likeService;
+    private final GetPlaceUseCase getPlaceUseCase;
+    private final GetLikeUseCase getLikeUseCase;
 
     @GetMapping("/active")
     public List<PlaceSummaryInfo> getAllActivePlaces(@RequestParam Long userId) {
-        List<PlaceSummaryResponse> places = placeService.getAllActivePlaces().stream()
+        List<PlaceSummaryResponse> places = getPlaceUseCase.getAllActivePlaces().stream()
                 .map(PlaceSummaryResponse::from)
                 .toList();
 
-        Set<Long> likedPlaceIds = likeService.getLikedTargetIds(userId, TargetType.PLACE);
+        Set<Long> likedPlaceIds = getLikeUseCase.getLikedTargetIds(userId, TargetType.PLACE);
 
         return places.stream()
                 .map(p -> new PlaceSummaryInfo(

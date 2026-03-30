@@ -1,17 +1,21 @@
 package com.umust.dobonglife.domain.review.application;
 
-import com.umust.dobonglife.domain.course.application.CourseService;
+import com.umust.dobonglife.domain.course.application.port.in.GetCourseUseCase;
+import com.umust.dobonglife.domain.course.application.port.in.ManageCourseUseCase;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
-import com.umust.dobonglife.domain.place.application.PlaceService;
+import com.umust.dobonglife.domain.place.application.port.in.GetPlaceUseCase;
+import com.umust.dobonglife.domain.place.application.port.in.ManagePlaceUseCase;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.review.application.dto.CreateReviewRequest;
 import com.umust.dobonglife.domain.review.application.dto.MyReviewResponse;
 import com.umust.dobonglife.domain.review.application.dto.ReviewRegisterResponse;
 import com.umust.dobonglife.domain.review.application.dto.ReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.application.dto.UpdateReviewRequest;
+import com.umust.dobonglife.domain.review.application.port.in.GetReviewUseCase;
+import com.umust.dobonglife.domain.review.application.port.in.ManageReviewUseCase;
+import com.umust.dobonglife.domain.review.application.port.out.LoadReviewPort;
+import com.umust.dobonglife.domain.review.application.port.out.SaveReviewPort;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
-import com.umust.dobonglife.domain.review.domain.entity.ReviewImage;
-import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
 import com.umust.dobonglife.domain.review.exception.ReviewErrorCode;
 import com.umust.dobonglife.domain.review.exception.ReviewException;
 import com.umust.dobonglife.global.common.constant.TargetType;
@@ -27,12 +31,16 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ReviewService {
+public class ReviewService implements GetReviewUseCase, ManageReviewUseCase {
 
-    private final ReviewRepository reviewRepository;
-    private final PlaceService placeService;
-    private final CourseService courseService;
+    private final LoadReviewPort loadReviewPort;
+    private final SaveReviewPort saveReviewPort;
+    private final GetPlaceUseCase getPlaceUseCase;
+    private final ManagePlaceUseCase managePlaceUseCase;
+    private final GetCourseUseCase getCourseUseCase;
+    private final ManageCourseUseCase manageCourseUseCase;
 
+    @Override
     @Transactional
     public ReviewRegisterResponse createReview(Long userId, CreateReviewRequest request) {
         Review review = Review.builder()
@@ -44,15 +52,16 @@ public class ReviewService {
                 .build();
 
         review.attachImages(request.imageUrls());
-        reviewRepository.save(review);
+        saveReviewPort.save(review);
         updateTargetRating(request.targetType(), request.targetId(), request.rating(), true);
 
         return ReviewRegisterResponse.from(review);
     }
 
+    @Override
     @Transactional
     public ReviewRegisterResponse updateReview(Long reviewId, Long userId, UpdateReviewRequest request) {
-        Review review = reviewRepository.findById(reviewId)
+        Review review = loadReviewPort.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
         review.validateOwner(userId);
@@ -68,9 +77,10 @@ public class ReviewService {
         return ReviewRegisterResponse.from(review);
     }
 
+    @Override
     @Transactional
     public void deleteReview(Long reviewId, Long userId) {
-        Review review = reviewRepository.findById(reviewId)
+        Review review = loadReviewPort.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
         review.validateOwner(userId);
@@ -80,21 +90,23 @@ public class ReviewService {
 
     private void updateTargetRating(TargetType targetType, Long targetId, Double rating, boolean isAdd) {
         if (targetType == TargetType.PLACE) {
-            if (isAdd) placeService.addReview(targetId, rating);
-            else placeService.removeReview(targetId, rating);
+            if (isAdd) managePlaceUseCase.addReview(targetId, rating);
+            else managePlaceUseCase.removeReview(targetId, rating);
         } else {
-            if (isAdd) courseService.addReview(targetId, rating);
-            else courseService.removeReview(targetId, rating);
+            if (isAdd) manageCourseUseCase.addReview(targetId, rating);
+            else manageCourseUseCase.removeReview(targetId, rating);
         }
     }
 
+    @Override
     public CursorResponse<ReviewSummaryResponse> getReviews(TargetType targetType, Long targetId, Long lastId, int size) {
-        List<ReviewSummaryResponse> content = reviewRepository.findReviews(targetType, targetId, lastId, size);
+        List<ReviewSummaryResponse> content = loadReviewPort.findReviews(targetType, targetId, lastId, size);
         return CursorUtils.toCursorResponse(content, size);
     }
 
+    @Override
     public CursorResponse<MyReviewResponse> getMyReviews(Long userId, TargetType targetType, Long lastId, int size) {
-        List<MyReviewResponse> content = reviewRepository.findMyReviews(userId, targetType, lastId, size);
+        List<MyReviewResponse> content = loadReviewPort.findMyReviews(userId, targetType, lastId, size);
         CursorResponse<MyReviewResponse> response = CursorUtils.toCursorResponse(content, size);
 
         List<Long> targetIds = response.getContent().stream()
@@ -103,7 +115,7 @@ public class ReviewService {
                 .toList();
 
         if (targetType == TargetType.PLACE) {
-            Map<Long, Place> placeMap = placeService.getPlacesInBatch(targetIds);
+            Map<Long, Place> placeMap = getPlaceUseCase.getPlacesInBatch(targetIds);
             return CursorUtils.convert(response, r -> {
                 Place p = placeMap.get(r.targetId());
                 return new MyReviewResponse(
@@ -114,7 +126,7 @@ public class ReviewService {
                         List.of(), r.updatedAt());
             });
         } else {
-            Map<Long, Course> courseMap = courseService.getCoursesInBatch(targetIds);
+            Map<Long, Course> courseMap = getCourseUseCase.getCoursesInBatch(targetIds);
             return CursorUtils.convert(response, r -> {
                 Course c = courseMap.get(r.targetId());
                 return new MyReviewResponse(

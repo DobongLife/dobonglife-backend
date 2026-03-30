@@ -5,14 +5,16 @@ import com.umust.dobonglife.domain.course.application.dto.CourseSummaryResponse;
 import com.umust.dobonglife.domain.course.application.dto.CreateCourseRequest;
 import com.umust.dobonglife.domain.course.application.dto.MyCourseResponse;
 import com.umust.dobonglife.domain.course.application.dto.UpdateCourseRequest;
+import com.umust.dobonglife.domain.course.application.port.in.GetCourseUseCase;
+import com.umust.dobonglife.domain.course.application.port.in.ManageCourseUseCase;
+import com.umust.dobonglife.domain.course.application.port.out.LoadCoursePort;
+import com.umust.dobonglife.domain.course.application.port.out.SaveCoursePort;
 import com.umust.dobonglife.domain.course.domain.entity.Course;
-import com.umust.dobonglife.domain.course.domain.repository.CourseRepository;
 import com.umust.dobonglife.domain.course.exception.CourseErrorCode;
 import com.umust.dobonglife.domain.course.exception.CourseException;
-import com.umust.dobonglife.domain.like.application.LikeService;
+import com.umust.dobonglife.domain.like.application.port.in.GetLikeUseCase;
 import com.umust.dobonglife.domain.place.domain.vo.Theme;
 import com.umust.dobonglife.global.common.constant.TargetType;
-import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,40 +30,47 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class CourseService {
-    private final CourseRepository courseRepository;
-    private final LikeService likeService;
+public class CourseService implements GetCourseUseCase, ManageCourseUseCase {
 
+    private final LoadCoursePort loadCoursePort;
+    private final SaveCoursePort saveCoursePort;
+    private final GetLikeUseCase getLikeUseCase;
+
+    @Override
     public Course getCourse(Long courseId) {
-        return courseRepository.findByIdAndStatus(courseId, BaseStatus.ACTIVE)
+        return loadCoursePort.findByIdAndActive(courseId)
                 .orElseThrow(() -> new CourseException(CourseErrorCode.COURSE_NOT_FOUND));
     }
 
+    @Override
     public CursorResponse<CourseSummaryResponse> getAllCourses(Long userId, Theme theme, Long lastId, int size) {
         CursorResponse<CourseSummaryResponse> response = CursorUtils.toCursorResponse(
-                courseRepository.findAllCourses(theme, lastId, size), c -> c);
+                loadCoursePort.findAllCourses(theme, lastId, size), c -> c);
 
-        Set<Long> likedCourseIds = likeService.getLikedTargetIds(userId, TargetType.COURSE);
+        Set<Long> likedCourseIds = getLikeUseCase.getLikedTargetIds(userId, TargetType.COURSE);
 
         return CursorUtils.convert(response, c -> c.withLiked(likedCourseIds.contains(c.courseId())));
     }
 
+    @Override
     public MyCourseResponse getMyCourses(Long userId, Long lastId, int size) {
-        long totalCount = courseRepository.countByUserIdAndStatus(userId, BaseStatus.ACTIVE);
+        long totalCount = loadCoursePort.countByUserIdAndActive(userId);
 
         CursorResponse<CourseSummaryResponse> courses = CursorUtils.toCursorResponse(
-                courseRepository.findMyCourses(userId, lastId, size), c -> c);
+                loadCoursePort.findMyCourses(userId, lastId, size), c -> c);
 
         return MyCourseResponse.of(totalCount, courses);
     }
 
+    @Override
     @Transactional
     public CourseRegisterResponse createCourse(Long userId, CreateCourseRequest request) {
         Course course = request.toEntity(userId);
-        courseRepository.save(course);
+        saveCoursePort.save(course);
         return CourseRegisterResponse.from(course.getId());
     }
 
+    @Override
     @Transactional
     public CourseRegisterResponse updateCourse(Long userId, Long courseId, UpdateCourseRequest request) {
         Course course = getCourse(courseId);
@@ -86,6 +95,7 @@ public class CourseService {
         return CourseRegisterResponse.from(course.getId());
     }
 
+    @Override
     @Transactional
     public void deleteCourse(Long userId, Long courseId) {
         Course course = getCourse(courseId);
@@ -97,18 +107,21 @@ public class CourseService {
         course.deactivate();
     }
 
+    @Override
     public Map<Long, Course> getCoursesInBatch(List<Long> courseIds) {
-        return courseRepository.findAllById(courseIds).stream()
+        return loadCoursePort.findAllByIds(courseIds).stream()
                 .collect(Collectors.toMap(Course::getId, Function.identity()));
     }
 
+    @Override
     @Transactional
     public void addReview(Long courseId, Double rating) {
-        courseRepository.addReview(courseId, rating);
+        saveCoursePort.addReview(courseId, rating);
     }
 
+    @Override
     @Transactional
     public void removeReview(Long courseId, Double rating) {
-        courseRepository.removeReview(courseId, rating);
+        saveCoursePort.removeReview(courseId, rating);
     }
 }

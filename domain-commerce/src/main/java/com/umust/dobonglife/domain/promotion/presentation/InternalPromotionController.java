@@ -1,7 +1,8 @@
 package com.umust.dobonglife.domain.promotion.presentation;
 
-import com.umust.dobonglife.domain.promotion.application.PresetService;
-import com.umust.dobonglife.domain.promotion.application.PromotionService;
+import com.umust.dobonglife.domain.promotion.application.port.in.GetPresetUseCase;
+import com.umust.dobonglife.domain.promotion.application.port.in.GetPromotionUseCase;
+import com.umust.dobonglife.domain.promotion.application.port.in.ManagePromotionUseCase;
 import com.umust.dobonglife.domain.promotion.application.dto.PromotionAdSummary;
 import com.umust.dobonglife.domain.promotion.application.dto.PromotionSummary;
 import com.umust.dobonglife.domain.promotion.domain.entity.Preset;
@@ -28,14 +29,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InternalPromotionController {
 
-    private final PromotionService promotionService;
-    private final PresetService presetService;
+    private final GetPromotionUseCase getPromotionUseCase;
+    private final ManagePromotionUseCase managePromotionUseCase;
+    private final GetPresetUseCase getPresetUseCase;
 
     @GetMapping("/ad")
     public CursorResponse<PromotionAdInfo> getAdPromotions(
             @RequestParam(required = false) Long lastId,
             @RequestParam int size) {
-        CursorResponse<PromotionAdSummary> result = promotionService.getAdPromotions(lastId, size);
+        CursorResponse<PromotionAdSummary> result = getPromotionUseCase.getAdPromotions(lastId, size);
 
         List<PromotionAdInfo> content = result.getContent().stream()
                 .map(ad -> new PromotionAdInfo(
@@ -50,7 +52,7 @@ public class InternalPromotionController {
     public CursorResponse<PromotionSummaryInfo> getPromotions(
             @RequestParam(required = false) Long lastId,
             @RequestParam int size) {
-        CursorResponse<PromotionSummary> result = promotionService.getPromotions(lastId, size);
+        CursorResponse<PromotionSummary> result = getPromotionUseCase.getPromotions(lastId, size);
 
         List<PromotionSummaryInfo> content = result.getContent().stream()
                 .map(p -> new PromotionSummaryInfo(
@@ -67,7 +69,7 @@ public class InternalPromotionController {
             @RequestBody PromotionRegisterRequest request,
             @RequestParam Long userId,
             @RequestParam(required = false) List<String> imageUrls) {
-        Promotion promotion = promotionService.createPromotion(request, userId, null);
+        Promotion promotion = managePromotionUseCase.createPromotion(request, userId, null);
 
         if (imageUrls != null && !imageUrls.isEmpty()) {
             promotion.attachImages(imageUrls);
@@ -92,14 +94,14 @@ public class InternalPromotionController {
         Long totalQuantity = Long.valueOf(body.get("totalQuantity").toString());
 
         PromotionUpdateRequest request = new PromotionUpdateRequest(title, description, totalQuantity);
-        Promotion promotion = promotionService.updatePromotion(request, promotionId, userId);
+        Promotion promotion = managePromotionUseCase.updatePromotion(request, promotionId, userId);
 
         return new PromotionUpdateInfo(promotion.getTitle(), promotion.getDescription(), promotion.getTotalQuantity());
     }
 
     @GetMapping("/preset")
     public PromotionPresetInfo getPresetByCategory(@RequestParam String category) {
-        Preset preset = presetService.getPresetByCategory(Category.valueOf(category));
+        Preset preset = getPresetUseCase.getPresetByCategory(Category.valueOf(category));
         LocalDate now = LocalDate.now();
         return new PromotionPresetInfo(
                 preset.getId(), preset.getCategory().name(), preset.getDescription(),

@@ -1,9 +1,11 @@
 package com.umust.dobonglife.domain.coupon.presentation;
 
-import com.umust.dobonglife.domain.coupon.application.CouponService;
+import com.umust.dobonglife.domain.coupon.application.port.in.GetCouponUseCase;
+import com.umust.dobonglife.domain.coupon.application.port.in.ManageCouponUseCase;
 import com.umust.dobonglife.domain.coupon.application.dto.CouponDetail;
 import com.umust.dobonglife.domain.coupon.application.dto.MyCouponStatus;
-import com.umust.dobonglife.domain.promotion.application.PromotionService;
+import com.umust.dobonglife.domain.promotion.application.port.in.GetPromotionUseCase;
+import com.umust.dobonglife.domain.promotion.application.port.in.ManagePromotionUseCase;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.domain.promotion.domain.entity.PromotionImage;
 import com.umust.dobonglife.global.common.response.CursorResponse;
@@ -24,8 +26,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class InternalCouponController {
 
-    private final CouponService couponService;
-    private final PromotionService promotionService;
+    private final GetCouponUseCase getCouponUseCase;
+    private final ManageCouponUseCase manageCouponUseCase;
+    private final GetPromotionUseCase getPromotionUseCase;
+    private final ManagePromotionUseCase managePromotionUseCase;
 
     @GetMapping("/my")
     public MyCouponInfo getMyCoupons(
@@ -33,13 +37,13 @@ public class InternalCouponController {
             @RequestParam(required = false) Long lastId,
             @RequestParam int size) {
 
-        CursorResponse<CouponDetail> couponPage = couponService.getMyCoupons(userId, lastId, size);
+        CursorResponse<CouponDetail> couponPage = getCouponUseCase.getMyCoupons(userId, lastId, size);
 
         List<Long> promotionIds = couponPage.getContent().stream()
                 .map(CouponDetail::promotionId)
                 .distinct()
                 .toList();
-        List<Promotion> promotions = promotionService.getPromotionsByIds(promotionIds);
+        List<Promotion> promotions = getPromotionUseCase.getPromotionsByIds(promotionIds);
         Map<Long, Promotion> promotionMap = promotions.stream()
                 .collect(Collectors.toMap(Promotion::getId, Function.identity()));
 
@@ -62,7 +66,7 @@ public class InternalCouponController {
                     );
                 });
 
-        MyCouponStatus status = couponService.getMyCouponStatus(userId);
+        MyCouponStatus status = getCouponUseCase.getMyCouponStatus(userId);
         MyCouponStatusInfo statusInfo = new MyCouponStatusInfo(status.available(), status.used(), status.expired());
 
         return new MyCouponInfo(statusInfo, coupons);
@@ -74,7 +78,7 @@ public class InternalCouponController {
             @RequestParam Long userId,
             @RequestParam Long promotionId,
             @RequestParam String code) {
-        promotionService.validateCode(promotionId, code);
-        couponService.useCoupon(couponId, userId);
+        managePromotionUseCase.validateCode(promotionId, code);
+        manageCouponUseCase.useCoupon(couponId, userId);
     }
 }
