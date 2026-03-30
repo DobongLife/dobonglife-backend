@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.review.application.dto.ReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.application.port.in.ReviewCleanupUseCase;
 import com.umust.dobonglife.domain.review.application.port.in.ReviewRestoreUseCase;
 import com.umust.dobonglife.domain.review.domain.repository.ReviewRepository;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +31,20 @@ public class ReviewService implements ReviewCleanupUseCase, ReviewRestoreUseCase
 
     @Override
     @Transactional
-    public void nullifyByUserId(Long userId) {
-        reviewRepository.nullifyUserByUserId(userId);
+    public void markPendingByUserId(Long userId) {
+        reviewRepository.updateStatusByUserId(userId, BaseStatus.ACTIVE, BaseStatus.PENDING);
+    }
+
+    @Override
+    @Transactional
+    public void finalizeByUserId(Long userId) {
+        // PENDING 리뷰의 userId를 null로 설정하고 ACTIVE로 복원 (익명 리뷰로 유지)
+        reviewRepository.nullifyUserAndUpdateStatus(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
     }
 
     @Override
     @Transactional
     public void restoreByUserId(Long userId) {
-        // 리뷰 userId nullify는 역연산 불가 → 트랜잭션 롤백으로 복구
+        reviewRepository.updateStatusByUserId(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
     }
 }

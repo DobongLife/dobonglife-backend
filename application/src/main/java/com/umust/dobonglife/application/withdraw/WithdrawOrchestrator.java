@@ -23,11 +23,10 @@ public class WithdrawOrchestrator {
         revokeSocialAccount(userId);
 
         try {
-            // ACTIVE -> PENDING
+            // 1단계: ACTIVE → PENDING
             withdrawRestClient.markPending(userId);
             pendingMarked = true;
 
-            // 종속 데이터 정리
             withdrawRestClient.cleanupReviews(userId);
             reviewCleaned = true;
 
@@ -40,7 +39,7 @@ public class WithdrawOrchestrator {
             withdrawRestClient.cleanupPoints(userId);
             pointCleaned = true;
 
-            // PENDING -> INACTIVE
+            // 2단계: 사용자 삭제 (PENDING → INACTIVE)
             withdrawRestClient.deleteAccount(userId);
 
         } catch (Exception e) {
@@ -48,8 +47,34 @@ public class WithdrawOrchestrator {
             throw e;
         }
 
-        // 모든 단계 성공 후 토큰 무효화
+        // 3단계: PENDING 데이터 최종 정리 (best-effort)
+        finalize(userId);
+
+        // 4단계: 토큰 무효화
         withdrawRestClient.invalidateToken(accessToken, refreshToken);
+    }
+
+    private void finalize(Long userId) {
+        try {
+            withdrawRestClient.finalizeReviews(userId);
+        } catch (Exception e) {
+            log.error("[회원탈퇴 최종정리] 리뷰 finalize 실패. userId={}", userId, e);
+        }
+        try {
+            withdrawRestClient.finalizeLikes(userId);
+        } catch (Exception e) {
+            log.error("[회원탈퇴 최종정리] 좋아요 finalize 실패. userId={}", userId, e);
+        }
+        try {
+            withdrawRestClient.finalizeCoupons(userId);
+        } catch (Exception e) {
+            log.error("[회원탈퇴 최종정리] 쿠폰 finalize 실패. userId={}", userId, e);
+        }
+        try {
+            withdrawRestClient.finalizePoints(userId);
+        } catch (Exception e) {
+            log.error("[회원탈퇴 최종정리] 포인트 finalize 실패. userId={}", userId, e);
+        }
     }
 
     private void compensate(
@@ -60,7 +85,7 @@ public class WithdrawOrchestrator {
             boolean reviewCleaned,
             boolean pendingMarked
     ) {
-        // 역순 보상
+        // 역순 보상 (PENDING → ACTIVE)
         try {
             if (pointCleaned) {
                 withdrawRestClient.restorePoints(userId);

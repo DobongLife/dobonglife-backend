@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.like.application.port.in.LikeRestoreUseCase;
 import com.umust.dobonglife.domain.like.domain.entity.Like;
 import com.umust.dobonglife.domain.like.domain.repository.LikeRepository;
 import com.umust.dobonglife.global.common.constant.TargetType;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -62,12 +63,17 @@ public class LikeService implements LikeCleanupUseCase, LikeRestoreUseCase {
     }
 
     @Override
-    public void deleteByUserId(Long userId) {
-        likeRepository.deleteAllByUserId(userId);
+    public void markPendingByUserId(Long userId) {
+        likeRepository.updateStatusByUserId(userId, BaseStatus.ACTIVE, BaseStatus.PENDING);
+    }
+
+    @Override
+    public void finalizeByUserId(Long userId) {
+        likeRepository.deleteByUserIdAndStatus(userId, BaseStatus.PENDING);
     }
 
     @Override
     public void restoreByUserId(Long userId) {
-        // 좋아요는 hard-delete → 트랜잭션 롤백으로 복구
+        likeRepository.updateStatusByUserId(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
     }
 }

@@ -8,6 +8,7 @@ import com.umust.dobonglife.domain.point.domain.repository.PointHistoryRepositor
 import com.umust.dobonglife.domain.point.domain.repository.PointRepository;
 import com.umust.dobonglife.domain.point.exception.PointErrorCode;
 import com.umust.dobonglife.domain.point.exception.PointException;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,16 +42,22 @@ public class PointService implements PointCleanupUseCase, PointRestoreUseCase {
 
     @Override
     @Transactional
-    public void deleteByUserId(Long userId) {
-        pointRepository.findByUserId(userId).ifPresent(point -> {
-            pointHistoryRepository.deleteAllByPointId(point.getId());
-            pointRepository.deleteByUserId(userId);
-        });
+    public void markPendingByUserId(Long userId) {
+        pointHistoryRepository.updateStatusByUserId(userId, BaseStatus.ACTIVE, BaseStatus.PENDING);
+        pointRepository.updateStatusByUserId(userId, BaseStatus.ACTIVE, BaseStatus.PENDING);
+    }
+
+    @Override
+    @Transactional
+    public void finalizeByUserId(Long userId) {
+        pointHistoryRepository.deleteByUserIdAndStatus(userId, BaseStatus.PENDING);
+        pointRepository.deleteByUserIdAndStatus(userId, BaseStatus.PENDING);
     }
 
     @Override
     @Transactional
     public void restoreByUserId(Long userId) {
-        // 포인트는 hard-delete → 트랜잭션 롤백으로 복구
+        pointRepository.updateStatusByUserId(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
+        pointHistoryRepository.updateStatusByUserId(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
     }
 }

@@ -3,7 +3,9 @@ package com.umust.dobonglife.domain.like.domain.repository;
 import com.umust.dobonglife.domain.like.domain.entity.Like;
 import com.umust.dobonglife.domain.like.domain.repository.custom.LikeRepositoryCustom;
 import com.umust.dobonglife.global.common.constant.TargetType;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -20,4 +22,14 @@ public interface LikeRepository extends JpaRepository<Like, Long>, LikeRepositor
     Set<Long> findTargetIdsByUserIdAndTargetType(@Param("userId") Long userId, @Param("targetType") TargetType targetType);
 
     void deleteAllByUserId(Long userId);
+
+    @Modifying
+    @Query("UPDATE Like l SET l.status = :newStatus WHERE l.userId = :userId AND l.status = :currentStatus")
+    void updateStatusByUserId(@Param("userId") Long userId,
+                              @Param("currentStatus") BaseStatus currentStatus,
+                              @Param("newStatus") BaseStatus newStatus);
+
+    @Modifying
+    @Query("DELETE FROM Like l WHERE l.userId = :userId AND l.status = :status")
+    void deleteByUserIdAndStatus(@Param("userId") Long userId, @Param("status") BaseStatus status);
 }

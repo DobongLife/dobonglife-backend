@@ -59,23 +59,37 @@ public class WithdrawInternalController {
         return BaseResponse.ok(null);
     }
 
-    // ── 종속 데이터 정리 ──
+    // ── 종속 데이터 정리 (ACTIVE → PENDING) ──
 
     @PostMapping("/reviews/{userId}/cleanup")
     public BaseResponse<Void> cleanupReviews(@PathVariable Long userId) {
-        reviewCleanupUseCase.nullifyByUserId(userId);
-        return BaseResponse.ok(null);
-    }
-
-    @PostMapping("/reviews/{userId}/restore")
-    public BaseResponse<Void> restoreReviews(@PathVariable Long userId) {
-        reviewRestoreUseCase.restoreByUserId(userId);
+        reviewCleanupUseCase.markPendingByUserId(userId);
         return BaseResponse.ok(null);
     }
 
     @PostMapping("/likes/{userId}/cleanup")
     public BaseResponse<Void> cleanupLikes(@PathVariable Long userId) {
-        likeCleanupUseCase.deleteByUserId(userId);
+        likeCleanupUseCase.markPendingByUserId(userId);
+        return BaseResponse.ok(null);
+    }
+
+    @PostMapping("/coupons/{userId}/cleanup")
+    public BaseResponse<Void> cleanupCoupons(@PathVariable Long userId) {
+        couponCleanupUseCase.markPendingByUserId(userId);
+        return BaseResponse.ok(null);
+    }
+
+    @PostMapping("/points/{userId}/cleanup")
+    public BaseResponse<Void> cleanupPoints(@PathVariable Long userId) {
+        pointCleanupUseCase.markPendingByUserId(userId);
+        return BaseResponse.ok(null);
+    }
+
+    // ── 보상 트랜잭션 (PENDING → ACTIVE) ──
+
+    @PostMapping("/reviews/{userId}/restore")
+    public BaseResponse<Void> restoreReviews(@PathVariable Long userId) {
+        reviewRestoreUseCase.restoreByUserId(userId);
         return BaseResponse.ok(null);
     }
 
@@ -85,27 +99,41 @@ public class WithdrawInternalController {
         return BaseResponse.ok(null);
     }
 
-    @PostMapping("/coupons/{userId}/cleanup")
-    public BaseResponse<Void> cleanupCoupons(@PathVariable Long userId) {
-        couponCleanupUseCase.deleteByUserId(userId);
-        return BaseResponse.ok(null);
-    }
-
     @PostMapping("/coupons/{userId}/restore")
     public BaseResponse<Void> restoreCoupons(@PathVariable Long userId) {
         couponRestoreUseCase.restoreByUserId(userId);
         return BaseResponse.ok(null);
     }
 
-    @PostMapping("/points/{userId}/cleanup")
-    public BaseResponse<Void> cleanupPoints(@PathVariable Long userId) {
-        pointCleanupUseCase.deleteByUserId(userId);
-        return BaseResponse.ok(null);
-    }
-
     @PostMapping("/points/{userId}/restore")
     public BaseResponse<Void> restorePoints(@PathVariable Long userId) {
         pointRestoreUseCase.restoreByUserId(userId);
+        return BaseResponse.ok(null);
+    }
+
+    // ── 최종 정리 (PENDING 데이터 확정 삭제) ──
+
+    @PostMapping("/reviews/{userId}/finalize")
+    public BaseResponse<Void> finalizeReviews(@PathVariable Long userId) {
+        reviewCleanupUseCase.finalizeByUserId(userId);
+        return BaseResponse.ok(null);
+    }
+
+    @PostMapping("/likes/{userId}/finalize")
+    public BaseResponse<Void> finalizeLikes(@PathVariable Long userId) {
+        likeCleanupUseCase.finalizeByUserId(userId);
+        return BaseResponse.ok(null);
+    }
+
+    @PostMapping("/coupons/{userId}/finalize")
+    public BaseResponse<Void> finalizeCoupons(@PathVariable Long userId) {
+        couponCleanupUseCase.finalizeByUserId(userId);
+        return BaseResponse.ok(null);
+    }
+
+    @PostMapping("/points/{userId}/finalize")
+    public BaseResponse<Void> finalizePoints(@PathVariable Long userId) {
+        pointCleanupUseCase.finalizeByUserId(userId);
         return BaseResponse.ok(null);
     }
 

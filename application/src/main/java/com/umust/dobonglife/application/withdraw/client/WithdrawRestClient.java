@@ -50,38 +50,58 @@ public class WithdrawRestClient {
         post("/users/{userId}/restore", userId);
     }
 
-    // ── 종속 데이터 정리 ──
+    // ── 종속 데이터 정리 (ACTIVE → PENDING) ──
 
     public void cleanupReviews(Long userId) {
         post("/reviews/{userId}/cleanup", userId);
-    }
-
-    public void restoreReviews(Long userId) {
-        post("/reviews/{userId}/restore", userId);
     }
 
     public void cleanupLikes(Long userId) {
         post("/likes/{userId}/cleanup", userId);
     }
 
-    public void restoreLikes(Long userId) {
-        post("/likes/{userId}/restore", userId);
-    }
-
     public void cleanupCoupons(Long userId) {
         post("/coupons/{userId}/cleanup", userId);
-    }
-
-    public void restoreCoupons(Long userId) {
-        post("/coupons/{userId}/restore", userId);
     }
 
     public void cleanupPoints(Long userId) {
         post("/points/{userId}/cleanup", userId);
     }
 
+    // ── 보상 트랜잭션 (PENDING → ACTIVE) ──
+
+    public void restoreReviews(Long userId) {
+        post("/reviews/{userId}/restore", userId);
+    }
+
+    public void restoreLikes(Long userId) {
+        post("/likes/{userId}/restore", userId);
+    }
+
+    public void restoreCoupons(Long userId) {
+        post("/coupons/{userId}/restore", userId);
+    }
+
     public void restorePoints(Long userId) {
         post("/points/{userId}/restore", userId);
+    }
+
+    // ── 최종 정리 (PENDING 데이터 확정 삭제) ──
+
+    public void finalizeReviews(Long userId) {
+        post("/reviews/{userId}/finalize", userId);
+    }
+
+    public void finalizeLikes(Long userId) {
+        post("/likes/{userId}/finalize", userId);
+    }
+
+    public void finalizeCoupons(Long userId) {
+        post("/coupons/{userId}/finalize", userId);
+    }
+
+    public void finalizePoints(Long userId) {
+        post("/points/{userId}/finalize", userId);
     }
 
     // ── 소셜 연동 해제 ──

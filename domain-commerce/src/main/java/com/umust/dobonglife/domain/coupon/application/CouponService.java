@@ -9,6 +9,7 @@ import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
 import com.umust.dobonglife.domain.coupon.application.dto.MyCouponStatus;
 import com.umust.dobonglife.domain.coupon.exception.CouponErrorCode;
 import com.umust.dobonglife.domain.coupon.exception.CouponException;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -69,14 +70,20 @@ public class CouponService implements CouponCleanupUseCase, CouponRestoreUseCase
 
     @Override
     @Transactional
-    public void deleteByUserId(Long userId) {
-        couponRepository.deleteAllByUserId(userId);
+    public void markPendingByUserId(Long userId) {
+        couponRepository.updateStatusByUserId(userId, BaseStatus.ACTIVE, BaseStatus.PENDING);
+    }
+
+    @Override
+    @Transactional
+    public void finalizeByUserId(Long userId) {
+        couponRepository.deleteByUserIdAndStatus(userId, BaseStatus.PENDING);
     }
 
     @Override
     @Transactional
     public void restoreByUserId(Long userId) {
-        // 쿠폰은 hard-delete → 트랜잭션 롤백으로 복구
+        couponRepository.updateStatusByUserId(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
     }
 
     private Coupon findById(Long couponId) {
