@@ -36,7 +36,7 @@ public class CouponIssuedNotificationListener {
                     event.couponId()
             );
         } catch (Exception e) {
-            log.error("쿠폰 발급 알림 전송 실패: sagaId={}, userId={}", event.sagaId(), event.userId(), e);
+            log.error("쿠폰 발급 알림 전송 실패: userId={}", event.userId(), e);
         }
     }
 }

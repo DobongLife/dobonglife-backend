@@ -21,9 +21,6 @@ public class InternalExchangeController {
             @RequestParam Long promotionId) {
         ExchangeRequest request = new ExchangeRequest(userId, promotionId);
         ExchangeResponse response = exchangeUseCase.execute(request);
-        return Map.of(
-                "sagaId", response.sagaId(),
-                "status", response.status()
-        );
+        return Map.of("couponId", response.couponId());
     }
 }
