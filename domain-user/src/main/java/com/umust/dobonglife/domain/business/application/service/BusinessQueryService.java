@@ -5,7 +5,7 @@ import com.umust.dobonglife.domain.business.application.port.in.GetBusinessCateg
 import com.umust.dobonglife.domain.business.application.port.in.GetBusinessUseCase;
 import com.umust.dobonglife.domain.business.application.port.out.LoadBusinessPort;
 import com.umust.dobonglife.domain.business.domain.entity.Business;
-import com.umust.dobonglife.domain.business.exception.BusinessDomainException;
+import com.umust.dobonglife.domain.business.exception.BusinessException;
 import com.umust.dobonglife.domain.business.exception.BusinessErrorCode;
 import com.umust.dobonglife.global.common.constant.Category;
 import lombok.RequiredArgsConstructor;
@@ -27,20 +27,20 @@ public class BusinessQueryService implements CheckBusinessUseCase, GetBusinessCa
     @Override
     public Category getBusinessCategory(Long userId) {
         return loadBusinessPort.findCategoryByUserId(userId)
-                .orElseThrow(() -> new BusinessDomainException(BusinessErrorCode.BUSINESS_CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.BUSINESS_CATEGORY_NOT_FOUND));
     }
 
     @Override
     public Business getBusinessByUser(Long userId) {
         return loadBusinessPort.findByUserId(userId)
-                .orElseThrow(() -> new BusinessDomainException(BusinessErrorCode.BUSINESS_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.BUSINESS_NOT_FOUND));
     }
 
     @Override
     public Long getBusinessPlaceId(Long userId) {
         Business business = getBusinessByUser(userId);
         if (business.getPlaceId() == null) {
-            throw new BusinessDomainException(BusinessErrorCode.BUSINESS_NOT_FOUND);
+            throw new BusinessException(BusinessErrorCode.BUSINESS_NOT_FOUND);
         }
         return business.getPlaceId();
     }

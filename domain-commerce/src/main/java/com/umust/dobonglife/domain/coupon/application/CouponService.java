@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +66,15 @@ public class CouponService {
         }
         coupon.used();
         couponRepository.save(coupon);
+    }
+
+    public Map<Long, Long> getUsedCountByPromotionIds(List<Long> promotionIds) {
+        return couponRepository.countByPromotionIdsAndStatus(promotionIds, CouponStatus.USED)
+                .stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (Long) row[1]
+                ));
     }
 
     private Coupon findById(Long couponId) {

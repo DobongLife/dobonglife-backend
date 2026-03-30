@@ -21,4 +21,13 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
                                        Pageable pageable);
 
     long countByUserIdAndCouponStatus(Long userId, CouponStatus couponStatus);
+
+    @Query("""
+        SELECT c.promotionId, COUNT(c)
+        FROM Coupon c
+        WHERE c.promotionId IN :promotionIds AND c.couponStatus = :status
+        GROUP BY c.promotionId
+    """)
+    List<Object[]> countByPromotionIdsAndStatus(@Param("promotionIds") List<Long> promotionIds,
+                                                @Param("status") CouponStatus status);
 }
