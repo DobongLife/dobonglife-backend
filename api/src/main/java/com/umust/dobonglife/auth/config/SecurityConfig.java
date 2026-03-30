@@ -62,10 +62,29 @@ public class SecurityConfig {
     }
 
     /**
-     * 2) API 체인: 기존 정책 유지 (동시 로그인 max 1 + expiredStrategy)
+     * 2) Internal API 체인: 서버 내부 호출 전용 (인증 불필요)
      */
     @Bean
     @Order(2)
+    public SecurityFilterChain internalFilterChain(HttpSecurity http,
+                                                    CorsConfigurationSource corsConfigurationSource) throws Exception {
+        http
+                .securityMatcher("/internal/**")
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .httpBasic(b -> b.disable())
+                .formLogin(fl -> fl.disable())
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        return http.build();
+    }
+
+    /**
+     * 3) API 체인: 기존 정책 유지 (동시 로그인 max 1 + expiredStrategy)
+     */
+    @Bean
+    @Order(3)
     public SecurityFilterChain apiFilterChain(HttpSecurity http,
                                               CustomLoginFilter customLoginFilter,
                                               CorsConfigurationSource corsConfigurationSource) throws Exception {
