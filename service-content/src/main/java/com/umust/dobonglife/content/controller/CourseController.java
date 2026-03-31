@@ -1,0 +1,66 @@
+package com.umust.dobonglife.content.controller;
+
+import com.umust.dobonglife.domain.course.application.CourseDetailService;
+import com.umust.dobonglife.domain.course.application.CourseService;
+import com.umust.dobonglife.domain.course.application.dto.*;
+import com.umust.dobonglife.domain.place.domain.vo.Theme;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
+import com.umust.dobonglife.global.common.constant.PageSizeType;
+import com.umust.dobonglife.global.common.response.BaseResponse;
+import com.umust.dobonglife.global.common.response.CursorResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/course")
+@RequiredArgsConstructor
+public class CourseController {
+
+    private final CourseService courseService;
+    private final CourseDetailService courseDetailService;
+
+    @PostMapping
+    public BaseResponse<CourseRegisterResponse> createCourse(
+            @CurrentUserId Long userId, @RequestBody @Valid CreateCourseRequest request) {
+        return BaseResponse.ok(courseService.createCourse(userId, request));
+    }
+
+    @PatchMapping("/{courseId}")
+    public BaseResponse<CourseRegisterResponse> updateCourse(
+            @CurrentUserId Long userId, @PathVariable Long courseId,
+            @RequestBody @Valid UpdateCourseRequest request) {
+        return BaseResponse.ok(courseService.updateCourse(userId, courseId, request));
+    }
+
+    @GetMapping("/my")
+    public BaseResponse<MyCourseResponse> getMyCourses(
+            @CurrentUserId Long userId,
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = PageSizeType.COURSE) int size) {
+        return BaseResponse.ok(courseService.getMyCourses(userId, lastId, size));
+    }
+
+    @GetMapping
+    public BaseResponse<CursorResponse<CourseSummaryResponse>> getAllCourses(
+            @CurrentUserId Long userId,
+            @RequestParam(required = false) Theme theme,
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = PageSizeType.COURSE) int size) {
+        return BaseResponse.ok(courseService.getAllCourses(userId, theme, lastId, size));
+    }
+
+    @DeleteMapping("/{courseId}")
+    public BaseResponse<Void> deleteCourse(@CurrentUserId Long userId, @PathVariable Long courseId) {
+        courseService.deleteCourse(userId, courseId);
+        return BaseResponse.ok(null);
+    }
+
+    @GetMapping("/{courseId}")
+    public BaseResponse<CourseDetailResponse> getCourseDetail(
+            @PathVariable Long courseId, @CurrentUserId Long userId,
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = "2") int size) {
+        return BaseResponse.ok(courseDetailService.getCourseDetail(courseId, userId, lastId, size));
+    }
+}

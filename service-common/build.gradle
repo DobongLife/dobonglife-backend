@@ -1,0 +1,13 @@
+apply plugin: 'java-library'
+
+dependencies {
+    api project(':core')
+    api project(':domain-auth')
+
+    api 'org.springframework.boot:spring-boot-starter-web'
+    api 'org.springframework.boot:spring-boot-starter-security'
+    api 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    api 'org.springframework.boot:spring-boot-starter-validation'
+}
+
+jar { enabled = true }

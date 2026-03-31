@@ -8,3 +8,10 @@ include 'domain-user'
 include 'domain-content'
 include 'domain-notification'
 include 'domain-auth'
+
+// MSA service modules
+include 'service-common'
+include 'service-user'
+include 'service-auth'
+include 'service-commerce'
+include 'service-content'

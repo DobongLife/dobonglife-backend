@@ -1,0 +1,70 @@
+package com.umust.dobonglife.commerce.controller;
+
+import com.umust.dobonglife.commerce.facade.PromotionFacade;
+import com.umust.dobonglife.commerce.facade.PromotionFacade.PromotionWithBlockedResponse;
+import com.umust.dobonglife.domain.coupon.application.ExchangeOrchestrator;
+import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
+import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;
+import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionRegisterRequest;
+import com.umust.dobonglife.domain.promotion.presentation.dto.request.PromotionUpdateRequest;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionPresetResponse;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionRegisterResponse;
+import com.umust.dobonglife.domain.promotion.presentation.dto.response.PromotionUpdateResponse;
+import com.umust.dobonglife.global.common.annotation.CurrentUserId;
+import com.umust.dobonglife.global.common.constant.PageSizeType;
+import com.umust.dobonglife.global.common.response.BaseResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/composition/promotion")
+public class PromotionCompositionController {
+
+    private final PromotionFacade promotionFacade;
+    private final ExchangeOrchestrator exchangeOrchestrator;
+
+    @GetMapping
+    public ResponseEntity<BaseResponse<PromotionWithBlockedResponse>> getPromotionsWithBlocked(
+            @CurrentUserId Long userId,
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = PageSizeType.PROMOTION) int size) {
+        return ResponseEntity.ok(BaseResponse.ok(promotionFacade.getPromotionsWithBlocked(userId, lastId, size)));
+    }
+
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse<PromotionRegisterResponse>> registerPromotion(
+            @RequestPart @Valid PromotionRegisterRequest request,
+            @RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles,
+            @CurrentUserId Long userId) {
+        return ResponseEntity.ok(BaseResponse.ok(promotionFacade.registerPromotion(request, userId, imageFiles)));
+    }
+
+    @PatchMapping("/update/{promotionId}")
+    public ResponseEntity<BaseResponse<PromotionUpdateResponse>> updatePromotion(
+            @PathVariable Long promotionId,
+            @RequestBody @Valid PromotionUpdateRequest request,
+            @CurrentUserId Long userId) {
+        return ResponseEntity.ok(BaseResponse.ok(promotionFacade.modifyPromotion(request, promotionId, userId)));
+    }
+
+    @GetMapping("/preset")
+    public ResponseEntity<BaseResponse<PromotionPresetResponse>> getPreset(@CurrentUserId Long userId) {
+        return ResponseEntity.ok(BaseResponse.ok(promotionFacade.getPreset(userId)));
+    }
+
+    @PostMapping("/{promotionId}/exchange")
+    public ResponseEntity<BaseResponse<ExchangeResponse>> exchangeCoupon(
+            @PathVariable Long promotionId,
+            @CurrentUserId Long userId) {
+        ExchangeRequest request = new ExchangeRequest(userId, promotionId);
+        ExchangeResponse response = exchangeOrchestrator.execute(request);
+        return ResponseEntity.ok(BaseResponse.ok(response));
+    }
+}

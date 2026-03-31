@@ -1,0 +1,19 @@
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+    implementation project(':service-common')
+    implementation project(':infra')
+    implementation project(':domain-auth')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+}
+
+bootJar {
+    enabled = true
+    mainClass = 'com.umust.dobonglife.auth.AuthServiceApplication'
+}
+jar { enabled = false }
