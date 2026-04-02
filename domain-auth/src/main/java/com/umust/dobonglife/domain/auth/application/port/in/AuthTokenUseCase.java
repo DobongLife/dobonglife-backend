@@ -10,5 +10,7 @@ public interface AuthTokenUseCase {
 
     void deleteRefreshToken(String refreshToken);
 
+    Long extractUserId(String refreshToken);
+
     AuthTokens reissueTokens(String refreshToken);
 }

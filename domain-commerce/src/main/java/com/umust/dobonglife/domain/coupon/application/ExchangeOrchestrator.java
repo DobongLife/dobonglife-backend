@@ -1,4 +1,4 @@
-package com.umust.dobonglife.application.coupon;
+package com.umust.dobonglife.domain.coupon.application;
 
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeRequest;
 import com.umust.dobonglife.domain.coupon.application.dto.ExchangeResponse;

@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':core')
+    implementation project(':domain-user')
     implementation project(':domain-commerce')
     implementation project(':domain-content')
     implementation project(':domain-auth')
