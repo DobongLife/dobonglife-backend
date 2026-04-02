@@ -89,6 +89,9 @@ swagger:
     local-url: ${SWAGGER_LOCAL_URL:http://localhost:8080}
     global-url: ${SWAGGER_GLOBAL_URL:https://api.dobonglife.co.kr}
 
+internal:
+  api-key: ${INTERNAL_API_KEY}
+
 withdraw:
   base-url: ${WITHDRAW_BASE_URL:http://localhost:8080}
 

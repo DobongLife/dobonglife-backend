@@ -11,6 +11,7 @@ import com.umust.dobonglife.presentation.schedule.dto.request.ScheduleRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ScheduleController {
     @ApiResponse(responseCode = "200", description = "일정 등록에 성공하였습니다.")
     @PostMapping
     public BaseResponse<Void> registerSchedule(@CurrentUserId Long userId,
-                                               @RequestBody ScheduleRequest request) {
+                                               @Valid @RequestBody ScheduleRequest request) {
         scheduleCommandUseCase.registerSchedule(
                 request.getTitle(), request.getStartTime(), request.getEndTime(),
                 request.getMemo(), request.getPlaceName(), request.getIsEvent(),

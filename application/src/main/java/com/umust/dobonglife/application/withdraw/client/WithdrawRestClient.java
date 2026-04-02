@@ -17,6 +17,9 @@ public class WithdrawRestClient {
     @Value("${withdraw.base-url}")
     private String baseUrl;
 
+    @Value("${internal.api-key}")
+    private String internalApiKey;
+
     private RestClient restClient;
 
     private static final int CONNECT_TIMEOUT_MS = 5_000;
@@ -32,6 +35,7 @@ public class WithdrawRestClient {
 
         this.restClient = RestClient.builder()
                 .baseUrl(baseUrl + "/internal/withdraw")
+                .defaultHeader("X-Internal-Api-Key", internalApiKey)
                 .requestFactory(factory)
                 .build();
     }
