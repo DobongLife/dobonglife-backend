@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.coupon.domain.repository;
 
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Query;
