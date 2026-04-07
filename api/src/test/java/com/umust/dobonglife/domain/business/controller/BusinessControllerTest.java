@@ -9,7 +9,7 @@ import com.umust.dobonglife.domain.place.domain.vo.Theme;
 import com.umust.dobonglife.domain.promotion.domain.constant.DiscountType;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.global.common.constant.Category;
-import com.umust.dobonglife.global.external.firebase.FirebaseConfig;
+import com.umust.dobonglife.infra.firebase.FirebaseConfig;
 import com.umust.dobonglife.global.support.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
