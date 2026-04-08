@@ -1,12 +1,15 @@
 package com.umust.dobonglife.domain.coupon.application;
 
 import com.umust.dobonglife.domain.coupon.application.dto.CouponDetail;
+import com.umust.dobonglife.domain.coupon.application.port.in.CouponCleanupUseCase;
+import com.umust.dobonglife.domain.coupon.application.port.in.CouponRestoreUseCase;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.repository.CouponRepository;
 import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
 import com.umust.dobonglife.domain.coupon.application.dto.MyCouponStatus;
 import com.umust.dobonglife.domain.coupon.exception.CouponErrorCode;
 import com.umust.dobonglife.domain.coupon.exception.CouponException;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.common.response.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class CouponService {
+public class CouponService implements CouponCleanupUseCase, CouponRestoreUseCase {
 
     private final CouponRepository couponRepository;
 
@@ -75,6 +78,24 @@ public class CouponService {
                         row -> (Long) row[0],
                         row -> (Long) row[1]
                 ));
+    }
+
+    @Override
+    @Transactional
+    public void markPendingByUserId(Long userId) {
+        couponRepository.updateStatusByUserId(userId, BaseStatus.ACTIVE, BaseStatus.PENDING);
+    }
+
+    @Override
+    @Transactional
+    public void finalizeByUserId(Long userId) {
+        couponRepository.deleteByUserIdAndStatus(userId, BaseStatus.PENDING);
+    }
+
+    @Override
+    @Transactional
+    public void restoreByUserId(Long userId) {
+        couponRepository.updateStatusByUserId(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
     }
 
     private Coupon findById(Long couponId) {

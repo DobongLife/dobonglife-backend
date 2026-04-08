@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.user.application.service;
 
-import com.umust.dobonglife.domain.user.application.dto.LocalLoginUser;
 import com.umust.dobonglife.domain.user.application.dto.OAuthLoginUser;
 import com.umust.dobonglife.domain.user.application.port.in.*;
 import com.umust.dobonglife.domain.user.application.port.out.LoadUserPort;
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class FindUserCommandService implements SignUpUseCase, DeleteAccountUseCase,
+public class UserCommandService implements SignUpUseCase, DeleteAccountUseCase,
         UpdatePasswordUseCase, OAuthFindUserUseCase, ManageUserUseCase {
 
     private final LoadUserPort loadUserPort;
@@ -54,11 +53,25 @@ public class FindUserCommandService implements SignUpUseCase, DeleteAccountUseCa
     // ── DeleteAccountUseCase ──
 
     @Override
+    public void markPending(Long userId) {
+        User user = loadUserPort.loadUser(userId);
+        user.markPending();
+        saveUserPort.save(user);
+    }
+
+    @Override
     public void deleteAccount(Long userId) {
         User user = loadUserPort.loadUser(userId);
         user.setFcmToken(null);
         saveUserPort.delete(user);
         SecurityContextHolder.clearContext();
+    }
+
+    @Override
+    public void restoreAccount(Long userId) {
+        User user = loadUserPort.loadUser(userId);
+        user.restore();
+        saveUserPort.save(user);
     }
 
     @Override

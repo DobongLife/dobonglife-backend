@@ -87,8 +87,7 @@ public class AuthController {
     })
     @SecurityRequirement(name = "RefreshAuth")
     @PostMapping("/reissue")
-    public BaseResponse<TokenResponse> reissueTokens(HttpServletRequest request,
-                                                     @CurrentUserId Long userId) {
+    public BaseResponse<TokenResponse> reissueTokens(HttpServletRequest request) {
         String refreshToken = tokenExtractor.extractRefreshToken(request);
         return BaseResponse.ok(TokenResponse.from(authFacade.reissueTokens(refreshToken)));
     }

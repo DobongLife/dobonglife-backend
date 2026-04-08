@@ -1,4 +1,4 @@
-package com.umust.dobonglife.auth.service;
+package com.umust.dobonglife.auth.security.service;
 
 import com.umust.dobonglife.auth.security.principal.UserPrincipal;
 import com.umust.dobonglife.domain.user.application.dto.LocalLoginUser;
