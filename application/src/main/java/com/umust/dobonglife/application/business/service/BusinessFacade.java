@@ -84,7 +84,8 @@ public class BusinessFacade {
 
     @Transactional(readOnly = true)
     public PromotionPage getBusinessPromotions(Long userId, Long lastId, int size) {
-        Slice<Promotion> slice = promotionService.getPromotionSliceByBusinessId(userId, lastId, size);
+        Business business = getBusinessUseCase.getBusinessByUser(userId);
+        Slice<Promotion> slice = promotionService.getPromotionSliceByBusinessId(business.getId(), lastId, size);
 
         List<Long> promotionIds = slice.getContent().stream()
                 .map(Promotion::getId)
