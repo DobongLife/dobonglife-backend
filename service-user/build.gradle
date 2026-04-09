@@ -1,7 +1,7 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-    implementation project(':service-common')
+    implementation project(':common-security')
     implementation project(':infra')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'

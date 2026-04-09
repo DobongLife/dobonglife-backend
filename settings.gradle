@@ -2,8 +2,10 @@ rootProject.name = 'dobonglife'
 include 'core'
 include 'infra'
 
+// MSA shared modules
+include 'common-security'
+
 // MSA service modules
-include 'service-common'
 include 'service-user'
 include 'service-auth'
 include 'service-commerce'
