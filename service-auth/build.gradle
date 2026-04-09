@@ -1,4 +1,5 @@
 apply plugin: 'org.springframework.boot'
+apply plugin: 'com.epages.restdocs-api-spec'
 
 dependencies {
     implementation project(':common-security')
@@ -11,7 +12,7 @@ dependencies {
     // JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // JWT (jjwt-api comes transitively from service-common)
+    // JWT (jjwt-api comes transitively from common-security)
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
@@ -22,6 +23,22 @@ dependencies {
     implementation 'com.google.api-client:google-api-client:2.2.0'
 
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // Test
+    testImplementation testFixtures(project(':common-security'))
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.18.4'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'com.h2database:h2'
+}
+
+openapi3 {
+    server = 'http://localhost:8082'
+    title = 'Auth Service API'
+    description = '인증 서비스 API 문서'
+    version = '1.0.0'
+    format = 'json'
+    outputDirectory = 'build/api-spec'
 }
 
 bootJar {
