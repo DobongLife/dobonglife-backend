@@ -49,6 +49,8 @@ src/test/resources/application-test.yml
 
 ### Claude ###
 .claude/
+nginx/
+script/
 
 # 테스트가 생성하는 스니펫
 /build/generated-snippets/

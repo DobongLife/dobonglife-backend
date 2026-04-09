@@ -3,11 +3,23 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     implementation project(':service-common')
     implementation project(':infra')
-    implementation project(':domain-auth')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // JWT (jjwt-api comes transitively from service-common)
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+    // Nimbus JOSE JWT (Apple auth)
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.37.2'
+
+    // Google API Client (Google auth)
+    implementation 'com.google.api-client:google-api-client:2.2.0'
 
     runtimeOnly 'com.mysql:mysql-connector-j'
 }
