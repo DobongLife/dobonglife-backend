@@ -34,4 +34,9 @@ public class PlaceService {
     public List<Place> getAllActivePlaces() {
         return placeRepository.findAllByStatus(BaseStatus.ACTIVE);
     }
+
+    @Transactional
+    public Place savePlace(Place place) {
+        return placeRepository.save(place);
+    }
 }

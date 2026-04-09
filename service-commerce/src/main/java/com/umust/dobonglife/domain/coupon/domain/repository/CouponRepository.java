@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.coupon.domain.repository;
 
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
+import java.util.List;
 import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -35,4 +36,13 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     @Modifying
     @Query("DELETE FROM Coupon c WHERE c.userId = :userId AND c.status = :status")
     void deleteByUserIdAndStatus(@Param("userId") Long userId, @Param("status") BaseStatus status);
+
+    @Query("""
+        SELECT c.promotionId, COUNT(c)
+        FROM Coupon c
+        WHERE c.promotionId IN :promotionIds AND c.couponStatus = :status
+        GROUP BY c.promotionId
+    """)
+    List<Object[]> countByPromotionIdsAndStatus(@Param("promotionIds") List<Long> promotionIds,
+                                                @Param("status") CouponStatus status);
 }

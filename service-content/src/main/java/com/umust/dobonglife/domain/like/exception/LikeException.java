@@ -1,6 +1,5 @@
 package com.umust.dobonglife.domain.like.exception;
 
-
 import com.umust.dobonglife.global.common.error.exception.BusinessException;
 
 public class LikeException extends BusinessException {

@@ -17,7 +17,8 @@ public enum BusinessErrorCode implements ErrorCode {
     INVALID_DISCOUNT_VALUE_NEGATIVE(HttpStatus.BAD_REQUEST, "할인 100%를 초과할 수 없습니다."),
     INVALID_COUPON_CODE(HttpStatus.BAD_REQUEST, "쿠폰 코드는 6자리입니다."),
     INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "시작일은 종료일보다 빠를 수 없습니다."),
-    COUPON_EXCHANGE_RESTRICTED(HttpStatus.FORBIDDEN, "리뷰 정책 위반(3회 삭제)으로 인해 쿠폰 교환이 제한되었습니다.");
+    COUPON_EXCHANGE_RESTRICTED(HttpStatus.FORBIDDEN, "리뷰 정책 위반(3회 삭제)으로 인해 쿠폰 교환이 제한되었습니다."),
+    INVALID_BUSINESS_NUMBER(HttpStatus.BAD_REQUEST, "유효하지 않은 사업자등록번호입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
