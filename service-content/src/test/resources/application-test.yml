@@ -72,3 +72,5 @@ firebase:
     account:
       path: /tmp/test-firebase-key.json
       enabled: false
+open-api:
+  secret-key: test-secret-key

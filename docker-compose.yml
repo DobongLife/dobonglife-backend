@@ -120,6 +120,18 @@ services:
       COMMERCE_SERVICE_URL: http://commerce-service:8083
       CONTENT_SERVICE_URL: http://content-service:8084
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-secret-key-change-me-in-production}
+      # Mail
+      MAIL_ADDRESS: ${MAIL_ADDRESS:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      # AWS S3
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY:-}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY:-}
+      AWS_REGION: ${AWS_REGION:-ap-northeast-2}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-}
+      # Firebase
+      FIREBASE_ENABLED: ${FIREBASE_ENABLED:-false}
+      FIREBASE_ADMINSDK_ACCOUNT_PATH: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:-}
+      OPEN_API_SECRET_KEY: ${OPEN_API_SECRET_KEY:-}
       JAVA_OPTS: >-
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
@@ -158,6 +170,28 @@ services:
       REDIS_PORT: 6379
       USER_SERVICE_URL: http://user-service:8081
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-secret-key-change-me-in-production}
+      # OAuth2
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID:-}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET:-}
+      KAKAO_REDIRECT_URI: ${KAKAO_REDIRECT_URI:-}
+      KAKAO_ADMIN_KEY: ${KAKAO_ADMIN_KEY:-}
+      # Apple
+      APPLE_CLIENT_ID: ${APPLE_CLIENT_ID:-}
+      APPLE_TEAM_ID: ${APPLE_TEAM_ID:-}
+      APPLE_KEY_ID: ${APPLE_KEY_ID:-}
+      APPLE_PRIVATE_KEY_PATH: ${APPLE_PRIVATE_KEY_PATH:-}
+      # AWS S3
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY:-}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY:-}
+      AWS_REGION: ${AWS_REGION:-ap-northeast-2}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-}
+      # Firebase
+      FIREBASE_ENABLED: ${FIREBASE_ENABLED:-false}
+      FIREBASE_ADMINSDK_ACCOUNT_PATH: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:-}
+      OPEN_API_SECRET_KEY: ${OPEN_API_SECRET_KEY:-}
       JAVA_OPTS: >-
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
@@ -196,6 +230,15 @@ services:
       REDIS_PORT: 6379
       USER_SERVICE_URL: http://user-service:8081
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-secret-key-change-me-in-production}
+      # AWS S3
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY:-}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY:-}
+      AWS_REGION: ${AWS_REGION:-ap-northeast-2}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-}
+      # Firebase
+      FIREBASE_ENABLED: ${FIREBASE_ENABLED:-false}
+      FIREBASE_ADMINSDK_ACCOUNT_PATH: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:-}
+      OPEN_API_SECRET_KEY: ${OPEN_API_SECRET_KEY:-}
       JAVA_OPTS: >-
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
@@ -233,6 +276,15 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-secret-key-change-me-in-production}
+      # AWS S3
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY:-}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY:-}
+      AWS_REGION: ${AWS_REGION:-ap-northeast-2}
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-}
+      # Firebase
+      FIREBASE_ENABLED: ${FIREBASE_ENABLED:-false}
+      FIREBASE_ADMINSDK_ACCOUNT_PATH: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:-}
+      OPEN_API_SECRET_KEY: ${OPEN_API_SECRET_KEY:-}
       JAVA_OPTS: >-
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
