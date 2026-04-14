@@ -1,5 +1,6 @@
 package com.umust.dobonglife.content.controller;
 
+import com.epages.restdocs.apispec.ResourceDocumentation;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.common.security.extractor.TokenExtractor;
@@ -11,10 +12,12 @@ import com.umust.dobonglife.domain.course.application.dto.CourseDetailResponse.C
 import com.umust.dobonglife.domain.course.domain.vo.Level;
 import com.umust.dobonglife.domain.place.domain.vo.Theme;
 import com.umust.dobonglife.domain.review.application.dto.ReviewSummaryResponse;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.test.support.TestWebMvcConfig;
 import com.umust.dobonglife.test.support.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
@@ -34,6 +37,8 @@ import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
+import static com.epages.restdocs.apispec.SimpleType.INTEGER;
+import static com.epages.restdocs.apispec.SimpleType.STRING;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -43,6 +48,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,13 +62,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class CourseControllerTest {
 
-    @Autowired MockMvc mockMvc;
-    @Autowired ObjectMapper objectMapper;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
 
-    @MockitoBean CourseService courseService;
-    @MockitoBean CourseDetailService courseDetailService;
-    @MockitoBean AuthenticateAccessTokenUseCase authenticateAccessTokenUseCase;
-    @MockitoBean TokenExtractor tokenExtractor;
+    @MockitoBean
+    CourseService courseService;
+    @MockitoBean
+    CourseDetailService courseDetailService;
+    @MockitoBean
+    AuthenticateAccessTokenUseCase authenticateAccessTokenUseCase;
+    @MockitoBean
+    TokenExtractor tokenExtractor;
 
     @Test
     @DisplayName("코스 생성 - 성공")

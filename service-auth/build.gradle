@@ -43,6 +43,6 @@ openapi3 {
 
 bootJar {
     enabled = true
-    mainClass = 'com.umust.dobonglife.auth.AuthServiceApplication'
+    mainClass = 'com.umust.dobonglife.AuthServiceApplication'
 }
 jar { enabled = false }

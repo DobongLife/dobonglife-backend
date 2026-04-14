@@ -17,13 +17,13 @@ import java.util.*;
 @Component
 public class WebClientService {
 
-    @Value("${open-api.secret-key}")
+    @Value("${open-api.secret-key:}")
     private String openApiSecretKey;
 
-    @Value("${open-api.base-url}")
+    @Value("${open-api.base-url:https://api.odcloud.kr/api/nts-businessman/v1}")
     private String openApiBaseUrl;
 
-    @Value("${naver.map.base-url}")
+    @Value("${naver.map.base-url:https://naveropenapi.apigw.ntruss.com/map-geocode/v2}")
     private String naverMapBaseUrl;
 
     @Value("${naver.map.client-id:}")

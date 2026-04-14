@@ -2,8 +2,9 @@ package com.umust.dobonglife.common.security.filter;
 
 import com.umust.dobonglife.common.security.extractor.TokenExtractor;
 import com.umust.dobonglife.common.security.principal.UserPrincipal;
-import com.umust.dobonglife.domain.auth.application.dto.AuthenticatedUser;
 import com.umust.dobonglife.domain.auth.application.port.in.AuthenticateAccessTokenUseCase;
+import com.umust.dobonglife.domain.auth.application.dto.AuthenticatedUser;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticateAccessTokenUseCase authenticateAccessTokenUseCase;
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         return path.startsWith("/api/auth/reissue");
     }
@@ -38,13 +39,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
         Optional<String> accessTokenOptional = tokenExtractor.extractAccessTokenOptional(request);
+
         if (accessTokenOptional.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
         AuthenticatedUser user = authenticateAccessTokenUseCase.authenticate(accessTokenOptional.get());
+
         List<GrantedAuthority> authorities = List.of(
                 new SimpleGrantedAuthority(user.role().toAuthority().getAuthority())
         );
@@ -60,6 +64,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(principal, null, authorities)
         );
+
+        log.info("JWT Filter Success : {}", request.getRequestURI());
         filterChain.doFilter(request, response);
     }
 }

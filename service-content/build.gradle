@@ -38,6 +38,6 @@ openapi3 {
 
 bootJar {
     enabled = true
-    mainClass = 'com.umust.dobonglife.content.ContentServiceApplication'
+    mainClass = 'com.umust.dobonglife.ContentServiceApplication'
 }
 jar { enabled = false }

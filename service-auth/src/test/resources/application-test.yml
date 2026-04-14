@@ -87,3 +87,10 @@ firebase:
       enabled: false
 open-api:
   secret-key: test-secret-key
+  base-url: https://api.odcloud.kr/api/nts-businessman/v1
+
+naver:
+  map:
+    base-url: https://naveropenapi.apigw.ntruss.com/map-geocode/v2
+    client-id: test-naver-client-id
+    client-secret: test-naver-client-secret

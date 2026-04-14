@@ -21,7 +21,6 @@ import java.time.Duration;
 
 @Slf4j
 @Service
-@Primary
 @RequiredArgsConstructor
 public class AuthTokenService implements AuthTokenUseCase, AuthenticateAccessTokenUseCase {
 

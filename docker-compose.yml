@@ -7,7 +7,10 @@ services:
     container_name: dobonglife-mysql-user
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: dobonglife_user
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
       TZ: Asia/Seoul
     ports:
       - "3307:3306"
@@ -26,7 +29,10 @@ services:
     container_name: dobonglife-mysql-auth
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: dobonglife_auth
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
       TZ: Asia/Seoul
     ports:
       - "3308:3306"
@@ -45,7 +51,10 @@ services:
     container_name: dobonglife-mysql-commerce
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: dobonglife_commerce
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
       TZ: Asia/Seoul
     ports:
       - "3309:3306"
@@ -64,7 +73,10 @@ services:
     container_name: dobonglife-mysql-content
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: dobonglife_content
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
       TZ: Asia/Seoul
     ports:
       - "3310:3306"
@@ -112,8 +124,8 @@ services:
       DB_HOST: mysql-user
       DB_PORT: 3306
       DB_SCHEMA: dobonglife_user
-      DB_USERNAME: root
-      DB_PASSWORD: root
+      DB_USERNAME: app
+      DB_PASSWORD: app
       REDIS_HOST: redis
       REDIS_PORT: 6379
       AUTH_SERVICE_URL: http://auth-service:8082
@@ -132,6 +144,10 @@ services:
       FIREBASE_ENABLED: ${FIREBASE_ENABLED:-false}
       FIREBASE_ADMINSDK_ACCOUNT_PATH: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:-}
       OPEN_API_SECRET_KEY: ${OPEN_API_SECRET_KEY:-}
+      OPEN_API_BASE_URL: ${OPEN_API_BASE_URL:-https://api.odcloud.kr/api/nts-businessman/v1}
+      NAVER_MAP_BASE_URL: ${NAVER_MAP_BASE_URL:-https://naveropenapi.apigw.ntruss.com/map-geocode/v2}
+      NAVER_MAP_CLIENT_ID: ${NAVER_MAP_CLIENT_ID:-}
+      NAVER_MAP_CLIENT_SECRET: ${NAVER_MAP_CLIENT_SECRET:-}
       JAVA_OPTS: >-
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
@@ -164,8 +180,8 @@ services:
       DB_HOST: mysql-auth
       DB_PORT: 3306
       DB_SCHEMA: dobonglife_auth
-      DB_USERNAME: root
-      DB_PASSWORD: root
+      DB_USERNAME: app
+      DB_PASSWORD: app
       REDIS_HOST: redis
       REDIS_PORT: 6379
       USER_SERVICE_URL: http://user-service:8081
@@ -192,6 +208,10 @@ services:
       FIREBASE_ENABLED: ${FIREBASE_ENABLED:-false}
       FIREBASE_ADMINSDK_ACCOUNT_PATH: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:-}
       OPEN_API_SECRET_KEY: ${OPEN_API_SECRET_KEY:-}
+      OPEN_API_BASE_URL: ${OPEN_API_BASE_URL:-https://api.odcloud.kr/api/nts-businessman/v1}
+      NAVER_MAP_BASE_URL: ${NAVER_MAP_BASE_URL:-https://naveropenapi.apigw.ntruss.com/map-geocode/v2}
+      NAVER_MAP_CLIENT_ID: ${NAVER_MAP_CLIENT_ID:-}
+      NAVER_MAP_CLIENT_SECRET: ${NAVER_MAP_CLIENT_SECRET:-}
       JAVA_OPTS: >-
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
@@ -224,8 +244,8 @@ services:
       DB_HOST: mysql-commerce
       DB_PORT: 3306
       DB_SCHEMA: dobonglife_commerce
-      DB_USERNAME: root
-      DB_PASSWORD: root
+      DB_USERNAME: app
+      DB_PASSWORD: app
       REDIS_HOST: redis
       REDIS_PORT: 6379
       USER_SERVICE_URL: http://user-service:8081
@@ -239,6 +259,10 @@ services:
       FIREBASE_ENABLED: ${FIREBASE_ENABLED:-false}
       FIREBASE_ADMINSDK_ACCOUNT_PATH: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:-}
       OPEN_API_SECRET_KEY: ${OPEN_API_SECRET_KEY:-}
+      OPEN_API_BASE_URL: ${OPEN_API_BASE_URL:-https://api.odcloud.kr/api/nts-businessman/v1}
+      NAVER_MAP_BASE_URL: ${NAVER_MAP_BASE_URL:-https://naveropenapi.apigw.ntruss.com/map-geocode/v2}
+      NAVER_MAP_CLIENT_ID: ${NAVER_MAP_CLIENT_ID:-}
+      NAVER_MAP_CLIENT_SECRET: ${NAVER_MAP_CLIENT_SECRET:-}
       JAVA_OPTS: >-
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
@@ -271,8 +295,8 @@ services:
       DB_HOST: mysql-content
       DB_PORT: 3306
       DB_SCHEMA: dobonglife_content
-      DB_USERNAME: root
-      DB_PASSWORD: root
+      DB_USERNAME: app
+      DB_PASSWORD: app
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-secret-key-change-me-in-production}
@@ -285,6 +309,10 @@ services:
       FIREBASE_ENABLED: ${FIREBASE_ENABLED:-false}
       FIREBASE_ADMINSDK_ACCOUNT_PATH: ${FIREBASE_ADMINSDK_ACCOUNT_PATH:-}
       OPEN_API_SECRET_KEY: ${OPEN_API_SECRET_KEY:-}
+      OPEN_API_BASE_URL: ${OPEN_API_BASE_URL:-https://api.odcloud.kr/api/nts-businessman/v1}
+      NAVER_MAP_BASE_URL: ${NAVER_MAP_BASE_URL:-https://naveropenapi.apigw.ntruss.com/map-geocode/v2}
+      NAVER_MAP_CLIENT_ID: ${NAVER_MAP_CLIENT_ID:-}
+      NAVER_MAP_CLIENT_SECRET: ${NAVER_MAP_CLIENT_SECRET:-}
       JAVA_OPTS: >-
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
