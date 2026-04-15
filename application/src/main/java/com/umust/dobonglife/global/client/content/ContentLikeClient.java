@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.client.content;
 
+import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import com.umust.dobonglife.global.port.content.LikePort;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +16,7 @@ public class ContentLikeClient implements LikePort {
     private final RestClient restClient;
 
     public ContentLikeClient(@Value("${service.content.url}") String baseUrl) {
-        this.restClient = RestClient.builder().baseUrl(baseUrl).build();
+        this.restClient = InternalRestClientFactory.create(baseUrl, "content-service");
     }
 
     @Override

@@ -20,4 +20,9 @@ public class CursorResponse<T extends Identifiable> {
         this.hasNext = hasNext;
         this.lastId = content.isEmpty() ? null : content.get(content.size() - 1).getId();
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Identifiable> CursorResponse<T> empty() {
+        return new CursorResponse<>(List.of(), null, false);
+    }
 }

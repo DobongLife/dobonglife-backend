@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.client.commerce;
 
+import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.common.response.CursorResponse;
 import com.umust.dobonglife.global.port.commerce.PromotionPort;
 import com.umust.dobonglife.global.port.dto.commerce.PromotionAdInfo;
@@ -21,9 +22,7 @@ public class CommercePromotionClient implements PromotionPort {
     private final RestClient restClient;
 
     public CommercePromotionClient(@Value("${service.commerce.url}") String baseUrl) {
-        this.restClient = RestClient.builder()
-                .baseUrl(baseUrl)
-                .build();
+        this.restClient = InternalRestClientFactory.create(baseUrl, "commerce-service");
     }
 
     @Override

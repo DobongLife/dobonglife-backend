@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.client.commerce;
 
+import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.port.commerce.ExchangePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,7 +15,7 @@ public class CommerceExchangeClient implements ExchangePort {
     private final RestClient restClient;
 
     public CommerceExchangeClient(@Value("${service.commerce.url}") String baseUrl) {
-        this.restClient = RestClient.builder().baseUrl(baseUrl).build();
+        this.restClient = InternalRestClientFactory.create(baseUrl, "commerce-service");
     }
 
     @Override

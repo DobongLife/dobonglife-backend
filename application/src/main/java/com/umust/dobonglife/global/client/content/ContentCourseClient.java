@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.client.content;
 
+import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.port.content.CoursePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,7 +15,7 @@ public class ContentCourseClient implements CoursePort {
     private final RestClient restClient;
 
     public ContentCourseClient(@Value("${service.content.url}") String baseUrl) {
-        this.restClient = RestClient.builder().baseUrl(baseUrl).build();
+        this.restClient = InternalRestClientFactory.create(baseUrl, "content-service");
     }
 
     @Override

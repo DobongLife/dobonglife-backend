@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.client.commerce;
 
+import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.port.commerce.PointPort;
 import com.umust.dobonglife.global.port.dto.commerce.MyPointInfo;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,7 @@ public class CommercePointClient implements PointPort {
     private final RestClient restClient;
 
     public CommercePointClient(@Value("${service.commerce.url}") String baseUrl) {
-        this.restClient = RestClient.builder().baseUrl(baseUrl).build();
+        this.restClient = InternalRestClientFactory.create(baseUrl, "commerce-service");
     }
 
     @Override

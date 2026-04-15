@@ -13,7 +13,8 @@ public enum CommonErrorCode implements ErrorCode {
     API_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 API입니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 HTTP 메서드입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
-    ILLEGAL_ARGUMENT(HttpStatus.BAD_REQUEST, "잘못된 요청값입니다.");
+    ILLEGAL_ARGUMENT(HttpStatus.BAD_REQUEST, "잘못된 요청값입니다."),
+    SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "서비스에 일시적으로 연결할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

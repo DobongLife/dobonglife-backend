@@ -11,7 +11,6 @@ import com.umust.dobonglife.global.port.user.in.OAuthFindUserUseCase;
 import com.umust.dobonglife.global.common.constant.Provider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class GoogleLoginApplicationService implements GoogleLoginUseCase {
     private final LoginSuccessUseCase loginSuccessUseCase;
 
     @Override
-    @Transactional
     public AuthTokens login(String idToken, String fcmToken) {
         SocialAuthUserInfo socialUser = googleOAuthPort.verify(idToken);
 

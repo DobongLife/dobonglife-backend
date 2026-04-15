@@ -12,7 +12,6 @@ import com.umust.dobonglife.global.common.constant.Provider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -25,7 +24,6 @@ public class AppleLoginApplicationService implements AppleLoginUseCase {
     private final LoginSuccessUseCase loginSuccessUseCase;
 
     @Override
-    @Transactional
     public AuthTokens login(String identityToken, String fcmToken, String providerToken) {
         SocialAuthUserInfo socialUser = appleOAuthPort.verify(identityToken);
 

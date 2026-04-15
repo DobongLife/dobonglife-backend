@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.client.commerce;
 
+import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.port.commerce.CouponPort;
 import com.umust.dobonglife.global.port.dto.commerce.MyCouponInfo;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,7 @@ public class CommerceCouponClient implements CouponPort {
     private final RestClient restClient;
 
     public CommerceCouponClient(@Value("${service.commerce.url}") String baseUrl) {
-        this.restClient = RestClient.builder().baseUrl(baseUrl).build();
+        this.restClient = InternalRestClientFactory.create(baseUrl, "commerce-service");
     }
 
     @Override

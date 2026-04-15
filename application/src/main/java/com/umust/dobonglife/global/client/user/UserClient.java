@@ -1,5 +1,6 @@
 package com.umust.dobonglife.global.client.user;
 
+import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.port.user.UserPort;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,7 @@ public class UserClient implements UserPort {
     private final RestClient restClient;
 
     public UserClient(@Value("${service.user.url}") String baseUrl) {
-        this.restClient = RestClient.builder().baseUrl(baseUrl).build();
+        this.restClient = InternalRestClientFactory.create(baseUrl, "user-service");
     }
 
     @Override
@@ -44,6 +45,14 @@ public class UserClient implements UserPort {
     public String getProviderId(Long userId) {
         return restClient.get()
                 .uri("/internal/user/{userId}/provider-id", userId)
+                .retrieve()
+                .body(String.class);
+    }
+
+    @Override
+    public String getProviderToken(Long userId) {
+        return restClient.get()
+                .uri("/internal/user/{userId}/provider-token", userId)
                 .retrieve()
                 .body(String.class);
     }

@@ -10,9 +10,6 @@ import com.umust.dobonglife.global.common.constant.Provider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Slf4j
 @Service
@@ -26,39 +23,46 @@ public class AuthFacade {
     private final DeleteAccountUseCase deleteAccountUseCase;
     private final UserPort userPort;
 
-    @Transactional
     public void logout(String accessToken, String refreshToken, Long userId) {
         manageUserUseCase.inValidFcmToken(userId);
         authTokenUseCase.logout(accessToken, refreshToken);
     }
 
-    @Transactional
     public void deleteAccount(String accessToken, String refreshToken, Long userId) {
         log.info("=== [회원탈퇴 시작] userId: {}", userId);
 
-        Provider provider = userPort.getProvider(userId);
-        String providerId = userPort.getProviderId(userId);
-        revokeSocialAccountUseCase.revoke(provider, providerId);
-
-        // TODO: 각 도메인 모듈에 cleanup use case 추가 후 활성화
-        // if (accountCleanupPort.isBusiness(userId)) {
-        //     accountCleanupPort.cleanupBusinessData(userId);
-        // }
-        // accountCleanupPort.cleanupUserData(userId);
+        // 1. 되돌릴 수 있는 작업 먼저 (soft delete)
         deleteAccountUseCase.deleteAccount(userId);
 
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                authTokenUseCase.invalidateAccessToken(accessToken);
-                if (refreshToken != null) {
-                    authTokenUseCase.deleteRefreshToken(refreshToken);
-                }
+        // 2. 되돌릴 수 없는 작업 — 실패해도 계정 삭제는 유지
+        try {
+            Provider provider = userPort.getProvider(userId);
+            revokeSocialAccountUseCase.revoke(provider, resolveProviderCredential(provider, userId));
+        } catch (Exception e) {
+            log.warn("[회원탈퇴] 소셜 연동 해제 실패 — 별도 배치에서 처리: userId={}", userId, e);
+        }
+
+        // 3. 토큰 무효화 (best-effort)
+        try {
+            authTokenUseCase.invalidateAccessToken(accessToken);
+            if (refreshToken != null) {
+                authTokenUseCase.deleteRefreshToken(refreshToken);
             }
-        });
+        } catch (Exception e) {
+            log.warn("[회원탈퇴] 토큰 무효화 실패 — TTL 만료 대기: userId={}", userId, e);
+        }
+
+        log.info("=== [회원탈퇴 완료] userId: {}", userId);
     }
 
     public AuthTokens reissueTokens(String refreshToken) {
         return authTokenUseCase.reissueTokens(refreshToken);
+    }
+
+    private String resolveProviderCredential(Provider provider, Long userId) {
+        if (provider == Provider.APPLE) {
+            return userPort.getProviderToken(userId);
+        }
+        return userPort.getProviderId(userId);
     }
 }

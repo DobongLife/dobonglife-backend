@@ -10,7 +10,7 @@ spring:
   config:
     activate:
       on-profile: common
-    import: optional:file:.env[.properties]
+    import: optional:file:../.env[.properties]
 
   web:
     resources:
@@ -84,6 +84,18 @@ apple:
   key-id: ${APPLE_KEY_ID}
   private-key-path: ${APPLE_PRIVATE_KEY_PATH}
 
+service:
+  commerce:
+    url: ${COMMERCE_SERVICE_URL:http://localhost:8082}
+  content:
+    url: ${CONTENT_SERVICE_URL:http://localhost:8081}
+  user:
+    url: ${USER_SERVICE_URL:http://localhost:8083}
+  auth:
+    url: ${AUTH_SERVICE_URL:http://localhost:8084}
+  notification:
+    url: ${NOTIFICATION_SERVICE_URL:http://localhost:8085}
+
 swagger:
   server:
     local-url: ${SWAGGER_LOCAL_URL:http://localhost:8080}
@@ -99,6 +111,26 @@ open-api:
 naver:
   map:
     base-url: ${NAVER_MAP_BASE_URL:https://naveropenapi.apigw.ntruss.com}
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+        register-health-indicator: true
+    instances:
+      user-service:
+        base-config: default
+      auth-service:
+        base-config: default
+      commerce-service:
+        base-config: default
+      content-service:
+        base-config: default
 
 cloud:
   aws:
