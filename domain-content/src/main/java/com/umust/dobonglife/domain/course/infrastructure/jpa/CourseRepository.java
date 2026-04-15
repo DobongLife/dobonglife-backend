@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface CourseJpaRepository extends JpaRepository<Course, Long>, CourseRepositoryCustom {
+public interface CourseRepository extends JpaRepository<Course, Long>, CourseRepositoryCustom {
 
     Optional<Course> findByIdAndStatus(Long id, BaseStatus status);
 

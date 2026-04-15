@@ -1,6 +1,10 @@
 server:
   port: 8084
 
+security:
+  internal:
+    permit-all: true
+
 spring:
   application:
     name: domain-auth

@@ -5,7 +5,7 @@ import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
 import com.umust.dobonglife.domain.like.application.port.out.LoadLikePort;
 import com.umust.dobonglife.domain.like.application.port.out.SaveLikePort;
 import com.umust.dobonglife.domain.like.domain.entity.Like;
-import com.umust.dobonglife.domain.like.infrastructure.jpa.LikeJpaRepository;
+import com.umust.dobonglife.domain.like.infrastructure.jpa.LikeRepository;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -18,7 +18,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class LikePersistenceAdapter implements LoadLikePort, SaveLikePort {
 
-    private final LikeJpaRepository likeJpaRepository;
+    private final LikeRepository likeJpaRepository;
 
     // ── LoadLikePort ──
 

@@ -1,6 +1,10 @@
 server:
   port: 8083
 
+security:
+  internal:
+    permit-all: true
+
 spring:
   application:
     name: domain-user

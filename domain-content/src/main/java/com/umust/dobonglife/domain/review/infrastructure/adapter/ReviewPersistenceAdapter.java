@@ -5,7 +5,7 @@ import com.umust.dobonglife.domain.review.application.dto.ReviewSummaryResponse;
 import com.umust.dobonglife.domain.review.application.port.out.LoadReviewPort;
 import com.umust.dobonglife.domain.review.application.port.out.SaveReviewPort;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
-import com.umust.dobonglife.domain.review.infrastructure.jpa.ReviewJpaRepository;
+import com.umust.dobonglife.domain.review.infrastructure.jpa.ReviewRepository;
 import com.umust.dobonglife.global.common.constant.TargetType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReviewPersistenceAdapter implements LoadReviewPort, SaveReviewPort {
 
-    private final ReviewJpaRepository reviewJpaRepository;
+    private final ReviewRepository reviewJpaRepository;
 
     // ── LoadReviewPort ──
 

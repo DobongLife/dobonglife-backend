@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 import java.util.Set;
 
-public interface LikeJpaRepository extends JpaRepository<Like, Long>, LikeRepositoryCustom {
+public interface LikeRepository extends JpaRepository<Like, Long>, LikeRepositoryCustom {
 
     Optional<Like> findByUserIdAndTargetTypeAndTargetId(Long userId, TargetType targetType, Long targetId);
 

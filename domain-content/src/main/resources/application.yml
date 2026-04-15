@@ -1,6 +1,10 @@
 server:
   port: 8081
 
+security:
+  internal:
+    permit-all: true
+
 spring:
   application:
     name: domain-content
@@ -22,3 +26,7 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}

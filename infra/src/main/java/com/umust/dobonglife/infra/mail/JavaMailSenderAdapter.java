@@ -5,6 +5,7 @@ import com.umust.dobonglife.infra.error.InfraException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -14,6 +15,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "spring.mail.host")
 public class JavaMailSenderAdapter implements com.umust.dobonglife.global.port.user.out.MailSender {
 
     private final JavaMailSender javaMailSender;
