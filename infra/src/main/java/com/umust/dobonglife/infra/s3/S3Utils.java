@@ -12,6 +12,7 @@ import com.umust.dobonglife.infra.error.InfraErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +36,7 @@ import static java.util.Objects.isNull;
 @Component
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnBean(S3Config.class)
 public class S3Utils implements ImageUploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;

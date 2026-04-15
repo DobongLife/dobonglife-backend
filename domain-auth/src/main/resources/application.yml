@@ -5,7 +5,7 @@ spring:
   application:
     name: domain-auth
   config:
-    import: optional:file:../.env[.properties]
+    import: optional:file:./.env[.properties]
   datasource:
     url: ${AUTH_DATASOURCE_URL:${LOCAL_DATASOURCE_URL:${DB_URL:jdbc:mysql://localhost:3306/dobonglife_auth?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul}}}
     username: ${AUTH_DATASOURCE_USERNAME:${LOCAL_DATASOURCE_USERNAME:${DB_USERNAME:root}}}
@@ -17,7 +17,7 @@ spring:
         useSSL: false
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
