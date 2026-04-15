@@ -7,4 +7,5 @@ public interface UserPort {
     String getFcmToken(Long userId);
     Provider getProvider(Long userId);
     String getProviderId(Long userId);
+    String getProviderToken(Long userId);
 }

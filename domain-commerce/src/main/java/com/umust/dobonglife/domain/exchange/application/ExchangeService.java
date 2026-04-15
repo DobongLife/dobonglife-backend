@@ -8,7 +8,6 @@ import com.umust.dobonglife.domain.point.application.port.in.ManagePointUseCase;
 import com.umust.dobonglife.domain.promotion.application.port.in.GetPromotionUseCase;
 import com.umust.dobonglife.domain.promotion.application.port.in.ManagePromotionUseCase;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
-import com.umust.dobonglife.global.port.user.in.ManageUserUseCase;
 import com.umust.dobonglife.global.common.event.CouponIssuedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ExchangeService implements ExchangeUseCase {
 
-    private final ManageUserUseCase manageUserUseCase;
     private final ManagePointUseCase managePointUseCase;
     private final GetPromotionUseCase getPromotionUseCase;
     private final ManagePromotionUseCase managePromotionUseCase;
@@ -29,8 +27,6 @@ public class ExchangeService implements ExchangeUseCase {
 
     @Override
     public ExchangeResponse execute(ExchangeRequest request) {
-        manageUserUseCase.canExchangeCoupon(request.userId());
-
         Promotion promotion = getPromotionUseCase.getActivePromotion(request.promotionId());
 
         managePointUseCase.deduct(request.userId(), promotion.getPoint());
@@ -40,6 +36,6 @@ public class ExchangeService implements ExchangeUseCase {
         eventPublisher.publishEvent(CouponIssuedEvent.of(
                 request.userId(), request.promotionId(), couponId, promotion.getPoint()));
 
-        return new ExchangeResponse(couponId);
+        return new ExchangeResponse(couponId, promotion.getPoint());
     }
 }

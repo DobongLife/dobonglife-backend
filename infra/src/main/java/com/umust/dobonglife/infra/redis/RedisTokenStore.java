@@ -1,6 +1,5 @@
 package com.umust.dobonglife.infra.redis;
 
-import com.umust.dobonglife.global.port.auth.out.TokenStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +8,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class RedisTokenStore implements TokenStore {
+public class RedisTokenStore implements com.umust.dobonglife.global.port.auth.out.TokenStore {
 
     private final RedisService redisService;
 

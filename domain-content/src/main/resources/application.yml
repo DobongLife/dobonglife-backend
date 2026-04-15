@@ -4,11 +4,17 @@ server:
 spring:
   application:
     name: domain-content
+  config:
+    import: optional:file:../.env[.properties]
   datasource:
-    url: jdbc:mysql://localhost:3306/dobonglife_content?useSSL=false&serverTimezone=Asia/Seoul
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:}
+    url: ${CONTENT_DATASOURCE_URL:${LOCAL_DATASOURCE_URL:${DB_URL:jdbc:mysql://localhost:3306/dobonglife_content?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul}}}
+    username: ${CONTENT_DATASOURCE_USERNAME:${LOCAL_DATASOURCE_USERNAME:${DB_USERNAME:root}}}
+    password: ${CONTENT_DATASOURCE_PASSWORD:${LOCAL_DATASOURCE_PASSWORD:${DB_PASSWORD:}}}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      data-source-properties:
+        allowPublicKeyRetrieval: true
+        useSSL: false
   jpa:
     hibernate:
       ddl-auto: validate

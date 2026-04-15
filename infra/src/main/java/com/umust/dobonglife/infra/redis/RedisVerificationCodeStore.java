@@ -1,6 +1,5 @@
 package com.umust.dobonglife.infra.redis;
 
-import com.umust.dobonglife.global.port.user.out.VerificationCodeStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +8,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class RedisVerificationCodeStore implements VerificationCodeStore {
+public class RedisVerificationCodeStore implements com.umust.dobonglife.global.port.user.out.VerificationCodeStore {
 
     private final RedisService redisService;
 

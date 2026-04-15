@@ -1,6 +1,5 @@
 package com.umust.dobonglife.infra.mail;
 
-import com.umust.dobonglife.global.port.user.out.MailSender;
 import com.umust.dobonglife.infra.error.InfraErrorCode;
 import com.umust.dobonglife.infra.error.InfraException;
 import jakarta.mail.MessagingException;
@@ -15,7 +14,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Component
 @RequiredArgsConstructor
-public class JavaMailSenderAdapter implements MailSender {
+public class JavaMailSenderAdapter implements com.umust.dobonglife.global.port.user.out.MailSender {
 
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;

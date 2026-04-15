@@ -3,9 +3,9 @@ package com.umust.dobonglife.presentation.promotion.controller;
 import com.umust.dobonglife.global.common.annotation.CurrentUserId;
 import com.umust.dobonglife.global.common.constant.PageSizeType;
 import com.umust.dobonglife.global.common.response.BaseResponse;
+import com.umust.dobonglife.global.composition.ExchangeFacade;
 import com.umust.dobonglife.global.composition.PromotionFacade;
 import com.umust.dobonglife.global.composition.dto.response.PromotionWithBlockedResponse;
-import com.umust.dobonglife.global.port.commerce.ExchangePort;
 import com.umust.dobonglife.global.port.dto.commerce.PromotionPresetInfo;
 import com.umust.dobonglife.global.port.dto.commerce.PromotionRegisterInfo;
 import com.umust.dobonglife.global.port.dto.commerce.PromotionUpdateInfo;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class PromotionCompositionController {
 
     private final PromotionFacade promotionFacade;
-    private final ExchangePort exchangePort;
+    private final ExchangeFacade exchangeFacade;
 
     @GetMapping
     public ResponseEntity<BaseResponse<PromotionWithBlockedResponse>> getPromotionsWithBlocked(
@@ -64,6 +64,6 @@ public class PromotionCompositionController {
     public ResponseEntity<BaseResponse<Map<String, Object>>> exchangeCoupon(
             @PathVariable Long promotionId,
             @CurrentUserId Long userId) {
-        return ResponseEntity.ok(BaseResponse.ok(exchangePort.exchange(userId, promotionId)));
+        return ResponseEntity.ok(BaseResponse.ok(exchangeFacade.exchange(userId, promotionId)));
     }
 }

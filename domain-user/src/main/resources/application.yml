@@ -4,11 +4,17 @@ server:
 spring:
   application:
     name: domain-user
+  config:
+    import: optional:file:../.env[.properties]
   datasource:
-    url: jdbc:mysql://localhost:3306/dobonglife_user?useSSL=false&serverTimezone=Asia/Seoul
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:}
+    url: ${USER_DATASOURCE_URL:${LOCAL_DATASOURCE_URL:${DB_URL:jdbc:mysql://localhost:3306/dobonglife_user?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul}}}
+    username: ${USER_DATASOURCE_USERNAME:${LOCAL_DATASOURCE_USERNAME:${DB_USERNAME:root}}}
+    password: ${USER_DATASOURCE_PASSWORD:${LOCAL_DATASOURCE_PASSWORD:${DB_PASSWORD:}}}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      data-source-properties:
+        allowPublicKeyRetrieval: true
+        useSSL: false
   jpa:
     hibernate:
       ddl-auto: validate
@@ -16,3 +22,16 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ADDRESS}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.timeout: 5000
+      mail.smtp.starttls.enable: true

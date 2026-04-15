@@ -1,10 +1,10 @@
 package com.umust.dobonglife.domain.auth.application.service;
 
-import com.umust.dobonglife.domain.auth.application.port.out.TokenStore;
 import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
 import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.infrastructure.JwtTokenProvider;
 import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
+import com.umust.dobonglife.global.port.auth.out.TokenStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
