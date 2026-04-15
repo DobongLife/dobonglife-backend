@@ -17,12 +17,8 @@ public enum LikeErrorCode implements ErrorCode {
     private final String message;
 
     @Override
-    public int getStatus() {
-        return httpStatus.value();
-    }
+    public int getStatus() { return httpStatus.value(); }
 
     @Override
-    public String getCode() {
-        return name();
-    }
+    public String getCode() { return name(); }
 }

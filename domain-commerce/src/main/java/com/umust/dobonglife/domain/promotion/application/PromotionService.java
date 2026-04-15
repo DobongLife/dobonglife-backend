@@ -121,6 +121,11 @@ public class PromotionService {
         promotion.validateCode(code);
     }
 
+    public Slice<Promotion> getPromotionSliceByBusinessId(Long businessId, Long lastId, int size) {
+        return promotionRepository.findByBusinessIdNoOffset(
+                businessId, lastId, PageRequest.of(0, size));
+    }
+
     private Promotion findById(Long promotionId) {
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new PromotionException(PromotionErrorCode.PROMOTION_NOT_FOUND));
