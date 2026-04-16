@@ -49,7 +49,7 @@ public class BusinessController {
     @GetMapping
     public BaseResponse<BusinessResponse> getBusiness(@CurrentUserId Long userId) {
         BusinessFacade.BusinessInfo info = businessFacade.getBusinessInfo(userId);
-        return BaseResponse.ok(BusinessResponse.of(info.business(), info.place()));
+        return BaseResponse.ok(BusinessResponse.of(info));
     }
 
     @Operation(summary = "사업장 정보 수정", description = "사업장 정보를 수정합니다.")
@@ -64,7 +64,7 @@ public class BusinessController {
                 request.getManagerName(), request.getCategory()
         );
         BusinessFacade.BusinessInfo info = businessFacade.updateBusiness(userId, command, imageFiles);
-        return BaseResponse.ok(BusinessResponse.of(info.business(), info.place()));
+        return BaseResponse.ok(BusinessResponse.of(info));
     }
 
     @Operation(summary = "사업장 프로모션 조회", description = "사업장 프로모션을 조회합니다.")
@@ -78,7 +78,7 @@ public class BusinessController {
         List<BusinessPromotionResponse> content = page.promotions().stream()
                 .map(promotion -> BusinessPromotionResponse.of(
                         promotion,
-                        page.usedCountMap().getOrDefault(promotion.getId(), 0L)
+                        page.usedCountMap().getOrDefault(promotion.promotionId(), 0L)
                 ))
                 .toList();
 

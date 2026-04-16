@@ -1,6 +1,8 @@
 package com.umust.dobonglife.domain.like.presentation;
 
 import com.umust.dobonglife.domain.like.application.port.in.GetLikeUseCase;
+import com.umust.dobonglife.domain.like.application.port.in.LikeCleanupUseCase;
+import com.umust.dobonglife.domain.like.application.port.in.LikeRestoreUseCase;
 import com.umust.dobonglife.domain.like.application.port.in.ToggleLikeUseCase;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedCourseResponse;
 import com.umust.dobonglife.domain.like.application.dto.MyLikedPlaceResponse;
@@ -16,6 +18,8 @@ public class InternalLikeController {
 
     private final ToggleLikeUseCase toggleLikeUseCase;
     private final GetLikeUseCase getLikeUseCase;
+    private final LikeCleanupUseCase likeCleanupUseCase;
+    private final LikeRestoreUseCase likeRestoreUseCase;
 
     @PostMapping("/{targetType}/{targetId}")
     public boolean toggleLike(
@@ -23,6 +27,21 @@ public class InternalLikeController {
             @PathVariable TargetType targetType,
             @PathVariable Long targetId) {
         return toggleLikeUseCase.toggleLike(userId, targetType, targetId);
+    }
+
+    @PostMapping("/withdraw/{userId}/cleanup")
+    public void cleanupLikes(@PathVariable Long userId) {
+        likeCleanupUseCase.markPendingByUserId(userId);
+    }
+
+    @PostMapping("/withdraw/{userId}/restore")
+    public void restoreLikes(@PathVariable Long userId) {
+        likeRestoreUseCase.restoreByUserId(userId);
+    }
+
+    @PostMapping("/withdraw/{userId}/finalize")
+    public void finalizeLikes(@PathVariable Long userId) {
+        likeCleanupUseCase.finalizeByUserId(userId);
     }
 
     @GetMapping("/place/my")

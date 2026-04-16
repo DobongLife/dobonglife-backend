@@ -4,11 +4,13 @@ import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.port.auth.dto.SocialAuthUserInfo;
 import com.umust.dobonglife.global.port.auth.out.AppleOAuthPort;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
+@Primary
 @Component
 public class AppleAuthClient implements AppleOAuthPort {
 

@@ -13,11 +13,13 @@ import com.umust.dobonglife.global.port.user.in.SendMailUseCase;
 import com.umust.dobonglife.global.port.user.in.SignUpUseCase;
 import com.umust.dobonglife.global.port.user.in.UpdatePasswordUseCase;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
+@Primary
 @Component
 public class UserUseCaseClient implements
         SignUpUseCase,

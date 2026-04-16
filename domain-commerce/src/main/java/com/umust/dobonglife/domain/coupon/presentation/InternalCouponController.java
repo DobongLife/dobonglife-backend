@@ -1,5 +1,7 @@
 package com.umust.dobonglife.domain.coupon.presentation;
 
+import com.umust.dobonglife.domain.coupon.application.port.in.CouponCleanupUseCase;
+import com.umust.dobonglife.domain.coupon.application.port.in.CouponRestoreUseCase;
 import com.umust.dobonglife.domain.coupon.application.port.in.GetCouponUseCase;
 import com.umust.dobonglife.domain.coupon.application.port.in.ManageCouponUseCase;
 import com.umust.dobonglife.domain.coupon.application.dto.CouponDetail;
@@ -30,6 +32,8 @@ public class InternalCouponController {
     private final ManageCouponUseCase manageCouponUseCase;
     private final GetPromotionUseCase getPromotionUseCase;
     private final ManagePromotionUseCase managePromotionUseCase;
+    private final CouponCleanupUseCase couponCleanupUseCase;
+    private final CouponRestoreUseCase couponRestoreUseCase;
 
     @GetMapping("/my")
     public MyCouponInfo getMyCoupons(
@@ -70,6 +74,21 @@ public class InternalCouponController {
         MyCouponStatusInfo statusInfo = new MyCouponStatusInfo(status.available(), status.used(), status.expired());
 
         return new MyCouponInfo(statusInfo, coupons);
+    }
+
+    @PostMapping("/withdraw/{userId}/cleanup")
+    public void cleanupCoupons(@PathVariable Long userId) {
+        couponCleanupUseCase.markPendingByUserId(userId);
+    }
+
+    @PostMapping("/withdraw/{userId}/restore")
+    public void restoreCoupons(@PathVariable Long userId) {
+        couponRestoreUseCase.restoreByUserId(userId);
+    }
+
+    @PostMapping("/withdraw/{userId}/finalize")
+    public void finalizeCoupons(@PathVariable Long userId) {
+        couponCleanupUseCase.finalizeByUserId(userId);
     }
 
     @PostMapping("/use/{couponId}")

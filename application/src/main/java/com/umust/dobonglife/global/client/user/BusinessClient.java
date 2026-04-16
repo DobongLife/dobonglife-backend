@@ -4,9 +4,11 @@ import com.umust.dobonglife.global.client.config.InternalRestClientFactory;
 import com.umust.dobonglife.global.common.constant.Category;
 import com.umust.dobonglife.global.port.BusinessPort;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+@Primary
 @Component
 public class BusinessClient implements BusinessPort {
 

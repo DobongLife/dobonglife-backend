@@ -11,11 +11,13 @@ import com.umust.dobonglife.global.port.auth.in.AuthenticateAccessTokenUseCase;
 import com.umust.dobonglife.global.port.auth.in.LoginSuccessUseCase;
 import com.umust.dobonglife.global.port.auth.in.RevokeSocialAccountUseCase;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
+@Primary
 @Component
 public class AuthUseCaseClient implements
         AuthTokenUseCase,

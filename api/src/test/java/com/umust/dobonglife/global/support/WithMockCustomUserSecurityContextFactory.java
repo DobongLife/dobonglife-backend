@@ -1,6 +1,6 @@
 package com.umust.dobonglife.global.support;
 
-import com.umust.dobonglife.auth.security.principal.UserPrincipal;
+import com.umust.dobonglife.security.principal.UserPrincipal;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;
 import org.springframework.beans.factory.annotation.Autowired;

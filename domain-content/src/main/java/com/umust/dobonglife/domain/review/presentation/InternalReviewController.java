@@ -2,6 +2,8 @@ package com.umust.dobonglife.domain.review.presentation;
 
 import com.umust.dobonglife.domain.review.application.port.in.GetReviewUseCase;
 import com.umust.dobonglife.domain.review.application.port.in.ManageReviewUseCase;
+import com.umust.dobonglife.domain.review.application.port.in.ReviewCleanupUseCase;
+import com.umust.dobonglife.domain.review.application.port.in.ReviewRestoreUseCase;
 import com.umust.dobonglife.domain.review.application.dto.CreateReviewRequest;
 import com.umust.dobonglife.domain.review.application.dto.MyReviewResponse;
 import com.umust.dobonglife.domain.review.application.dto.ReviewRegisterResponse;
@@ -19,6 +21,8 @@ public class InternalReviewController {
 
     private final ManageReviewUseCase manageReviewUseCase;
     private final GetReviewUseCase getReviewUseCase;
+    private final ReviewCleanupUseCase reviewCleanupUseCase;
+    private final ReviewRestoreUseCase reviewRestoreUseCase;
 
     @PostMapping
     public ReviewRegisterResponse createReview(
@@ -47,6 +51,21 @@ public class InternalReviewController {
             @RequestParam(required = false) Long lastId,
             @RequestParam int size) {
         return getReviewUseCase.getReviews(targetType, targetId, lastId, size);
+    }
+
+    @PostMapping("/withdraw/{userId}/cleanup")
+    public void cleanupReviews(@PathVariable Long userId) {
+        reviewCleanupUseCase.markPendingByUserId(userId);
+    }
+
+    @PostMapping("/withdraw/{userId}/restore")
+    public void restoreReviews(@PathVariable Long userId) {
+        reviewRestoreUseCase.restoreByUserId(userId);
+    }
+
+    @PostMapping("/withdraw/{userId}/finalize")
+    public void finalizeReviews(@PathVariable Long userId) {
+        reviewCleanupUseCase.finalizeByUserId(userId);
     }
 
     @GetMapping("/my/{targetType}")

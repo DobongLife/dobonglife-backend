@@ -130,6 +130,16 @@ public class InternalUserController {
         deleteAccountUseCase.handleDeletion(userId);
     }
 
+    @PostMapping("/{userId}/mark-pending")
+    public void markPending(@PathVariable Long userId) {
+        deleteAccountUseCase.markPending(userId);
+    }
+
+    @PostMapping("/{userId}/restore")
+    public void restoreAccount(@PathVariable Long userId) {
+        deleteAccountUseCase.restoreAccount(userId);
+    }
+
     @PostMapping("/{userId}/exchange/check")
     public void canExchangeCoupon(@PathVariable Long userId) {
         manageUserUseCase.canExchangeCoupon(userId);
