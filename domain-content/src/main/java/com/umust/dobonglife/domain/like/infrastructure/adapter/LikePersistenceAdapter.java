@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.like.application.port.out.SaveLikePort;
 import com.umust.dobonglife.domain.like.domain.entity.Like;
 import com.umust.dobonglife.domain.like.infrastructure.jpa.LikeRepository;
 import com.umust.dobonglife.global.common.constant.TargetType;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
@@ -57,5 +58,15 @@ public class LikePersistenceAdapter implements LoadLikePort, SaveLikePort {
     @Override
     public void delete(Like like) {
         likeJpaRepository.delete(like);
+    }
+
+    @Override
+    public void updateStatusByUserId(Long userId, BaseStatus currentStatus, BaseStatus newStatus) {
+        likeJpaRepository.updateStatusByUserId(userId, currentStatus, newStatus);
+    }
+
+    @Override
+    public void deleteByUserIdAndStatus(Long userId, BaseStatus status) {
+        likeJpaRepository.deleteByUserIdAndStatus(userId, status);
     }
 }

@@ -10,6 +10,10 @@ dependencies {
     implementation project(':core')
     implementation project(':infra')
     implementation project(':application')
+    implementation project(':domain-commerce')
+    implementation project(':domain-content')
+    implementation project(':domain-auth')
+    implementation project(':domain-user')
 
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -43,6 +47,7 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     // Test
+    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'com.h2database:h2'
     testRuntimeOnly 'com.h2database:h2'
 }

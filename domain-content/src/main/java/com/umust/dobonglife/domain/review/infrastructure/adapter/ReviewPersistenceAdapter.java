@@ -7,6 +7,7 @@ import com.umust.dobonglife.domain.review.application.port.out.SaveReviewPort;
 import com.umust.dobonglife.domain.review.domain.entity.Review;
 import com.umust.dobonglife.domain.review.infrastructure.jpa.ReviewRepository;
 import com.umust.dobonglife.global.common.constant.TargetType;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -41,5 +42,15 @@ public class ReviewPersistenceAdapter implements LoadReviewPort, SaveReviewPort 
     @Override
     public Review save(Review review) {
         return reviewJpaRepository.save(review);
+    }
+
+    @Override
+    public void updateStatusByUserId(Long userId, BaseStatus currentStatus, BaseStatus newStatus) {
+        reviewJpaRepository.updateStatusByUserId(userId, currentStatus, newStatus);
+    }
+
+    @Override
+    public void nullifyUserAndUpdateStatus(Long userId, BaseStatus currentStatus, BaseStatus newStatus) {
+        reviewJpaRepository.nullifyUserAndUpdateStatus(userId, currentStatus, newStatus);
     }
 }

@@ -8,5 +8,6 @@ public interface GetUserUseCase {
     Provider getProvider(Long userId);
     String getProviderToken(Long userId);
     boolean isBlockedUser(Long userId);
+    boolean isNotActiveUser(Long userId);
     String getFcmToken(Long userId);
 }

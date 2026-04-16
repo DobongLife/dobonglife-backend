@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum Category {
     RESTAURANT("음식점", "https://s3.ap-northeast-2.amazonaws.com/dobong-img/images/3ea2e5af-e34e-46f3-943c-08b6c132253a.png"),

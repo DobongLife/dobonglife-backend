@@ -2,6 +2,7 @@ package com.umust.dobonglife.domain.place.application;
 
 import com.umust.dobonglife.domain.place.application.port.in.ManagePlaceUseCase;
 import com.umust.dobonglife.domain.place.application.port.out.SavePlacePort;
+import com.umust.dobonglife.domain.place.domain.entity.Place;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,5 +22,10 @@ public class PlaceCommandService implements ManagePlaceUseCase {
     @Override
     public void removeReview(Long placeId, Double rating) {
         savePlacePort.removeReview(placeId, rating);
+    }
+
+    @Override
+    public Place savePlace(Place place) {
+        return savePlacePort.save(place);
     }
 }

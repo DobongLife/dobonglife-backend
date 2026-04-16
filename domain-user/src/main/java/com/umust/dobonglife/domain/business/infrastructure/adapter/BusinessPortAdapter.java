@@ -1,6 +1,7 @@
 package com.umust.dobonglife.domain.business.infrastructure.adapter;
 
-import com.umust.dobonglife.domain.business.application.port.in.GetBusinessUseCase;
+import com.umust.dobonglife.domain.business.application.port.in.CheckBusinessUseCase;
+import com.umust.dobonglife.domain.business.application.port.in.GetBusinessCategoryUseCase;
 import com.umust.dobonglife.global.common.constant.Category;
 import com.umust.dobonglife.global.port.BusinessPort;
 import lombok.RequiredArgsConstructor;
@@ -10,15 +11,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BusinessPortAdapter implements BusinessPort {
 
-    private final GetBusinessUseCase getBusinessUseCase;
+    private final CheckBusinessUseCase checkBusinessUseCase;
+    private final GetBusinessCategoryUseCase getBusinessCategoryUseCase;
 
     @Override
     public boolean checkBusiness(Long userId) {
-        return getBusinessUseCase.checkBusiness(userId);
+        return checkBusinessUseCase.checkBusiness(userId);
     }
 
     @Override
     public Category getBusinessCategory(Long userId) {
-        return getBusinessUseCase.getBusinessCategory(userId);
+        return getBusinessCategoryUseCase.getBusinessCategory(userId);
     }
 }

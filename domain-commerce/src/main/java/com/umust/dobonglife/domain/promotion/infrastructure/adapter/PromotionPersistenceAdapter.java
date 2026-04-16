@@ -44,6 +44,11 @@ public class PromotionPersistenceAdapter implements LoadPromotionPort, SavePromo
     }
 
     @Override
+    public Slice<Promotion> findByBusinessIdNoOffset(Long businessId, Long lastId, Pageable pageable) {
+        return promotionJpaRepository.findByBusinessIdNoOffset(businessId, lastId, pageable);
+    }
+
+    @Override
     public Promotion save(Promotion promotion) {
         return promotionJpaRepository.save(promotion);
     }

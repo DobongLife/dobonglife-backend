@@ -30,4 +30,4 @@ bootJar {
     enabled = true
     mainClass = 'com.umust.dobonglife.DomainAuthApplication'
 }
-jar { enabled = false }
+jar { enabled = true }

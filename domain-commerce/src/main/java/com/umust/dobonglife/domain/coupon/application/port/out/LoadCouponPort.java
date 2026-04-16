@@ -5,6 +5,7 @@ import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface LoadCouponPort {
@@ -14,4 +15,6 @@ public interface LoadCouponPort {
     Slice<Coupon> findByUserIdNoOffset(Long userId, Long lastId, Pageable pageable);
 
     long countByUserIdAndCouponStatus(Long userId, CouponStatus couponStatus);
+
+    List<Object[]> countByPromotionIdsAndStatus(List<Long> promotionIds, CouponStatus status);
 }

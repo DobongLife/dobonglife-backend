@@ -2,7 +2,8 @@ package com.umust.dobonglife.domain.user.presentation;
 
 import com.umust.dobonglife.domain.user.application.dto.LocalLoginUser;
 import com.umust.dobonglife.domain.user.application.dto.OAuthLoginUser;
-import com.umust.dobonglife.domain.business.application.port.in.GetBusinessUseCase;
+import com.umust.dobonglife.domain.business.application.port.in.CheckBusinessUseCase;
+import com.umust.dobonglife.domain.business.application.port.in.GetBusinessCategoryUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.CheckAuthCodeUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.DeleteAccountUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
@@ -27,7 +28,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class InternalUserController {
 
-    private final GetBusinessUseCase getBusinessUseCase;
+    private final CheckBusinessUseCase checkBusinessUseCase;
+    private final GetBusinessCategoryUseCase getBusinessCategoryUseCase;
     private final GetUserUseCase getUserUseCase;
     private final SignUpUseCase signUpUseCase;
     private final UpdatePasswordUseCase updatePasswordUseCase;
@@ -65,12 +67,12 @@ public class InternalUserController {
 
     @GetMapping("/{userId}/business")
     public boolean hasBusiness(@PathVariable Long userId) {
-        return getBusinessUseCase.checkBusiness(userId);
+        return checkBusinessUseCase.checkBusiness(userId);
     }
 
     @GetMapping("/{userId}/business/category")
     public String getBusinessCategory(@PathVariable Long userId) {
-        return getBusinessUseCase.getBusinessCategory(userId).name();
+        return getBusinessCategoryUseCase.getBusinessCategory(userId).name();
     }
 
     @GetMapping("/local-auth")

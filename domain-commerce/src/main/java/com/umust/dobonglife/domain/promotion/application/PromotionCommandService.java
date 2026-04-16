@@ -11,6 +11,8 @@ import com.umust.dobonglife.domain.promotion.exception.PromotionException;
 import com.umust.dobonglife.global.common.image.ImageUploader;
 import com.umust.dobonglife.global.common.transaction.TransactionHelper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,6 +83,11 @@ public class PromotionCommandService implements ManagePromotionUseCase {
     public void validateCode(Long promotionId, String code) {
         Promotion promotion = findById(promotionId);
         promotion.validateCode(code);
+    }
+
+    public Slice<Promotion> getPromotionSliceByBusinessId(Long businessId, Long lastId, int size) {
+        return loadPromotionPort.findByBusinessIdNoOffset(
+                businessId, lastId, PageRequest.of(0, size));
     }
 
     private Promotion findById(Long promotionId) {

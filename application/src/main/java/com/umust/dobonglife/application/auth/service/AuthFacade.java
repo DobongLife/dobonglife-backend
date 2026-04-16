@@ -1,12 +1,12 @@
 package com.umust.dobonglife.application.auth.service;
 
-import com.umust.dobonglife.global.port.auth.in.AuthTokenUseCase;
-import com.umust.dobonglife.global.port.auth.in.RevokeSocialAccountUseCase;
+import com.umust.dobonglife.application.withdraw.WithdrawOrchestrator;
+import com.umust.dobonglife.domain.auth.application.port.in.AuthTokenUseCase;
 import com.umust.dobonglife.global.port.auth.dto.AuthTokens;
-import com.umust.dobonglife.global.port.user.in.DeleteAccountUseCase;
-import com.umust.dobonglife.global.port.user.UserPort;
-import com.umust.dobonglife.global.port.user.in.ManageUserUseCase;
-import com.umust.dobonglife.global.common.constant.Provider;
+import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
+import com.umust.dobonglife.domain.user.exception.UserErrorCode;
+import com.umust.dobonglife.domain.user.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,11 +17,9 @@ import org.springframework.stereotype.Service;
 public class AuthFacade {
 
     private final AuthTokenUseCase authTokenUseCase;
-    private final RevokeSocialAccountUseCase revokeSocialAccountUseCase;
-
     private final ManageUserUseCase manageUserUseCase;
-    private final DeleteAccountUseCase deleteAccountUseCase;
-    private final UserPort userPort;
+    private final GetUserUseCase getUserUseCase;
+    private final WithdrawOrchestrator withdrawOrchestrator;
 
     public void logout(String accessToken, String refreshToken, Long userId) {
         manageUserUseCase.inValidFcmToken(userId);
@@ -29,40 +27,17 @@ public class AuthFacade {
     }
 
     public void deleteAccount(String accessToken, String refreshToken, Long userId) {
-        log.info("=== [회원탈퇴 시작] userId: {}", userId);
-
-        // 1. 되돌릴 수 있는 작업 먼저 (soft delete)
-        deleteAccountUseCase.deleteAccount(userId);
-
-        // 2. 되돌릴 수 없는 작업 — 실패해도 계정 삭제는 유지
-        try {
-            Provider provider = userPort.getProvider(userId);
-            revokeSocialAccountUseCase.revoke(provider, resolveProviderCredential(provider, userId));
-        } catch (Exception e) {
-            log.warn("[회원탈퇴] 소셜 연동 해제 실패 — 별도 배치에서 처리: userId={}", userId, e);
-        }
-
-        // 3. 토큰 무효화 (best-effort)
-        try {
-            authTokenUseCase.invalidateAccessToken(accessToken);
-            if (refreshToken != null) {
-                authTokenUseCase.deleteRefreshToken(refreshToken);
-            }
-        } catch (Exception e) {
-            log.warn("[회원탈퇴] 토큰 무효화 실패 — TTL 만료 대기: userId={}", userId, e);
-        }
-
-        log.info("=== [회원탈퇴 완료] userId: {}", userId);
+        withdrawOrchestrator.execute(userId, accessToken, refreshToken);
     }
 
     public AuthTokens reissueTokens(String refreshToken) {
-        return authTokenUseCase.reissueTokens(refreshToken);
-    }
+        Long userId = authTokenUseCase.extractUserId(refreshToken);
 
-    private String resolveProviderCredential(Provider provider, Long userId) {
-        if (provider == Provider.APPLE) {
-            return userPort.getProviderToken(userId);
+        if (getUserUseCase.isNotActiveUser(userId)) {
+            throw new UserException(UserErrorCode.USER_ALREADY_WITHDRAWN);
         }
-        return userPort.getProviderId(userId);
+
+        var domainTokens = authTokenUseCase.reissueTokens(refreshToken);
+        return new AuthTokens(domainTokens.accessToken(), domainTokens.refreshToken(), domainTokens.role());
     }
 }

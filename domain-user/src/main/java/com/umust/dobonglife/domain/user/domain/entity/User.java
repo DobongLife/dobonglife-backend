@@ -4,6 +4,7 @@ import com.umust.dobonglife.domain.user.domain.policy.UserPolicy;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;
 import com.umust.dobonglife.global.common.model.BaseEntity;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import com.umust.dobonglife.domain.user.exception.UserErrorCode;
 import com.umust.dobonglife.domain.user.exception.UserException;
 import jakarta.persistence.*;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter @Setter
 @SQLDelete(sql = "UPDATE users SET status = 'INACTIVE' WHERE user_id = ?")
-@SQLRestriction("status IN ('ACTIVE')")
+@SQLRestriction("status IN ('ACTIVE', 'PENDING')")
 public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,6 +71,14 @@ public class User extends BaseEntity {
 
     @Column(nullable = true)
     private String providerToken;
+
+    public void markPending() {
+        this.status = BaseStatus.PENDING;
+    }
+
+    public void restore() {
+        this.status = BaseStatus.ACTIVE;
+    }
 
     public void handleDeletion() {
         this.deleteCount++;

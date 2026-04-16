@@ -20,7 +20,8 @@ public enum UserErrorCode implements ErrorCode {
     INVALID_EMAIL_CODE(HttpStatus.UNAUTHORIZED, "인증 번호가 다릅니다."),
     COUPON_EXCHANGE_RESTRICTED(HttpStatus.FORBIDDEN, "리뷰 정책 위반(3회 삭제)으로 인해 쿠폰 교환이 제한되었습니다."),
     INVALID_POINT(HttpStatus.BAD_REQUEST, "포인트가 부족합니다."),
-    POINT_CANNOT_NEGATIVE(HttpStatus.CONFLICT, "포인트 내역은 음수가 될 수 없습니다.");
+    POINT_CANNOT_NEGATIVE(HttpStatus.CONFLICT, "포인트 내역은 음수가 될 수 없습니다."),
+    USER_ALREADY_WITHDRAWN(HttpStatus.FORBIDDEN, "탈퇴한 사용자입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

@@ -58,6 +58,12 @@ public class AuthTokenService implements AuthTokenUseCase, AuthenticateAccessTok
     }
 
     @Override
+    public Long extractUserId(String refreshToken) {
+        jwtTokenProvider.validateToken(refreshToken);
+        return jwtTokenProvider.getUserId(refreshToken);
+    }
+
+    @Override
     public AuthTokens reissueTokens(String refreshToken) {
         jwtTokenProvider.validateToken(refreshToken);
 

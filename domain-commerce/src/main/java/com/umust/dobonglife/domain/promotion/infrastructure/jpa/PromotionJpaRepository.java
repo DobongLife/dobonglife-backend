@@ -31,6 +31,16 @@ public interface PromotionJpaRepository extends JpaRepository<Promotion, Long> {
 
     @Query("""
         SELECT p FROM Promotion p
+        WHERE p.businessId = :businessId
+        AND (:lastId IS NULL OR p.id < :lastId)
+        ORDER BY p.id DESC
+    """)
+    Slice<Promotion> findByBusinessIdNoOffset(@Param("businessId") Long businessId,
+                                              @Param("lastId") Long lastId,
+                                              Pageable pageable);
+
+    @Query("""
+        SELECT p FROM Promotion p
         WHERE p.priority IS NOT NULL
         AND (:lastId IS NULL OR p.id < :lastId)
         ORDER BY p.priority ASC, p.id DESC

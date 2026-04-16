@@ -1,10 +1,10 @@
 package com.umust.dobonglife.domain.business.application.port.in;
 
-import com.umust.dobonglife.global.common.constant.Category;
+import com.umust.dobonglife.domain.business.domain.entity.Business;
 
 public interface GetBusinessUseCase {
 
-    boolean checkBusiness(Long userId);
+    Business getBusinessByUser(Long userId);
 
-    Category getBusinessCategory(Long userId);
+    Long getBusinessPlaceId(Long userId);
 }

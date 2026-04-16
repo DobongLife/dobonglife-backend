@@ -23,4 +23,4 @@ bootJar {
     enabled = true
     mainClass = 'com.umust.dobonglife.DomainContentApplication'
 }
-jar { enabled = false }
+jar { enabled = true }

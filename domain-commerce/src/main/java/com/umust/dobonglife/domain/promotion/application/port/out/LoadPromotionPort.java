@@ -18,4 +18,6 @@ public interface LoadPromotionPort {
     Slice<Promotion> findPromotionNoOffset(Long lastId, Pageable pageable);
 
     Slice<Promotion> findBannerNoOffset(Long lastId, Pageable pageable);
+
+    Slice<Promotion> findByBusinessIdNoOffset(Long businessId, Long lastId, Pageable pageable);
 }

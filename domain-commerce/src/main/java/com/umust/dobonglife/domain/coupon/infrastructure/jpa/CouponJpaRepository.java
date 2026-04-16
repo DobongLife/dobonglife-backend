@@ -2,8 +2,11 @@ package com.umust.dobonglife.domain.coupon.infrastructure.jpa;
 
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
 import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
+import java.util.List;
+import com.umust.dobonglife.global.common.model.BaseStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +24,25 @@ public interface CouponJpaRepository extends JpaRepository<Coupon, Long> {
                                        Pageable pageable);
 
     long countByUserIdAndCouponStatus(Long userId, CouponStatus couponStatus);
+
+    void deleteAllByUserId(Long userId);
+
+    @Modifying
+    @Query("UPDATE Coupon c SET c.status = :newStatus WHERE c.userId = :userId AND c.status = :currentStatus")
+    void updateStatusByUserId(@Param("userId") Long userId,
+                              @Param("currentStatus") BaseStatus currentStatus,
+                              @Param("newStatus") BaseStatus newStatus);
+
+    @Modifying
+    @Query("DELETE FROM Coupon c WHERE c.userId = :userId AND c.status = :status")
+    void deleteByUserIdAndStatus(@Param("userId") Long userId, @Param("status") BaseStatus status);
+
+    @Query("""
+        SELECT c.promotionId, COUNT(c)
+        FROM Coupon c
+        WHERE c.promotionId IN :promotionIds AND c.couponStatus = :status
+        GROUP BY c.promotionId
+    """)
+    List<Object[]> countByPromotionIdsAndStatus(@Param("promotionIds") List<Long> promotionIds,
+                                                @Param("status") CouponStatus status);
 }

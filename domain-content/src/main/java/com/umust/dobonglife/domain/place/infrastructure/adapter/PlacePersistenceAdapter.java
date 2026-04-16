@@ -45,4 +45,9 @@ public class PlacePersistenceAdapter implements LoadPlacePort, SavePlacePort {
     public void removeReview(Long placeId, Double rating) {
         placeJpaRepository.removeReview(placeId, rating);
     }
+
+    @Override
+    public Place save(Place place) {
+        return placeJpaRepository.save(place);
+    }
 }
