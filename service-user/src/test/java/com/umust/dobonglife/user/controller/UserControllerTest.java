@@ -100,7 +100,7 @@ class UserControllerTest {
         mockMvc.perform(post("/api/users/mail/send").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"email": "test@example.com", "isForSignUp": true}
+                                {"email": "test@example.com", "forSignUp": true}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -112,7 +112,7 @@ class UserControllerTest {
                                 .description("이메일로 인증코드를 전송합니다.")
                                 .requestFields(
                                         fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-                                        fieldWithPath("isForSignUp").type(JsonFieldType.BOOLEAN).description("회원가입용 여부"))
+                                        fieldWithPath("forSignUp").type(JsonFieldType.BOOLEAN).description("회원가입용 여부"))
                                 .responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
@@ -131,7 +131,7 @@ class UserControllerTest {
         mockMvc.perform(post("/api/users/mail/check").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"email": "test@example.com", "authCode": "123456", "isForSignUp": true}
+                                {"email": "test@example.com", "authCode": "123456", "forSignUp": true}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
@@ -144,7 +144,7 @@ class UserControllerTest {
                                 .requestFields(
                                         fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                                         fieldWithPath("authCode").type(JsonFieldType.STRING).description("인증코드"),
-                                        fieldWithPath("isForSignUp").type(JsonFieldType.BOOLEAN).description("회원가입용 여부"))
+                                        fieldWithPath("forSignUp").type(JsonFieldType.BOOLEAN).description("회원가입용 여부"))
                                 .responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),

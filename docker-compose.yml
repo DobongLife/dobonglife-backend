@@ -7,7 +7,6 @@ services:
     container_name: dobonglife-mysql-user
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: dobonglife_user
       MYSQL_USER: app
       MYSQL_PASSWORD: app
@@ -29,7 +28,6 @@ services:
     container_name: dobonglife-mysql-auth
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: dobonglife_auth
       MYSQL_USER: app
       MYSQL_PASSWORD: app
@@ -51,7 +49,6 @@ services:
     container_name: dobonglife-mysql-commerce
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: dobonglife_commerce
       MYSQL_USER: app
       MYSQL_PASSWORD: app
@@ -73,7 +70,6 @@ services:
     container_name: dobonglife-mysql-content
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: dobonglife_content
       MYSQL_USER: app
       MYSQL_PASSWORD: app

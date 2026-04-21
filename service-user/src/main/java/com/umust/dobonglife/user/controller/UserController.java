@@ -42,13 +42,13 @@ public class UserController {
 
     @PostMapping("/mail/send")
     public BaseResponse<Void> sendAuthCodeMail(@Valid @RequestBody MailRequest request) {
-        sendMailUseCase.sendMail(request.email(), request.isForSignUp());
+        sendMailUseCase.sendMail(request.email(), request.forSignUp());
         return BaseResponse.ok(null);
     }
 
     @PostMapping("/mail/check")
     public BaseResponse<Void> checkAuthCode(@Valid @RequestBody MailCodeCheckRequest request) {
-        checkAuthCodeUseCase.checkAuthCode(request.email(), request.authCode(), request.isForSignUp());
+        checkAuthCodeUseCase.checkAuthCode(request.email(), request.authCode(), request.forSignUp());
         return BaseResponse.ok(null);
     }
 
@@ -66,13 +66,13 @@ public class UserController {
 
     public record MailRequest(
             @NotBlank String email,
-            boolean isForSignUp
+            boolean forSignUp
     ) {}
 
     public record MailCodeCheckRequest(
             @NotBlank String email,
             @NotBlank String authCode,
-            boolean isForSignUp
+            boolean forSignUp
     ) {}
 
     public record PasswordUpdateRequest(
