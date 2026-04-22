@@ -5,9 +5,12 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -66,7 +69,20 @@ public class UserServiceClient {
         return response.getData();
     }
 
+    public Optional<LocalUserResponse> findLocalUser(String email) {
+        BaseResponse<LocalUserResponse> response = restClient.get()
+                .uri(uri -> uri.path("/internal/users/local").queryParam("email", email).build())
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {})
+                .body(new ParameterizedTypeReference<>() {});
+        if (response == null || response.getData() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(response.getData());
+    }
+
     public record OAuthUserRequest(String provider, String providerId, String email, String name) {}
     public record OAuthUserResponse(Long id, String role, String name) {}
     public record UserProviderResponse(String provider, String providerId) {}
+    public record LocalUserResponse(Long userId, String email, String password, String provider, String role) {}
 }

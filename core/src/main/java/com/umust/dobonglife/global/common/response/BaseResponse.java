@@ -1,5 +1,7 @@
 package com.umust.dobonglife.global.common.response;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
@@ -11,10 +13,18 @@ public class BaseResponse<T> {
     private final String message;
     private final T data;
 
-    private BaseResponse(T data, String message) {
-        this.success = true;
+    @JsonCreator
+    private BaseResponse(
+            @JsonProperty("success") boolean success,
+            @JsonProperty("message") String message,
+            @JsonProperty("data") T data) {
+        this.success = success;
         this.message = message;
         this.data = data;
+    }
+
+    private BaseResponse(T data, String message) {
+        this(true, message, data);
     }
 
     public static <T> BaseResponse<T> ok(T data) {

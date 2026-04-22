@@ -3,9 +3,11 @@ package com.umust.dobonglife.user.internal;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.umust.dobonglife.common.security.extractor.TokenExtractor;
 import com.umust.dobonglife.domain.auth.application.port.in.AuthenticateAccessTokenUseCase;
+import com.umust.dobonglife.domain.user.application.dto.LocalLoginUser;
 import com.umust.dobonglife.domain.user.application.dto.OAuthLoginUser;
 import com.umust.dobonglife.domain.user.application.port.in.DeleteAccountUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.LoadLocalAuthUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.OAuthFindUserUseCase;
 import com.umust.dobonglife.global.common.constant.Provider;
@@ -57,6 +59,7 @@ class UserInternalControllerTest {
     @MockitoBean GetUserUseCase getUserUseCase;
     @MockitoBean ManageUserUseCase manageUserUseCase;
     @MockitoBean OAuthFindUserUseCase oAuthFindUserUseCase;
+    @MockitoBean LoadLocalAuthUserUseCase loadLocalAuthUserUseCase;
     @MockitoBean TokenExtractor tokenExtractor;
     @MockitoBean AuthenticateAccessTokenUseCase authenticateAccessTokenUseCase;
 
@@ -358,5 +361,42 @@ class UserInternalControllerTest {
                 ));
 
         verify(oAuthFindUserUseCase).findOrCreateOAuthUser(Provider.KAKAO, "kakao-12345", "oauth@example.com", "김도봉");
+    }
+
+    @Test
+    @DisplayName("로컬 사용자 조회 - 성공")
+    void findLocalUser_success() throws Exception {
+        LocalLoginUser localUser = new LocalLoginUser(
+                42L, "user@example.com", "{bcrypt}hashed-password", Provider.LOCAL, Role.MEMBER
+        );
+        given(loadLocalAuthUserUseCase.loadLocalUserByEmail("user@example.com")).willReturn(localUser);
+
+        mockMvc.perform(get("/internal/users/local").param("email", "user@example.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.userId").value(42))
+                .andExpect(jsonPath("$.data.email").value("user@example.com"))
+                .andExpect(jsonPath("$.data.password").value("{bcrypt}hashed-password"))
+                .andExpect(jsonPath("$.data.provider").value("LOCAL"))
+                .andExpect(jsonPath("$.data.role").value("MEMBER"))
+                .andDo(print())
+                .andDo(document("internal-user-local",
+                        preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("내부 사용자 API").summary("로컬 사용자 조회")
+                                .description("폼 로그인용 로컬 사용자 정보(해시된 비밀번호 포함)를 조회합니다.")
+                                .responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("로컬 사용자 정보"),
+                                        fieldWithPath("data.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                                        fieldWithPath("data.email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("data.password").type(JsonFieldType.STRING).description("해시된 비밀번호"),
+                                        fieldWithPath("data.provider").type(JsonFieldType.STRING).description("프로바이더"),
+                                        fieldWithPath("data.role").type(JsonFieldType.STRING).description("사용자 역할"))
+                                .build())
+                ));
+
+        verify(loadLocalAuthUserUseCase).loadLocalUserByEmail("user@example.com");
     }
 }

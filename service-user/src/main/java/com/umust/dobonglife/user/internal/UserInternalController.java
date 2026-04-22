@@ -1,7 +1,9 @@
 package com.umust.dobonglife.user.internal;
 
+import com.umust.dobonglife.domain.user.application.dto.LocalLoginUser;
 import com.umust.dobonglife.domain.user.application.port.in.DeleteAccountUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
+import com.umust.dobonglife.domain.user.application.port.in.LoadLocalAuthUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.OAuthFindUserUseCase;
 import com.umust.dobonglife.global.common.constant.Provider;
@@ -18,6 +20,7 @@ public class UserInternalController {
     private final GetUserUseCase getUserUseCase;
     private final ManageUserUseCase manageUserUseCase;
     private final OAuthFindUserUseCase oAuthFindUserUseCase;
+    private final LoadLocalAuthUserUseCase loadLocalAuthUserUseCase;
 
     // Withdraw saga endpoints
     @PostMapping("/{userId}/mark-pending")
@@ -89,7 +92,18 @@ public class UserInternalController {
         return BaseResponse.ok(new OAuthUserResponse(user.id(), user.role().name(), user.name()));
     }
 
+    // Local user lookup for form login (auth-service authenticates with returned hashed password)
+    @GetMapping("/local")
+    public BaseResponse<LocalUserResponse> findLocalUser(@RequestParam String email) {
+        LocalLoginUser user = loadLocalAuthUserUseCase.loadLocalUserByEmail(email);
+        return BaseResponse.ok(new LocalUserResponse(
+                user.userId(), user.email(), user.password(),
+                user.provider().name(), user.role().name()
+        ));
+    }
+
     public record UserProviderResponse(String provider, String providerId) {}
     public record OAuthUserRequest(String provider, String providerId, String email, String name) {}
     public record OAuthUserResponse(Long id, String role, String name) {}
+    public record LocalUserResponse(Long userId, String email, String password, String provider, String role) {}
 }
