@@ -6,6 +6,7 @@ import com.umust.dobonglife.global.common.constant.Provider;
 public interface GetUserUseCase {
     String getProviderId(Long userId);
     Provider getProvider(Long userId);
+    String getProviderToken(Long userId);
     boolean isBlockedUser(Long userId);
     boolean isNotActiveUser(Long userId);
     String getFcmToken(Long userId);

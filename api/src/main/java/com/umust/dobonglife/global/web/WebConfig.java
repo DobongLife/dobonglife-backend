@@ -1,6 +1,6 @@
 package com.umust.dobonglife.global.web;
 
-import com.umust.dobonglife.auth.resolver.CurrentUserIdArgumentResolver;
+import com.umust.dobonglife.security.resolver.CurrentUserIdArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;

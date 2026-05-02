@@ -4,7 +4,8 @@ import com.umust.dobonglife.domain.coupon.application.dto.CouponDetail;
 import com.umust.dobonglife.domain.coupon.application.port.in.CouponCleanupUseCase;
 import com.umust.dobonglife.domain.coupon.application.port.in.CouponRestoreUseCase;
 import com.umust.dobonglife.domain.coupon.domain.entity.Coupon;
-import com.umust.dobonglife.domain.coupon.domain.repository.CouponRepository;
+import com.umust.dobonglife.domain.coupon.application.port.out.LoadCouponPort;
+import com.umust.dobonglife.domain.coupon.application.port.out.SaveCouponPort;
 import com.umust.dobonglife.domain.coupon.domain.vo.CouponStatus;
 import com.umust.dobonglife.domain.coupon.application.dto.MyCouponStatus;
 import com.umust.dobonglife.domain.coupon.exception.CouponErrorCode;
@@ -28,18 +29,19 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CouponService implements CouponCleanupUseCase, CouponRestoreUseCase {
 
-    private final CouponRepository couponRepository;
+    private final LoadCouponPort loadCouponPort;
+    private final SaveCouponPort saveCouponPort;
 
     public CursorResponse<CouponDetail> getMyCoupons(Long userId, Long lastId, int size) {
-        Slice<Coupon> coupons = couponRepository.findByUserIdNoOffset(
+        Slice<Coupon> coupons = loadCouponPort.findByUserIdNoOffset(
                 userId, lastId, PageRequest.of(0, size));
         return CursorUtils.toCursorResponse(coupons, CouponDetail::from);
     }
 
     public MyCouponStatus getMyCouponStatus(Long userId) {
-        Long available = couponRepository.countByUserIdAndCouponStatus(userId, CouponStatus.AVAILABLE);
-        Long used = couponRepository.countByUserIdAndCouponStatus(userId, CouponStatus.USED);
-        Long expired = couponRepository.countByUserIdAndCouponStatus(userId, CouponStatus.EXPIRED);
+        Long available = loadCouponPort.countByUserIdAndCouponStatus(userId, CouponStatus.AVAILABLE);
+        Long used = loadCouponPort.countByUserIdAndCouponStatus(userId, CouponStatus.USED);
+        Long expired = loadCouponPort.countByUserIdAndCouponStatus(userId, CouponStatus.EXPIRED);
         return MyCouponStatus.of(available, used, expired);
     }
 
@@ -52,7 +54,7 @@ public class CouponService implements CouponCleanupUseCase, CouponRestoreUseCase
                 .issueStartDate(LocalDate.now())
                 .issueEndDate(LocalDate.now().plusDays(couponValidDays))
                 .build();
-        return couponRepository.save(coupon).getId();
+        return saveCouponPort.save(coupon).getId();
     }
 
     @Transactional
@@ -68,11 +70,11 @@ public class CouponService implements CouponCleanupUseCase, CouponRestoreUseCase
             throw new CouponException(CouponErrorCode.INVALID_COUPON_ID);
         }
         coupon.used();
-        couponRepository.save(coupon);
+        saveCouponPort.save(coupon);
     }
 
     public Map<Long, Long> getUsedCountByPromotionIds(List<Long> promotionIds) {
-        return couponRepository.countByPromotionIdsAndStatus(promotionIds, CouponStatus.USED)
+        return loadCouponPort.countByPromotionIdsAndStatus(promotionIds, CouponStatus.USED)
                 .stream()
                 .collect(Collectors.toMap(
                         row -> (Long) row[0],
@@ -83,22 +85,22 @@ public class CouponService implements CouponCleanupUseCase, CouponRestoreUseCase
     @Override
     @Transactional
     public void markPendingByUserId(Long userId) {
-        couponRepository.updateStatusByUserId(userId, BaseStatus.ACTIVE, BaseStatus.PENDING);
+        saveCouponPort.updateStatusByUserId(userId, BaseStatus.ACTIVE, BaseStatus.PENDING);
     }
 
     @Override
     @Transactional
     public void finalizeByUserId(Long userId) {
-        couponRepository.deleteByUserIdAndStatus(userId, BaseStatus.PENDING);
+        saveCouponPort.deleteByUserIdAndStatus(userId, BaseStatus.PENDING);
     }
 
     @Override
     @Transactional
     public void restoreByUserId(Long userId) {
-        couponRepository.updateStatusByUserId(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
+        saveCouponPort.updateStatusByUserId(userId, BaseStatus.PENDING, BaseStatus.ACTIVE);
     }
 
     private Coupon findById(Long couponId) {
-        return couponRepository.findById(couponId).orElseThrow(() -> new CouponException(CouponErrorCode.INVALID_COUPON_ID));
+        return loadCouponPort.findById(couponId).orElseThrow(() -> new CouponException(CouponErrorCode.INVALID_COUPON_ID));
     }
 }

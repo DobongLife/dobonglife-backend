@@ -6,11 +6,14 @@ import com.umust.dobonglife.domain.business.domain.entity.Business;
 import com.umust.dobonglife.domain.business.exception.BusinessErrorCode;
 import com.umust.dobonglife.domain.business.exception.BusinessException;
 import com.umust.dobonglife.domain.coupon.application.CouponService;
-import com.umust.dobonglife.domain.place.application.PlaceService;
+import com.umust.dobonglife.domain.place.application.port.in.GetPlaceUseCase;
+import com.umust.dobonglife.domain.place.application.port.in.ManagePlaceUseCase;
 import com.umust.dobonglife.domain.place.domain.entity.Place;
 import com.umust.dobonglife.domain.place.domain.entity.PlaceDetail;
+import com.umust.dobonglife.domain.place.domain.entity.PlaceImage;
+import com.umust.dobonglife.domain.place.domain.entity.PlaceTheme;
 import com.umust.dobonglife.domain.place.domain.vo.Theme;
-import com.umust.dobonglife.domain.promotion.application.PromotionService;
+import com.umust.dobonglife.domain.promotion.application.PromotionCommandService;
 import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.global.common.constant.Category;
 import com.umust.dobonglife.global.common.image.ImageUploader;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +35,9 @@ public class BusinessFacade {
 
     private final GetBusinessUseCase getBusinessUseCase;
     private final ManageBusinessUseCase manageBusinessUseCase;
-    private final PlaceService placeService;
-    private final PromotionService promotionService;
+    private final GetPlaceUseCase getPlaceUseCase;
+    private final ManagePlaceUseCase managePlaceUseCase;
+    private final PromotionCommandService promotionService;
     private final CouponService couponService;
     private final WebClientService webClientService;
     private final BusinessStatusParser businessStatusParser;
@@ -41,8 +46,8 @@ public class BusinessFacade {
     @Transactional(readOnly = true)
     public BusinessInfo getBusinessInfo(Long userId) {
         Business business = getBusinessUseCase.getBusinessByUser(userId);
-        Place place = placeService.getPlace(business.getPlaceId());
-        return new BusinessInfo(business, place);
+        Place place = getPlaceUseCase.getPlace(business.getPlaceId());
+        return toBusinessInfo(business, place);
     }
 
     @Transactional
@@ -51,7 +56,7 @@ public class BusinessFacade {
 
         Place place;
         if (command.placeId() != null) {
-            place = placeService.getPlace(command.placeId());
+            place = getPlaceUseCase.getPlace(command.placeId());
         } else {
             place = createPlace(command, imageFiles);
         }
@@ -78,8 +83,8 @@ public class BusinessFacade {
         business.updateInfo(command.email(), command.managerName());
         manageBusinessUseCase.save(business);
 
-        Place place = placeService.getPlace(business.getPlaceId());
-        return new BusinessInfo(business, place);
+        Place place = getPlaceUseCase.getPlace(business.getPlaceId());
+        return toBusinessInfo(business, place);
     }
 
     @Transactional(readOnly = true)
@@ -95,7 +100,16 @@ public class BusinessFacade {
                 ? Map.of()
                 : couponService.getUsedCountByPromotionIds(promotionIds);
 
-        return new PromotionPage(slice.getContent(), usedCountMap, slice.hasNext());
+        List<PromotionInfo> promotions = slice.getContent().stream()
+                .map(p -> new PromotionInfo(
+                        p.getId(), p.getTitle(), p.getStartDate(), p.getEndDate(),
+                        p.getDiscountType().name(), p.getDiscountValue(),
+                        p.getTotalQuantity(), p.getCode(), p.getDescription(),
+                        p.getCouponValidDays()
+                ))
+                .toList();
+
+        return new PromotionPage(promotions, usedCountMap, slice.hasNext());
     }
 
     private void checkBusinessStatus(String businessNumber) {
@@ -135,10 +149,40 @@ public class BusinessFacade {
             place.attachImages(imageUrls);
         }
 
-        return placeService.savePlace(place);
+        return managePlaceUseCase.savePlace(place);
     }
 
-    public record BusinessInfo(Business business, Place place) {}
+    private BusinessInfo toBusinessInfo(Business business, Place place) {
+        PlaceDetail detail = place.getDetail();
+        return new BusinessInfo(
+                business.getId(), business.getBusinessNumber(), business.getEmail(),
+                business.getManagerName(), business.getUserId(),
+                place.getId(), place.getName(),
+                detail != null ? detail.getSubName() : null,
+                detail != null ? detail.getContent() : null,
+                detail != null ? detail.getAddress() : null,
+                detail != null ? detail.getContact() : null,
+                detail != null ? detail.getOperatingHour() : null,
+                place.getLatitude(), place.getLongitude(), place.getThumbnailUrl(),
+                place.getImages().stream().map(PlaceImage::getImageUrl).toList(),
+                place.getCategory() != null ? place.getCategory().getDescription() : null,
+                place.getThemes().stream().map(t -> t.getTheme().name()).toList()
+        );
+    }
+
+    public record BusinessInfo(
+            Long businessId, String businessNumber, String email, String managerName, Long userId,
+            Long placeId, String placeName, String subName, String content,
+            String address, String contact, String operatingHour,
+            Double latitude, Double longitude, String thumbnailUrl,
+            List<String> imageUrls, String category, List<String> themes
+    ) {}
+
+    public record PromotionInfo(
+            Long promotionId, String title, LocalDate startDate, LocalDate endDate,
+            String discountType, Long discountValue, Long totalQuantity,
+            String code, String description, Integer couponValidDays
+    ) {}
 
     public record RegisterCommand(
             Long placeId, String subName, String businessName, String content,
@@ -153,7 +197,7 @@ public class BusinessFacade {
     ) {}
 
     public record PromotionPage(
-            List<Promotion> promotions,
+            List<PromotionInfo> promotions,
             Map<Long, Long> usedCountMap,
             boolean hasNext
     ) {}

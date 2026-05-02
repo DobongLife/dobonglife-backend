@@ -24,6 +24,9 @@ public class UserQueryService implements GetUserUseCase, LoadLocalAuthUserUseCas
     public Provider getProvider(Long userId) {return loadUserPort.loadUser(userId).getProvider();}
 
     @Override
+    public String getProviderToken(Long userId) {return loadUserPort.loadUser(userId).getProviderToken();}
+
+    @Override
     public boolean isBlockedUser(Long userId) {
         return loadUserPort.loadUser(userId).isBlocked();
     }

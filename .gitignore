@@ -63,3 +63,7 @@ api/src/main/resources/firebase/firebase-adminsdk-account.json
 
 # Local profile (api module)
 api/src/main/resources/application-local.yml
+
+# Contributor guide generated locally
+AGENTS.md
+CLAUDE.md

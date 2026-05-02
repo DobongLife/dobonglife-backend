@@ -3,6 +3,7 @@ package com.umust.dobonglife.global.error;
 import com.umust.dobonglife.global.common.error.ErrorCode;
 import com.umust.dobonglife.global.common.response.BaseErrorResponse;
 import com.umust.dobonglife.global.common.error.exception.BusinessException;
+import com.umust.dobonglife.global.common.error.exception.ServiceCallException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -71,6 +72,15 @@ public class GlobalControllerAdvice {
         return ResponseEntity
                 .status(BAD_REQUEST.getStatus())
                 .body(new BaseErrorResponse(BAD_REQUEST));
+    }
+
+    @ExceptionHandler(ServiceCallException.class)
+    public ResponseEntity<BaseErrorResponse> handleServiceCall(ServiceCallException e) {
+        ErrorCode code = e.getErrorCode();
+        log.error("[ServiceCallException] service={}, status={}", e.getServiceName(), e.getStatusCode(), e);
+        return ResponseEntity
+                .status(code.getStatus())
+                .body(new BaseErrorResponse(code));
     }
 
     @ExceptionHandler(BusinessException.class)

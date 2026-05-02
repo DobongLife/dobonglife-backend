@@ -2,7 +2,6 @@ package com.umust.dobonglife.domain.auth.application.service;
 
 import com.umust.dobonglife.domain.auth.application.port.in.AuthTokenUseCase;
 import com.umust.dobonglife.domain.auth.application.port.in.AuthenticateAccessTokenUseCase;
-import com.umust.dobonglife.domain.auth.application.port.out.TokenStore;
 import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
 import com.umust.dobonglife.domain.auth.application.dto.AuthenticatedUser;
 import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
@@ -11,6 +10,7 @@ import com.umust.dobonglife.domain.auth.exception.CustomJwtException;
 import com.umust.dobonglife.domain.auth.infrastructure.JwtTokenProvider;
 import com.umust.dobonglife.global.common.constant.Provider;
 import com.umust.dobonglife.global.common.constant.Role;
+import com.umust.dobonglife.global.port.auth.out.TokenStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

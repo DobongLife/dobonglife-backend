@@ -2,7 +2,7 @@ package com.umust.dobonglife.application.auth.service;
 
 import com.umust.dobonglife.application.withdraw.WithdrawOrchestrator;
 import com.umust.dobonglife.domain.auth.application.port.in.AuthTokenUseCase;
-import com.umust.dobonglife.domain.auth.application.dto.AuthTokens;
+import com.umust.dobonglife.global.port.auth.dto.AuthTokens;
 import com.umust.dobonglife.domain.user.application.port.in.GetUserUseCase;
 import com.umust.dobonglife.domain.user.application.port.in.ManageUserUseCase;
 import com.umust.dobonglife.domain.user.exception.UserErrorCode;
@@ -37,6 +37,7 @@ public class AuthFacade {
             throw new UserException(UserErrorCode.USER_ALREADY_WITHDRAWN);
         }
 
-        return authTokenUseCase.reissueTokens(refreshToken);
+        var domainTokens = authTokenUseCase.reissueTokens(refreshToken);
+        return new AuthTokens(domainTokens.accessToken(), domainTokens.refreshToken(), domainTokens.role());
     }
 }

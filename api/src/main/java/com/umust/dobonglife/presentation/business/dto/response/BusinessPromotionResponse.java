@@ -1,7 +1,6 @@
 package com.umust.dobonglife.presentation.business.dto.response;
 
-import com.umust.dobonglife.domain.promotion.domain.constant.DiscountType;
-import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
+import com.umust.dobonglife.application.business.service.BusinessFacade;
 import com.umust.dobonglife.global.common.Identifiable;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +16,7 @@ public class BusinessPromotionResponse implements Identifiable {
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean inPeriod;
-    private DiscountType discountType;
+    private String discountType;
     private Long discountValue;
     private int usedValue;
     private Long usedCount;
@@ -31,27 +30,27 @@ public class BusinessPromotionResponse implements Identifiable {
         return promotionId;
     }
 
-    public static BusinessPromotionResponse of(Promotion promotion, Long usedCount) {
+    public static BusinessPromotionResponse of(BusinessFacade.PromotionInfo promotion, Long usedCount) {
         LocalDate today = LocalDate.now();
-        boolean inPeriod = !today.isBefore(promotion.getStartDate()) && !today.isAfter(promotion.getEndDate());
-        int usedValue = promotion.getTotalQuantity() > 0
-                ? (int) (usedCount * 100 / promotion.getTotalQuantity())
+        boolean inPeriod = !today.isBefore(promotion.startDate()) && !today.isAfter(promotion.endDate());
+        int usedValue = promotion.totalQuantity() > 0
+                ? (int) (usedCount * 100 / promotion.totalQuantity())
                 : 0;
 
         return BusinessPromotionResponse.builder()
-                .promotionId(promotion.getId())
-                .title(promotion.getTitle())
-                .startDate(promotion.getStartDate())
-                .endDate(promotion.getEndDate())
+                .promotionId(promotion.promotionId())
+                .title(promotion.title())
+                .startDate(promotion.startDate())
+                .endDate(promotion.endDate())
                 .inPeriod(inPeriod)
-                .discountType(promotion.getDiscountType())
-                .discountValue(promotion.getDiscountValue())
+                .discountType(promotion.discountType())
+                .discountValue(promotion.discountValue())
                 .usedValue(usedValue)
                 .usedCount(usedCount)
-                .totalCount(promotion.getTotalQuantity())
-                .code(promotion.getCode())
-                .description(promotion.getDescription())
-                .validPeriod(promotion.getCouponValidDays())
+                .totalCount(promotion.totalQuantity())
+                .code(promotion.code())
+                .description(promotion.description())
+                .validPeriod(promotion.couponValidDays())
                 .build();
     }
 }

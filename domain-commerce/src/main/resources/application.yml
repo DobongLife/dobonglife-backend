@@ -1,0 +1,32 @@
+server:
+  port: 8082
+
+security:
+  internal:
+    permit-all: true
+
+spring:
+  application:
+    name: domain-commerce
+  config:
+    import: optional:file:./.env[.properties]
+  datasource:
+    url: ${COMMERCE_DATASOURCE_URL:${LOCAL_DATASOURCE_URL:${DB_URL:jdbc:mysql://localhost:3306/dobonglife_commerce?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul}}}
+    username: ${COMMERCE_DATASOURCE_USERNAME:${LOCAL_DATASOURCE_USERNAME:${DB_USERNAME:root}}}
+    password: ${COMMERCE_DATASOURCE_PASSWORD:${LOCAL_DATASOURCE_PASSWORD:${DB_PASSWORD:}}}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      data-source-properties:
+        allowPublicKeyRetrieval: true
+        useSSL: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}

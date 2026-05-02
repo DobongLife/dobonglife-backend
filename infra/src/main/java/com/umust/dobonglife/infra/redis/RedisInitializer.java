@@ -19,10 +19,14 @@ public class RedisInitializer {
 
     @PostConstruct
     public void clearRedis() {
-        redisTemplate.execute((RedisCallback<Void>) connection -> {
-            connection.serverCommands().flushDb();
-            return null;
-        });
-        log.info("Redis DB 초기화 완료");
+        try {
+            redisTemplate.execute((RedisCallback<Void>) connection -> {
+                connection.serverCommands().flushDb();
+                return null;
+            });
+            log.info("Redis DB 초기화 완료");
+        } catch (Exception e) {
+            log.warn("Redis DB 초기화 생략: {}", e.getMessage());
+        }
     }
 }

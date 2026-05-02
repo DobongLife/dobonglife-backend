@@ -20,7 +20,7 @@ import java.io.InputStream;
 @Slf4j
 public class FirebaseConfig {
 
-    @Value("${firebase.adminsdk.account.path}")
+    @Value("${firebase.adminsdk.account.path:}")
     private String firebaseAccountPath;
 
     @Value("${firebase.adminsdk.account.enabled:true}")
@@ -30,6 +30,10 @@ public class FirebaseConfig {
     public void initialize() {
         if (!firebaseEnabled) {
             log.info("Firebase 초기화 비활성화 (firebase.adminsdk.account.enabled=false)");
+            return;
+        }
+        if (firebaseAccountPath == null || firebaseAccountPath.isBlank()) {
+            log.warn("Firebase 초기화 건너뜀: firebase.adminsdk.account.path 값이 비어 있습니다");
             return;
         }
 

@@ -121,7 +121,7 @@ public class ReviewController {
     public BaseResponse<CursorResponse<CourseReviewSummaryResponse>> getMyCourseReviews(@CurrentUserId Long userId,
                                                                                   @RequestParam(required = false) Long lastReviewId,
                                                                                   @RequestParam(defaultValue = "2") int size) {
-        CursorResponse<CourseReviewSummaryResponse> responses = reviewService.getMyCourseReviews(userId, lastReviewId, size);
+        CursorResponse<CourseReviewSummaryResponse> 111responses = reviewService.getMyCourseReviews(userId, lastReviewId, size);
         return BaseResponse.ok(responses);
     }
 

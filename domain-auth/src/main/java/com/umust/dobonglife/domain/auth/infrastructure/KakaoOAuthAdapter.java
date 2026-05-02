@@ -1,10 +1,10 @@
 package com.umust.dobonglife.domain.auth.infrastructure;
 
-import com.umust.dobonglife.domain.auth.application.port.out.KakaoOAuthPort;
 import com.umust.dobonglife.domain.auth.application.dto.KakaoUserInfo;
-import com.umust.dobonglife.domain.auth.application.dto.SocialAuthUserInfo;
 import com.umust.dobonglife.domain.auth.exception.AuthErrorCode;
 import com.umust.dobonglife.global.common.error.exception.BusinessException;
+import com.umust.dobonglife.global.port.auth.dto.SocialAuthUserInfo;
+import com.umust.dobonglife.global.port.auth.out.KakaoOAuthPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

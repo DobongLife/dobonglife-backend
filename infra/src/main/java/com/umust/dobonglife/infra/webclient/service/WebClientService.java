@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
@@ -15,6 +16,7 @@ import java.util.*;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "open-api.secret-key")
 public class WebClientService {
 
     @Value("${open-api.secret-key}")

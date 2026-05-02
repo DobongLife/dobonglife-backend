@@ -2,12 +2,6 @@ package com.umust.dobonglife.domain.business.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umust.dobonglife.application.business.service.BusinessFacade;
-import com.umust.dobonglife.domain.business.domain.entity.Business;
-import com.umust.dobonglife.domain.place.domain.entity.Place;
-import com.umust.dobonglife.domain.place.domain.entity.PlaceDetail;
-import com.umust.dobonglife.domain.place.domain.vo.Theme;
-import com.umust.dobonglife.domain.promotion.domain.constant.DiscountType;
-import com.umust.dobonglife.domain.promotion.domain.entity.Promotion;
 import com.umust.dobonglife.global.common.constant.Category;
 import com.umust.dobonglife.infra.firebase.FirebaseConfig;
 import com.umust.dobonglife.global.support.WithMockCustomUser;
@@ -23,7 +17,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -70,40 +63,16 @@ public class BusinessControllerTest {
     @MockitoBean
     JavaMailSender javaMailSender;
 
-    private Business createBusiness(Long id, Long userId, Long placeId) {
-        Business business = Business.builder()
-                .userId(userId)
-                .placeId(placeId)
-                .category(Category.CAFE)
-                .businessNumber("2198701322")
-                .managerName("홍길동")
-                .email("biz@example.com")
-                .build();
-        ReflectionTestUtils.setField(business, "id", id);
-        return business;
-    }
-
-    private Place createPlace(Long id) {
-        Place place = Place.builder()
-                .category(Category.CAFE)
-                .name("도봉 카페")
-                .latitude(37.6898)
-                .longitude(127.0472)
-                .build();
-        ReflectionTestUtils.setField(place, "id", id);
-
-        PlaceDetail detail = PlaceDetail.builder()
-                .subName("자연 속 카페")
-                .content("아름다운 카페입니다")
-                .address("서울 도봉구 도봉로 123")
-                .contact("02-123-4567")
-                .operatingHour("09:00~18:00")
-                .build();
-        place.attachDetail(detail);
-        place.attachImages(List.of("https://example.com/img1.jpg"));
-        place.attachThemes(List.of(Theme.NATURE));
-
-        return place;
+    private BusinessFacade.BusinessInfo createBusinessInfo() {
+        return new BusinessFacade.BusinessInfo(
+                1L, "2198701322", "biz@example.com", "홍길동", 1L,
+                10L, "도봉 카페", "자연 속 카페", "아름다운 카페입니다",
+                "서울 도봉구 도봉로 123", "02-123-4567", "09:00~18:00",
+                37.6898, 127.0472, null,
+                List.of("https://example.com/img1.jpg"),
+                Category.CAFE.getDescription(),
+                List.of("NATURE")
+        );
     }
 
     // =========================================================================
@@ -173,10 +142,7 @@ public class BusinessControllerTest {
     @DisplayName("사업장 정보 조회 - 성공")
     @WithMockCustomUser
     void getBusiness_success() throws Exception {
-        Business business = createBusiness(1L, 1L, 10L);
-        Place place = createPlace(10L);
-        BusinessFacade.BusinessInfo info = new BusinessFacade.BusinessInfo(business, place);
-
+        BusinessFacade.BusinessInfo info = createBusinessInfo();
         given(businessFacade.getBusinessInfo(eq(1L))).willReturn(info);
 
         mockMvc.perform(get("/api/business")
@@ -214,7 +180,7 @@ public class BusinessControllerTest {
                                                 fieldWithPath("data.operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
                                                 fieldWithPath("data.latitude").type(JsonFieldType.NUMBER).description("위도"),
                                                 fieldWithPath("data.longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                                fieldWithPath("data.thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
+                                                fieldWithPath("data.thumbnailUrl").type(JsonFieldType.NULL).description("썸네일 URL"),
                                                 fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
                                                 fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
                                                 fieldWithPath("data.themes").type(JsonFieldType.ARRAY).description("테마 목록")
@@ -231,11 +197,15 @@ public class BusinessControllerTest {
     @DisplayName("사업장 수정 - 성공")
     @WithMockCustomUser
     void updateBusiness_success() throws Exception {
-        Business business = createBusiness(1L, 1L, 10L);
-        ReflectionTestUtils.setField(business, "email", "updated@example.com");
-        ReflectionTestUtils.setField(business, "managerName", "이강파");
-        Place place = createPlace(10L);
-        BusinessFacade.BusinessInfo info = new BusinessFacade.BusinessInfo(business, place);
+        BusinessFacade.BusinessInfo info = new BusinessFacade.BusinessInfo(
+                1L, "2198701322", "updated@example.com", "이강파", 1L,
+                10L, "도봉 카페", "자연 속 카페", "아름다운 카페입니다",
+                "서울 도봉구 도봉로 123", "02-123-4567", "09:00~18:00",
+                37.6898, 127.0472, null,
+                List.of("https://example.com/img1.jpg"),
+                Category.CAFE.getDescription(),
+                List.of("NATURE")
+        );
 
         given(businessFacade.updateBusiness(eq(1L), any(), any())).willReturn(info);
 
@@ -297,7 +267,7 @@ public class BusinessControllerTest {
                                                 fieldWithPath("data.operatingHour").type(JsonFieldType.STRING).description("운영 시간"),
                                                 fieldWithPath("data.latitude").type(JsonFieldType.NUMBER).description("위도"),
                                                 fieldWithPath("data.longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                                fieldWithPath("data.thumbnailUrl").type(JsonFieldType.STRING).description("썸네일 URL"),
+                                                fieldWithPath("data.thumbnailUrl").type(JsonFieldType.NULL).description("썸네일 URL"),
                                                 fieldWithPath("data.imageUrls").type(JsonFieldType.ARRAY).description("이미지 URL 목록"),
                                                 fieldWithPath("data.category").type(JsonFieldType.STRING).description("카테고리"),
                                                 fieldWithPath("data.themes").type(JsonFieldType.ARRAY).description("테마 목록")
@@ -314,22 +284,12 @@ public class BusinessControllerTest {
     @DisplayName("사업장 프로모션 조회 - 성공")
     @WithMockCustomUser
     void getBusinessPromotion_success() throws Exception {
-        Promotion promotion = Promotion.builder()
-                .businessId(1L)
-                .category(Category.CAFE)
-                .title("여름 할인 이벤트")
-                .description("여름 맞이 10% 할인")
-                .startDate(LocalDate.of(2025, 6, 1))
-                .endDate(LocalDate.of(2027, 8, 31))
-                .couponValidDays(30)
-                .discountType(DiscountType.PERCENT)
-                .discountValue(10L)
-                .minPrice(0L)
-                .maxPrice(100000L)
-                .point(0L)
-                .totalQuantity(100L)
-                .build();
-        ReflectionTestUtils.setField(promotion, "id", 1L);
+        BusinessFacade.PromotionInfo promotion = new BusinessFacade.PromotionInfo(
+                1L, "여름 할인 이벤트",
+                LocalDate.of(2025, 6, 1), LocalDate.of(2027, 8, 31),
+                "PERCENT", 10L, 100L, null,
+                "여름 맞이 10% 할인", 30
+        );
 
         BusinessFacade.PromotionPage page = new BusinessFacade.PromotionPage(
                 List.of(promotion),
@@ -375,7 +335,7 @@ public class BusinessControllerTest {
                                                 fieldWithPath("data.content[].usedValue").type(JsonFieldType.NUMBER).description("사용률 (%)"),
                                                 fieldWithPath("data.content[].usedCount").type(JsonFieldType.NUMBER).description("사용 횟수"),
                                                 fieldWithPath("data.content[].totalCount").type(JsonFieldType.NUMBER).description("총 발급 수"),
-                                                fieldWithPath("data.content[].code").type(JsonFieldType.STRING).description("쿠폰 코드"),
+                                                fieldWithPath("data.content[].code").type(JsonFieldType.NULL).description("쿠폰 코드"),
                                                 fieldWithPath("data.content[].description").type(JsonFieldType.STRING).description("프로모션 설명"),
                                                 fieldWithPath("data.content[].validPeriod").type(JsonFieldType.NUMBER).description("유효 기간 (일)"),
                                                 fieldWithPath("data.lastId").type(JsonFieldType.NUMBER).description("마지막 프로모션 ID"),
